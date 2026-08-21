@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { FilterChips } from "@/components/ui/FilterChips/FilterChips";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { activities, activityTypes } from "@/lib/activities";
+import { noticeFor } from "@/lib/get-notice";
 import styles from "./activities.module.css";
 
 export default function ActivitiesPage() {
@@ -92,7 +93,7 @@ export default function ActivitiesPage() {
       )}
 
       <p className={styles.note}>
-        동아리 행사 일정입니다. 봉사 신청은 봉사 모집 탭에서 확인해 주세요.
+        {noticeFor("활동")}
       </p>
     </div>
   );

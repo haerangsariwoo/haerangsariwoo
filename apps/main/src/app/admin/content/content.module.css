@@ -1,0 +1,142 @@
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--a-ink-soft);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+.input {
+  height: 40px;
+  border-radius: var(--a-radius-sm);
+  border: 1px solid var(--a-line);
+  padding: 0 13px;
+  font-size: 13px;
+  background: var(--a-surface);
+  width: 100%;
+}
+
+.textarea {
+  min-height: 80px;
+  border-radius: var(--a-radius-sm);
+  border: 1px solid var(--a-line);
+  padding: 11px 13px;
+  font-size: 13px;
+  background: var(--a-surface);
+  width: 100%;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--a-brand);
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.itemHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.itemNo {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex: none;
+}
+
+.itemTitle {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+}
+
+.screenTag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--a-radius-pill);
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+  flex: none;
+}
+
+.iconBtn {
+  border: 1px solid var(--a-line);
+  background: var(--a-surface);
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+  cursor: pointer;
+}
+
+.iconBtn.danger {
+  color: #d14b57;
+  border-color: transparent;
+  background: #fbe7e9;
+}
+
+.addRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.saveBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--a-line);
+}
+
+.saveNote {
+  flex: 1;
+  font-size: 11.5px;
+  color: var(--a-ink-soft);
+  line-height: 1.5;
+}

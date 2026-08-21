@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { badges, hourStats, profile, records } from "@/lib/my";
+import { noticeFor } from "@/lib/get-notice";
 import styles from "./my.module.css";
 
 export const metadata = { title: "MY · 해랑사리우" };
@@ -92,7 +93,7 @@ export default function MyPage() {
       </section>
 
       <p className={styles.note}>
-        봉사시간은 운영진이 승인·업로드한 실적만 반영됩니다.
+        {noticeFor("마이")}
       </p>
     </div>
   );

@@ -11,6 +11,7 @@ import {
   semesterStatus,
 } from "@/lib/mock-data";
 import { notices } from "@/lib/community";
+import { homeCopy } from "@/lib/app-content";
 import styles from "./home.module.css";
 
 const QUICK_MENU = [
@@ -27,8 +28,11 @@ export default function HomePage() {
         <span className={styles.heroMascot} role="img" aria-label="마스코트">
           🐬
         </span>
-        <h1 className={styles.greeting}>안녕하세요, {member.name}님!</h1>
-        <p className={styles.subGreeting}>오늘도 따뜻한 하루 보내세요.</p>
+        <h1 className={styles.greeting}>
+          안녕하세요, {member.name}
+          {homeCopy.greetingSuffix}
+        </h1>
+        <p className={styles.subGreeting}>{homeCopy.subGreeting}</p>
 
         <div className={styles.summaryRow}>
           <div className={styles.summaryCard}>

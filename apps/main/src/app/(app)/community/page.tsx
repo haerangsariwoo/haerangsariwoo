@@ -5,6 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { albums, notices } from "@/lib/community";
+import { noticeFor } from "@/lib/get-notice";
 import styles from "./community.module.css";
 
 type Tab = "공지" | "앨범";
@@ -74,7 +75,7 @@ export default function CommunityPage() {
       )}
 
       <p className={styles.note}>
-        공지와 활동 앨범만 제공합니다. 운영진 문의는 쪽지함의 익명 문의를 이용해 주세요.
+        {noticeFor("커뮤니티")}
       </p>
     </div>
   );

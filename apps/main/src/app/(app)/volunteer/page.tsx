@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import { volunteerCategories, volunteers } from "@/lib/mock-data";
+import { noticeFor } from "@/lib/get-notice";
 import styles from "./volunteer.module.css";
 
 const STATUS_ORDER = { closing: 0, open: 1, waitlist: 2, closed: 3 } as const;
@@ -50,7 +51,7 @@ export default function VolunteerPage() {
       )}
 
       <p className={styles.note}>
-        1365 · VMS 배지가 붙은 봉사는 원본 사이트에서 신청해야 합니다.
+        {noticeFor("봉사 모집")}
       </p>
     </div>
   );

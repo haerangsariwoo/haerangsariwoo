@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { myTeamDetail, profile } from "@/lib/my";
+import { noticeFor } from "@/lib/get-notice";
 import styles from "./team.module.css";
 
 export const metadata = { title: "내 조 · 해랑사리우" };
@@ -34,7 +35,7 @@ export default function TeamPage() {
       </section>
 
       <p className={styles.note}>
-        조 편성은 운영진이 진행하며, 부원은 발행된 결과만 확인할 수 있습니다.
+        {noticeFor("내 조")}
       </p>
     </div>
   );

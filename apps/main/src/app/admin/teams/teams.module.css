@@ -1,0 +1,153 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.poolList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.poolRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-md);
+}
+
+.poolAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex: none;
+}
+
+.poolName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+.poolMeta {
+  font-size: 11px;
+  color: var(--a-ink-soft);
+  margin-top: 3px;
+}
+
+.genderTag {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--a-radius-pill);
+}
+
+.genderTag.남 {
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+}
+
+.genderTag.여 {
+  background: #ffe9f0;
+  color: #d1467e;
+}
+
+.teamGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.teamCard {
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-lg);
+  padding: 14px 16px;
+}
+
+.teamHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.teamName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+.ratio {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.memberChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: var(--a-radius-pill);
+  background: var(--a-bg);
+  color: var(--a-ink);
+}
+
+.memberChip .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.dot.남 {
+  background: var(--a-brand);
+}
+.dot.여 {
+  background: #d1467e;
+}
+
+.publishBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: var(--a-bg);
+  border-radius: var(--a-radius-md);
+}
+
+.publishText {
+  font-size: 12px;
+  color: var(--a-ink-soft);
+  flex: 1;
+}
+
+.publishText b {
+  color: var(--a-ink);
+}

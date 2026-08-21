@@ -1,0 +1,244 @@
+.shell {
+  min-height: 100dvh;
+  display: flex;
+  background: var(--a-bg);
+  color: var(--a-ink);
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 248px;
+  flex: none;
+  background: var(--a-sidebar);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 14px 16px;
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 10px 24px;
+}
+
+.mascot {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.wordmark {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.adminTag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--a-sidebar-accent);
+  margin-left: auto;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: var(--a-radius-md);
+  color: var(--a-sidebar-ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.navItem.active {
+  background: var(--a-sidebar-active);
+  color: #fff;
+  font-weight: 700;
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: var(--a-sidebar-icon);
+}
+
+.navItem.active .navIcon {
+  color: #fff;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--a-sidebar-profile);
+  border-radius: var(--a-radius-lg);
+  padding: 13px 14px;
+  margin-top: 16px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex: none;
+}
+
+.profileName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.profileMeta {
+  font-size: 11px;
+  color: var(--a-sidebar-meta);
+  margin-top: 3px;
+}
+
+.backToApp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: var(--a-radius-md);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--a-sidebar-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.backToApp:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ---------- main ---------- */
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: 76px;
+  background: var(--a-surface);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--a-ink);
+  margin-right: auto;
+}
+
+.semesterSelect {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--a-radius-md);
+  background: var(--a-bg);
+  border: none;
+  color: var(--a-ink);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--a-bg);
+  border: none;
+  color: var(--a-brand);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.createButton {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: var(--a-radius-md);
+  background: var(--a-brand);
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.content {
+  flex: 1;
+  padding: 28px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1440px;
+  width: 100%;
+}
+
+/* ---------- mobile guard ---------- */
+.mobileNote {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+  .content {
+    padding: 20px 16px 40px;
+  }
+  .topbar {
+    padding: 0 16px;
+  }
+  .pageTitle {
+    font-size: 18px;
+  }
+  .semesterSelect,
+  .createButton {
+    display: none;
+  }
+  .mobileNote {
+    display: block;
+    background: var(--a-orange-soft);
+    color: #8a5a12;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: var(--a-radius-sm);
+    padding: 14px 16px;
+    line-height: 1.6;
+  }
+}

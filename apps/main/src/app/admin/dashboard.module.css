@@ -1,0 +1,386 @@
+.intro {
+  margin-bottom: 4px;
+}
+
+.introTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+.introDesc {
+  font-size: 13px;
+  color: var(--a-ink-soft);
+  margin-top: 6px;
+}
+
+.metricRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .metricRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metric {
+  background: var(--a-surface);
+  border-radius: var(--a-radius-xl);
+  box-shadow: var(--a-shadow);
+  padding: 18px;
+}
+
+.metricTop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.metricIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--a-radius-md);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.metricIcon.blue {
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+}
+.metricIcon.green {
+  background: var(--a-green-soft);
+  color: var(--a-green);
+}
+.metricIcon.orange {
+  background: var(--a-orange-soft);
+  color: var(--a-orange);
+}
+.metricIcon.purple {
+  background: var(--a-purple-soft);
+  color: var(--a-purple);
+}
+
+.metricLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--a-ink-soft);
+}
+
+.metricBottom {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.metricValue {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--a-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.metricCaption {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.metricCaption.blue {
+  color: var(--a-brand);
+}
+.metricCaption.green {
+  color: var(--a-green);
+}
+.metricCaption.orange {
+  color: var(--a-orange);
+}
+.metricCaption.purple {
+  color: var(--a-purple);
+}
+
+/* ---------- two-col rows ---------- */
+.rowA {
+  display: grid;
+  grid-template-columns: minmax(0, 724fr) minmax(0, 380fr);
+  gap: 24px;
+}
+
+.rowB {
+  display: grid;
+  grid-template-columns: minmax(0, 520fr) minmax(0, 584fr);
+  gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .rowA,
+  .rowB {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- toolbar ---------- */
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.search {
+  flex: 1;
+  min-width: 200px;
+  height: 40px;
+  border-radius: var(--a-radius-md);
+  background: var(--a-bg);
+  border: none;
+  padding: 0 14px;
+  font-size: 12px;
+  color: var(--a-ink);
+}
+
+.search::placeholder {
+  color: var(--a-ink-soft);
+}
+
+.select {
+  height: 40px;
+  border-radius: var(--a-radius-md);
+  border: 1px solid var(--a-line);
+  background: var(--a-surface);
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--a-ink);
+}
+
+/* ---------- approvals ---------- */
+.approvalList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.approvalRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.approvalAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex: none;
+}
+
+.approvalAvatar.blue {
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+}
+.approvalAvatar.green {
+  background: var(--a-green-soft);
+  color: var(--a-green);
+}
+.approvalAvatar.orange {
+  background: #ffedd6;
+  color: var(--a-orange);
+}
+
+.approvalBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.approvalName {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+.approvalActivity {
+  font-size: 11px;
+  color: var(--a-ink-soft);
+  margin-top: 5px;
+}
+
+.approvalHours {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--a-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.approvalButton {
+  width: 64px;
+  height: 36px;
+  border-radius: 11px;
+  background: var(--a-brand);
+  color: #fff;
+  border: none;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  flex: none;
+}
+
+.batchBar {
+  margin-top: 18px;
+  background: var(--a-bg);
+  border-radius: var(--a-radius-sm);
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--a-brand);
+}
+
+/* ---------- schedule ---------- */
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.eventRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eventDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.eventDot.orange {
+  background: var(--a-orange);
+}
+.eventDot.blue {
+  background: var(--a-brand);
+}
+
+.eventTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--a-ink);
+  flex: 1;
+}
+
+.eventTime {
+  font-size: 11px;
+  color: var(--a-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.dayName {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+  padding-bottom: 6px;
+}
+
+.day {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--a-ink);
+  border-radius: var(--a-radius-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.day.eventOrange {
+  background: var(--a-orange-soft);
+  color: var(--a-orange);
+  font-weight: 700;
+}
+
+.day.eventBlue {
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+  font-weight: 700;
+}
+
+/* ---------- quick actions ---------- */
+.quickGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.quickCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--a-bg);
+  border-radius: var(--a-radius-lg);
+  padding: 18px 14px;
+  color: inherit;
+}
+
+.quickIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--a-radius-md);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.quickIcon.blue {
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+}
+.quickIcon.green {
+  background: var(--a-green-soft);
+  color: var(--a-green);
+}
+.quickIcon.orange {
+  background: var(--a-orange-soft);
+  color: var(--a-orange);
+}
+.quickIcon.purple {
+  background: var(--a-purple-soft);
+  color: var(--a-purple);
+}
+
+.quickLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+.quickDesc {
+  display: block;
+  font-size: 11px;
+  color: var(--a-ink-soft);
+  margin-top: 5px;
+}
+
+.quickChev {
+  margin-left: auto;
+  color: var(--a-ink-soft);
+  font-size: 16px;
+}

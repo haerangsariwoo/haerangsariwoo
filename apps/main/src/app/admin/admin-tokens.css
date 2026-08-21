@@ -1,0 +1,35 @@
+/* 관리자 전용 토큰 — 회원 앱과 팔레트가 다르므로 admin 스코프에서만 재정의 */
+.adminScope {
+  --a-bg: #f6f9fb;
+  --a-surface: #ffffff;
+  --a-ink: #0b161f;
+  --a-ink-soft: #5e6e7a;
+  --a-line: #d6e0e8;
+
+  --a-brand: #1485d1;
+  --a-brand-soft: #e0f2fc;
+
+  --a-sidebar: #09293d;
+  --a-sidebar-active: #1a5473;
+  --a-sidebar-profile: #0f384d;
+  --a-sidebar-ink: #ccdee5;
+  --a-sidebar-icon: #abc7d6;
+  --a-sidebar-meta: #a6c4d4;
+  --a-sidebar-accent: #91c9e8;
+
+  --a-green: #0a8559;
+  --a-green-soft: #d4f2e3;
+  --a-orange: #ff964d;
+  --a-orange-soft: #fff0d1;
+  --a-purple: #736be0;
+  --a-purple-soft: #ebe5ff;
+  --a-grey-soft: #edf0f2;
+
+  --a-radius-sm: 10px;
+  --a-radius-md: 12px;
+  --a-radius-lg: 14px;
+  --a-radius-xl: 18px;
+  --a-radius-pill: 999px;
+
+  --a-shadow: 0px 4px 14px 0px rgba(8, 31, 46, 0.06);
+}

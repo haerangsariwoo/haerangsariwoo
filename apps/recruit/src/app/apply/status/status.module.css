@@ -1,0 +1,322 @@
+.successIcon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green);
+  display: grid;
+  place-items: center;
+  margin: 12px auto 0;
+}
+
+.centerTitle {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.centerDesc {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.timeline {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+}
+
+.timelineTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.stepRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+}
+
+.stepIcon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex: none;
+  background: var(--grey-soft);
+  color: var(--ink-soft);
+}
+
+.stepIcon.done {
+  background: var(--brand);
+  color: #fff;
+}
+
+.stepLabel {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.stepState {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.stepState.done {
+  color: var(--green);
+}
+
+.infoNote {
+  background: var(--brand-soft);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.infoNote b {
+  color: var(--ink);
+}
+
+/* ---------- 결과 카드 ---------- */
+.resultCard {
+  border-radius: var(--radius-xl);
+  padding: 24px 20px;
+  background: var(--navy);
+  text-align: center;
+}
+
+.resultEmblem {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(92, 211, 166, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--mint);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+}
+
+.resultLabel {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+.resultTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  margin-top: 12px;
+}
+
+.resultDesc {
+  font-size: 12px;
+  color: var(--navy-ink);
+  margin-top: 14px;
+  line-height: 1.6;
+}
+
+.resultCard.reject .resultEmblem {
+  border-color: rgba(184, 214, 229, 0.4);
+  color: var(--navy-ink);
+}
+
+.resultCard.reject .resultLabel {
+  color: var(--navy-ink);
+}
+
+/* ---------- 면접 슬롯 ---------- */
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.dateTabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.dateTabs::-webkit-scrollbar {
+  display: none;
+}
+
+.dateTab {
+  flex: none;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dateTab.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 52px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+}
+
+.slot.selected {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.slot:disabled {
+  background: var(--grey-soft);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.slotTime {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.slot:disabled .slotTime {
+  color: var(--ink-soft);
+}
+
+.slotLeft {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
+}
+
+.slot:disabled .slotLeft {
+  color: var(--ink-soft);
+}
+
+.placeNote {
+  display: flex;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+/* ---------- 다음 단계 ---------- */
+.nextCard {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+}
+
+.nextTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.nextList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nextItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.nextNo {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex: none;
+}
+
+.footerAction {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.switcher {
+  display: flex;
+  gap: 6px;
+  background: var(--grey-soft);
+  border-radius: var(--radius-md);
+  padding: 4px;
+}
+
+.switchBtn {
+  flex: 1;
+  height: 34px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.switchBtn.on {
+  background: var(--surface);
+  color: var(--brand);
+}
+
+.demoNote {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  text-align: center;
+  line-height: 1.5;
+}

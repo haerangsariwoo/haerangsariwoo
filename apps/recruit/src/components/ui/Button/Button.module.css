@@ -1,0 +1,55 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  transition: opacity 0.15s ease, transform 0.05s ease;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.primary {
+  background: var(--brand);
+  color: #fff;
+}
+
+.navy {
+  background: var(--navy);
+  color: #fff;
+}
+
+.outline {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.md {
+  height: 48px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+.lg {
+  height: 54px;
+  padding: 0 24px;
+  font-size: 15px;
+}
+
+.fullWidth {
+  width: 100%;
+}

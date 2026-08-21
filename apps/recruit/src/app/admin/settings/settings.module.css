@@ -1,0 +1,162 @@
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1000px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.input {
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  padding: 0 13px;
+  font-size: 13px;
+  background: var(--surface);
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--brand-soft);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.toggleText {
+  flex: 1;
+}
+
+.toggleTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.toggleDesc {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+.switch {
+  width: 52px;
+  height: 30px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--brand);
+  position: relative;
+  cursor: pointer;
+  flex: none;
+}
+
+.switch.off {
+  background: #c3ccd8;
+}
+
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 25px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.15s ease;
+}
+
+.switch.off .knob {
+  left: 3px;
+}
+
+.questionList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.question {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 13px 14px;
+}
+
+.qLabel {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.qType {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.photoRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.photoCard {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  text-align: center;
+}
+
+.photoBox {
+  height: 70px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-pale);
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+.photoTitle {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.uploadBtn {
+  margin-top: 8px;
+  width: 100%;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+}

@@ -7,6 +7,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/main",
       "port": 3000
+    },
+    {
+      "name": "recruit",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/recruit",
+      "port": 3001
     }
   ]
 }

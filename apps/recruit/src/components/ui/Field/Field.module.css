@@ -1,0 +1,72 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.required {
+  color: var(--brand);
+  margin-left: 3px;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: 15px 16px;
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color 0.15s ease;
+}
+
+.textarea {
+  min-height: 140px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  /* 예시 문구는 회색으로 — 입력값과 구분 */
+  color: var(--ink-soft);
+  opacity: 0.75;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.input.invalid,
+.textarea.invalid {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.help {
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.error {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--danger);
+}
+
+.counter {
+  align-self: flex-end;
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}

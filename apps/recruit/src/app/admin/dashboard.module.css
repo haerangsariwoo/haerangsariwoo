@@ -1,0 +1,142 @@
+.metricRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1000px) {
+  .metricRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+
+.metricLabel {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.metricValue {
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.metricValue.blue {
+  color: var(--brand);
+}
+.metricValue.green {
+  color: var(--green);
+}
+.metricValue.orange {
+  color: #e08a1e;
+}
+.metricValue.purple {
+  color: #7a5af5;
+}
+
+.metricUnit {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1000px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stageList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stageRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stageNo {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex: none;
+}
+
+.stageLabel {
+  flex: 1;
+  font-size: 13px;
+}
+
+.stageDate {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.progressWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.progressRow {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.progressHead {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.progressLabel {
+  font-weight: 700;
+}
+
+.progressValue {
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--grey-soft);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--brand);
+}
+
+.fill.full {
+  background: var(--danger);
+}

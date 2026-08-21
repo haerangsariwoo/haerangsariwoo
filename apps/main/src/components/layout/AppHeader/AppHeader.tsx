@@ -83,7 +83,7 @@ export function AppHeader() {
 
             <Link href="/my" className={styles.profileRow}>
               <span className={styles.profileAvatar}>{profile.name.charAt(0)}</span>
-              <span>
+              <span className={styles.profileText}>
                 <span className={styles.profileName}>{profile.name}</span>
                 <span className={styles.profileMeta}>
                   {profile.cohort} · {profile.role}
@@ -108,7 +108,7 @@ export function AppHeader() {
                     <path d="M9.5 12l1.8 1.8 3.4-3.6" strokeLinecap="round" />
                   </svg>
                 </span>
-                <span>
+                <span className={styles.adminText}>
                   <span className={styles.adminLabel}>관리자 페이지</span>
                   <span className={styles.adminDesc}>봉사·회원·승인 관리 (운영진 전용)</span>
                 </span>

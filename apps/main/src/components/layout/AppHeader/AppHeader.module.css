@@ -109,16 +109,24 @@
   flex: none;
 }
 
+.profileText {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
 .profileName {
   font-size: 14px;
   font-weight: 700;
   color: var(--ink);
+  line-height: 1.3;
 }
 
 .profileMeta {
   font-size: 11px;
   color: var(--ink-soft);
-  margin-top: 3px;
+  line-height: 1.3;
 }
 
 .menuList {
@@ -166,17 +174,23 @@
   flex: none;
 }
 
+.adminText {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
 .adminLabel {
-  display: block;
   font-size: 14px;
   font-weight: 700;
+  line-height: 1.3;
 }
 
 .adminDesc {
-  display: block;
   font-size: 11px;
   color: var(--navy-soft);
-  margin-top: 3px;
+  line-height: 1.35;
 }
 
 .logout {

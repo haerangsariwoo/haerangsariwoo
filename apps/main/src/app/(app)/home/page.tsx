@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import {
   albumTones,
   member,
@@ -81,33 +82,7 @@ export default function HomePage() {
         </div>
         <div className={styles.volunteerList}>
           {recruitingVolunteers.map((v) => (
-            <article key={v.id} className={styles.volunteerCard}>
-              <div className={cn(styles.thumb, styles[v.thumbTone])} />
-              <div className={styles.volunteerBody}>
-                <h3 className={styles.volunteerTitle}>{v.title}</h3>
-                <p className={styles.volunteerMeta}>{v.dateLabel}</p>
-                <div className={styles.tagRow}>
-                  <span className={styles.tag}>{v.category}</span>
-                  <span className={styles.tag}>
-                    {v.source === "internal" ? "내부" : v.source === "1365" ? "1365" : "VMS"}
-                  </span>
-                </div>
-              </div>
-              {v.source === "internal" ? (
-                <button type="button" className={styles.volunteerAction}>
-                  신청하기
-                </button>
-              ) : (
-                <a
-                  href={v.externalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.volunteerAction}
-                >
-                  원문 보기
-                </a>
-              )}
-            </article>
+            <VolunteerCard key={v.id} item={v} />
           ))}
         </div>
       </section>

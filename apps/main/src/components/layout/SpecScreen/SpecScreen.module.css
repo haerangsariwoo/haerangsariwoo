@@ -1,0 +1,98 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.statusBadge {
+  background: var(--success-bg);
+  color: var(--success-text);
+  font-size: 10px;
+  font-weight: 700;
+  height: 26px;
+  padding: 0 14px;
+  border-radius: 13px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 17px 13px;
+  min-height: 74px;
+  color: inherit;
+}
+
+.blockIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  flex: none;
+}
+
+.blockIcon.sky {
+  background: #ddf1fc;
+}
+.blockIcon.mint {
+  background: var(--success-bg);
+}
+.blockIcon.warn {
+  background: var(--warn-bg);
+}
+
+.blockTitle {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.blockDesc {
+  display: block;
+  font-size: 10px;
+  color: var(--badge-grey-text);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.ruleNote {
+  background: #ddf1fc;
+  color: var(--navy);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 12px 14px;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  line-height: 1.6;
+}
+
+.spacer {
+  flex: 1;
+  min-height: 8px;
+}

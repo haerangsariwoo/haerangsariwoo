@@ -1,0 +1,49 @@
+.nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  height: 92px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--ink-soft);
+  padding-top: 6px;
+}
+
+.tab.active {
+  color: var(--brand-text);
+}
+
+.tab svg {
+  width: 24px;
+  height: 24px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.tab.active .label {
+  font-weight: 700;
+}
+
+.indicator {
+  position: absolute;
+  top: 2px;
+  width: 22px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--brand);
+}

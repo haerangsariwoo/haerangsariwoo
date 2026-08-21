@@ -1,0 +1,73 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg);
+  padding: 48px 16px 40px;
+}
+
+.shell {
+  width: 100%;
+  max-width: 398px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.mascot {
+  font-size: 56px;
+  line-height: 1;
+}
+
+.wordmark {
+  font-family: var(--font-display), sans-serif;
+  font-size: 26px;
+  color: var(--ink);
+}
+
+.tagline {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.badge {
+  align-self: center;
+  background: var(--success-bg);
+  color: var(--success-text);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.note {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  line-height: 1.5;
+}
+
+.footNote {
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}

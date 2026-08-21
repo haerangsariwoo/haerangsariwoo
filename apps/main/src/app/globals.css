@@ -1,0 +1,87 @@
+:root {
+  /* base */
+  --bg: #f3f9fd;
+  --surface: #ffffff;
+  --ink: #0d1a26;
+  --ink-soft: #576b7a;
+  --line: #d8e3ea;
+
+  /* brand */
+  --brand: #148cd6; /* solid CTA / active tab indicator */
+  --brand-text: #085eab; /* value text, links, active label */
+  --brand-soft: #e5f7ff; /* tag pill bg */
+  --sky: #c9ebfa; /* hero card bg */
+
+  /* navy (auth / serious CTA / 내 조 card) */
+  --navy: #0b3552;
+  --navy-deep: #0a334f;
+  --navy-soft: #b0def5;
+
+  /* accents */
+  --mint-bg: #ccf2e3;
+  --mint-text: #0d855c;
+  --success-bg: #dcf5e9;
+  --success-text: #168760;
+  --peach-bg: #ffedd6;
+  --peach-bg-2: #ffe8c7;
+  --lavender-bg: #dee5ff;
+  --orange: #ff964f;
+  --warn-bg: #fff2d2;
+  --badge-grey-bg: #eaf2f7;
+  --badge-grey-text: #718096;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0px 5px 14px 0px rgba(8, 46, 71, 0.07);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100%;
+  color: var(--ink);
+  background: var(--bg);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}

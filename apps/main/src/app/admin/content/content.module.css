@@ -100,6 +100,7 @@
   background: var(--a-brand-soft);
   color: var(--a-brand);
   flex: none;
+  white-space: nowrap;
 }
 
 .iconBtn {
@@ -111,6 +112,8 @@
   font-weight: 700;
   color: var(--a-ink-soft);
   cursor: pointer;
+  flex: none;
+  white-space: nowrap;
 }
 
 .iconBtn.danger {
@@ -123,6 +126,74 @@
   display: flex;
   gap: 10px;
   margin-top: 14px;
+}
+
+/* ---------- 앨범 행 ---------- */
+.albumRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-md);
+  padding: 12px 14px;
+  flex-wrap: wrap;
+}
+
+.albumTitle {
+  flex: 1 1 200px;
+  min-width: 160px;
+  height: 40px;
+  border-radius: var(--a-radius-sm);
+  border: 1px solid var(--a-line);
+  padding: 0 13px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--a-surface);
+  color: var(--a-ink);
+}
+
+.albumTitle:focus {
+  outline: none;
+  border-color: var(--a-brand);
+}
+
+.albumMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: none;
+  /* 글자 단위로 줄바꿈되지 않도록 고정 */
+  white-space: nowrap;
+}
+
+.albumDate {
+  font-size: 11px;
+  color: var(--a-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.albumCount {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+.albumUpload {
+  flex: none;
+  white-space: nowrap;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--a-radius-sm);
+  border: 1px solid var(--a-line);
+  background: var(--a-surface);
+  color: var(--a-ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.albumUpload:hover {
+  background: var(--a-bg);
 }
 
 .saveBar {

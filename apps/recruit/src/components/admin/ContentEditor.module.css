@@ -102,6 +102,8 @@
   font-weight: 700;
   color: var(--ink-soft);
   cursor: pointer;
+  flex: none;
+  white-space: nowrap;
 }
 
 .iconBtn.danger {

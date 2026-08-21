@@ -1,0 +1,45 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+}
+
+.summary > div {
+  flex: 1;
+  text-align: center;
+}
+
+.divider {
+  width: 1px;
+  height: 36px;
+  background: var(--line);
+  flex: none;
+}
+
+.summaryLabel {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.summaryValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brand-text);
+  margin-top: 6px;
+}
+
+.groupTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+}

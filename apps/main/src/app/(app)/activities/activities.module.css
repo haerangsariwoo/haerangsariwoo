@@ -1,0 +1,154 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groupLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+.card {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  color: inherit;
+}
+
+.card.past {
+  opacity: 0.62;
+}
+
+.stripe {
+  width: 6px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.stripe.sky {
+  background: var(--brand);
+}
+.stripe.mint {
+  background: #34b98d;
+}
+.stripe.peach {
+  background: #f5a524;
+}
+.stripe.lavender {
+  background: #9a57d6;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.typeTag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  color: var(--brand-text);
+}
+
+.dday {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-text);
+  margin-left: auto;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 10px;
+}
+
+.metaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.attendRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.attend {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.attend.참석 {
+  background: var(--mint-bg);
+  color: var(--mint-text);
+}
+.attend.미정 {
+  background: var(--warn-bg);
+  color: #8a5a12;
+}
+.attend.불참 {
+  background: #eef2f6;
+  color: #9aa7b4;
+}
+.attend.none {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+}
+
+.teamFlag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-text);
+}
+
+.empty {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.note {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  line-height: 1.6;
+}

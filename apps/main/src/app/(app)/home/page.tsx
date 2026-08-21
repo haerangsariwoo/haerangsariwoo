@@ -7,10 +7,10 @@ import {
   member,
   myTeam,
   nextActivity,
-  notices,
   recruitingVolunteers,
   semesterStatus,
 } from "@/lib/mock-data";
+import { notices } from "@/lib/community";
 import styles from "./home.module.css";
 
 const QUICK_MENU = [
@@ -98,10 +98,12 @@ export default function HomePage() {
           <ul className={styles.noticeList}>
             {notices.map((n) => (
               <li key={n.id} className={styles.noticeItem}>
-                <span className={cn(styles.noticeTag, n.tagTone === "urgent" && styles.urgent)}>
-                  {n.tag}
-                </span>
-                <span className={styles.noticeText}>{n.title}</span>
+                <Link href={`/community/notice/${n.id}`} className={styles.noticeLink}>
+                  <span className={cn(styles.noticeTag, n.category === "필독" && styles.urgent)}>
+                    {n.category}
+                  </span>
+                  <span className={styles.noticeText}>{n.title}</span>
+                </Link>
               </li>
             ))}
           </ul>

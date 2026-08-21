@@ -142,20 +142,6 @@ export function findVolunteer(id: string) {
 
 export const recruitingVolunteers = volunteers.slice(0, 2);
 
-export interface Notice {
-  id: string;
-  tag: string;
-  tagTone: "urgent" | "default";
-  title: string;
-}
-
-export const notices: Notice[] = [
-  { id: "n1", tag: "필독", tagTone: "urgent", title: "2학기 정기총회 안내" },
-  { id: "n2", tag: "일정", tagTone: "default", title: "신입 부원 교육 일정" },
-  { id: "n3", tag: "후기", tagTone: "default", title: "여름봉사 활동 후기" },
-  { id: "n4", tag: "MT", tagTone: "default", title: "26회 MT 준비 안내" },
-];
-
 export const albumTones = ["sky", "mint", "peach", "lavender"] as const;
 
 export const myTeam = {

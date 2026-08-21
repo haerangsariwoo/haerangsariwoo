@@ -1,0 +1,153 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.segment {
+  display: flex;
+  background: #e9eff5;
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 4px;
+}
+
+.segmentBtn {
+  flex: 1;
+  height: 38px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.segmentBtn.active {
+  background: var(--surface);
+  color: var(--brand-text);
+  box-shadow: var(--shadow-card);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.noticeCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  color: inherit;
+}
+
+.noticeCard.pinned {
+  border: 1px solid var(--brand);
+}
+
+.noticeTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.catTag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  color: var(--brand-text);
+}
+
+.catTag.urgent {
+  background: #ffeee0;
+  color: var(--orange);
+}
+
+.pinFlag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--brand-text);
+  margin-left: auto;
+}
+
+.noticeTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.noticeMeta {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.albumCard {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  color: inherit;
+  display: block;
+}
+
+.albumGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.photo {
+  aspect-ratio: 1;
+  border-radius: 10px;
+}
+
+.photo.sky {
+  background: var(--sky);
+}
+.photo.mint {
+  background: var(--mint-bg);
+}
+.photo.peach {
+  background: var(--peach-bg-2);
+}
+.photo.lavender {
+  background: var(--lavender-bg);
+}
+
+.albumFoot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.albumTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.albumMeta {
+  font-size: 11px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.note {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  line-height: 1.6;
+}

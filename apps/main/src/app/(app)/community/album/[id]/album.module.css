@@ -1,0 +1,56 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.photo {
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+}
+
+.photo.sky {
+  background: var(--sky);
+}
+.photo.mint {
+  background: var(--mint-bg);
+}
+.photo.peach {
+  background: var(--peach-bg-2);
+}
+.photo.lavender {
+  background: var(--lavender-bg);
+}
+
+.note {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  line-height: 1.6;
+}

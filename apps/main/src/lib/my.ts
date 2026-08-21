@@ -9,7 +9,7 @@ export interface Profile {
 // 데모 계정: 관리자 화면까지 확인할 수 있도록 운영진으로 설정.
 // Supabase 연동 시 로그인한 회원의 실제 role로 대체한다.
 export const profile: Profile = {
-  name: "홍근",
+  name: "재겸",
   studentId: "2591001",
   cohort: "59기",
   track: "IT공과대 · 컴퓨터공학",
@@ -67,7 +67,7 @@ export const myTeamDetail = {
   eventTitle: "제26회 해랑사리우 MT",
   teamName: "MT 3조",
   leader: "김해랑",
-  members: ["김해랑", "홍근", "서지우", "이준호", "박서연", "최민재"],
+  members: ["김해랑", "재겸", "서지우", "이준호", "박서연", "최민재"],
   dateLabel: "9.19 (금) – 9.21 (일)",
   place: "가평 청평유원지",
 };

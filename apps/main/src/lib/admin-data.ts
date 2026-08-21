@@ -107,7 +107,7 @@ export interface Applicant {
 }
 
 export const applicants: Applicant[] = [
-  { id: "ap1", name: "홍근", studentId: "2591001", cohort: "59기", volunteer: "아동센터 교육 봉사", appliedAt: "08.14", state: "참여확정" },
+  { id: "ap1", name: "재겸", studentId: "2591001", cohort: "59기", volunteer: "아동센터 교육 봉사", appliedAt: "08.14", state: "참여확정" },
   { id: "ap2", name: "이서연", studentId: "2591044", cohort: "59기", volunteer: "아동센터 교육 봉사", appliedAt: "08.14", state: "참여확정" },
   { id: "ap3", name: "박민준", studentId: "2491120", cohort: "58기", volunteer: "한강 플로깅", appliedAt: "08.15", state: "신청완료" },
   { id: "ap4", name: "최하늘", studentId: "2591137", cohort: "59기", volunteer: "한강 플로깅", appliedAt: "08.16", state: "대기", waitNo: 1 },
@@ -130,7 +130,7 @@ export const hourRequests: HourRequest[] = [
   { id: "hr1", name: "이서연", studentId: "2591044", volunteer: "한강 플로깅", date: "08.14", hours: 2, proof: "사진 2장", state: "대기" },
   { id: "hr2", name: "박민준", studentId: "2491120", volunteer: "아동센터 교육", date: "08.12", hours: 3, proof: "사진 1장", state: "대기" },
   { id: "hr3", name: "최하늘", studentId: "2591137", volunteer: "급식소 배식", date: "08.10", hours: 4, proof: "확인서", state: "대기" },
-  { id: "hr4", name: "홍근", studentId: "2591001", volunteer: "여름 집중 봉사", date: "08.05", hours: 8, proof: "확인서", state: "승인" },
+  { id: "hr4", name: "재겸", studentId: "2591001", volunteer: "여름 집중 봉사", date: "08.05", hours: 8, proof: "확인서", state: "승인" },
 ];
 
 /* ---------- 회원 관리 ---------- */
@@ -147,7 +147,7 @@ export interface AdminMember {
 
 export const adminMembers: AdminMember[] = [
   { id: "m1", name: "김우영", studentId: "2391005", cohort: "26기", track: "IT공과대 · 컴퓨터공학", role: "운영진", hours: 124, code: "482913" },
-  { id: "m2", name: "홍근", studentId: "2591001", cohort: "59기", track: "IT공과대 · 컴퓨터공학", role: "운영진", hours: 76, code: "301755" },
+  { id: "m2", name: "재겸", studentId: "2591001", cohort: "59기", track: "IT공과대 · 컴퓨터공학", role: "운영진", hours: 76, code: "301755" },
   { id: "m3", name: "이서연", studentId: "2591044", cohort: "59기", track: "디자인대 · 시각디자인", role: "부원", hours: 58, code: "774120" },
   { id: "m4", name: "박민준", studentId: "2491120", cohort: "58기", track: "사회과학대 · 행정학", role: "부원", hours: 92, code: "156089" },
   { id: "m5", name: "최하늘", studentId: "2591137", cohort: "59기", track: "인문대 · 국어국문", role: "부원", hours: 41, code: "620344" },
@@ -164,7 +164,7 @@ export interface TeamMemberRow {
 
 export const teamPool: TeamMemberRow[] = [
   { id: "t1", name: "김해랑", cohort: "58기", gender: "남", team: 3 },
-  { id: "t2", name: "홍근", cohort: "59기", gender: "남", team: 3 },
+  { id: "t2", name: "재겸", cohort: "59기", gender: "남", team: 3 },
   { id: "t3", name: "서지우", cohort: "58기", gender: "여", team: 3 },
   { id: "t4", name: "이준호", cohort: "59기", gender: "남", team: 3 },
   { id: "t5", name: "박서연", cohort: "59기", gender: "여", team: 3 },

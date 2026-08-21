@@ -15,7 +15,7 @@ export default function AdminContentPage() {
           <div className={styles.field}>
             <label className={styles.label} htmlFor="greeting">
               인사말 뒤 문구
-              <span className={styles.hint}>예: 홍근<b>님!</b></span>
+              <span className={styles.hint}>예: 재겸<b>님!</b></span>
             </label>
             <input id="greeting" className={styles.input} defaultValue={homeCopy.greetingSuffix} />
           </div>

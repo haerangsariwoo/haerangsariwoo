@@ -17,7 +17,7 @@ export interface Applicant {
 export const applicants: Applicant[] = [
   {
     id: "a1",
-    name: "홍근",
+    name: "재겸",
     studentId: "2591001",
     track: "IT공과대 · 컴퓨터공학",
     phone: "010-1234-5678",

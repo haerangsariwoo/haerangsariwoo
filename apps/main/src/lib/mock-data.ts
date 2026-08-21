@@ -25,7 +25,7 @@ export interface VolunteerSummary {
 }
 
 export const member = {
-  name: "홍근",
+  name: "재겸",
   totalHours: 76,
   totalActivities: 12,
 };

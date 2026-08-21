@@ -119,15 +119,25 @@ export default function AdminContentPage() {
         <div className={styles.itemList}>
           {albums.map((a) => (
             <div key={a.id} className={styles.albumRow}>
-              <input
-                className={styles.albumTitle}
-                defaultValue={a.title}
-                aria-label={`${a.title} 앨범 이름`}
-              />
-              <span className={styles.albumMeta}>
-                <span className={styles.albumDate}>{a.date}</span>
-                <span className={styles.albumCount}>등록된 사진 {a.photoCount}장</span>
-              </span>
+              <div className={styles.thumbGrid} aria-hidden>
+                {a.tones.map((tone, i) => (
+                  <span key={i} className={cn(styles.thumb, styles[tone])} />
+                ))}
+              </div>
+
+              <div className={styles.albumBody}>
+                <input
+                  className={styles.albumTitle}
+                  defaultValue={a.title}
+                  aria-label={`${a.title} 앨범 이름`}
+                />
+                <p className={styles.albumMeta}>
+                  {a.date}
+                  <span className={styles.dot}>·</span>
+                  사진 {a.photoCount}장
+                </p>
+              </div>
+
               <button type="button" className={styles.albumUpload}>
                 사진 업로드
               </button>

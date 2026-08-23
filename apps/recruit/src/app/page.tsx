@@ -14,7 +14,7 @@ import styles from "./page.module.css";
 import { Logo } from "@/components/ui/Logo/Logo";
 
 export default function LandingPage() {
-  const { applicationsOpen, semester } = recruitConfig;
+  const { applicationsOpen } = recruitConfig;
   const cohort = cohortLabel(recruitConfig.year, recruitConfig.semesterNo);
 
   const schedule = [
@@ -46,11 +46,11 @@ export default function LandingPage() {
             </span>
           </div>
 
-          <p className={styles.heroNote}>
-            {applicationsOpen
-              ? `${semester} · 지원 일정과 자격은 매 학기 운영진이 설정합니다.`
-              : "다음 모집 일정은 준비되는 대로 이곳에 안내드립니다."}
-          </p>
+          {!applicationsOpen && (
+            <p className={styles.heroNote}>
+              다음 모집 일정은 준비되는 대로 이곳에 안내드립니다.
+            </p>
+          )}
 
           <span className={styles.dolphinCircle}>
             <Logo size={48} priority />
@@ -147,11 +147,16 @@ export default function LandingPage() {
           )}
         </div>
 
-        <p className={styles.footer}>
-          해랑사리우 · 한성대학교 봉사동아리
-          <br />
-          문의는 공식 채널을 이용해 주세요.
-        </p>
+        <footer className={styles.footer}>
+          <p>
+            해랑사리우 · 한성대학교 봉사동아리
+            <br />
+            문의는 공식 채널을 이용해 주세요.
+          </p>
+          <Link href="/admin/login" className={styles.adminLink}>
+            관리자 페이지
+          </Link>
+        </footer>
       </div>
     </main>
   );

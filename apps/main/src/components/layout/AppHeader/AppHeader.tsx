@@ -33,8 +33,7 @@ export function AppHeader() {
     <>
       <header className={styles.header}>
         <Link href="/home" className={styles.brand} aria-label="홈으로">
-          <Logo size={26} className={styles.mascot} priority />
-          <span className={styles.wordmark}>해랑사리우</span>
+          <Logo size={30} className={styles.mascot} priority />
         </Link>
         <button
           type="button"

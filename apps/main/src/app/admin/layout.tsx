@@ -15,7 +15,6 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
       <aside className={styles.sidebar}>
         <Link href="/admin" className={styles.brand} aria-label="관리자 홈으로">
           <Logo size={26} className={styles.mascot} priority />
-          <span className={styles.wordmark}>해랑사리우</span>
           <span className={styles.adminTag}>ADMIN</span>
         </Link>
 

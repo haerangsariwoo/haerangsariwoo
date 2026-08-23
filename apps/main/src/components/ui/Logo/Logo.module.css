@@ -1,0 +1,25 @@
+/*
+ * 로고 원본(logo2.avif)은 640×640 캔버스 가운데에 349×148 짜리 그림이 들어 있고
+ * 나머지 97%가 투명 여백이다. 그대로 정사각으로 그리면 그림이 4분의 1 크기로 보인다.
+ * 파일을 다시 인코딩하지 않고 여백만 잘라내기 위해 컨테이너로 감싸 확대·클리핑한다.
+ */
+.wrap {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  /* 그림 자체의 가로세로 비율 */
+  aspect-ratio: 349 / 148;
+}
+
+.image {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  /* 640 캔버스 중 그림이 349 이므로 그 비율만큼 키운다.
+     전역 img { max-width: 100% } 가 확대를 막으므로 함께 푼다. */
+  width: calc(100% * 640 / 349);
+  max-width: none;
+  height: auto;
+}

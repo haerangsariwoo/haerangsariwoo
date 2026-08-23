@@ -183,7 +183,10 @@ export const faqs = [
   },
 ];
 
-/** 지원서 문항 — 관리자가 편집 가능 */
+/**
+ * 지원서 문항 — 관리자가 편집 가능.
+ * 학번은 1단계(지원자 확인)에서 이미 받으므로 여기서 다시 묻지 않는다.
+ */
 export interface FormField {
   name: string;
   label: string;
@@ -203,13 +206,6 @@ export const applicationFields: FormField[] = [
     required: true,
   },
   { name: "name", label: "이름", placeholder: "이름을 입력해 주세요", type: "text", required: true },
-  {
-    name: "studentId",
-    label: "학번",
-    placeholder: "예: 2026000",
-    type: "number",
-    required: true,
-  },
   {
     name: "phone",
     label: "연락처",

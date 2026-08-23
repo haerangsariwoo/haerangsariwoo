@@ -18,8 +18,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <Link href="/admin" className={styles.brand} aria-label="관리자 홈으로">
-          <Logo size={22} className={styles.mascot} priority />
-          <span className={styles.wordmark}>해랑사리우</span>
+          <Logo size={26} className={styles.mascot} priority />
         </Link>
         <p className={styles.season}>
           신규모집 운영

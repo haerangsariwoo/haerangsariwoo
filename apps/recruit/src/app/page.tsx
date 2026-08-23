@@ -33,8 +33,7 @@ export default function LandingPage() {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link href="/" className={styles.brand}>
-            <Logo size={28} priority />
-            <span className={styles.wordmark}>{brand.name}</span>
+            <Logo size={34} priority />
           </Link>
 
           <nav className={styles.nav}>

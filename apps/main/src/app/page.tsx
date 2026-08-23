@@ -56,8 +56,7 @@ export default function LoginPage() {
     <main className={styles.page}>
       <div className={styles.shell}>
         <div className={styles.brand}>
-          <Logo size={64} className={styles.mascot} priority />
-          <h1 className={styles.wordmark}>해랑사리우</h1>
+          <Logo size={62} className={styles.mascot} priority />
           <p className={styles.tagline}>학번과 비밀번호로 로그인하세요</p>
         </div>
 

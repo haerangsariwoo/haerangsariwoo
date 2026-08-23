@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/Field/Field";
+import { saveStudentId } from "@/lib/apply-session";
 import styles from "./apply.module.css";
 
 export default function IdentifyPage() {
@@ -27,6 +28,9 @@ export default function IdentifyPage() {
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
+
+    // 2단계에서 다시 묻지 않도록 학번을 넘긴다 (본인 지정번호는 저장하지 않는다)
+    saveStudentId(studentId.trim());
 
     // TODO: Supabase — 학번+본인지정번호로 기존 지원 확인 후 분기
     router.push("/apply/form");
@@ -64,8 +68,19 @@ export default function IdentifyPage() {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           error={errors.code}
-          help="지원자가 직접 정하는 번호입니다. 결과 확인과 면접 시간 선택에 사용돼요."
+          help="지원자가 직접 정하는 번호입니다."
         />
+
+        <div className={styles.warnNote}>
+          <span className={styles.warnIcon} aria-hidden="true">
+            !
+          </span>
+          <p className={styles.warnText}>
+            <span className={styles.warnTitle}>본인 지정번호를 꼭 기억해 주세요.</span>
+            앞으로 <b>결과 확인</b>과 <b>면접 시간 선택</b>에 계속 사용됩니다. 운영진도 번호를 대신
+            확인해 드릴 수 없으니 분실하지 않도록 주의해 주세요.
+          </p>
+        </div>
 
         <div className={styles.privacyNote}>
           <svg className={styles.lockIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">

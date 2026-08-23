@@ -6,6 +6,7 @@ import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
 import { TextArea, TextField } from "@/components/ui/Field/Field";
 import { applicationFields, motivationField } from "@/lib/recruit-config";
+import { useStudentId } from "@/lib/apply-session";
 import styles from "../apply.module.css";
 
 type Values = Record<string, string>;
@@ -14,6 +15,8 @@ const STEP_TOTAL = 4;
 
 export default function ApplicationFormPage() {
   const router = useRouter();
+  // 1단계에서 확인한 학번. 다시 묻지 않고 확인만 시켜준다.
+  const studentId = useStudentId();
   const [step, setStep] = useState(2); // 1단계(지원자 확인)는 이전 화면에서 완료
   const [values, setValues] = useState<Values>({});
   const [errors, setErrors] = useState<Values>({});
@@ -28,9 +31,6 @@ export default function ApplicationFormPage() {
       if (f.required && !(values[f.name] ?? "").trim()) {
         next[f.name] = `${f.label}을(를) 입력해 주세요.`;
       }
-    }
-    if (values.studentId && !/^\d{7}$/.test(values.studentId.trim())) {
-      next.studentId = "학번 7자리를 정확히 입력해 주세요.";
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -74,6 +74,15 @@ export default function ApplicationFormPage() {
           </div>
 
           <form className={styles.form} onSubmit={handleNext} noValidate>
+            {/* 1단계에서 확인한 학번 — 수정하려면 이전 단계로 돌아간다 */}
+            <div className={styles.lockedField}>
+              <span className={styles.label}>학번</span>
+              <div className={styles.lockedRow}>
+                <span className={styles.lockedValue}>{studentId ?? "이전 단계에서 확인"}</span>
+                <span className={styles.lockedTag}>1단계에서 확인함</span>
+              </div>
+            </div>
+
             {applicationFields.map((f) => (
               <TextField
                 key={f.name}

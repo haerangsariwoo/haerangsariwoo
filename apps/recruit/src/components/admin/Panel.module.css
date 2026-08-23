@@ -196,3 +196,85 @@
   color: var(--ink-600);
   cursor: pointer;
 }
+
+/* 배지를 눌러 상태를 바꾸는 자리 — 버튼 기본 스타일을 지운다 */
+.badgeButton {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+}
+
+.badgeButton:hover {
+  opacity: 0.8;
+}
+
+/* 표 안 버튼 두 개를 나란히 */
+.rowActions {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.rowBtnPrimary {
+  background: var(--brand-blue-500);
+  border-color: transparent;
+  color: #fff;
+}
+
+.rowBtnPrimary:hover {
+  background: var(--brand-blue-600);
+}
+
+/* 표 위에 펼치는 한 줄 입력 폼 */
+.inlineForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(23, 111, 242, 0.14);
+  border-radius: var(--radius-md);
+  background: var(--brand-surface);
+}
+
+.inlineField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 130px;
+}
+
+.inlineLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-800);
+}
+
+.inlineInput {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(23, 111, 242, 0.18);
+  border-radius: var(--radius-xs);
+  background: var(--surface-white);
+  color: var(--ink-800);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 9px 12px;
+}
+
+.inlineInput:focus {
+  outline: 2px solid var(--brand-tint-10);
+  outline-offset: -1px;
+  border-color: var(--brand-blue-500);
+}
+
+.inlineActions {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}

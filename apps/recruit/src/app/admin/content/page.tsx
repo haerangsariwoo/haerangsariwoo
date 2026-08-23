@@ -11,6 +11,7 @@ import {
   nextSteps,
 } from "@/lib/recruit-config";
 import styles from "@/components/admin/ContentEditor.module.css";
+import { SaveBar } from "./SaveBar";
 
 export const metadata = { title: "랜딩 콘텐츠 · 해랑사리우" };
 
@@ -40,16 +41,7 @@ function Photo({
   );
 }
 
-function SaveBar({ note }: { note: string }) {
-  return (
-    <div className={styles.saveBar}>
-      <p className={styles.saveNote}>{note}</p>
-      <button type="button" className={cn(ui.btn, ui.primary)}>
-        저장
-      </button>
-    </div>
-  );
-}
+
 
 export default function RecruitContentPage() {
   return (

@@ -13,12 +13,12 @@
 .label {
   font-size: 12px;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .hint {
   font-size: 11px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   font-weight: 400;
   margin-left: 6px;
 }
@@ -26,20 +26,20 @@
 .input {
   height: 40px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   padding: 0 13px;
   font-size: 13px;
-  background: var(--surface);
+  background: var(--surface-white);
   width: 100%;
 }
 
 .textarea {
   min-height: 80px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   padding: 11px 13px;
   font-size: 13px;
-  background: var(--surface);
+  background: var(--surface-white);
   width: 100%;
   resize: vertical;
   line-height: 1.6;
@@ -48,7 +48,7 @@
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: var(--brand);
+  border-color: var(--brand-blue-500);
 }
 
 /* 반복 항목 (FAQ, 다음 단계 등) */
@@ -59,7 +59,7 @@
 }
 
 .item {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   border-radius: var(--radius-md);
   padding: 14px;
   display: flex;
@@ -77,8 +77,8 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
   display: grid;
   place-items: center;
   font-size: 11px;
@@ -90,26 +90,26 @@
   flex: 1;
   font-size: 12px;
   font-weight: 700;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .iconBtn {
-  border: 1px solid var(--line);
-  background: var(--surface);
+  border: 1px solid rgba(23, 111, 242, 0.14);
+  background: var(--surface-white);
   border-radius: 7px;
   padding: 5px 10px;
   font-size: 11px;
   font-weight: 700;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   cursor: pointer;
   flex: none;
   white-space: nowrap;
 }
 
 .iconBtn.danger {
-  color: var(--danger);
+  color: #cf4444;
   border-color: transparent;
-  background: var(--danger-soft);
+  background: #fdecec;
 }
 
 .addRow {
@@ -124,13 +124,13 @@
   gap: 12px;
   margin-top: 18px;
   padding-top: 16px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(23, 111, 242, 0.14);
 }
 
 .saveNote {
   flex: 1;
   font-size: 11.5px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   line-height: 1.5;
 }
 
@@ -148,7 +148,7 @@
 }
 
 .card {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   border-radius: var(--radius-md);
   padding: 12px;
   display: flex;
@@ -159,9 +159,146 @@
 .photoBox {
   height: 76px;
   border-radius: var(--radius-sm);
-  background: var(--brand-pale);
+  background: var(--brand-surface-alt);
   display: grid;
   place-items: center;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   font-size: 11px;
+}
+
+/* ---------- 사진 미리보기 (새 랜딩 구조) ---------- */
+.photoPreview {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-muted);
+  display: grid;
+  place-items: center;
+}
+
+.photoPreview.hero {
+  aspect-ratio: 16 / 9;
+}
+
+.photoPreview.card {
+  aspect-ratio: 4 / 3;
+}
+
+.photoPreview.wide {
+  aspect-ratio: 4 / 3;
+  max-width: 320px;
+}
+
+.photoImage {
+  object-fit: cover;
+}
+
+.photoEmpty {
+  font-size: 12px;
+  color: var(--ink-600);
+}
+
+/* 사진 위에 얹는 교체 버튼 */
+.photoActions {
+  position: absolute;
+  right: var(--space-8);
+  bottom: var(--space-8);
+  display: flex;
+  gap: var(--space-6);
+}
+
+.photoBtn {
+  height: 30px;
+  padding: 0 var(--space-12);
+  border: none;
+  border-radius: var(--radius-xs);
+  background: rgba(10, 24, 40, 0.62);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.photoBtn:hover {
+  background: rgba(10, 24, 40, 0.78);
+}
+
+/* ---------- 슬라이드 목록 ---------- */
+.slideGrid {
+  display: grid;
+  gap: var(--space-16);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.slide {
+  border: 1px solid rgba(23, 111, 242, 0.14);
+  border-radius: var(--radius-md);
+  background: var(--surface-white);
+  padding: var(--space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.slideHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.slideNo {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.slideLabel {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-800);
+}
+
+/* ---------- 두 칸 배치 ---------- */
+.twoCol {
+  display: grid;
+  gap: var(--space-20);
+}
+
+@media (min-width: 900px) {
+  .twoCol {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: start;
+  }
+}
+
+/* ---------- 연도 사실 ---------- */
+.factRow {
+  display: grid;
+  gap: var(--space-12);
+  grid-template-columns: 110px 1fr auto;
+  align-items: center;
+}
+
+/* ---------- 미리보기 링크 ---------- */
+.previewLink {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-blue-500);
+}
+
+.previewLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

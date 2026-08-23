@@ -90,34 +90,6 @@
   --content-max: 1200px;
   --screen-pad: 20px;
 
-  /* ---------- 구버전 토큰 호환 ----------
-     아직 새 디자인으로 옮기지 않은 화면(/apply, /admin 등)이
-     예전 이름을 참조한다. 화면을 하나씩 전환하면서 이 블록을 줄이고,
-     전부 옮기면 통째로 지운다. */
-  --bg: var(--surface-white);
-  --surface: var(--surface-white);
-  --ink: var(--ink-800);
-  --ink-soft: var(--ink-500);
-  --line: #e6ebf2;
-
-  --brand: var(--brand-blue-500);
-  --brand-soft: var(--brand-surface);
-  --brand-pale: var(--brand-surface-alt);
-  --navy: var(--ink-800);
-  --navy-ink: rgba(255, 255, 255, 0.72);
-
-  --green: #0f8a63;
-  --green-soft: #dff5ec;
-  --mint: var(--accent-success);
-  --gold: var(--accent-star);
-  --danger: #cf4444;
-  --danger-soft: #fdecec;
-  --warn-soft: #fff3d6;
-  --warn-ink: #8a5a12;
-  --grey-soft: var(--surface-muted);
-
-  --radius-xl: var(--radius-lg);
-  --radius-hero: var(--radius-sheet);
 }
 
 * {

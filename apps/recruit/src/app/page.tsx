@@ -7,6 +7,7 @@ import {
   activityCards,
   brand,
   cohortLabel,
+  faqs,
   landing,
   navItems,
   recruitConfig,
@@ -148,6 +149,27 @@ export default function LandingPage() {
                 </p>
               )}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- FAQ ---------- */}
+      <section id="faq" className={styles.section}>
+        <div className={styles.inner}>
+          <h2 className={styles.sectionTitle}>Q&amp;A</h2>
+          <p className={styles.sectionLead}>지원 전 가장 많이 받는 질문입니다.</p>
+          <div className={cn(styles.sectionBody, styles.faqList)}>
+            {faqs.map((f) => (
+              <div key={f.q} className={styles.faqItem}>
+                <p className={styles.faqQ}>
+                  <span className={styles.faqMark} aria-hidden="true">
+                    Q
+                  </span>
+                  {f.q}
+                </p>
+                <p className={styles.faqA}>{f.a}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

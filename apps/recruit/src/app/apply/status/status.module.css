@@ -1,46 +1,52 @@
+/* design.md — 지원 결과 확인. 새 토큰으로 다시 칠했다. */
+
 .successIcon {
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: var(--green-soft);
-  color: var(--green);
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
   display: grid;
   place-items: center;
-  margin: 12px auto 0;
+  margin: var(--space-12) auto 0;
 }
 
 .centerTitle {
   text-align: center;
+  font-family: var(--font-heading);
   font-size: 22px;
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 600;
+  color: var(--ink-900);
+  line-height: 1.35;
 }
 
 .centerDesc {
   text-align: center;
   font-size: 12.5px;
-  color: var(--ink-soft);
-  line-height: 1.6;
+  color: var(--ink-500);
+  line-height: 1.7;
 }
 
+/* ---------- 진행 상황 ---------- */
 .timeline {
-  background: var(--surface);
-  border-radius: var(--radius-xl);
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  padding: 18px;
+  padding: var(--space-20);
 }
 
 .timelineTitle {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 16px;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-800);
+  margin-bottom: var(--space-16);
 }
 
 .stepRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-12);
   padding: 11px 0;
 }
 
@@ -53,49 +59,51 @@
   font-size: 11px;
   font-weight: 700;
   flex: none;
-  background: var(--grey-soft);
-  color: var(--ink-soft);
+  background: var(--surface-muted);
+  color: var(--ink-600);
 }
 
 .stepIcon.done {
-  background: var(--brand);
-  color: #fff;
+  background: var(--brand-gradient);
+  color: var(--surface-white);
 }
 
 .stepLabel {
   flex: 1;
+  min-width: 0;
   font-size: 13px;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .stepState {
+  flex: none;
   font-size: 11px;
   font-weight: 700;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .stepState.done {
-  color: var(--green);
+  color: var(--brand-blue-500);
 }
 
 .infoNote {
-  background: var(--brand-soft);
+  background: var(--brand-surface);
   border-radius: var(--radius-md);
-  padding: 14px 16px;
+  padding: var(--space-14) var(--space-16);
   font-size: 11.5px;
-  color: var(--ink-soft);
-  line-height: 1.6;
+  color: var(--ink-500);
+  line-height: 1.7;
 }
 
 .infoNote b {
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 /* ---------- 결과 카드 ---------- */
 .resultCard {
-  border-radius: var(--radius-xl);
-  padding: 24px 20px;
-  background: var(--navy);
+  border-radius: var(--radius-lg);
+  padding: var(--space-24) var(--space-20);
+  background: var(--ink-800);
   text-align: center;
 }
 
@@ -103,55 +111,60 @@
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  border: 1.5px solid rgba(92, 211, 166, 0.5);
+  border: 1.5px solid rgba(45, 215, 164, 0.5);
   background: rgba(255, 255, 255, 0.06);
-  color: var(--mint);
+  color: var(--accent-success);
   display: grid;
   place-items: center;
-  margin: 0 auto 18px;
+  margin: 0 auto var(--space-16);
 }
 
 .resultLabel {
+  font-family: var(--font-heading);
   font-size: 12.5px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--gold);
+  color: var(--accent-success);
 }
 
 .resultTitle {
+  font-family: var(--font-heading);
   font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.35;
-  margin-top: 12px;
+  font-weight: 600;
+  color: var(--surface-white);
+  line-height: 1.4;
+  margin-top: var(--space-12);
 }
 
 .resultDesc {
   font-size: 12px;
-  color: var(--navy-ink);
-  margin-top: 14px;
-  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.68);
+  margin-top: var(--space-14);
+  line-height: 1.7;
 }
 
+/* 불합격 — 초록을 쓰지 않고 차분하게 */
 .resultCard.reject .resultEmblem {
-  border-color: rgba(184, 214, 229, 0.4);
-  color: var(--navy-ink);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .resultCard.reject .resultLabel {
-  color: var(--navy-ink);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* ---------- 면접 슬롯 ---------- */
 .sectionTitle {
+  font-family: var(--font-heading);
   font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 600;
+  color: var(--ink-800);
 }
 
+/* §2.3 Category Tab */
 .dateTabs {
   display: flex;
-  gap: 8px;
+  gap: var(--space-8);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -162,121 +175,125 @@
 
 .dateTab {
   flex: none;
-  height: 38px;
-  padding: 0 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--ink-soft);
-  font-size: 13px;
-  font-weight: 700;
+  height: 41px;
+  padding: 0 var(--space-16);
+  border: none;
+  border-radius: var(--radius-tab);
+  background: transparent;
+  color: var(--ink-600);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
   cursor: pointer;
 }
 
 .dateTab.active {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: #fff;
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
+  font-weight: 700;
 }
 
 .slotGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: var(--space-10);
 }
 
 .slot {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-8);
   height: 52px;
-  padding: 0 14px;
+  padding: 0 var(--space-14);
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
+  background: var(--surface-white);
+  box-shadow: var(--shadow-card);
+  font-family: inherit;
   cursor: pointer;
   text-align: left;
 }
 
 .slot.selected {
-  border-color: var(--brand);
-  background: var(--brand-soft);
+  border-color: var(--brand-blue-500);
+  background: var(--brand-surface);
 }
 
 .slot:disabled {
-  background: var(--grey-soft);
-  color: var(--ink-soft);
+  background: var(--surface-muted);
+  box-shadow: none;
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
 .slotTime {
+  font-family: var(--font-heading);
   font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 600;
+  color: var(--ink-800);
   font-variant-numeric: tabular-nums;
 }
 
 .slot:disabled .slotTime {
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .slotLeft {
   font-size: 11px;
   font-weight: 700;
-  color: var(--brand);
+  color: var(--brand-blue-500);
   font-variant-numeric: tabular-nums;
 }
 
 .slot:disabled .slotLeft {
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .placeNote {
   display: flex;
-  gap: 8px;
+  gap: var(--space-8);
   font-size: 11.5px;
-  color: var(--ink-soft);
-  line-height: 1.6;
+  color: var(--ink-500);
+  line-height: 1.7;
 }
 
 /* ---------- 다음 단계 ---------- */
 .nextCard {
-  background: var(--surface);
-  border-radius: var(--radius-xl);
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  padding: 18px;
+  padding: var(--space-20);
 }
 
 .nextTitle {
+  font-family: var(--font-heading);
   font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 14px;
+  font-weight: 600;
+  color: var(--ink-800);
+  margin-bottom: var(--space-14);
 }
 
 .nextList {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-14);
 }
 
 .nextItem {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-12);
   font-size: 13px;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .nextNo {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
   display: grid;
   place-items: center;
   font-size: 11px;
@@ -286,15 +303,16 @@
 
 .footerAction {
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: var(--space-16);
 }
 
+/* 데모용 상태 전환기 */
 .switcher {
   display: flex;
-  gap: 6px;
-  background: var(--grey-soft);
+  gap: var(--space-6);
+  background: var(--surface-muted);
   border-radius: var(--radius-md);
-  padding: 4px;
+  padding: var(--space-4);
 }
 
 .switchBtn {
@@ -303,20 +321,21 @@
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--ink-600);
+  font-family: inherit;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .switchBtn.on {
-  background: var(--surface);
-  color: var(--brand);
+  background: var(--surface-white);
+  color: var(--brand-blue-500);
 }
 
 .demoNote {
   font-size: 10.5px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.6;
 }

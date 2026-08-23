@@ -25,23 +25,23 @@
 .label {
   font-size: 12px;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .input {
   height: 40px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   padding: 0 13px;
   font-size: 13px;
-  background: var(--surface);
+  background: var(--surface-white);
 }
 
 .toggleRow {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: var(--brand-soft);
+  background: var(--brand-surface);
   border-radius: var(--radius-md);
   padding: 16px;
 }
@@ -53,12 +53,12 @@
 .toggleTitle {
   font-size: 13px;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .toggleDesc {
   font-size: 11.5px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   margin-top: 5px;
   line-height: 1.5;
 }
@@ -68,7 +68,7 @@
   height: 30px;
   border-radius: var(--radius-pill);
   border: none;
-  background: var(--brand);
+  background: var(--brand-blue-500);
   position: relative;
   cursor: pointer;
   flex: none;
@@ -103,7 +103,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   border-radius: var(--radius-sm);
   padding: 13px 14px;
 }
@@ -116,7 +116,7 @@
 
 .qType {
   font-size: 11px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .photoRow {
@@ -126,7 +126,7 @@
 }
 
 .photoCard {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   border-radius: var(--radius-md);
   padding: 10px;
   text-align: center;
@@ -135,10 +135,10 @@
 .photoBox {
   height: 70px;
   border-radius: var(--radius-sm);
-  background: var(--brand-pale);
+  background: var(--brand-surface-alt);
   display: grid;
   place-items: center;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   font-size: 11px;
   margin-bottom: 10px;
 }
@@ -153,10 +153,10 @@
   width: 100%;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface);
+  border: 1px solid rgba(23, 111, 242, 0.14);
+  background: var(--surface-white);
   font-size: 11px;
   font-weight: 700;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   cursor: pointer;
 }

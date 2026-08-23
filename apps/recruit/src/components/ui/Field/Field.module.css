@@ -1,72 +1,86 @@
+/* design.md §2.2 Search Field 를 입력 필드 전반으로 확장.
+   테두리 없는 면(--brand-surface) + radius 24, placeholder 는 --ink-400. */
+
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .label {
   font-size: 13px;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .required {
-  color: var(--brand);
+  color: var(--brand-blue-500);
   margin-left: 3px;
 }
 
 .input,
 .textarea {
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  padding: 15px 16px;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-input);
+  background: var(--brand-surface);
+  padding: 15px var(--space-16);
   font-size: 14px;
-  color: var(--ink);
-  transition: border-color 0.15s ease;
+  color: var(--ink-800);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .textarea {
   min-height: 140px;
   resize: vertical;
   line-height: 1.6;
+  border-radius: var(--radius-md);
 }
 
 .input::placeholder,
 .textarea::placeholder {
-  /* 예시 문구는 회색으로 — 입력값과 구분 */
-  color: var(--ink-soft);
-  opacity: 0.75;
+  /* §1.2 --type-placeholder : 13px, --ink-400 */
+  font-size: 13px;
+  color: var(--ink-400);
 }
 
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: var(--brand);
+  background: var(--surface-white);
+  border-color: var(--brand-blue-500);
+  box-shadow: 0 0 0 3px rgba(23, 111, 242, 0.35);
 }
 
 .input.invalid,
 .textarea.invalid {
-  border-color: var(--danger);
-  background: var(--danger-soft);
+  border-color: #cf4444;
+  background: #fdecec;
+}
+
+.input.invalid:focus,
+.textarea.invalid:focus {
+  box-shadow: 0 0 0 3px rgba(207, 68, 68, 0.28);
 }
 
 .help {
   font-size: 11px;
-  color: var(--ink-soft);
-  line-height: 1.5;
+  color: var(--ink-600);
+  line-height: 1.6;
 }
 
 .error {
   font-size: 11px;
   font-weight: 700;
-  color: var(--danger);
+  color: #cf4444;
 }
 
 .counter {
   align-self: flex-end;
   font-size: 11px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   font-variant-numeric: tabular-nums;
 }

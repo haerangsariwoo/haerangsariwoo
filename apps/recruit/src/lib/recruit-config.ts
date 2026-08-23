@@ -157,6 +157,7 @@ export const navItems = [
   { href: "#about", label: "소개" },
   { href: "#activities", label: "활동" },
   { href: "#recruiting", label: "모집 안내" },
+  { href: "#faq", label: "Q&A" },
 ] as const;
 
 export const processSteps = [
@@ -166,14 +167,15 @@ export const processSteps = [
   { no: 4, label: "최종 결과" },
 ];
 
+// §5 Copy & Tone — 평서형(~합니다) 통일, 감탄사·이모지를 쓰지 않는다
 export const faqs = [
   {
     q: "봉사 경험이 없어도 되나요?",
-    a: "네! 대부분 처음 시작해요. 신입 부원 교육을 통해 함께 배워나가면 됩니다.",
+    a: "대부분 처음 시작합니다. 신입 부원 교육을 통해 함께 배워나가면 됩니다.",
   },
   {
     q: "결과는 어디서 확인하나요?",
-    a: "지원 시 정한 학번과 본인 지정번호로 로그인하면 앱에서 바로 확인할 수 있어요.",
+    a: "지원 시 정한 학번과 본인 지정번호로 로그인하면 이곳에서 바로 확인할 수 있습니다.",
   },
   {
     q: "지원 자격이 어떻게 되나요?",

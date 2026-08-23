@@ -11,15 +11,15 @@
 }
 
 .metric {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--surface-white);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
 }
 
 .metricLabel {
   font-size: 12px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .metricValue {
@@ -30,10 +30,10 @@
 }
 
 .metricValue.blue {
-  color: var(--brand);
+  color: var(--brand-blue-500);
 }
 .metricValue.green {
-  color: var(--green);
+  color: var(--brand-blue-500);
 }
 .metricValue.orange {
   color: #e08a1e;
@@ -44,7 +44,7 @@
 
 .metricUnit {
   font-size: 13px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   font-weight: 500;
   margin-left: 4px;
 }
@@ -77,8 +77,8 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
   display: grid;
   place-items: center;
   font-size: 11px;
@@ -93,7 +93,7 @@
 
 .stageDate {
   font-size: 12px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   font-variant-numeric: tabular-nums;
 }
 
@@ -120,23 +120,23 @@
 }
 
 .progressValue {
-  color: var(--ink-soft);
+  color: var(--ink-600);
   font-variant-numeric: tabular-nums;
 }
 
 .track {
   height: 8px;
   border-radius: 4px;
-  background: var(--grey-soft);
+  background: var(--surface-muted);
   overflow: hidden;
 }
 
 .fill {
   height: 100%;
   border-radius: 4px;
-  background: var(--brand);
+  background: var(--brand-blue-500);
 }
 
 .fill.full {
-  background: var(--danger);
+  background: #cf4444;
 }

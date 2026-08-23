@@ -1,73 +1,88 @@
+/* design.md §3.3 Detail — 시트 배경 위에 내용을 얹는 구조 */
+
 .page {
   min-height: 100dvh;
   display: flex;
   justify-content: center;
-  background: var(--bg);
+  background: var(--surface-sheet);
 }
 
 .shell {
   width: 100%;
-  max-width: 390px;
-  background: var(--bg);
+  max-width: 430px;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  background: var(--surface-sheet);
 }
 
 .header {
   height: 68px;
-  background: var(--surface);
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 20px;
+  gap: var(--space-12);
+  padding: 0 var(--screen-pad);
   position: sticky;
   top: 0;
   z-index: 10;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
 }
 
+/* §3.3 — 좌상단 back 버튼, radius 8 (--radius-xs) */
 .back {
-  color: var(--ink);
-  font-size: 24px;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin-left: -8px;
+  border-radius: var(--radius-xs);
+  background: var(--brand-surface);
+  color: var(--ink-800);
+  font-size: 22px;
   line-height: 1;
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+}
+
+.back:hover {
+  background: var(--brand-tint-10);
 }
 
 .title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--ink);
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink-900);
   flex: 1;
   min-width: 0;
 }
 
 .step {
+  flex: none;
+  font-family: var(--font-heading);
   font-size: 12px;
-  font-weight: 700;
-  color: var(--brand);
+  font-weight: 600;
+  color: var(--brand-blue-500);
   font-variant-numeric: tabular-nums;
 }
 
 .progressTrack {
   height: 3px;
-  background: var(--grey-soft);
+  background: rgba(23, 111, 242, 0.1);
 }
 
 .progressFill {
   height: 100%;
-  background: var(--brand);
+  background: var(--brand-gradient);
   transition: width 0.25s ease;
 }
 
 .body {
   flex: 1;
-  padding: 24px 20px 32px;
+  padding: var(--space-24) var(--screen-pad) var(--space-32);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-20);
 }
 
 .homeLogo {

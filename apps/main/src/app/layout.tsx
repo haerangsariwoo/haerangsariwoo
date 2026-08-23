@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 /**
@@ -11,6 +12,19 @@ const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
+});
+
+/**
+ * 손글씨 느낌의 포인트 글꼴 (THEFACESHOP INKLIPQUID).
+ * 원본 2.1MB 를 실제로 쓰는 글자만 남겨 34KB woff2 로 줄였다.
+ * 인사말처럼 짧은 한 줄에만 쓰고, 본문에는 쓰지 않는다.
+ */
+const inkLipquid = localFont({
+  src: "./fonts/inklipquid-subset.woff2",
+  variable: "--font-accent",
+  display: "swap",
+  // 글자가 없으면 본문 글꼴로 자연스럽게 넘어가게
+  fallback: ["Pretendard Variable", "Pretendard", "system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +40,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={montserrat.variable}>
+    <html lang="ko" className={`${montserrat.variable} ${inkLipquid.variable}`}>
       <head>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
         <link

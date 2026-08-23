@@ -28,6 +28,8 @@ export interface ExternalVolunteer {
   applied: number | null;
   /** 활동 시간대 (예: 10:00–12:00) */
   time?: string;
+  /** 출처가 모집 마감을 알려주는 경우 (VMS) */
+  closed?: boolean;
   /** 원본 사이트 상세 링크 */
   url: string;
 }

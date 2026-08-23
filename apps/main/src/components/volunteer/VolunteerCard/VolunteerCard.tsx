@@ -1,7 +1,15 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import type { VolunteerSummary } from "@/lib/mock-data";
 import styles from "./VolunteerCard.module.css";
+
+/** 출처별 기본 이미지 — 내부 봉사는 동아리 로고, 외부는 해당 포털 로고 */
+const SOURCE_IMAGE: Record<VolunteerSummary["source"], string> = {
+  internal: "/volunteer-default.png",
+  "1365": "/portal-1365-icon.png",
+  vms: "/portal-vms-icon.png",
+};
 
 const SOURCE_LABEL: Record<VolunteerSummary["source"], string> = {
   internal: "내부",
@@ -16,7 +24,21 @@ export function VolunteerCard({ item }: { item: VolunteerSummary }) {
   return (
     <article className={styles.card}>
       <Link href={`/volunteer/${item.id}`} className={styles.thumbLink} aria-label={item.title}>
-        <span className={cn(styles.thumb, styles[item.thumbTone])} />
+        <span
+          className={cn(
+            styles.thumb,
+            styles[item.thumbTone],
+            isExternal && !item.imageUrl && styles.logoThumb,
+          )}
+        >
+          <Image
+            className={styles.thumbImage}
+            src={item.imageUrl ?? SOURCE_IMAGE[item.source]}
+            alt=""
+            width={160}
+            height={160}
+          />
+        </span>
       </Link>
 
       <div className={styles.body}>

@@ -28,7 +28,17 @@ export default function AdminVolunteersPage() {
       </div>
 
       <DataTable
-        columns={["봉사활동", "일시", "장소", "신청/정원", "인정시간", "출처", "상태", ""]}
+        columns={[
+          "봉사활동",
+          "일시",
+          "장소",
+          "신청/정원",
+          "인정시간",
+          "출처",
+          "대표 이미지",
+          "상태",
+          "",
+        ]}
       >
         {adminVolunteers.map((v) => (
           <tr key={v.id}>
@@ -43,10 +53,17 @@ export default function AdminVolunteersPage() {
               <Badge tone={v.source === "내부" ? "blue" : "grey"}>{v.source}</Badge>
             </td>
             <td>
+              {v.imageUrl ? (
+                <Badge tone="blue">등록됨</Badge>
+              ) : (
+                <span className={tableStyles.muted}>기본 (로고)</span>
+              )}
+            </td>
+            <td>
               <Badge tone={v.tone}>{v.status}</Badge>
             </td>
             <td>
-              <RowAction>관리</RowAction>
+              <RowAction>이미지 변경</RowAction>
             </td>
           </tr>
         ))}

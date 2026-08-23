@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  overflow: hidden;
   padding: 14px;
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -16,8 +17,14 @@
   flex: none;
   display: grid;
   place-items: center;
-  font-size: 11px;
-  font-weight: 700;
+  overflow: hidden;
+}
+
+.thumbLogo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .thumb.p1365 {
@@ -58,6 +65,9 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 9px;
+  /* 긴 주소 태그가 카드 밖으로 나가지 않도록 */
+  max-width: 100%;
+  min-width: 0;
 }
 
 .tag {
@@ -67,7 +77,12 @@
   font-weight: 500;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
+  /* 한 줄로 두되, 넘치면 카드 폭에 맞춰 줄임표로 자른다 */
   white-space: nowrap;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tag.source {

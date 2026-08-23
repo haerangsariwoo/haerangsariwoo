@@ -19,6 +19,19 @@
   height: 80px;
   border-radius: var(--radius-md);
   flex: none;
+  overflow: hidden;
+}
+
+.thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 포털 아이콘은 정사각이라 그대로 채운다 */
+.logoThumb {
+  display: block;
 }
 
 .thumb.mint {

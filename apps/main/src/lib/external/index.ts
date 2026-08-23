@@ -25,6 +25,8 @@ function withinDeadline<T>(p: (signal: AbortSignal) => Promise<T>): Promise<T> {
  * 모집 기간을 알 수 없으면 활동 종료일로 대신 판단한다.
  */
 function isStillOpen(v: ExternalVolunteer, tomorrow: string) {
+  // 출처가 마감을 명시하면 그대로 따른다 (VMS)
+  if (v.closed) return false;
   if (v.recruitEnd) return v.recruitEnd >= tomorrow;
   if (v.endDate) return v.endDate >= tomorrow;
   return true;
@@ -51,8 +53,8 @@ export async function getExternalVolunteers(options?: {
   // Encoding/Decoding 어느 키를 넣어도 동작하도록 정규화한다
   const serviceKey = normalizeServiceKey(process.env.DATA_GO_KR_SERVICE_KEY);
 
-  // 키가 없으면 예시 데이터로 동작한다 (팀원이 키 없이도 화면을 볼 수 있게)
-  if (!serviceKey) {
+  // 1365 키가 없어도 VMS 는 동작하므로 둘 다 불가능할 때만 예시로 대체한다
+  if (!serviceKey && process.env.DISABLE_VMS === "1") {
     const value: ExternalFetchResult = {
       items: normalize(sampleExternal),
       live: false,
@@ -63,14 +65,17 @@ export async function getExternalVolunteers(options?: {
     return value;
   }
 
-  // VMS 는 공공데이터포털에서 봉사활동처(기관) 목록만 제공하고
-  // 모집 공고 오퍼레이션이 확인되지 않아 기본적으로 끈다.
-  // 모집 API 경로를 확인하면 VMS_RECRUIT_OPERATION 을 지정해 켤 수 있다.
-  const vmsEnabled = Boolean(process.env.VMS_RECRUIT_OPERATION);
+  // VMS 는 공개 모집 목록을 읽어 온다 (공공데이터포털 API 에는 모집 공고가 없다)
+  const vmsDisabled = process.env.DISABLE_VMS === "1";
+  const today = new Date().toISOString().slice(0, 10);
 
-  const tasks = [withinDeadline((signal) => fetch1365({ serviceKey, pages: 5, signal }))];
-  if (vmsEnabled) {
-    tasks.push(withinDeadline((signal) => fetchVms({ serviceKey, signal })));
+  const tasks: Promise<ExternalVolunteer[]>[] = [];
+  if (serviceKey) {
+    const key = serviceKey;
+    tasks.push(withinDeadline((signal) => fetch1365({ serviceKey: key, pages: 5, signal })));
+  }
+  if (!vmsDisabled) {
+    tasks.push(withinDeadline((signal) => fetchVms({ recruitFrom: today, pages: 3, signal })));
   }
 
   const results = await Promise.allSettled(tasks);

@@ -1,8 +1,15 @@
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 import type { ExternalVolunteer } from "@/lib/external/types";
 import styles from "./ExternalCard.module.css";
 
 const SOURCE_LABEL = { "1365": "1365", vms: "VMS" } as const;
+
+/** 출처 표시용 공식 로고 */
+const SOURCE_LOGO = {
+  "1365": { src: "/portal-1365-icon.png", alt: "1365 자원봉사포털", w: 192, h: 192 },
+  vms: { src: "/portal-vms-icon.png", alt: "VMS 사회복지자원봉사인증관리", w: 192, h: 192 },
+} as const;
 
 /** 2026-09-05 → 09.05 */
 function short(d: string) {
@@ -39,7 +46,13 @@ export function ExternalCard({ item }: { item: ExternalVolunteer }) {
       rel="noopener noreferrer"
     >
       <span className={cn(styles.thumb, item.source === "1365" ? styles.p1365 : styles.pvms)}>
-        {SOURCE_LABEL[item.source]}
+        <Image
+          className={styles.thumbLogo}
+          src={SOURCE_LOGO[item.source].src}
+          alt={SOURCE_LOGO[item.source].alt}
+          width={SOURCE_LOGO[item.source].w}
+          height={SOURCE_LOGO[item.source].h}
+        />
       </span>
 
       <div className={styles.body}>
@@ -47,17 +60,19 @@ export function ExternalCard({ item }: { item: ExternalVolunteer }) {
         <p className={styles.org}>{item.org}</p>
 
         <dl className={styles.periods}>
-          <div className={styles.period}>
-            <dt className={cn(styles.periodLabel, styles.recruit)}>모집</dt>
-            <dd className={styles.periodValue}>
-              {range(item.recruitStart, item.recruitEnd) || "상시"}
-              {left !== null && (
-                <span className={cn(styles.dday, closingSoon && styles.urgent)}>
-                  {left === 0 ? "오늘 마감" : `D-${left}`}
-                </span>
-              )}
-            </dd>
-          </div>
+          {item.recruitEnd && (
+            <div className={styles.period}>
+              <dt className={cn(styles.periodLabel, styles.recruit)}>모집</dt>
+              <dd className={styles.periodValue}>
+                {range(item.recruitStart, item.recruitEnd)}
+                {left !== null && (
+                  <span className={cn(styles.dday, closingSoon && styles.urgent)}>
+                    {left === 0 ? "오늘 마감" : `D-${left}`}
+                  </span>
+                )}
+              </dd>
+            </div>
+          )}
           <div className={styles.period}>
             <dt className={styles.periodLabel}>활동</dt>
             <dd className={styles.periodValue}>

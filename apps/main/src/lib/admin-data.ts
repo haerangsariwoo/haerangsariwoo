@@ -85,6 +85,8 @@ export interface AdminVolunteer {
   source: "내부" | "1365" | "VMS";
   status: string;
   tone: BadgeTone;
+  /** 등록된 대표 이미지. 없으면 동아리 로고가 기본으로 쓰인다 */
+  imageUrl?: string;
 }
 
 export const adminVolunteers: AdminVolunteer[] = [

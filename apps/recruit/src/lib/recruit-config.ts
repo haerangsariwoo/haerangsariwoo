@@ -78,6 +78,47 @@ export const activityCards: ActivityCard[] = [
 ];
 
 /**
+ * 히어로 슬라이드 — design.md §4.1 "풀블리드 사진 슬라이더 (4장, 자동 전환)".
+ * 사진은 관리자 페이지에서 교체한다.
+ */
+export interface HeroSlide {
+  id: string;
+  title: string;
+  subtitle: string;
+  photoUrl: string;
+}
+
+export const heroSlides: HeroSlide[] = [
+  {
+    id: "hs1",
+    title: "해랑사리우",
+    subtitle: "나눔으로 하나되는 우리, 봉사로 빛나는 청춘",
+    photoUrl: "/landing/hero-1.svg",
+  },
+  {
+    id: "hs2",
+    title: "함께하는 봉사",
+    subtitle: "지역사회와 함께 성장하는 중앙 봉사동아리",
+    photoUrl: "/landing/hero-2.svg",
+  },
+  {
+    id: "hs3",
+    title: "1996년부터 현재까지",
+    subtitle: "30년간 이어온 봉사의 전통",
+    photoUrl: "/landing/hero-3.svg",
+  },
+  {
+    id: "hs4",
+    title: "매 학기 새로운 시작",
+    subtitle: "신입 부원과 함께 다음 이야기를 씁니다",
+    photoUrl: "/landing/hero-4.svg",
+  },
+];
+
+/** 슬라이드 자동 전환 간격 (ms) */
+export const heroInterval = 5000;
+
+/**
  * 랜딩 문구 — design.md §5 Copy & Tone 을 따른다.
  * 평서형(~합니다) 통일, 이모지·감탄사 없음, 소개는 한 단락.
  * 관리자 페이지에서 편집하게 되면 landing_content 테이블로 옮긴다.

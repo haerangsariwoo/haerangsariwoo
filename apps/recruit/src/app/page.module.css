@@ -115,120 +115,6 @@
   }
 }
 
-/* ================= Hero ================= */
-/* §3.1 Splash 구조 — 카피와 CTA 를 아래로 몰아 가운데를 비운다 */
-.hero {
-  position: relative;
-  min-height: 100svh;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-  background: var(--ink-800);
-}
-
-@media (min-width: 768px) {
-  .hero {
-    min-height: min(88vh, 900px);
-  }
-}
-
-.heroMedia {
-  position: absolute;
-  inset: 0;
-}
-
-.heroImage {
-  object-fit: cover;
-  object-position: center;
-}
-
-/* §1.6 — 사진 위 텍스트에는 scrim 필수 */
-.heroScrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 24, 40, 0.42) 0%,
-    rgba(10, 24, 40, 0.08) 38%,
-    rgba(10, 24, 40, 0.74) 100%
-  );
-}
-
-.heroBody {
-  position: relative;
-  width: 100%;
-  max-width: var(--content-max);
-  margin: 0 auto;
-  padding: 0 var(--space-32) var(--space-50);
-  color: var(--surface-white);
-}
-
-.heroEyebrow {
-  font-family: var(--font-heading);
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.82);
-}
-
-/* §1.2 --type-h1 : Montserrat 500 / 40 (모바일 32) */
-.heroTitle {
-  font-family: var(--font-heading);
-  font-weight: 500;
-  font-size: 32px;
-  line-height: 1.16;
-  letter-spacing: -0.01em;
-  margin-top: var(--space-16);
-  text-wrap: balance;
-}
-
-@media (min-width: 768px) {
-  .heroTitle {
-    font-size: 40px;
-    line-height: 1.1;
-  }
-}
-
-.heroTradition {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.78);
-  margin-top: var(--space-16);
-}
-
-.heroStatus {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-8);
-  height: 34px;
-  padding: 0 var(--space-16);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(8px);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--surface-white);
-  margin-top: var(--space-24);
-}
-
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-success);
-  flex: none;
-}
-
-.statusDot.off {
-  background: var(--ink-300);
-}
-
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-12);
-  margin-top: var(--space-28);
-}
-
 /* ================= Section 공통 ================= */
 .section {
   padding: var(--space-50) 0;
@@ -367,8 +253,35 @@
   .recruitGrid {
     grid-template-columns: 1fr 1fr;
     gap: var(--space-50);
-    align-items: start;
+    /* 좌우 칼럼 높이를 맞춘다 */
+    align-items: stretch;
   }
+
+  .recruitLeft {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 인용을 아래로 밀어 체크리스트와 일정 카드의 끝을 맞춘다 */
+  .quote {
+    margin-top: auto;
+    padding-top: var(--space-8);
+  }
+}
+
+.recruitLeft {
+  min-width: 0;
+}
+
+.scheduleCard {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 일정 목록 아래 남는 공간을 버튼이 밀어낸다 */
+.scheduleActions {
+  margin-top: auto;
+  padding-top: var(--space-24);
 }
 
 .checklistTitle {
@@ -478,7 +391,6 @@
 }
 
 .scheduleActions {
-  margin-top: var(--space-24);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-12);

@@ -12,6 +12,7 @@ import {
   recruitConfig,
 } from "@/lib/recruit-config";
 import { ActivityGallery } from "./ActivityGallery";
+import { HeroSlider } from "./HeroSlider";
 import styles from "./page.module.css";
 
 export default function LandingPage() {
@@ -60,60 +61,7 @@ export default function LandingPage() {
         ))}
       </nav>
 
-      {/* ---------- Hero ---------- */}
-      {/* §3.1 — 카피와 CTA 를 아래로 몰아 가운데를 비운다 */}
-      <section className={styles.hero}>
-        <div className={styles.heroMedia}>
-          <Image
-            className={styles.heroImage}
-            src="/landing/hero.svg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            unoptimized
-          />
-          <span className={styles.heroScrim} />
-        </div>
-
-        <div className={styles.heroBody}>
-          <p className={styles.heroEyebrow}>{landing.heroLead}</p>
-          <h1 className={styles.heroTitle}>
-            {brand.slogan1}
-            <br />
-            {brand.slogan2}
-          </h1>
-          <p className={styles.heroTradition}>{brand.tradition}</p>
-
-          <p className={styles.heroStatus}>
-            <span className={cn(styles.statusDot, !applicationsOpen && styles.off)} />
-            {applicationsOpen ? `${cohort} 신입 부원 모집 중` : "다음 모집을 준비하고 있습니다"}
-          </p>
-
-          <div className={styles.heroActions}>
-            {applicationsOpen ? (
-              <>
-                <Link href="/apply">
-                  <Button size="md" onPhoto>
-                    지원하기 →
-                  </Button>
-                </Link>
-                <Link href="/apply/status">
-                  <Button size="md" variant="ghost">
-                    결과 확인
-                  </Button>
-                </Link>
-              </>
-            ) : (
-              <a href="#about">
-                <Button size="md" variant="ghost">
-                  동아리 알아보기
-                </Button>
-              </a>
-            )}
-          </div>
-        </div>
-      </section>
+      <HeroSlider applicationsOpen={applicationsOpen} cohort={cohort} />
 
       {/* ---------- About ---------- */}
       <section id="about" className={styles.section}>
@@ -170,7 +118,7 @@ export default function LandingPage() {
           <p className={styles.sectionLead}>{landing.recruiting.lead}</p>
 
           <div className={cn(styles.sectionBody, styles.recruitGrid)}>
-            <div>
+            <div className={styles.recruitLeft}>
               <h3 className={styles.checklistTitle}>{landing.recruiting.checklistTitle}</h3>
               <ul className={styles.checklist}>
                 {landing.recruiting.checklist.map((item) => (

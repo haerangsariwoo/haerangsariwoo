@@ -82,6 +82,11 @@ export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
                 ) : (
                   <Image src="/icons/photo.svg" alt="" width={32} height={32} unoptimized />
                 )}
+                {a.photoUrl && (
+                  <span className={styles.zoomHint} aria-hidden="true">
+                    ⤢
+                  </span>
+                )}
               </span>
               <span className={styles.body}>
                 <span className={styles.title}>{a.title}</span>

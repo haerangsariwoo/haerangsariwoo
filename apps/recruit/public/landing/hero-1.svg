@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="히어로 사진 자리표시 1">
+  <defs>
+    <linearGradient id="s1" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#0B2A57"/>
+      <stop offset="0.55" stop-color="#176FF2"/>
+    </linearGradient>
+    <radialGradient id="r1" cx="0.76" cy="0.26" r="0.6">
+      <stop offset="0" stop-color="#8FC6FF" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#8FC6FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#s1)"/>
+  <rect width="1600" height="1000" fill="url(#r1)"/>
+  <path d="M0 700 C 300 620, 520 780, 820 700 S 1320 620, 1600 690 L1600 1000 L0 1000 Z" fill="#0B2A57" opacity="0.45"/>
+  <path d="M0 820 C 340 750, 640 880, 960 810 S 1380 750, 1600 800 L1600 1000 L0 1000 Z" fill="#071B3A" opacity="0.5"/>
+  <circle cx="1230" cy="250" r="130" fill="#FFFFFF" opacity="0.10"/>
+  <circle cx="290" cy="520" r="200" fill="#FFFFFF" opacity="0.06"/>
+  <text x="800" y="410" text-anchor="middle" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="34" fill="#FFFFFF" opacity="0.3">활동 사진 1 · 관리자 페이지에서 교체</text>
+</svg>

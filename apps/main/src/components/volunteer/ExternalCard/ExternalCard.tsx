@@ -31,6 +31,7 @@ export function ExternalCard({ item }: { item: ExternalVolunteer }) {
         <p className={styles.org}>{item.org}</p>
         <p className={styles.date}>
           {dateRange(item.startDate, item.endDate)}
+          {item.time && ` · ${item.time}`}
           {item.capacity !== null && (
             <>
               {" · "}

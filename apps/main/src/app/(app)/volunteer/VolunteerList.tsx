@@ -6,6 +6,11 @@ import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCar
 import { ExternalCard } from "@/components/volunteer/ExternalCard/ExternalCard";
 import { volunteerCategories, volunteers } from "@/lib/mock-data";
 import type { ExternalFetchResult } from "@/lib/external/types";
+import {
+  ExternalFilters,
+  filterExternal,
+  type ExternalFilterValue,
+} from "./ExternalFilters";
 import { noticeFor } from "@/lib/get-notice";
 import styles from "./volunteer.module.css";
 
@@ -16,6 +21,12 @@ type Tab = "내부" | "1365 · VMS";
 export function VolunteerList({ external }: { external: ExternalFetchResult }) {
   const [tab, setTab] = useState<Tab>("내부");
   const [category, setCategory] = useState<string>("전체");
+  // 외부 목록은 지역·유형을 앱 안에서 직접 고른다 (기본은 서울)
+  const [extFilter, setExtFilter] = useState<ExternalFilterValue>({
+    sido: external.items.some((v) => v.sido === "서울") ? "서울" : "전체",
+    gugun: "전체",
+    category: "전체",
+  });
 
   const internalList = useMemo(() => {
     const filtered =
@@ -23,10 +34,10 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
     return [...filtered].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
   }, [category]);
 
-  const externalList = useMemo(() => {
-    if (category === "전체") return external.items;
-    return external.items.filter((v) => v.category.includes(category));
-  }, [category, external.items]);
+  const externalList = useMemo(
+    () => filterExternal(external.items, extFilter),
+    [external.items, extFilter],
+  );
 
   const list = tab === "내부" ? internalList : externalList;
 
@@ -55,20 +66,28 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
         ))}
       </div>
 
-      <div className={styles.chipRow} role="tablist" aria-label="봉사 카테고리">
-        {volunteerCategories.map((c) => (
-          <button
-            key={c}
-            type="button"
-            role="tab"
-            aria-selected={category === c}
-            className={cn(styles.chip, category === c && styles.active)}
-            onClick={() => setCategory(c)}
-          >
-            {c}
-          </button>
-        ))}
-      </div>
+      {tab === "내부" ? (
+        <div className={styles.chipRow} role="tablist" aria-label="봉사 카테고리">
+          {volunteerCategories.map((c) => (
+            <button
+              key={c}
+              type="button"
+              role="tab"
+              aria-selected={category === c}
+              className={cn(styles.chip, category === c && styles.active)}
+              onClick={() => setCategory(c)}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <ExternalFilters
+          items={external.items}
+          value={extFilter}
+          onChange={setExtFilter}
+        />
+      )}
 
       {tab === "내부" ? (
         internalList.length === 0 ? (

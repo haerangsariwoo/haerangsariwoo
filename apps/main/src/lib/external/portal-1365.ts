@@ -1,26 +1,33 @@
 import "server-only";
 import type { ExternalVolunteer } from "./types";
+import { parseRegion } from "./region";
 
 /**
  * 1365 자원봉사포털 — 행정안전부 봉사참여정보서비스
  * 공공데이터포털: https://www.data.go.kr/data/15000221/openapi.do
  *
  * 크롤링이 아니라 공식 OpenAPI를 사용한다.
- * 신청 키는 DATA_GO_KR_SERVICE_KEY 환경변수로 주입한다.
+ * 목록 조회는 getVltrSearchWordList 오퍼레이션이 담당한다.
+ * (getVltrPartcptnItem 은 상세 조회용이라 목록이 비어 있다)
  */
-const ENDPOINT =
-  "http://openapi.1365.go.kr/openapi/service/rest/VolunteerPartcptnService/getVltrPartcptnItem";
+const BASE =
+  "http://openapi.1365.go.kr/openapi/service/rest/VolunteerPartcptnService";
+const LIST_OPERATION = process.env.PORTAL_1365_OPERATION ?? "getVltrSearchWordList";
 
-/** 상세 페이지 링크 — progrmRegistNo(프로그램 등록번호) 기준 */
-function detailUrl(progrmRegistNo: string) {
-  return `https://www.1365.go.kr/vols/1572247904127/partcptn/timeCptn.do?type=show&progrmRegistNo=${progrmRegistNo}`;
-}
-
-/** XML 한 덩어리에서 태그 값을 뽑는다 (의존성 없이 처리) */
 function pick(xml: string, tag: string) {
   const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
   if (!m) return "";
   return m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, "$1").trim();
+}
+
+/** XML 엔티티 복원 (url 에 &amp; 가 들어온다) */
+function unescape(v: string) {
+  return v
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
 }
 
 /** YYYYMMDD → YYYY-MM-DD */
@@ -29,58 +36,80 @@ function toDate(v: string) {
   return `${v.slice(0, 4)}-${v.slice(4, 6)}-${v.slice(6, 8)}`;
 }
 
-function toNumber(v: string): number | null {
-  const n = Number(v);
-  return Number.isFinite(n) && v !== "" ? n : null;
-}
-
-export async function fetch1365(params: {
-  serviceKey: string;
-  numOfRows?: number;
-  /** 활동 시작일 이후만 (YYYYMMDD) */
-  from?: string;
-  signal?: AbortSignal;
-}): Promise<ExternalVolunteer[]> {
+async function fetchPage(
+  serviceKey: string,
+  pageNo: number,
+  numOfRows: number,
+  signal?: AbortSignal,
+): Promise<string[]> {
   const qs = new URLSearchParams({
-    serviceKey: params.serviceKey,
-    numOfRows: String(params.numOfRows ?? 30),
-    pageNo: "1",
+    serviceKey,
+    numOfRows: String(numOfRows),
+    pageNo: String(pageNo),
   });
-  if (params.from) qs.set("schSdate", params.from);
 
-  const res = await fetch(`${ENDPOINT}?${qs.toString()}`, {
-    signal: params.signal,
+  const res = await fetch(`${BASE}/${LIST_OPERATION}?${qs.toString()}`, {
+    signal,
     headers: { Accept: "application/xml" },
   });
 
-  if (!res.ok) {
-    throw new Error(`1365 응답 오류 (${res.status})`);
-  }
+  if (!res.ok) throw new Error(`1365 응답 오류 (${res.status})`);
 
   const xml = await res.text();
 
-  // 공공데이터포털은 오류도 200으로 내려주는 경우가 있어 본문을 확인한다
+  // 공공데이터포털은 오류도 200으로 내려주므로 본문을 확인한다
   const resultCode = pick(xml, "resultCode");
   if (resultCode && resultCode !== "00") {
     throw new Error(`1365 오류: ${pick(xml, "resultMsg") || resultCode}`);
   }
 
-  const items = xml.match(/<item>[\s\S]*?<\/item>/g) ?? [];
+  return xml.match(/<item>[\s\S]*?<\/item>/g) ?? [];
+}
+
+export async function fetch1365(params: {
+  serviceKey: string;
+  /** 한 번에 가져올 페이지 수 (지역 필터를 위해 넉넉히 받는다) */
+  pages?: number;
+  numOfRows?: number;
+  signal?: AbortSignal;
+}): Promise<ExternalVolunteer[]> {
+  const pages = params.pages ?? 3;
+  const numOfRows = params.numOfRows ?? 100;
+
+  const batches = await Promise.all(
+    Array.from({ length: pages }, (_, i) =>
+      fetchPage(params.serviceKey, i + 1, numOfRows, params.signal),
+    ),
+  );
+  const items = batches.flat();
 
   return items.map((raw) => {
     const no = pick(raw, "progrmRegistNo");
+    const begin = pick(raw, "actBeginTm");
+    const end = pick(raw, "actEndTm");
+    const time = begin && end ? `${begin}:00–${end}:00` : "";
+    const place = pick(raw, "actPlace");
+    const org = pick(raw, "nanmmbyNm");
+    const region = parseRegion(place, org);
+
     return {
       id: `1365-${no}`,
       source: "1365" as const,
       title: pick(raw, "progrmSj"),
-      org: pick(raw, "nanmmbyNm") || pick(raw, "mnnstNm"),
-      area: [pick(raw, "sidoCd"), pick(raw, "gugunCd")].filter(Boolean).join(" "),
+      org,
+      // sidoCd·gugunCd 는 코드값이라 표시에 부적합해 실제 활동 장소를 쓴다
+      area: place,
+      sido: region.sido,
+      gugun: region.gugun,
       category: pick(raw, "srvcClCode"),
       startDate: toDate(pick(raw, "progrmBgnde")),
       endDate: toDate(pick(raw, "progrmEndde")),
-      capacity: toNumber(pick(raw, "rcritNmpr")),
-      applied: toNumber(pick(raw, "appTotal")),
-      url: detailUrl(no),
+      // 이 오퍼레이션은 모집 인원을 제공하지 않는다
+      capacity: null,
+      applied: null,
+      time,
+      // 응답에 상세 링크가 포함되어 있다
+      url: unescape(pick(raw, "url")) || `https://www.1365.go.kr`,
     };
   });
 }

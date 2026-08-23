@@ -2,6 +2,7 @@ import "server-only";
 import { fetch1365 } from "./portal-1365";
 import { fetchVms } from "./portal-vms";
 import { sampleExternal } from "./sample";
+import { normalizeServiceKey } from "./service-key";
 import type { ExternalFetchResult, ExternalVolunteer } from "./types";
 
 export type { ExternalVolunteer, ExternalFetchResult } from "./types";
@@ -18,11 +19,20 @@ function withinDeadline<T>(p: (signal: AbortSignal) => Promise<T>): Promise<T> {
   return p(ac.signal).finally(() => clearTimeout(timer));
 }
 
-/** 활동이 이미 끝난 건 제외하고, 시작일 빠른 순으로 */
+/** 오늘 마감인 건 사실상 신청이 안 되므로, 내일 이후까지 열린 모집만 남긴다 */
+function isStillOpen(v: ExternalVolunteer, tomorrow: string) {
+  if (!v.endDate) return true;
+  return v.endDate >= tomorrow;
+}
+
+/** 마감 임박 순으로 정렬하고, 신청 가능한 건만 남긴다 */
 function normalize(items: ExternalVolunteer[]) {
-  const today = new Date().toISOString().slice(0, 10);
+  const t = new Date();
+  t.setDate(t.getDate() + 1);
+  const tomorrow = t.toISOString().slice(0, 10);
+
   return items
-    .filter((v) => v.title && (!v.endDate || v.endDate >= today))
+    .filter((v) => v.title && isStillOpen(v, tomorrow))
     .sort((a, b) => a.startDate.localeCompare(b.startDate));
 }
 
@@ -33,7 +43,8 @@ export async function getExternalVolunteers(options?: {
     return cache.value;
   }
 
-  const serviceKey = process.env.DATA_GO_KR_SERVICE_KEY;
+  // Encoding/Decoding 어느 키를 넣어도 동작하도록 정규화한다
+  const serviceKey = normalizeServiceKey(process.env.DATA_GO_KR_SERVICE_KEY);
 
   // 키가 없으면 예시 데이터로 동작한다 (팀원이 키 없이도 화면을 볼 수 있게)
   if (!serviceKey) {
@@ -47,10 +58,17 @@ export async function getExternalVolunteers(options?: {
     return value;
   }
 
-  const results = await Promise.allSettled([
-    withinDeadline((signal) => fetch1365({ serviceKey, signal })),
-    withinDeadline((signal) => fetchVms({ serviceKey, signal })),
-  ]);
+  // VMS 는 공공데이터포털에서 봉사활동처(기관) 목록만 제공하고
+  // 모집 공고 오퍼레이션이 확인되지 않아 기본적으로 끈다.
+  // 모집 API 경로를 확인하면 VMS_RECRUIT_OPERATION 을 지정해 켤 수 있다.
+  const vmsEnabled = Boolean(process.env.VMS_RECRUIT_OPERATION);
+
+  const tasks = [withinDeadline((signal) => fetch1365({ serviceKey, pages: 5, signal }))];
+  if (vmsEnabled) {
+    tasks.push(withinDeadline((signal) => fetchVms({ serviceKey, signal })));
+  }
+
+  const results = await Promise.allSettled(tasks);
 
   const items: ExternalVolunteer[] = [];
   const errors: string[] = [];

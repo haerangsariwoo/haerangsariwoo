@@ -6,8 +6,12 @@ export interface ExternalVolunteer {
   title: string;
   /** 모집 기관 / 활동처 */
   org: string;
-  /** 활동 지역 */
+  /** 활동 장소 원문 */
   area: string;
+  /** 시도 (예: 서울) — 필터용 */
+  sido: string;
+  /** 시군구 (예: 성북구) — 필터용 */
+  gugun: string;
   /** 활동 분야 (환경, 교육 등) */
   category: string;
   /** 활동 시작일 (YYYY-MM-DD) */
@@ -18,6 +22,8 @@ export interface ExternalVolunteer {
   capacity: number | null;
   /** 신청 인원 (알 수 없으면 null) */
   applied: number | null;
+  /** 활동 시간대 (예: 10:00–12:00) */
+  time?: string;
   /** 원본 사이트 상세 링크 */
   url: string;
 }

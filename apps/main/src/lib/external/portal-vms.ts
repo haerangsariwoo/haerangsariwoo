@@ -1,5 +1,6 @@
 import "server-only";
 import type { ExternalVolunteer } from "./types";
+import { parseRegion } from "./region";
 
 /**
  * VMS — 한국사회복지협의회 봉사활동정보 조회
@@ -9,7 +10,7 @@ import type { ExternalVolunteer } from "./types";
  * 모집정보 오퍼레이션 경로는 승인 후 문서에서 확인해 환경변수로 지정한다.
  */
 const BASE = "https://apis.data.go.kr/B460014/vmsdataview";
-const DEFAULT_OPERATION = process.env.VMS_RECRUIT_OPERATION ?? "getVltrRcritList";
+const OPERATION = process.env.VMS_RECRUIT_OPERATION ?? "";
 
 function pick(xml: string, tag: string) {
   const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
@@ -38,7 +39,7 @@ export async function fetchVms(params: {
     pageNo: "1",
   });
 
-  const res = await fetch(`${BASE}/${DEFAULT_OPERATION}?${qs.toString()}`, {
+  const res = await fetch(`${BASE}/${OPERATION}?${qs.toString()}`, {
     signal: params.signal,
     headers: { Accept: "application/xml" },
   });
@@ -65,6 +66,13 @@ export async function fetchVms(params: {
       title: pick(raw, "rcritNm") || pick(raw, "progrmSj") || pick(raw, "centName"),
       org: pick(raw, "centName") || pick(raw, "mnnstNm"),
       area: pick(raw, "areaName") || pick(raw, "sidoNm"),
+      ...(() => {
+        const r = parseRegion(
+          pick(raw, "areaName") || pick(raw, "sidoNm"),
+          pick(raw, "centName"),
+        );
+        return { sido: r.sido, gugun: r.gugun };
+      })(),
       category: pick(raw, "fldName") || pick(raw, "srvcClNm"),
       startDate: toDate(pick(raw, "actBgnDe") || pick(raw, "progrmBgnde")),
       endDate: toDate(pick(raw, "actEndDe") || pick(raw, "progrmEndde")),

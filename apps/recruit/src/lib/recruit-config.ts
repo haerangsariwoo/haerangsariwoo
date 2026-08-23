@@ -57,10 +57,66 @@ export interface ActivityCard {
 
 export const activityCards: ActivityCard[] = [
   // photoUrl 은 관리자 페이지에서 실제 활동 사진으로 교체한다
-  { id: "ac1", title: "봉사", desc: "지역사회와 함께", photoUrl: "/activity/volunteer.svg" },
-  { id: "ac2", title: "친목", desc: "친해지길 바라", photoUrl: "/activity/friendship.svg" },
-  { id: "ac3", title: "MT", desc: "우리만의 추억", photoUrl: "/activity/mt.svg" },
+  {
+    id: "ac1",
+    title: "봉사 활동",
+    desc: "지역사회와 함께하는 정기 봉사로 나눔의 가치를 실천하고, 꾸준한 관계 속에서 실질적인 도움을 전합니다.",
+    photoUrl: "/activity/volunteer.svg",
+  },
+  {
+    id: "ac2",
+    title: "친해지길 바라",
+    desc: "매주 이어지는 친목 활동으로 부원들과 유대감을 쌓고, 함께 성장하는 공동체 문화를 만들어갑니다.",
+    photoUrl: "/activity/friendship.svg",
+  },
+  {
+    id: "ac3",
+    title: "MT",
+    desc: "학기마다 떠나는 MT 에서 추억을 쌓고 팀워크를 다지며, 봉사에 대한 마음을 함께 나눕니다.",
+    photoUrl: "/activity/mt.svg",
+  },
 ];
+
+/**
+ * 랜딩 문구 — design.md §5 Copy & Tone 을 따른다.
+ * 평서형(~합니다) 통일, 이모지·감탄사 없음, 소개는 한 단락.
+ * 관리자 페이지에서 편집하게 되면 landing_content 테이블로 옮긴다.
+ */
+export const landing = {
+  heroLead: "한성대학교 중앙 봉사동아리",
+  about: {
+    title: "About",
+    body: "해랑사리우는 1996년 창설된 한성대학교 중앙 봉사동아리로, 대학 생활의 의미를 봉사에서 찾고 지역사회와 함께 성장하려는 학생들이 모인 공동체입니다. 단발적인 참여에 그치지 않는 지속적인 봉사와 기획 활동을 통해 공동체에 실질적인 도움을 전하고, 구성원 각자가 책임감과 연대감을 바탕으로 성장할 수 있는 경험을 만들어갑니다.",
+  },
+  activities: {
+    title: "Activities",
+    lead: "해랑사리우는 봉사를 중심으로 다양한 활동을 진행하며, 구성원들과 함께 성장하고 지역사회에 기여합니다.",
+  },
+  recruiting: {
+    title: "Recruiting",
+    lead: "매 학기 3월과 9월에 신입 부원을 모집합니다.",
+    checklistTitle: "우리는 이런 분들을 찾고 있습니다",
+    checklist: [
+      "봉사 활동에 관심이 있고 함께 참여할 의사가 있으신 분",
+      "지역사회에 도움을 주고 싶은 따뜻한 마음을 가지신 분",
+      "부원들과 소통하며 함께 성장하고 싶으신 분",
+      "봉사 경험이 없어도 열정을 가지신 분",
+    ],
+    quote: "봉사를 사랑하시는 여러분, 환영합니다.",
+  },
+  footer: {
+    address: "서울특별시 성북구 삼선교로16길 116 한성대학교",
+    instagram: "https://www.instagram.com/haerangsariwoo",
+    instagramLabel: "@haerangsariwoo",
+  },
+} as const;
+
+/** 헤더 내비게이션 — 우리 앱 구조에 맞춘 항목 */
+export const navItems = [
+  { href: "#about", label: "소개" },
+  { href: "#activities", label: "활동" },
+  { href: "#recruiting", label: "모집 안내" },
+] as const;
 
 export const processSteps = [
   { no: 1, label: "지원" },

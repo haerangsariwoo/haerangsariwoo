@@ -1,17 +1,18 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
+import { Logo } from "@/components/ui/Logo/Logo";
 import {
-  cohortLabel,
   activityCards,
   brand,
-  faqs,
-  processSteps,
+  cohortLabel,
+  landing,
+  navItems,
   recruitConfig,
 } from "@/lib/recruit-config";
-import styles from "./page.module.css";
 import { ActivityGallery } from "./ActivityGallery";
-import { Logo } from "@/components/ui/Logo/Logo";
+import styles from "./page.module.css";
 
 export default function LandingPage() {
   const { applicationsOpen } = recruitConfig;
@@ -25,119 +26,242 @@ export default function LandingPage() {
   ];
 
   return (
-    <main className={styles.page}>
-      <div className={styles.shell}>
-        <section className={styles.hero}>
-          <div className={styles.heroBrand}>
-            <Logo size={26} className={styles.mascot} priority />
+    <div className={styles.page}>
+      {/* ---------- Header ---------- */}
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
+          <Link href="/" className={styles.brand}>
+            <Logo size={28} priority />
             <span className={styles.wordmark}>{brand.name}</span>
-          </div>
+          </Link>
 
-          <h1 className={styles.slogan}>
+          <nav className={styles.nav}>
+            {navItems.map((n) => (
+              <a key={n.href} href={n.href} className={styles.navLink}>
+                {n.label}
+              </a>
+            ))}
+          </nav>
+
+          <Link href={applicationsOpen ? "/apply" : "#recruiting"}>
+            <Button size="sm" variant={applicationsOpen ? "primary" : "secondary"}>
+              {applicationsOpen ? "지원하기" : "모집 안내"}
+            </Button>
+          </Link>
+        </div>
+      </header>
+
+      {/* 모바일용 앵커 탭 */}
+      <nav className={styles.mobileNav} aria-label="섹션 바로가기">
+        {navItems.map((n) => (
+          <a key={n.href} href={n.href} className={styles.mobileNavLink}>
+            {n.label}
+          </a>
+        ))}
+      </nav>
+
+      {/* ---------- Hero ---------- */}
+      {/* §3.1 — 카피와 CTA 를 아래로 몰아 가운데를 비운다 */}
+      <section className={styles.hero}>
+        <div className={styles.heroMedia}>
+          <Image
+            className={styles.heroImage}
+            src="/landing/hero.svg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            unoptimized
+          />
+          <span className={styles.heroScrim} />
+        </div>
+
+        <div className={styles.heroBody}>
+          <p className={styles.heroEyebrow}>{landing.heroLead}</p>
+          <h1 className={styles.heroTitle}>
             {brand.slogan1}
             <br />
             {brand.slogan2}
           </h1>
-          <p className={styles.tradition}>{brand.tradition}</p>
+          <p className={styles.heroTradition}>{brand.tradition}</p>
 
-          <div className={styles.badgeRow}>
-            <span className={cn(styles.badge, !applicationsOpen && styles.closed)}>
-              {applicationsOpen ? `${cohort} 신입부원 모집 중` : "모집 준비 중"}
-            </span>
-          </div>
-
-          {!applicationsOpen && (
-            <p className={styles.heroNote}>
-              다음 모집 일정은 준비되는 대로 이곳에 안내드립니다.
-            </p>
-          )}
-
-          <span className={styles.dolphinCircle}>
-            <Logo size={48} priority />
-          </span>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>해랑사리우에서 함께해요</h2>
-          <ActivityGallery cards={activityCards} />
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.processCard}>
-            <h2 className={styles.processTitle}>모집 절차</h2>
-            <div className={styles.steps}>
-              {processSteps.map((s, i) => (
-                <div key={s.no} className={styles.stepItem}>
-                  {i < processSteps.length - 1 && <span className={styles.stepLine} />}
-                  <span className={cn(styles.stepDot, i === 0 && styles.active)}>{s.no}</span>
-                  <span className={styles.stepLabel}>{s.label}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className={styles.scheduleList}>
-              {schedule.map((s) => (
-                <div key={s.label} className={styles.scheduleRow}>
-                  <span className={styles.scheduleLabel}>{s.label}</span>
-                  <span className={styles.scheduleValue}>{s.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>자주 묻는 질문</h2>
-          <div className={styles.faqList}>
-            {faqs.map((f) => (
-              <div key={f.q} className={styles.faqItem}>
-                <p className={styles.faqQ}>
-                  <span className={styles.faqMark}>Q</span>
-                  {f.q}
-                </p>
-                <p className={styles.faqA}>{f.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <div className={styles.ctaWrap}>
-          {applicationsOpen ? (
-            <>
-              <Link href="/apply">
-                <Button variant="primary" size="lg" fullWidth>
-                  지원 시작하기
-                </Button>
-              </Link>
-              <Link href="/apply" className={styles.subLink}>
-                이미 지원했나요? 결과 확인
-              </Link>
-            </>
-          ) : (
-            <>
-              <p className={styles.closedNote}>
-                현재는 모집 기간이 아닙니다.
-                <br />
-                모집이 시작되면 이곳에서 지원할 수 있어요.
-              </p>
-              <Link href="/apply" className={styles.subLink}>
-                지난 지원 결과 확인하기
-              </Link>
-            </>
-          )}
-        </div>
-
-        <footer className={styles.footer}>
-          <p>
-            해랑사리우 · 한성대학교 봉사동아리
-            <br />
-            문의는 공식 채널을 이용해 주세요.
+          <p className={styles.heroStatus}>
+            <span className={cn(styles.statusDot, !applicationsOpen && styles.off)} />
+            {applicationsOpen ? `${cohort} 신입 부원 모집 중` : "다음 모집을 준비하고 있습니다"}
           </p>
-          <Link href="/admin/login" className={styles.adminLink}>
-            관리자 페이지
-          </Link>
-        </footer>
-      </div>
-    </main>
+
+          <div className={styles.heroActions}>
+            {applicationsOpen ? (
+              <>
+                <Link href="/apply">
+                  <Button size="md" onPhoto>
+                    지원하기 →
+                  </Button>
+                </Link>
+                <Link href="/apply/status">
+                  <Button size="md" variant="ghost">
+                    결과 확인
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <a href="#about">
+                <Button size="md" variant="ghost">
+                  동아리 알아보기
+                </Button>
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- About ---------- */}
+      <section id="about" className={styles.section}>
+        <div className={styles.inner}>
+          <h2 className={styles.sectionTitle}>{landing.about.title}</h2>
+          <div className={cn(styles.sectionBody, styles.aboutGrid)}>
+            <div>
+              <p className={styles.aboutText}>{landing.about.body}</p>
+              <div className={styles.aboutStats}>
+                <div>
+                  <span className={styles.statValue}>1996</span>
+                  <span className={styles.statLabel}>창설</span>
+                </div>
+                <div>
+                  <span className={styles.statValue}>30년</span>
+                  <span className={styles.statLabel}>이어온 전통</span>
+                </div>
+                <div>
+                  <span className={styles.statValue}>중앙</span>
+                  <span className={styles.statLabel}>봉사동아리</span>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.aboutPhoto}>
+              <Image
+                className={styles.aboutPhotoImage}
+                src="/landing/about.svg"
+                alt="해랑사리우 활동 사진"
+                fill
+                sizes="(min-width: 1200px) 560px, 100vw"
+                unoptimized
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Activities ---------- */}
+      <section id="activities" className={cn(styles.section, styles.sectionTinted)}>
+        <div className={styles.inner}>
+          <h2 className={styles.sectionTitle}>{landing.activities.title}</h2>
+          <p className={styles.sectionLead}>{landing.activities.lead}</p>
+          <div className={styles.sectionBody}>
+            <ActivityGallery cards={activityCards} />
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Recruiting ---------- */}
+      <section id="recruiting" className={cn(styles.section, styles.sectionSheet)}>
+        <div className={styles.inner}>
+          <h2 className={styles.sectionTitle}>{landing.recruiting.title}</h2>
+          <p className={styles.sectionLead}>{landing.recruiting.lead}</p>
+
+          <div className={cn(styles.sectionBody, styles.recruitGrid)}>
+            <div>
+              <h3 className={styles.checklistTitle}>{landing.recruiting.checklistTitle}</h3>
+              <ul className={styles.checklist}>
+                {landing.recruiting.checklist.map((item) => (
+                  <li key={item} className={styles.checkItem}>
+                    <span className={styles.checkMark} aria-hidden="true">
+                      ✓
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className={styles.quote}>{landing.recruiting.quote}</p>
+            </div>
+
+            <div className={styles.scheduleCard}>
+              <p className={styles.scheduleHead}>모집 일정</p>
+              <span className={styles.cohortTag}>{cohort}</span>
+
+              <div className={styles.scheduleList}>
+                {schedule.map((s) => (
+                  <div key={s.label} className={styles.scheduleRow}>
+                    <span className={styles.scheduleLabel}>{s.label}</span>
+                    <span className={styles.scheduleValue}>{s.value}</span>
+                  </div>
+                ))}
+              </div>
+
+              {applicationsOpen ? (
+                <div className={styles.scheduleActions}>
+                  <Link href="/apply">
+                    <Button size="md">지원하기 →</Button>
+                  </Link>
+                  <Link href="/apply/status">
+                    <Button size="md" variant="secondary">
+                      결과 확인
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <p className={styles.closedNote}>
+                  현재는 지원서를 받지 않습니다. 다음 모집 일정은 준비되는 대로 이곳과 공식
+                  Instagram 에 안내드립니다.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Footer ---------- */}
+      <footer className={styles.footer}>
+        <div className={styles.inner}>
+          <div className={styles.footerGrid}>
+            <div>
+              <p className={styles.footerTitle}>{brand.name}</p>
+              <p className={styles.footerText}>
+                한성대학교 중앙 봉사동아리
+                <br />
+                {landing.footer.address}
+              </p>
+            </div>
+
+            <div>
+              <p className={styles.footerTitle}>바로가기</p>
+              <div className={styles.footerLinks}>
+                <a
+                  className={styles.footerLink}
+                  href={landing.footer.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Instagram {landing.footer.instagramLabel}
+                </a>
+                <Link className={styles.footerLink} href="/apply">
+                  신입 부원 지원하기
+                </Link>
+                <Link className={styles.footerLink} href="/apply/status">
+                  지원 결과 확인
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.footerBottom}>
+            <span>© {recruitConfig.year} 해랑사리우. All rights reserved.</span>
+            <Link href="/admin/login" className={styles.adminLink}>
+              관리자 페이지
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }

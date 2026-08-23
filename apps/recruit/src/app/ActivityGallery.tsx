@@ -76,15 +76,17 @@ export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
                     src={a.photoUrl}
                     alt={a.title}
                     fill
-                    sizes="120px"
+                    sizes="(min-width: 1200px) 380px, (min-width: 768px) 50vw, 100vw"
                     unoptimized
                   />
                 ) : (
-                  <Image src="/icons/photo.svg" alt="" width={24} height={24} unoptimized />
+                  <Image src="/icons/photo.svg" alt="" width={32} height={32} unoptimized />
                 )}
               </span>
-              <span className={styles.title}>{a.title}</span>
-              <span className={styles.desc}>{a.desc}</span>
+              <span className={styles.body}>
+                <span className={styles.title}>{a.title}</span>
+                <span className={styles.desc}>{a.desc}</span>
+              </span>
             </>
           );
 

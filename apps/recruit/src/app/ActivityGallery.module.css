@@ -1,69 +1,97 @@
-/* ---------- 썸네일 그리드 ---------- */
+/* design.md §2.5 Deal Card / §4.2 Activities 카드 (웹 확대판) */
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: var(--space-28);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .card {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
   box-shadow: var(--shadow-card);
-  padding: 8px 10px 14px;
-  /* button 로 쓰일 때 기본 스타일을 지운다 */
-  border: none;
+  border: 1px solid var(--surface-card-border);
+  /* button 으로 쓰일 때 기본 스타일을 지운다 */
   font-family: inherit;
   text-align: left;
   width: 100%;
   display: block;
+  transition: box-shadow 0.18s ease;
 }
 
-.card.clickable {
+.clickable {
   cursor: zoom-in;
 }
 
-.card.clickable:hover .photo,
-.card.clickable:focus-visible .photo {
-  filter: brightness(0.94);
+.clickable:hover {
+  box-shadow: 0 8px 28px rgba(151, 160, 178, 0.26);
 }
 
-.card.clickable:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
+.clickable:hover .thumb::after {
+  opacity: 1;
 }
 
-.photo {
+.thumb {
   position: relative;
-  height: 54px;
+  aspect-ratio: 16 / 10;
   border-radius: var(--radius-sm);
-  background: var(--brand-pale);
+  overflow: hidden;
+  background: var(--ink-200);
   display: grid;
   place-items: center;
-  margin-bottom: 12px;
-  overflow: hidden;
-  transition: filter 0.15s ease;
+}
+
+/* 확대 가능하다는 힌트 */
+.thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(23, 111, 242, 0.1);
+  opacity: 0;
+  transition: opacity 0.18s ease;
 }
 
 .thumbImage {
   object-fit: cover;
 }
 
-.title {
-  /* button 안의 span 이라 block 을 줘야 desc 와 줄이 나뉜다 */
+.body {
   display: block;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
+  padding: var(--space-16) var(--space-12) var(--space-20);
+}
+
+/* §1.2 --type-h5 : Montserrat 600 / 18 */
+.title {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--ink-800);
 }
 
 .desc {
   display: block;
-  font-size: 10px;
-  color: var(--ink-soft);
-  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-500);
+  margin-top: var(--space-8);
 }
 
-/* ---------- 라이트박스 ---------- */
+/* ================= 라이트박스 ================= */
 .dialog {
   border: none;
   padding: 0;
@@ -76,7 +104,7 @@
 }
 
 .dialog::backdrop {
-  background: rgba(6, 22, 34, 0.9);
+  background: rgba(10, 24, 40, 0.92);
 }
 
 .viewer {
@@ -84,33 +112,35 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 14px;
-  gap: 12px;
+  padding: var(--space-16);
+  gap: var(--space-12);
 }
 
 .bar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-10);
   flex: none;
 }
 
 .counter {
+  font-family: var(--font-heading);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   color: rgba(255, 255, 255, 0.75);
   font-variant-numeric: tabular-nums;
 }
 
+/* §1.5 --shadow-float : 이미지 위 원형 버튼 */
 .close {
   margin-left: auto;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   flex: none;
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.14);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--surface-white);
   font-size: 19px;
   line-height: 1;
   font-family: inherit;
@@ -120,7 +150,7 @@
 }
 
 .close:hover {
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .stage {
@@ -134,28 +164,30 @@
 
 .fullImage {
   object-fit: contain;
+  border-radius: var(--radius-lg);
 }
 
 .nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.16);
-  color: #fff;
+  color: var(--surface-white);
   font-size: 20px;
   line-height: 1;
   font-family: inherit;
   cursor: pointer;
   display: grid;
   place-items: center;
+  box-shadow: var(--shadow-float);
 }
 
 .nav:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .prev {
@@ -169,17 +201,22 @@
 .caption {
   flex: none;
   text-align: center;
-  padding-bottom: 6px;
+  padding-bottom: var(--space-6);
 }
 
 .captionTitle {
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--surface-white);
 }
 
 .captionDesc {
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.7;
   color: rgba(255, 255, 255, 0.7);
-  margin-top: 5px;
+  margin-top: var(--space-6);
+  max-width: 52ch;
+  margin-left: auto;
+  margin-right: auto;
 }

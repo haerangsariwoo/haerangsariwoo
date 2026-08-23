@@ -115,7 +115,7 @@ export default function HomePage() {
         <article className={cn(styles.card, styles.panel)}>
           <div className={styles.panelHead}>
             <h2 className={styles.panelTitle}>앨범</h2>
-            <Link href="/community/album" className={styles.panelMore}>
+            <Link href="/community?tab=앨범" className={styles.panelMore}>
               전체&nbsp;&nbsp;›
             </Link>
           </div>

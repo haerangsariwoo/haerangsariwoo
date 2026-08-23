@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { albums, notices } from "@/lib/community";
@@ -11,7 +12,22 @@ import styles from "./community.module.css";
 type Tab = "공지" | "앨범";
 
 export default function CommunityPage() {
-  const [tab, setTab] = useState<Tab>("공지");
+  // useSearchParams 는 직접 접속 시 서버 렌더에서 suspend 하므로 경계로 감싼다
+  return (
+    <Suspense fallback={<CommunityBoard initialTab="공지" />}>
+      <CommunityFromQuery />
+    </Suspense>
+  );
+}
+
+/** 홈의 "앨범 전체보기"처럼 ?tab=앨범 으로 들어오면 앨범 탭을 연다 */
+function CommunityFromQuery() {
+  const params = useSearchParams();
+  return <CommunityBoard initialTab={params.get("tab") === "앨범" ? "앨범" : "공지"} />;
+}
+
+function CommunityBoard({ initialTab }: { initialTab: Tab }) {
+  const [tab, setTab] = useState<Tab>(initialTab);
   const sorted = [...notices].sort((a, b) => Number(b.pinned) - Number(a.pinned));
 
   return (

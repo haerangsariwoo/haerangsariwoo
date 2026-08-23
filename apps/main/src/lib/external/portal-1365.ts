@@ -104,6 +104,9 @@ export async function fetch1365(params: {
       category: pick(raw, "srvcClCode"),
       startDate: toDate(pick(raw, "progrmBgnde")),
       endDate: toDate(pick(raw, "progrmEndde")),
+      // noticeBgnde/noticeEndde 가 실제 신청 가능한 모집 기간이다
+      recruitStart: toDate(pick(raw, "noticeBgnde")),
+      recruitEnd: toDate(pick(raw, "noticeEndde")),
       // 이 오퍼레이션은 모집 인원을 제공하지 않는다
       capacity: null,
       applied: null,

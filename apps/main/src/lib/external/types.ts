@@ -18,6 +18,10 @@ export interface ExternalVolunteer {
   startDate: string;
   /** 활동 종료일 (YYYY-MM-DD) */
   endDate: string;
+  /** 모집 시작일 (YYYY-MM-DD) */
+  recruitStart: string;
+  /** 모집 마감일 (YYYY-MM-DD) — 이 날짜가 지나면 신청할 수 없다 */
+  recruitEnd: string;
   /** 모집 인원 (알 수 없으면 null) */
   capacity: number | null;
   /** 신청 인원 (알 수 없으면 null) */

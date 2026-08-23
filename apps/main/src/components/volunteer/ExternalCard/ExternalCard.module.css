@@ -82,11 +82,56 @@
   font-weight: 700;
 }
 
-.date {
+.periods {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.period {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.periodLabel {
+  flex: none;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: #eef2f6;
+  border-radius: 5px;
+  padding: 2px 6px;
+}
+
+.periodLabel.recruit {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+}
+
+.periodValue {
   font-size: 11px;
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
-  margin-top: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dday {
+  flex: none;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--brand-text);
+}
+
+.dday.urgent {
+  color: #d14b57;
 }
 
 .action {

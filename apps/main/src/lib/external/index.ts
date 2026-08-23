@@ -19,13 +19,18 @@ function withinDeadline<T>(p: (signal: AbortSignal) => Promise<T>): Promise<T> {
   return p(ac.signal).finally(() => clearTimeout(timer));
 }
 
-/** 오늘 마감인 건 사실상 신청이 안 되므로, 내일 이후까지 열린 모집만 남긴다 */
+/**
+ * 아직 신청할 수 있는 모집만 남긴다.
+ * 오늘 마감인 건은 사실상 신청이 어려우므로 내일 이후까지 열린 것만 통과시킨다.
+ * 모집 기간을 알 수 없으면 활동 종료일로 대신 판단한다.
+ */
 function isStillOpen(v: ExternalVolunteer, tomorrow: string) {
-  if (!v.endDate) return true;
-  return v.endDate >= tomorrow;
+  if (v.recruitEnd) return v.recruitEnd >= tomorrow;
+  if (v.endDate) return v.endDate >= tomorrow;
+  return true;
 }
 
-/** 마감 임박 순으로 정렬하고, 신청 가능한 건만 남긴다 */
+/** 신청 가능한 건만 남기고, 모집 마감이 임박한 순으로 정렬한다 */
 function normalize(items: ExternalVolunteer[]) {
   const t = new Date();
   t.setDate(t.getDate() + 1);
@@ -33,7 +38,7 @@ function normalize(items: ExternalVolunteer[]) {
 
   return items
     .filter((v) => v.title && isStillOpen(v, tomorrow))
-    .sort((a, b) => a.startDate.localeCompare(b.startDate));
+    .sort((a, b) => (a.recruitEnd || a.startDate).localeCompare(b.recruitEnd || b.startDate));
 }
 
 export async function getExternalVolunteers(options?: {

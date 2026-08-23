@@ -76,6 +76,8 @@ export async function fetchVms(params: {
       category: pick(raw, "fldName") || pick(raw, "srvcClNm"),
       startDate: toDate(pick(raw, "actBgnDe") || pick(raw, "progrmBgnde")),
       endDate: toDate(pick(raw, "actEndDe") || pick(raw, "progrmEndde")),
+      recruitStart: toDate(pick(raw, "rcritBgnDe") || pick(raw, "noticeBgnde")),
+      recruitEnd: toDate(pick(raw, "rcritEndDe") || pick(raw, "noticeEndde")),
       capacity: toNumber(pick(raw, "rcritNmpr")),
       applied: toNumber(pick(raw, "appTotal")),
       url: "https://www.vms.or.kr",

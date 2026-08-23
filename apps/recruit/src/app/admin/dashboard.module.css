@@ -33,7 +33,8 @@
   color: var(--brand-blue-500);
 }
 .metricValue.green {
-  color: var(--brand-blue-500);
+  /* 긍정 수치 — §1.1 --accent-success 를 읽히는 농도로 */
+  color: #0a7a5b;
 }
 .metricValue.orange {
   color: #e08a1e;

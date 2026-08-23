@@ -167,16 +167,19 @@
   color: var(--brand-blue-500);
 }
 .badge.green {
-  background: var(--brand-tint-10);
-  color: var(--brand-blue-500);
+  /* 합격·예약 가능 — 긍정 상태.
+     --accent-success 원색은 11px 텍스트에 대비가 모자라(§6) 어둡게 쓴다. */
+  background: rgba(45, 215, 164, 0.2);
+  color: #0a7a5b;
 }
 .badge.grey {
   background: var(--surface-muted);
   color: var(--ink-600);
 }
 .badge.warn {
-  background: var(--brand-surface);
-  color: var(--ink-500);
+  /* 미선택·보류 — 눈에 띄되 오류는 아닌 상태 */
+  background: rgba(216, 209, 56, 0.22);
+  color: #7a6a09;
 }
 .badge.danger {
   background: #fdecec;

@@ -3,6 +3,7 @@ import { AdminNav } from "./AdminNav";
 import { AdminTopbar } from "./AdminTopbar";
 import "./admin-tokens.css";
 import styles from "./layout.module.css";
+import { Logo } from "@/components/ui/Logo/Logo";
 
 export const metadata = {
   title: "운영진 관리자 · 해랑사리우",
@@ -13,9 +14,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
     <div className={`adminScope ${styles.shell}`}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <span className={styles.mascot} role="img" aria-label="마스코트">
-            🐬
-          </span>
+          <Logo size={26} className={styles.mascot} priority />
           <span className={styles.wordmark}>해랑사리우</span>
           <span className={styles.adminTag}>ADMIN</span>
         </div>

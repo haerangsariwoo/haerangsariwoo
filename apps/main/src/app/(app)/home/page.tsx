@@ -13,6 +13,7 @@ import {
 import { notices } from "@/lib/community";
 import { homeCopy } from "@/lib/app-content";
 import styles from "./home.module.css";
+import { Logo } from "@/components/ui/Logo/Logo";
 
 const QUICK_MENU = [
   { label: "봉사 캘린더", icon: "/icons/quick-calendar.svg", href: "/calendar" },
@@ -25,9 +26,7 @@ export default function HomePage() {
   return (
     <>
       <section className={styles.hero}>
-        <span className={styles.heroMascot} role="img" aria-label="마스코트">
-          🐬
-        </span>
+        <Logo size={68} className={styles.heroMascot} priority />
         <h1 className={styles.greeting}>
           안녕하세요, {member.name}
           {homeCopy.greetingSuffix}

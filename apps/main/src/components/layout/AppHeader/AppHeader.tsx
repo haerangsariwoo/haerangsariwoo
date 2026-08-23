@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { profile } from "@/lib/my";
 import styles from "./AppHeader.module.css";
+import { Logo } from "@/components/ui/Logo/Logo";
 
 const MENU: { label: string; href: Route }[] = [
   { label: "봉사 캘린더", href: "/calendar" },
@@ -32,9 +33,7 @@ export function AppHeader() {
     <>
       <header className={styles.header}>
         <div className={styles.brand}>
-          <span className={styles.mascot} role="img" aria-label="해랑사리우 마스코트">
-            🐬
-          </span>
+          <Logo size={26} className={styles.mascot} priority />
           <span className={styles.wordmark}>해랑사리우</span>
         </div>
         <button

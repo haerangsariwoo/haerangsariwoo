@@ -2,6 +2,7 @@ import { AdminNav } from "./AdminNav";
 import { recruitConfig } from "@/lib/recruit-config";
 import styles from "./layout.module.css";
 import { AdminTitle } from "./AdminTitle";
+import { Logo } from "@/components/ui/Logo/Logo";
 
 export const metadata = { title: "모집 관리자 · 해랑사리우" };
 
@@ -10,9 +11,7 @@ export default function RecruitAdminLayout({ children }: LayoutProps<"/admin">) 
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <span className={styles.mascot} role="img" aria-label="마스코트">
-            🐬
-          </span>
+          <Logo size={22} className={styles.mascot} priority />
           <span className={styles.wordmark}>해랑사리우</span>
         </div>
         <p className={styles.season}>

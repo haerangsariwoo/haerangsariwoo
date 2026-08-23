@@ -10,6 +10,7 @@ import {
   recruitConfig,
 } from "@/lib/recruit-config";
 import styles from "./page.module.css";
+import { Logo } from "@/components/ui/Logo/Logo";
 
 export default function LandingPage() {
   const { applicationsOpen, cohort, semester } = recruitConfig;
@@ -26,9 +27,7 @@ export default function LandingPage() {
       <div className={styles.shell}>
         <section className={styles.hero}>
           <div className={styles.heroBrand}>
-            <span className={styles.mascot} role="img" aria-label="해랑사리우 마스코트">
-              🐬
-            </span>
+            <Logo size={26} className={styles.mascot} priority />
             <span className={styles.wordmark}>{brand.name}</span>
           </div>
 
@@ -51,8 +50,8 @@ export default function LandingPage() {
               : "다음 모집 일정은 준비되는 대로 이곳에 안내드립니다."}
           </p>
 
-          <span className={styles.dolphinCircle} role="img" aria-label="마스코트">
-            🐬
+          <span className={styles.dolphinCircle}>
+            <Logo size={48} />
           </span>
         </section>
 

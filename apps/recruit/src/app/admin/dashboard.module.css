@@ -23,7 +23,7 @@
 }
 
 .metricValue {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   margin-top: 8px;
   font-variant-numeric: tabular-nums;
@@ -44,7 +44,7 @@
 }
 
 .metricUnit {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-600);
   font-weight: 500;
   margin-left: 4px;
@@ -82,14 +82,14 @@
   color: var(--brand-blue-500);
   display: grid;
   place-items: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   flex: none;
 }
 
 .stageLabel {
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .stageDate {
@@ -127,14 +127,14 @@
 
 .track {
   height: 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-pill);
   background: var(--surface-muted);
   overflow: hidden;
 }
 
 .fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--radius-pill);
   background: var(--brand-blue-500);
 }
 

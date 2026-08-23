@@ -9,14 +9,14 @@
 /* §1.2 --type-h3 : Montserrat 600 / 24 */
 .introTitle {
   font-family: var(--font-heading);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--ink-900);
   line-height: 1.35;
 }
 
 .introDesc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-500);
   line-height: 1.7;
 }
@@ -41,7 +41,7 @@
 }
 
 .privacyText {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-500);
   line-height: 1.7;
 }
@@ -75,7 +75,7 @@
 
 .stepNote {
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-600);
   padding-top: var(--space-6);
 }
@@ -85,7 +85,7 @@
   background: var(--surface-white);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  padding: var(--space-16);
+  padding: var(--space-24);
   display: flex;
   flex-direction: column;
   gap: var(--space-14);
@@ -93,7 +93,7 @@
 
 .checkTitle {
   font-family: var(--font-heading);
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--ink-800);
 }
@@ -102,7 +102,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-10);
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--ink-500);
   line-height: 1.6;
   cursor: pointer;

@@ -33,7 +33,7 @@
   border-radius: var(--radius-sm);
   border: 1px solid rgba(23, 111, 242, 0.14);
   padding: 0 13px;
-  font-size: 13px;
+  font-size: 14px;
   background: var(--surface-white);
 }
 
@@ -51,13 +51,13 @@
 }
 
 .toggleTitle {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--ink-800);
 }
 
 .toggleDesc {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--ink-600);
   margin-top: 5px;
   line-height: 1.5;
@@ -110,12 +110,12 @@
 
 .qLabel {
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .qType {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-600);
 }
 
@@ -139,12 +139,12 @@
   display: grid;
   place-items: center;
   color: var(--ink-600);
-  font-size: 11px;
+  font-size: 12px;
   margin-bottom: 10px;
 }
 
 .photoTitle {
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -155,7 +155,7 @@
   border-radius: 8px;
   border: 1px solid rgba(23, 111, 242, 0.14);
   background: var(--surface-white);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink-600);
   cursor: pointer;

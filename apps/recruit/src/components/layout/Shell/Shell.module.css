@@ -38,6 +38,7 @@
   border-radius: var(--radius-xs);
   background: var(--brand-surface);
   color: var(--ink-800);
+  /* 화살표 글리프 크기 — 본문 타입 스케일과 무관 */
   font-size: 22px;
   line-height: 1;
   display: grid;
@@ -50,7 +51,7 @@
 
 .title {
   font-family: var(--font-heading);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--ink-900);
   flex: 1;

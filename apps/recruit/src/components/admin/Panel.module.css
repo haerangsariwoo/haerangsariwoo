@@ -13,13 +13,13 @@
 }
 
 .title {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--ink-800);
 }
 
 .count {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 5px 12px;
   border-radius: var(--radius-pill);
@@ -111,7 +111,7 @@
 
 .table thead th {
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink-600);
   padding: 0 10px 12px;
@@ -155,7 +155,7 @@
 
 .badge {
   display: inline-flex;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 5px 11px;
   border-radius: var(--radius-pill);
@@ -189,9 +189,9 @@
 .rowBtn {
   border: 1px solid rgba(23, 111, 242, 0.14);
   background: var(--surface-white);
-  border-radius: 7px;
+  border-radius: var(--radius-xs);
   padding: 5px 11px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink-600);
   cursor: pointer;

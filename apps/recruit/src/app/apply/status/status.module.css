@@ -14,7 +14,7 @@
 .centerTitle {
   text-align: center;
   font-family: var(--font-heading);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--ink-900);
   line-height: 1.35;
@@ -22,7 +22,7 @@
 
 .centerDesc {
   text-align: center;
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--ink-500);
   line-height: 1.7;
 }
@@ -32,12 +32,12 @@
   background: var(--surface-white);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  padding: var(--space-20);
+  padding: var(--space-24);
 }
 
 .timelineTitle {
   font-family: var(--font-heading);
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--ink-800);
   margin-bottom: var(--space-16);
@@ -56,7 +56,7 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   flex: none;
   background: var(--surface-muted);
@@ -71,13 +71,13 @@
 .stepLabel {
   flex: 1;
   min-width: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-800);
 }
 
 .stepState {
   flex: none;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink-600);
 }
@@ -90,7 +90,7 @@
   background: var(--brand-surface);
   border-radius: var(--radius-md);
   padding: var(--space-14) var(--space-16);
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--ink-500);
   line-height: 1.7;
 }
@@ -121,7 +121,7 @@
 
 .resultLabel {
   font-family: var(--font-heading);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--accent-success);
@@ -156,7 +156,7 @@
 /* ---------- 면접 슬롯 ---------- */
 .sectionTitle {
   font-family: var(--font-heading);
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--ink-800);
 }
@@ -239,7 +239,7 @@
 }
 
 .slotLeft {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--brand-blue-500);
   font-variant-numeric: tabular-nums;
@@ -252,7 +252,7 @@
 .placeNote {
   display: flex;
   gap: var(--space-8);
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--ink-500);
   line-height: 1.7;
 }
@@ -262,12 +262,12 @@
   background: var(--surface-white);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  padding: var(--space-20);
+  padding: var(--space-24);
 }
 
 .nextTitle {
   font-family: var(--font-heading);
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--ink-800);
   margin-bottom: var(--space-14);
@@ -284,7 +284,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-12);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-800);
 }
 
@@ -296,7 +296,7 @@
   color: var(--brand-blue-500);
   display: grid;
   place-items: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   flex: none;
 }
@@ -334,7 +334,7 @@
 }
 
 .demoNote {
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--ink-600);
   text-align: center;
   line-height: 1.6;

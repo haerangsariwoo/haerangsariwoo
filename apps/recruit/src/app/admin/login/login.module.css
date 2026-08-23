@@ -28,13 +28,13 @@
 }
 
 .title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--ink-800);
 }
 
 .desc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-600);
 }
 
@@ -46,7 +46,7 @@
 
 .note {
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-600);
 }
 

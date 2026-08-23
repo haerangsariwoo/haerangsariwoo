@@ -8,7 +8,12 @@ import styles from "./NoticeComposer.module.css";
 
 const CATEGORIES = ["필독", "일정", "후기", "MT"] as const;
 
-export function NoticeComposer() {
+interface NoticeComposerProps {
+  /** 공지를 만들면 목록에 추가하도록 부모에 알린다 */
+  onCreate?: (n: { title: string; body: string; category: string; pinned: boolean }) => void;
+}
+
+export function NoticeComposer({ onCreate }: NoticeComposerProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -28,6 +33,8 @@ export function NoticeComposer() {
     e.preventDefault();
     setBusy(true);
     setResult(null);
+
+    onCreate?.({ title: title.trim(), body: body.trim(), category, pinned });
 
     if (!push) {
       setResult({ ok: true, text: "공지를 등록했습니다. (알림은 보내지 않음)" });

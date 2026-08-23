@@ -63,17 +63,6 @@ export default function HomePage() {
       </section>
 
       <section className={styles.duo}>
-        <article className={cn(styles.card, styles.nextCard)}>
-          <div className={styles.nextHead}>
-            <h2 className={styles.cardTitle}>다음 활동</h2>
-            <span className={styles.ddayBadge}>D-{nextActivity.dday}</span>
-          </div>
-          <p className={styles.nextOrg}>{nextActivity.org}</p>
-          <p className={styles.nextTitle}>{nextActivity.title}</p>
-          <p className={styles.nextWhen}>{nextActivity.dateLabel}</p>
-          <p className={styles.nextMeta}>{nextActivity.place}</p>
-          <p className={styles.nextMeta}>{nextActivity.capacityLabel}</p>
-        </article>
         <article className={cn(styles.card, styles.statusCard)}>
           <h2 className={styles.cardTitle}>이번 학기 현황</h2>
           <div className={styles.donutWrap}>
@@ -91,6 +80,17 @@ export default function HomePage() {
           </div>
         </article>
 
+        <article className={cn(styles.card, styles.nextCard)}>
+          <div className={styles.nextHead}>
+            <h2 className={styles.cardTitle}>다음 활동</h2>
+            <span className={styles.ddayBadge}>D-{nextActivity.dday}</span>
+          </div>
+          <p className={styles.nextOrg}>{nextActivity.org}</p>
+          <p className={styles.nextTitle}>{nextActivity.title}</p>
+          <p className={styles.nextWhen}>{nextActivity.dateLabel}</p>
+          <p className={styles.nextMeta}>{nextActivity.place}</p>
+          <p className={styles.nextMeta}>{nextActivity.capacityLabel}</p>
+        </article>
       </section>
 
       <section>

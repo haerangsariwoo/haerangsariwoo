@@ -67,33 +67,30 @@
   box-shadow: var(--shadow-card);
 }
 
-/* 카드를 나란히 두면 중요도가 같아 보인다.
-   시간이 걸린 '다음 활동'을 크게 두고, 현황은 카드를 벗겨 배경 위에 얹는다. */
+/* 두 카드를 한 줄에. 좁은 화면에서는 세로로 쌓인다. */
 .duo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-20);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+  align-items: stretch;
+}
+
+@media (max-width: 359px) {
+  .duo {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ---------- 이번 학기 현황 — 카드가 아니라 배경 위의 띠 ---------- */
 .statusCard {
-  background: none;
-  box-shadow: none;
-  border-radius: 0;
-  padding: 0 0 var(--space-16);
-  border-bottom: 1px solid rgba(23, 111, 242, 0.12);
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-areas:
-    "title title"
-    "donut lines";
+  padding: var(--space-16);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  column-gap: var(--space-20);
-  row-gap: var(--space-14);
+  gap: var(--space-12);
 }
 
 .cardTitle {
-  grid-area: title;
   align-self: flex-start;
   font-family: var(--font-accent);
   font-size: 19px;
@@ -103,7 +100,6 @@
 }
 
 .donutWrap {
-  grid-area: donut;
   position: relative;
   width: 82px;
   height: 82px;
@@ -120,8 +116,7 @@
 }
 
 .statusLines {
-  grid-area: lines;
-  align-self: center;
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
@@ -143,10 +138,9 @@
   padding: var(--space-16);
   display: flex;
   flex-direction: column;
-  /* 화면에서 가장 먼저 눈에 들어와야 하는 카드 */
   background: var(--surface-white);
   border-radius: var(--radius-md);
-  box-shadow: 0 8px 28px rgba(23, 111, 242, 0.13);
+  box-shadow: var(--shadow-card);
 }
 
 .nextHead {

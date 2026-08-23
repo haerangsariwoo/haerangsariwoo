@@ -185,9 +185,10 @@
 }
 
 .sectionTitle {
-  font-family: var(--font-heading);
-  font-size: 18px;
-  font-weight: 600;
+  font-family: var(--font-accent);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
   color: var(--ink-800);
 }
 
@@ -295,9 +296,10 @@
 }
 
 .panelTitle {
-  font-family: var(--font-heading);
-  font-size: 18px;
-  font-weight: 600;
+  font-family: var(--font-accent);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
   color: var(--ink-800);
 }
 

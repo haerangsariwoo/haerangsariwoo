@@ -114,7 +114,7 @@ export default function AdminContentPage() {
       <Panel
         title="활동 사진 (앨범)"
         count={`${albums.length}개`}
-        desc="커뮤니티 앨범과 홈 화면에 노출되는 사진입니다. 상세 관리는 활동앨범 메뉴에서 할 수 있어요."
+        desc="커뮤니티 앨범과 홈 화면에 노출되는 사진입니다."
       >
         <div className={styles.itemList}>
           {albums.map((a) => (
@@ -146,7 +146,7 @@ export default function AdminContentPage() {
         </div>
 
         <div className={styles.saveBar}>
-          <p className={styles.saveNote}>새 앨범은 활동앨범 메뉴에서 만들 수 있습니다.</p>
+          <p className={styles.saveNote}>앨범을 만들면 커뮤니티 탭에 바로 보입니다.</p>
           <button type="button" className={cn(toolbar.button, toolbar.primary)}>
             저장
           </button>

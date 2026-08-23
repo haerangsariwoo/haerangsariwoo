@@ -151,3 +151,59 @@
 .publishText b {
   color: var(--a-ink);
 }
+
+/* ---------- 드래그 앤 드롭 ---------- */
+.colTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--a-ink);
+  margin-bottom: 12px;
+}
+
+/* 끌어다 놓을 수 있는 곳임을 알린다 */
+.poolRow,
+.memberChip {
+  cursor: grab;
+  user-select: none;
+}
+
+.poolRow:active,
+.memberChip:active {
+  cursor: grabbing;
+}
+
+.dragging {
+  opacity: 0.4;
+}
+
+/* 키보드·클릭으로 고른 상태 */
+.picked {
+  outline: 2px solid var(--a-brand);
+  outline-offset: 2px;
+}
+
+/* 드롭 대상 위에 올라와 있을 때 */
+.dropOver {
+  outline: 2px dashed var(--a-brand);
+  outline-offset: 3px;
+  background: var(--a-brand-soft);
+}
+
+.emptyHint {
+  font-size: 12px;
+  color: var(--a-ink-soft);
+  padding: 8px 2px;
+}
+
+.pickHint {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--a-radius-sm);
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+  font-size: 12.5px;
+}
+
+.poolList {
+  min-height: 120px;
+}

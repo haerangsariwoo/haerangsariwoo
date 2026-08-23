@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
           <span className={styles.avatar}>우</span>
           <div>
             <p className={styles.profileName}>김우영 운영진</p>
-            <p className={styles.profileMeta}>24-1기 · 관리자</p>
+            <p className={styles.profileMeta}>24-1기 관리자</p>
           </div>
         </div>
 

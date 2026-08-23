@@ -66,7 +66,7 @@ export function VolunteerCard({ item }: { item: VolunteerSummary }) {
         </a>
       ) : (
         <Link href={`/volunteer/${item.id}`} className={styles.action}>
-          신청하기
+          신청
         </Link>
       )}
     </article>

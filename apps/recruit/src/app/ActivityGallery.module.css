@@ -1,0 +1,185 @@
+/* ---------- 썸네일 그리드 ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 8px 10px 14px;
+  /* button 로 쓰일 때 기본 스타일을 지운다 */
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  display: block;
+}
+
+.card.clickable {
+  cursor: zoom-in;
+}
+
+.card.clickable:hover .photo,
+.card.clickable:focus-visible .photo {
+  filter: brightness(0.94);
+}
+
+.card.clickable:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.photo {
+  position: relative;
+  height: 54px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-pale);
+  display: grid;
+  place-items: center;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: filter 0.15s ease;
+}
+
+.thumbImage {
+  object-fit: cover;
+}
+
+.title {
+  /* button 안의 span 이라 block 을 줘야 desc 와 줄이 나뉜다 */
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.desc {
+  display: block;
+  font-size: 10px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+
+/* ---------- 라이트박스 ---------- */
+.dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: 100vw;
+  max-height: 100dvh;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.dialog::backdrop {
+  background: rgba(6, 22, 34, 0.9);
+}
+
+.viewer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  gap: 12px;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+.counter {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+  font-variant-numeric: tabular-nums;
+}
+
+.close {
+  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 19px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.close:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullImage {
+  object-fit: contain;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.nav:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.prev {
+  left: 0;
+}
+
+.next {
+  right: 0;
+}
+
+.caption {
+  flex: none;
+  text-align: center;
+  padding-bottom: 6px;
+}
+
+.captionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.captionDesc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 5px;
+}

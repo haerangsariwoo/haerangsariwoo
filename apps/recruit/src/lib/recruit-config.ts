@@ -56,9 +56,10 @@ export interface ActivityCard {
 }
 
 export const activityCards: ActivityCard[] = [
-  { id: "ac1", title: "봉사", desc: "지역사회와 함께", photoUrl: null },
-  { id: "ac2", title: "친목", desc: "친해지길 바라", photoUrl: null },
-  { id: "ac3", title: "MT", desc: "우리만의 추억", photoUrl: null },
+  // photoUrl 은 관리자 페이지에서 실제 활동 사진으로 교체한다
+  { id: "ac1", title: "봉사", desc: "지역사회와 함께", photoUrl: "/activity/volunteer.svg" },
+  { id: "ac2", title: "친목", desc: "친해지길 바라", photoUrl: "/activity/friendship.svg" },
+  { id: "ac3", title: "MT", desc: "우리만의 추억", photoUrl: "/activity/mt.svg" },
 ];
 
 export const processSteps = [

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
@@ -11,6 +10,7 @@ import {
   recruitConfig,
 } from "@/lib/recruit-config";
 import styles from "./page.module.css";
+import { ActivityGallery } from "./ActivityGallery";
 import { Logo } from "@/components/ui/Logo/Logo";
 
 export default function LandingPage() {
@@ -59,27 +59,7 @@ export default function LandingPage() {
 
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>해랑사리우에서 함께해요</h2>
-          <div className={styles.activityGrid}>
-            {activityCards.map((a) => (
-              <article key={a.id} className={styles.activityCard}>
-                <div className={styles.photo}>
-                  {a.photoUrl ? (
-                    <Image src={a.photoUrl} alt={a.title} width={94} height={54} unoptimized />
-                  ) : (
-                    <Image
-                      src="/icons/photo.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                      unoptimized
-                    />
-                  )}
-                </div>
-                <h3 className={styles.activityTitle}>{a.title}</h3>
-                <p className={styles.activityDesc}>{a.desc}</p>
-              </article>
-            ))}
-          </div>
+          <ActivityGallery cards={activityCards} />
         </section>
 
         <section className={styles.section}>

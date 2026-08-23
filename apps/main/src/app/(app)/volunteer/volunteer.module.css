@@ -173,9 +173,9 @@
 
 .groupTitle {
   font-family: var(--font-accent);
+  /* 활동 탭의 그룹 라벨과 같은 급 */
+  font-size: 20px;
   font-weight: 400;
   letter-spacing: 0.01em;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink-soft);
+  color: var(--ink-800);
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AdminNav } from "./AdminNav";
 import { recruitConfig } from "@/lib/recruit-config";
 import styles from "./layout.module.css";
@@ -10,10 +11,10 @@ export default function RecruitAdminLayout({ children }: LayoutProps<"/admin">) 
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
-        <div className={styles.brand}>
+        <Link href="/admin" className={styles.brand} aria-label="관리자 홈으로">
           <Logo size={22} className={styles.mascot} priority />
           <span className={styles.wordmark}>해랑사리우</span>
-        </div>
+        </Link>
         <p className={styles.season}>
           신규모집 운영
           <b>

@@ -32,10 +32,10 @@ export function AppHeader() {
   return (
     <>
       <header className={styles.header}>
-        <div className={styles.brand}>
+        <Link href="/home" className={styles.brand} aria-label="홈으로">
           <Logo size={26} className={styles.mascot} priority />
           <span className={styles.wordmark}>해랑사리우</span>
-        </div>
+        </Link>
         <button
           type="button"
           className={styles.menuButton}

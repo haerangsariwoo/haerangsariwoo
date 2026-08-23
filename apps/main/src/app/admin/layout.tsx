@@ -13,11 +13,11 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
     <div className={`adminScope ${styles.shell}`}>
       <aside className={styles.sidebar}>
-        <div className={styles.brand}>
+        <Link href="/admin" className={styles.brand} aria-label="관리자 홈으로">
           <Logo size={26} className={styles.mascot} priority />
           <span className={styles.wordmark}>해랑사리우</span>
           <span className={styles.adminTag}>ADMIN</span>
-        </div>
+        </Link>
 
         <AdminNav />
 

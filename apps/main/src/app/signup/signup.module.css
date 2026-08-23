@@ -1,0 +1,226 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg);
+  padding: 32px 16px 40px;
+}
+
+.shell {
+  width: 100%;
+  max-width: 398px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.backLink {
+  font-size: 13px;
+  color: var(--brand-text);
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 8px;
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 성별 선택 */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  padding-left: 2px;
+}
+
+.optional {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin-left: 6px;
+}
+
+.genderRow {
+  display: flex;
+  gap: 10px;
+}
+
+.genderBtn {
+  flex: 1;
+  height: 52px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.genderBtn.on {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.select {
+  height: 56px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 0 14px;
+  font-size: 15px;
+  color: var(--ink);
+  width: 100%;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.select.placeholder {
+  color: var(--ink-soft);
+}
+
+.select.invalid {
+  border-color: var(--orange);
+  background: var(--warn-bg);
+}
+
+/* MBTI 그리드 */
+.mbtiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.mbtiBtn {
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mbtiBtn.on {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.errorText {
+  font-size: 11px;
+  color: var(--orange);
+  font-weight: 700;
+  padding-left: 2px;
+}
+
+.helper {
+  font-size: 11px;
+  color: var(--ink-soft);
+  padding-left: 2px;
+  line-height: 1.5;
+}
+
+.note {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  line-height: 1.6;
+}
+
+/* 제출 완료 */
+.doneWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding-top: 40px;
+  text-align: center;
+}
+
+.doneIcon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--mint-bg);
+  color: var(--mint-text);
+  display: grid;
+  place-items: center;
+}
+
+.doneTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.doneDesc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+.summary {
+  width: 100%;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.summaryRow {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.summaryLabel {
+  width: 84px;
+  flex: none;
+  color: var(--ink-soft);
+}
+
+.summaryValue {
+  font-weight: 700;
+  color: var(--ink);
+}

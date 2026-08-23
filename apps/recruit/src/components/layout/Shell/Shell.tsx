@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import type { Route } from "next";
+import { Logo } from "@/components/ui/Logo/Logo";
 import styles from "./Shell.module.css";
 
 interface ShellProps {
@@ -23,6 +24,9 @@ export function Shell({ title, back, step, children }: ShellProps) {
                 </Link>
               )}
               <span className={styles.title}>{title}</span>
+              <Link href="/" className={styles.homeLogo} aria-label="처음으로">
+                <Logo size={24} />
+              </Link>
               {step && (
                 <span className={styles.step}>
                   {step.current} / {step.total}

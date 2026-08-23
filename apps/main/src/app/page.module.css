@@ -71,3 +71,23 @@
   color: var(--ink-soft);
   line-height: 1.6;
 }
+
+.signupRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.signupText {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.signupLink {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

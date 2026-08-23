@@ -42,13 +42,10 @@ html {
   height: 100%;
 }
 
-html,
 body {
+  /* overflow-x: hidden 은 position: sticky 를 깨뜨리므로 쓰지 않는다.
+     가로 넘침은 각 화면에서 막는다. */
   max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
   min-height: 100%;
   color: var(--ink);
   background: var(--bg);

@@ -40,10 +40,11 @@
   font-size: 16px;
   font-weight: 700;
   color: var(--ink);
+  flex: 1;
+  min-width: 0;
 }
 
 .step {
-  margin-left: auto;
   font-size: 12px;
   font-weight: 700;
   color: var(--brand);
@@ -67,4 +68,15 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.homeLogo {
+  display: flex;
+  align-items: center;
+  flex: none;
+  opacity: 0.9;
+}
+
+.homeLogo:hover {
+  opacity: 1;
 }

@@ -4,7 +4,7 @@ export const metrics = [
   { label: "오늘 봉사", value: "2건", caption: "진행 예정", tone: "blue" as const, icon: "sun" },
   { label: "출석 현황", value: "18 / 24명", caption: "75% 참여", tone: "green" as const, icon: "check" },
   { label: "미승인 봉사시간", value: "7건", caption: "검토 필요", tone: "orange" as const, icon: "alert" },
-  { label: "신규 신청", value: "12명", caption: "대기 3명", tone: "purple" as const, icon: "plus" },
+  { label: "가입 승인 대기", value: "3명", caption: "검토 필요", tone: "purple" as const, icon: "plus" },
 ];
 
 export interface TodayVolunteer {
@@ -69,7 +69,7 @@ export const upcomingEvents = [
 export const quickActions = [
   { id: "qa1", label: "봉사시간 승인", desc: "7건의 증빙 검토", href: "/admin/hours" as const, tone: "orange" as const },
   { id: "qa2", label: "출석 처리", desc: "참여 여부 확인", href: "/admin/applicants" as const, tone: "blue" as const },
-  { id: "qa3", label: "회원 등록", desc: "학번·식별번호 발급", href: "/admin/members" as const, tone: "green" as const },
+  { id: "qa3", label: "가입 승인", desc: "신규 가입 신청 검토", href: "/admin/members" as const, tone: "green" as const },
   { id: "qa4", label: "팀짜기", desc: "행사 조 편성", href: "/admin/teams" as const, tone: "purple" as const },
 ];
 
@@ -138,19 +138,22 @@ export interface AdminMember {
   id: string;
   name: string;
   studentId: string;
+  /** 생년월일 6자리 — 로그인 비밀번호 */
+  birth: string;
+  gender: "남" | "여";
   cohort: string;
   track: string;
+  mbti?: string;
   role: "부원" | "운영진";
   hours: number;
-  code: string;
 }
 
 export const adminMembers: AdminMember[] = [
-  { id: "m1", name: "김우영", studentId: "2391005", cohort: "26기", track: "IT공과대 · 컴퓨터공학", role: "운영진", hours: 124, code: "482913" },
-  { id: "m2", name: "재겸", studentId: "2591001", cohort: "59기", track: "IT공과대 · 컴퓨터공학", role: "운영진", hours: 76, code: "301755" },
-  { id: "m3", name: "이서연", studentId: "2591044", cohort: "59기", track: "디자인대 · 시각디자인", role: "부원", hours: 58, code: "774120" },
-  { id: "m4", name: "박민준", studentId: "2491120", cohort: "58기", track: "사회과학대 · 행정학", role: "부원", hours: 92, code: "156089" },
-  { id: "m5", name: "최하늘", studentId: "2591137", cohort: "59기", track: "인문대 · 국어국문", role: "부원", hours: 41, code: "620344" },
+  { id: "m1", name: "김우영", studentId: "2391005", birth: "010204", gender: "남", cohort: "26기", track: "IT공과대 · 컴퓨터공학", mbti: "ENTJ", role: "운영진", hours: 124 },
+  { id: "m2", name: "재겸", studentId: "2591001", birth: "060312", gender: "남", cohort: "59기", track: "IT공과대 · 컴퓨터공학", mbti: "INFJ", role: "운영진", hours: 76 },
+  { id: "m3", name: "이서연", studentId: "2591044", birth: "060821", gender: "여", cohort: "59기", track: "디자인대 · 시각디자인", mbti: "ENFP", role: "부원", hours: 58 },
+  { id: "m4", name: "박민준", studentId: "2491120", birth: "050415", gender: "남", cohort: "58기", track: "사회과학대 · 행정학", mbti: "ISTP", role: "부원", hours: 92 },
+  { id: "m5", name: "최하늘", studentId: "2591137", birth: "061103", gender: "여", cohort: "59기", track: "인문대 · 국어국문", mbti: "ISFJ", role: "부원", hours: 41 },
 ];
 
 /* ---------- 팀짜기 ---------- */

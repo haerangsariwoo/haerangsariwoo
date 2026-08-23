@@ -11,19 +11,29 @@ export function Badge({ tone, children }: { tone: BadgeTone; children: ReactNode
 export function RowAction({
   children,
   primary,
+  onClick,
+  title,
 }: {
   children: ReactNode;
   primary?: boolean;
+  onClick?: () => void;
+  title?: string;
 }) {
   return (
-    <button type="button" className={cn(styles.rowAction, primary && styles.primary)}>
+    <button
+      type="button"
+      className={cn(styles.rowAction, primary && styles.primary)}
+      onClick={onClick}
+      title={title}
+    >
       {children}
     </button>
   );
 }
 
 interface DataTableProps {
-  columns: string[];
+  /** 문자열 외에 체크박스 같은 요소도 헤더에 넣을 수 있다 */
+  columns: ReactNode[];
   children: ReactNode;
   empty?: string;
   isEmpty?: boolean;
@@ -39,8 +49,8 @@ export function DataTable({ columns, children, empty, isEmpty }: DataTableProps)
       <table className={styles.table}>
         <thead>
           <tr>
-            {columns.map((c) => (
-              <th key={c}>{c}</th>
+            {columns.map((c, i) => (
+              <th key={i}>{c}</th>
             ))}
           </tr>
         </thead>

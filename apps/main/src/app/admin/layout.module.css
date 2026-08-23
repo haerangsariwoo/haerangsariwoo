@@ -242,3 +242,19 @@
     line-height: 1.6;
   }
 }
+
+/* 상단바 아이콘 버튼의 알림 점 */
+.iconButton {
+  position: relative;
+}
+
+.iconDot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--a-orange);
+  border: 1.5px solid var(--a-surface);
+}

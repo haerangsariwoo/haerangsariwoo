@@ -112,36 +112,39 @@ export function HeroSlider({ applicationsOpen, cohort }: HeroSliderProps) {
         </div>
       </div>
 
-      <button
-        type="button"
-        className={cn(styles.arrow, styles.prev)}
-        onClick={() => go(-1)}
-        aria-label="이전 사진"
-      >
-        ‹
-      </button>
-      <button
-        type="button"
-        className={cn(styles.arrow, styles.next)}
-        onClick={() => go(1)}
-        aria-label="다음 사진"
-      >
-        ›
-      </button>
+      <div className={styles.controls}>
+        <button
+          type="button"
+          className={cn(styles.arrow, styles.prev)}
+          onClick={() => go(-1)}
+          aria-label="이전 사진"
+        >
+          ‹
+        </button>
 
-      <div className={styles.dots}>
-        {heroSlides.map((s, i) => (
-          <button
-            key={s.id}
-            type="button"
-            className={styles.dot}
-            aria-current={i === index}
-            aria-label={`${i + 1}번째 사진 보기`}
-            onClick={() => setIndex(i)}
-          >
-            <span className={styles.dotMark} />
-          </button>
-        ))}
+        <div className={styles.dots}>
+          {heroSlides.map((s, i) => (
+            <button
+              key={s.id}
+              type="button"
+              className={styles.dot}
+              aria-current={i === index}
+              aria-label={`${i + 1}번째 사진 보기`}
+              onClick={() => setIndex(i)}
+            >
+              <span className={styles.dotMark} />
+            </button>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          className={cn(styles.arrow, styles.next)}
+          onClick={() => go(1)}
+          aria-label="다음 사진"
+        >
+          ›
+        </button>
       </div>
     </section>
   );

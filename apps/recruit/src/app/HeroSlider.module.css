@@ -2,7 +2,10 @@
 
 .hero {
   position: relative;
-  min-height: 100svh;
+  /* svh 로 고정한다. dvh 를 쓰면 모바일 주소창이 접히고 펴질 때마다
+     높이가 바뀌어 사진 크롭이 흔들린다.
+     헤더(72px)가 위에 쌓이므로 그만큼 빼야 한 화면에 딱 맞는다. */
+  height: calc(100svh - 72px);
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -11,7 +14,7 @@
 
 @media (min-width: 768px) {
   .hero {
-    min-height: min(88vh, 900px);
+    height: min(88vh, 900px);
   }
 }
 
@@ -176,11 +179,9 @@
 /* ---------- 조작부 ---------- */
 /* §1.5 --shadow-float : 이미지 위 원형 버튼 */
 .arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
   width: 44px;
   height: 44px;
+  flex: none;
   border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
@@ -200,32 +201,59 @@
   background: rgba(255, 255, 255, 0.34);
 }
 
-.prev {
-  left: var(--space-12);
-}
-
-.next {
-  right: var(--space-12);
-}
-
-@media (min-width: 768px) {
-  .prev {
-    left: var(--space-24);
-  }
-  .next {
-    right: var(--space-24);
-  }
+/* 조작부 전체 — 모바일에서는 화살표를 점 양옆에 둔다.
+   세로 가운데에 두면 짧은 화면에서 제목을 덮는다. */
+.controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--space-16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  z-index: 2;
 }
 
 .dots {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: var(--space-24);
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  z-index: 2;
+}
+
+/* 넓은 화면에서는 화살표를 사진 좌우 세로 가운데로 되돌린다.
+   조작부가 히어로 전체를 덮게 하되, 클릭은 버튼에서만 받는다. */
+@media (min-width: 768px) {
+  .controls {
+    inset: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .arrow,
+  .dots {
+    pointer-events: auto;
+    position: absolute;
+  }
+
+  .arrow {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .prev {
+    left: var(--space-24);
+  }
+
+  .next {
+    right: var(--space-24);
+  }
+
+  .dots {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: var(--space-24);
+  }
 }
 
 /* 점 자체는 8px 이지만 누르는 영역은 44px 를 확보한다 (§4.3) */

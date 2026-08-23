@@ -43,23 +43,8 @@ export default function LandingPage() {
               </a>
             ))}
           </nav>
-
-          <Link href={applicationsOpen ? "/apply" : "#recruiting"}>
-            <Button size="sm" variant={applicationsOpen ? "primary" : "secondary"}>
-              {applicationsOpen ? "지원하기" : "모집 안내"}
-            </Button>
-          </Link>
         </div>
       </header>
-
-      {/* 모바일용 앵커 탭 */}
-      <nav className={styles.mobileNav} aria-label="섹션 바로가기">
-        {navItems.map((n) => (
-          <a key={n.href} href={n.href} className={styles.mobileNavLink}>
-            {n.label}
-          </a>
-        ))}
-      </nav>
 
       <HeroSlider applicationsOpen={applicationsOpen} cohort={cohort} />
 

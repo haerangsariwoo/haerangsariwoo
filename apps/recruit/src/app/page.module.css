@@ -1,7 +1,6 @@
 /* design.md §4 Website Application */
 
 .page {
-  min-height: 100dvh;
   background: var(--surface-white);
 }
 
@@ -75,41 +74,21 @@
   color: var(--brand-blue-500);
 }
 
-/* 모바일에서는 헤더 아래 가로 스크롤 탭으로 내린다 (§2.3) */
-.mobileNav {
-  display: none;
-}
-
 @media (max-width: 767px) {
+  /* 좁은 화면에서는 간격을 줄이고, 모자라면 가로로 넘긴다 */
   .nav {
-    display: none;
-  }
-
-  .mobileNav {
-    display: flex;
-    align-items: center;
-    gap: var(--space-28);
+    gap: var(--space-20);
     overflow-x: auto;
     scrollbar-width: none;
-    padding: 0 var(--screen-pad) var(--space-10);
-    background: rgba(255, 255, 255, 0.86);
-    backdrop-filter: blur(12px);
-    position: sticky;
-    top: 72px;
-    z-index: 19;
-    border-bottom: 1px solid rgba(23, 111, 242, 0.07);
   }
 
-  .mobileNav::-webkit-scrollbar {
+  .nav::-webkit-scrollbar {
     display: none;
   }
 
-  .mobileNavLink {
+  .navLink {
     flex: none;
-    font-size: 14px;
-    color: var(--ink-600);
-    white-space: nowrap;
-    min-height: 34px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
   }

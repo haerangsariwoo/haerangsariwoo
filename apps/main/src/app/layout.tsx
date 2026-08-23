@@ -16,14 +16,16 @@ const montserrat = Montserrat({
 
 /**
  * 손글씨 느낌의 포인트 글꼴 (THEFACESHOP INKLIPQUID).
- * 원본 2.1MB 를 실제로 쓰는 글자만 남겨 34KB woff2 로 줄였다.
- * 인사말처럼 짧은 한 줄에만 쓰고, 본문에는 쓰지 않는다.
+ * 글리프 전체(18,374자)를 담는다. 서브셋으로 줄이면 용량은 작지만
+ * 서브셋에 없는 이름·문구가 폴백으로 떨어져 화면마다 글꼴이 달라진다.
+ * 원본 TTF 2.1MB → woff2 306KB.
+ *
+ * 제목과 인사말에만 쓰고 본문에는 쓰지 않는다.
  */
 const inkLipquid = localFont({
-  src: "./fonts/inklipquid-subset.woff2",
+  src: "./fonts/inklipquid-full.woff2",
   variable: "--font-accent",
   display: "swap",
-  // 글자가 없으면 본문 글꼴로 자연스럽게 넘어가게
   fallback: ["Pretendard Variable", "Pretendard", "system-ui", "sans-serif"],
 });
 

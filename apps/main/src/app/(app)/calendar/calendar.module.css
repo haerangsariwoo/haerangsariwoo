@@ -1,0 +1,259 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---------- 월 이동 ---------- */
+.monthBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.monthBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.monthLabel {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  min-width: 108px;
+  text-align: center;
+}
+
+/* ---------- 범례 ---------- */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.dot.volunteer {
+  background: var(--brand);
+}
+.dot.mine {
+  background: var(--mint-text);
+}
+.dot.activity {
+  background: #9a57d6;
+}
+
+/* ---------- 달력 ---------- */
+.calendar {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: 16px 12px 18px;
+}
+
+.weekRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+}
+
+.weekName {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  padding-bottom: 8px;
+}
+
+.weekName.sun {
+  color: #e06b6b;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.day {
+  aspect-ratio: 1 / 1.15;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  padding-top: 6px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.dayNum {
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.day.sun .dayNum {
+  color: #e06b6b;
+}
+
+.day.other .dayNum {
+  color: var(--ink-faint);
+}
+
+.day.today .dayNum {
+  font-weight: 700;
+  color: var(--brand-text);
+}
+
+.day.selected {
+  background: var(--brand-soft);
+}
+
+.day.selected .dayNum {
+  font-weight: 700;
+  color: var(--brand-text);
+}
+
+.dots {
+  display: flex;
+  gap: 3px;
+  min-height: 6px;
+}
+
+.dots .dot {
+  width: 5px;
+  height: 5px;
+}
+
+/* ---------- 선택한 날 일정 ---------- */
+.dayPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dayTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.eventCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 14px 16px;
+  color: inherit;
+}
+
+.stripe {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 2px;
+  flex: none;
+}
+
+.stripe.volunteer {
+  background: var(--brand);
+}
+.stripe.mine {
+  background: var(--mint-text);
+}
+.stripe.activity {
+  background: #9a57d6;
+}
+
+.eventBody {
+  flex: 1;
+  min-width: 0;
+  /* span 이라도 세로로 쌓이도록 */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.eventTitle {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventMeta {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+.eventTag {
+  flex: none;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.eventTag.volunteer {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+}
+.eventTag.mine {
+  background: var(--mint-bg);
+  color: var(--mint-text);
+}
+.eventTag.activity {
+  background: #f3eafb;
+  color: #7b3fb5;
+}
+
+.empty {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.note {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  line-height: 1.6;
+}

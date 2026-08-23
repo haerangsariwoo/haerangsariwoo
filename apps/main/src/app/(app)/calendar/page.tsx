@@ -1,19 +1,179 @@
-import { SpecScreen } from "@/components/layout/SpecScreen/SpecScreen";
+"use client";
 
-export const metadata = { title: "봉사 캘린더 · 해랑사리우" };
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import type { Route } from "next";
+import { cn } from "@/lib/cn";
+import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
+import { buildEvents, kindLabel, type EventKind } from "@/lib/calendar-events";
+import { noticeFor } from "@/lib/get-notice";
+import styles from "./calendar.module.css";
+
+const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
+const KINDS: EventKind[] = ["volunteer", "mine", "activity"];
+
+function iso(y: number, m: number, d: number) {
+  return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
 
 export default function CalendarPage() {
+  const today = new Date();
+  const [cursor, setCursor] = useState({ y: today.getFullYear(), m: today.getMonth() });
+  const [selected, setSelected] = useState(
+    iso(today.getFullYear(), today.getMonth(), today.getDate()),
+  );
+
+  const events = useMemo(() => buildEvents(cursor.y), [cursor.y]);
+
+  /** 날짜별로 묶어 점을 찍는다 */
+  const byDate = useMemo(() => {
+    const map = new Map<string, EventKind[]>();
+    for (const e of events) {
+      const list = map.get(e.date) ?? [];
+      if (!list.includes(e.kind)) list.push(e.kind);
+      map.set(e.date, list);
+    }
+    return map;
+  }, [events]);
+
+  /** 6주 그리드에 채울 날짜들 */
+  const cells = useMemo(() => {
+    const first = new Date(cursor.y, cursor.m, 1);
+    const start = new Date(first);
+    start.setDate(1 - first.getDay());
+
+    return Array.from({ length: 42 }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return {
+        date: iso(d.getFullYear(), d.getMonth(), d.getDate()),
+        day: d.getDate(),
+        weekday: d.getDay(),
+        inMonth: d.getMonth() === cursor.m,
+      };
+    });
+  }, [cursor]);
+
+  const dayEvents = events
+    .filter((e) => e.date === selected)
+    .sort((a, b) => a.title.localeCompare(b.title));
+
+  const todayIso = iso(today.getFullYear(), today.getMonth(), today.getDate());
+
+  function move(step: number) {
+    setCursor((c) => {
+      const d = new Date(c.y, c.m + step, 1);
+      return { y: d.getFullYear(), m: d.getMonth() };
+    });
+  }
+
+  const [sy, sm, sd] = selected.split("-").map(Number);
+
   return (
-    <SpecScreen
-      title="봉사 캘린더"
-      status="정상"
-      blocks={[
-        { title: "봉사·친목·MT·회의 색 구분", desc: "유형별 색으로 일정을 구분합니다." },
-        { title: "내 신청 일정", desc: "신청·확정된 일정만 따로 볼 수 있습니다." },
-        { title: "월간 · 일정 상세", desc: "월간 보기에서 날짜를 눌러 상세를 확인합니다." },
-      ]}
-      note="봉사와 동아리 활동을 한 캘린더에서 함께 확인합니다"
-      action={{ label: "홈으로", href: "/home" }}
-    />
+    <div className={styles.page}>
+      <PageHeader title="봉사 캘린더" back={{ href: "/home", label: "홈" }} />
+
+      <div className={styles.monthBar}>
+        <button type="button" className={styles.monthBtn} onClick={() => move(-1)} aria-label="이전 달">
+          ‹
+        </button>
+        <span className={styles.monthLabel}>
+          {cursor.y}년 {cursor.m + 1}월
+        </span>
+        <button type="button" className={styles.monthBtn} onClick={() => move(1)} aria-label="다음 달">
+          ›
+        </button>
+      </div>
+
+      <div className={styles.legend}>
+        {KINDS.map((k) => (
+          <span key={k} className={styles.legendItem}>
+            <span className={cn(styles.dot, styles[k])} />
+            {kindLabel(k)}
+          </span>
+        ))}
+      </div>
+
+      <div className={styles.calendar}>
+        <div className={styles.weekRow}>
+          {WEEK.map((w, i) => (
+            <span key={w} className={cn(styles.weekName, i === 0 && styles.sun)}>
+              {w}
+            </span>
+          ))}
+        </div>
+
+        <div className={styles.grid}>
+          {cells.map((c) => {
+            const kinds = byDate.get(c.date) ?? [];
+            return (
+              <button
+                key={c.date}
+                type="button"
+                className={cn(
+                  styles.day,
+                  c.weekday === 0 && styles.sun,
+                  !c.inMonth && styles.other,
+                  c.date === todayIso && styles.today,
+                  c.date === selected && styles.selected,
+                )}
+                onClick={() => {
+                  setSelected(c.date);
+                  // 앞뒤 달 날짜를 누르면 그 달로 이동한다
+                  if (!c.inMonth) {
+                    const [y, m] = c.date.split("-").map(Number);
+                    setCursor({ y, m: m - 1 });
+                  }
+                }}
+                aria-label={`${c.day}일${kinds.length ? ` 일정 ${kinds.length}건` : ""}`}
+                aria-pressed={c.date === selected}
+              >
+                <span className={styles.dayNum}>{c.day}</span>
+                <span className={styles.dots}>
+                  {kinds.map((k) => (
+                    <span key={k} className={cn(styles.dot, styles[k])} />
+                  ))}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <section className={styles.dayPanel}>
+        <h2 className={styles.dayTitle}>
+          {sm}월 {sd}일 ({WEEK[new Date(sy, sm - 1, sd).getDay()]})
+        </h2>
+
+        {dayEvents.length === 0 ? (
+          <p className={styles.empty}>이 날은 예정된 일정이 없어요.</p>
+        ) : (
+          dayEvents.map((e) => {
+            const inner = (
+              <>
+                <span className={cn(styles.stripe, styles[e.kind])} />
+                <span className={styles.eventBody}>
+                  <span className={styles.eventTitle}>{e.title}</span>
+                  <span className={styles.eventMeta}>{e.meta}</span>
+                </span>
+                <span className={cn(styles.eventTag, styles[e.kind])}>{kindLabel(e.kind)}</span>
+              </>
+            );
+
+            return e.href ? (
+              <Link key={e.id} href={e.href as Route} className={styles.eventCard}>
+                {inner}
+              </Link>
+            ) : (
+              <div key={e.id} className={styles.eventCard}>
+                {inner}
+              </div>
+            );
+          })
+        )}
+      </section>
+
+      <p className={styles.note}>{noticeFor("봉사 모집")}</p>
+    </div>
   );
 }

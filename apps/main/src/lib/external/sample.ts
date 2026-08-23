@@ -1,0 +1,60 @@
+import type { ExternalVolunteer } from "./types";
+
+/**
+ * API 키가 없거나 외부 포털 호출이 실패했을 때 보여줄 예시 데이터.
+ * 실제 응답과 같은 형태라 화면 검증에 그대로 쓸 수 있다.
+ */
+export const sampleExternal: ExternalVolunteer[] = [
+  {
+    id: "1365-sample-1",
+    source: "1365",
+    title: "무료급식소 배식 봉사",
+    org: "성북종합사회복지관",
+    area: "서울 성북구",
+    category: "복지",
+    startDate: "2026-09-05",
+    endDate: "2026-09-05",
+    capacity: 20,
+    applied: 14,
+    url: "https://www.1365.go.kr",
+  },
+  {
+    id: "1365-sample-2",
+    source: "1365",
+    title: "지역아동센터 학습 멘토링",
+    org: "성북구 자원봉사센터",
+    area: "서울 성북구",
+    category: "교육",
+    startDate: "2026-09-08",
+    endDate: "2026-12-20",
+    capacity: 12,
+    applied: 5,
+    url: "https://www.1365.go.kr",
+  },
+  {
+    id: "vms-sample-1",
+    source: "vms",
+    title: "유기견 보호소 환경 정비",
+    org: "성북 동물보호센터",
+    area: "서울 성북구",
+    category: "환경",
+    startDate: "2026-09-12",
+    endDate: "2026-09-12",
+    capacity: 12,
+    applied: 12,
+    url: "https://www.vms.or.kr",
+  },
+  {
+    id: "vms-sample-2",
+    source: "vms",
+    title: "독거어르신 안부 확인 봉사",
+    org: "한국사회복지협의회",
+    area: "서울 강북구",
+    category: "복지",
+    startDate: "2026-09-19",
+    endDate: "2026-11-28",
+    capacity: 8,
+    applied: 3,
+    url: "https://www.vms.or.kr",
+  },
+];

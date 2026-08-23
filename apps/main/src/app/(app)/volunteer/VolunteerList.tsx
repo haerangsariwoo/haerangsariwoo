@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { cn } from "@/lib/cn";
+import * as Tabs from "@radix-ui/react-tabs";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import { ExternalCard } from "@/components/volunteer/ExternalCard/ExternalCard";
 import { volunteers } from "@/lib/mock-data";
@@ -64,21 +64,16 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
         <span className={styles.count}>{totalCount}건</span>
       </div>
 
-      <div className={styles.segment} role="tablist" aria-label="봉사 출처">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            type="button"
-            role="tab"
-            aria-selected={tab === t}
-            className={cn(styles.segmentBtn, tab === t && styles.segmentOn)}
-            onClick={() => setTab(t)}
-          >
-            {t}
-            <span className={styles.segmentCount}>{tabCount(t)}</span>
-          </button>
-        ))}
-      </div>
+      <Tabs.Root value={tab} onValueChange={(v) => setTab(v as Tab)}>
+        <Tabs.List className={styles.segment} aria-label="봉사 출처">
+          {TABS.map((t) => (
+            <Tabs.Trigger key={t} value={t} className={styles.segmentBtn}>
+              {t}
+              <span className={styles.segmentCount}>{tabCount(t)}</span>
+            </Tabs.Trigger>
+          ))}
+        </Tabs.List>
+      </Tabs.Root>
 
       <ExternalFilters items={external.items} value={extFilter} onChange={setExtFilter} />
 

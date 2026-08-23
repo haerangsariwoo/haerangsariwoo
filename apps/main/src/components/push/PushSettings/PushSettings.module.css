@@ -47,7 +47,7 @@
   justify-content: flex-start;
 }
 
-.switch.on {
+.switch[data-state="checked"] {
   background: var(--brand);
   justify-content: flex-end;
 }

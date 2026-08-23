@@ -105,7 +105,7 @@
   white-space: nowrap;
 }
 
-.segmentOn {
+.segmentBtn[data-state="active"] {
   background: var(--surface);
   color: var(--brand-text);
   box-shadow: var(--shadow-card);

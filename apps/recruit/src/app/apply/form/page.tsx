@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import * as Checkbox from "@radix-ui/react-checkbox";
 import { useRouter } from "next/navigation";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
@@ -158,32 +159,35 @@ export default function ApplicationFormPage() {
               <p className={styles.checkTitle}>제출 전 확인</p>
 
               <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
+                <Checkbox.Root
                   className={styles.checkbox}
                   checked={agreed.info}
-                  onChange={(e) => setAgreed((a) => ({ ...a, info: e.target.checked }))}
-                />
+                  onCheckedChange={(v) => setAgreed((a) => ({ ...a, info: v === true }))}
+                >
+                  <Checkbox.Indicator className={styles.checkMark}>✓</Checkbox.Indicator>
+                </Checkbox.Root>
                 입력한 개인정보가 정확해요
               </label>
 
               <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
+                <Checkbox.Root
                   className={styles.checkbox}
                   checked={agreed.code}
-                  onChange={(e) => setAgreed((a) => ({ ...a, code: e.target.checked }))}
-                />
+                  onCheckedChange={(v) => setAgreed((a) => ({ ...a, code: v === true }))}
+                >
+                  <Checkbox.Indicator className={styles.checkMark}>✓</Checkbox.Indicator>
+                </Checkbox.Root>
                 본인 지정번호를 기억하고 있어요 (결과 확인에 필요해요)
               </label>
 
               <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
+                <Checkbox.Root
                   className={styles.checkbox}
                   checked={agreed.privacy}
-                  onChange={(e) => setAgreed((a) => ({ ...a, privacy: e.target.checked }))}
-                />
+                  onCheckedChange={(v) => setAgreed((a) => ({ ...a, privacy: v === true }))}
+                >
+                  <Checkbox.Indicator className={styles.checkMark}>✓</Checkbox.Indicator>
+                </Checkbox.Root>
                 개인정보 수집·이용에 동의해요
               </label>
             </div>

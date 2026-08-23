@@ -192,9 +192,29 @@
 }
 
 .checkbox {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--brand-blue-500);
   flex: none;
+  width: 22px;
+  height: 22px;
   margin-top: 1px;
+  border: 1.5px solid var(--ink-400);
+  border-radius: var(--radius-xs);
+  background: var(--surface-white);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.checkbox[data-state="checked"] {
+  background: var(--brand-gradient);
+  border-color: transparent;
+}
+
+.checkMark {
+  color: var(--surface-white);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
 }

@@ -1,0 +1,109 @@
+/* design.md §4 — 랜딩 Q&A. Radix Accordion 위에 얹은 스타일 */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  max-width: 860px;
+}
+
+.item {
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-20) var(--space-24);
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* §4.3 모바일 터치 타깃 */
+  min-height: 44px;
+}
+
+.trigger:hover .question {
+  color: var(--brand-blue-500);
+}
+
+.mark {
+  flex: none;
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--brand-blue-500);
+}
+
+.question {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink-800);
+}
+
+.chevron {
+  flex: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-600);
+  transition: transform 0.2s ease;
+}
+
+.trigger[data-state="open"] .chevron {
+  transform: rotate(180deg);
+}
+
+/* Radix 가 알려주는 콘텐츠 높이로 펼침·접힘을 그린다 */
+.content {
+  overflow: hidden;
+}
+
+.content[data-state="open"] {
+  animation: slideDown 0.22s ease;
+}
+
+.content[data-state="closed"] {
+  animation: slideUp 0.18s ease;
+}
+
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content[data-state="open"],
+  .content[data-state="closed"] {
+    animation: none;
+  }
+}
+
+.answer {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ink-500);
+  padding: 0 var(--space-24) var(--space-20) 46px;
+}

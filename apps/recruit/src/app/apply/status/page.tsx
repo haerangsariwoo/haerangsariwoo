@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import * as Tabs from "@radix-ui/react-tabs";
 import { cn } from "@/lib/cn";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
@@ -47,18 +48,15 @@ export default function StatusPage() {
   return (
     <Shell title="지원 현황" back="/">
       {/* 데모 전환 스위처 — Supabase 연동 시 제거 */}
-      <div className={styles.switcher}>
-        {STAGES.map((s) => (
-          <button
-            key={s.key}
-            type="button"
-            className={cn(styles.switchBtn, stage === s.key && styles.on)}
-            onClick={() => setStage(s.key)}
-          >
-            {s.label}
-          </button>
-        ))}
-      </div>
+      <Tabs.Root value={stage} onValueChange={(v) => setStage(v as Stage)}>
+        <Tabs.List className={styles.switcher} aria-label="지원 단계 보기">
+          {STAGES.map((s) => (
+            <Tabs.Trigger key={s.key} value={s.key} className={styles.switchBtn}>
+              {s.label}
+            </Tabs.Trigger>
+          ))}
+        </Tabs.List>
+      </Tabs.Root>
       {stage !== "submitted" && (
         <label className={styles.demoNote}>
           <input
@@ -118,21 +116,21 @@ export default function StatusPage() {
           </div>
 
           <p className={styles.sectionTitle}>면접 날짜</p>
-          <div className={styles.dateTabs}>
-            {dates.map((d) => (
-              <button
-                key={d}
-                type="button"
-                className={cn(styles.dateTab, selectedDate === d && styles.active)}
-                onClick={() => {
-                  setSelectedDate(d);
-                  setSelectedSlot(null);
-                }}
-              >
-                {d}
-              </button>
-            ))}
-          </div>
+          <Tabs.Root
+            value={selectedDate}
+            onValueChange={(v) => {
+              setSelectedDate(v);
+              setSelectedSlot(null);
+            }}
+          >
+            <Tabs.List className={styles.dateTabs} aria-label="면접 날짜">
+              {dates.map((d) => (
+                <Tabs.Trigger key={d} value={d} className={styles.dateTab}>
+                  {d}
+                </Tabs.Trigger>
+              ))}
+            </Tabs.List>
+          </Tabs.Root>
 
           <p className={styles.sectionTitle}>시간 선택</p>
           <div className={styles.slotGrid}>

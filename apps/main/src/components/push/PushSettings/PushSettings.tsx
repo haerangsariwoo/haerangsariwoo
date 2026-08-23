@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as Switch from "@radix-ui/react-switch";
 import { cn } from "@/lib/cn";
 import { sendTestNotification, subscribeUser, unsubscribeUser } from "@/app/actions/push";
 import {
@@ -113,17 +114,15 @@ export function PushSettings() {
           <p className={styles.desc}>새 공지가 올라오면 휴대폰 알림으로 바로 알려드려요.</p>
         </div>
         {supported && (
-          <button
-            type="button"
-            role="switch"
-            aria-checked={on}
+          <Switch.Root
+            checked={on}
             aria-label="공지 알림 받기"
-            className={cn(styles.switch, on && styles.on)}
+            className={styles.switch}
             disabled={busy || denied}
-            onClick={on ? disable : enable}
+            onCheckedChange={(next) => (next ? enable() : disable())}
           >
-            <span className={styles.knob} />
-          </button>
+            <Switch.Thumb className={styles.knob} />
+          </Switch.Root>
         )}
       </div>
 

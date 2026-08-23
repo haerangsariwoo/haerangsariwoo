@@ -7,12 +7,12 @@ import {
   activityCards,
   brand,
   cohortLabel,
-  faqs,
   landing,
   navItems,
   recruitConfig,
 } from "@/lib/recruit-config";
 import { ActivityGallery } from "./ActivityGallery";
+import { FaqList } from "./FaqList";
 import { HeroSlider } from "./HeroSlider";
 import styles from "./page.module.css";
 
@@ -157,18 +157,8 @@ export default function LandingPage() {
         <div className={styles.inner}>
           <h2 className={styles.sectionTitle}>Q&amp;A</h2>
           <p className={styles.sectionLead}>지원 전 가장 많이 받는 질문입니다.</p>
-          <div className={cn(styles.sectionBody, styles.faqList)}>
-            {faqs.map((f) => (
-              <div key={f.q} className={styles.faqItem}>
-                <p className={styles.faqQ}>
-                  <span className={styles.faqMark} aria-hidden="true">
-                    Q
-                  </span>
-                  {f.q}
-                </p>
-                <p className={styles.faqA}>{f.a}</p>
-              </div>
-            ))}
+          <div className={styles.sectionBody}>
+            <FaqList />
           </div>
         </div>
       </section>

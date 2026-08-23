@@ -107,11 +107,11 @@ export interface Applicant {
 }
 
 export const applicants: Applicant[] = [
-  { id: "ap1", name: "재겸", studentId: "2591001", cohort: "59기", volunteer: "아동센터 교육 봉사", appliedAt: "08.14", state: "참여확정" },
-  { id: "ap2", name: "이서연", studentId: "2591044", cohort: "59기", volunteer: "아동센터 교육 봉사", appliedAt: "08.14", state: "참여확정" },
-  { id: "ap3", name: "박민준", studentId: "2491120", cohort: "58기", volunteer: "한강 플로깅", appliedAt: "08.15", state: "신청완료" },
-  { id: "ap4", name: "최하늘", studentId: "2591137", cohort: "59기", volunteer: "한강 플로깅", appliedAt: "08.16", state: "대기", waitNo: 1 },
-  { id: "ap5", name: "서지우", studentId: "2491077", cohort: "58기", volunteer: "아동센터 교육 봉사", appliedAt: "08.12", state: "노쇼" },
+  { id: "ap1", name: "재겸", studentId: "2591001", cohort: "26-1기", volunteer: "아동센터 교육 봉사", appliedAt: "08.14", state: "참여확정" },
+  { id: "ap2", name: "이서연", studentId: "2591044", cohort: "26-1기", volunteer: "아동센터 교육 봉사", appliedAt: "08.14", state: "참여확정" },
+  { id: "ap3", name: "박민준", studentId: "2491120", cohort: "25-2기", volunteer: "한강 플로깅", appliedAt: "08.15", state: "신청완료" },
+  { id: "ap4", name: "최하늘", studentId: "2591137", cohort: "26-1기", volunteer: "한강 플로깅", appliedAt: "08.16", state: "대기", waitNo: 1 },
+  { id: "ap5", name: "서지우", studentId: "2491077", cohort: "25-2기", volunteer: "아동센터 교육 봉사", appliedAt: "08.12", state: "노쇼" },
 ];
 
 /* ---------- 봉사시간 승인 ---------- */
@@ -138,9 +138,10 @@ export interface AdminMember {
   id: string;
   name: string;
   studentId: string;
-  /** 생년월일 6자리 — 로그인 비밀번호 */
+  /** 생년월일 6자리 — 부원 정보용 (로그인에는 쓰지 않음) */
   birth: string;
   gender: "남" | "여";
+  /** 가입 연도·학기 표기 (예: 26-1기) */
   cohort: string;
   track: string;
   mbti?: string;
@@ -149,11 +150,11 @@ export interface AdminMember {
 }
 
 export const adminMembers: AdminMember[] = [
-  { id: "m1", name: "김우영", studentId: "2391005", birth: "010204", gender: "남", cohort: "26기", track: "IT공과대 · 컴퓨터공학", mbti: "ENTJ", role: "운영진", hours: 124 },
-  { id: "m2", name: "재겸", studentId: "2591001", birth: "060312", gender: "남", cohort: "59기", track: "IT공과대 · 컴퓨터공학", mbti: "INFJ", role: "운영진", hours: 76 },
-  { id: "m3", name: "이서연", studentId: "2591044", birth: "060821", gender: "여", cohort: "59기", track: "디자인대 · 시각디자인", mbti: "ENFP", role: "부원", hours: 58 },
-  { id: "m4", name: "박민준", studentId: "2491120", birth: "050415", gender: "남", cohort: "58기", track: "사회과학대 · 행정학", mbti: "ISTP", role: "부원", hours: 92 },
-  { id: "m5", name: "최하늘", studentId: "2591137", birth: "061103", gender: "여", cohort: "59기", track: "인문대 · 국어국문", mbti: "ISFJ", role: "부원", hours: 41 },
+  { id: "m1", name: "김우영", studentId: "2391005", birth: "010204", gender: "남", cohort: "24-1기", track: "IT공과대 · 컴퓨터공학", mbti: "ENTJ", role: "운영진", hours: 124 },
+  { id: "m2", name: "재겸", studentId: "2591001", birth: "060312", gender: "남", cohort: "26-1기", track: "IT공과대 · 컴퓨터공학", mbti: "INFJ", role: "운영진", hours: 76 },
+  { id: "m3", name: "이서연", studentId: "2591044", birth: "060821", gender: "여", cohort: "26-1기", track: "디자인대 · 시각디자인", mbti: "ENFP", role: "부원", hours: 58 },
+  { id: "m4", name: "박민준", studentId: "2491120", birth: "050415", gender: "남", cohort: "25-2기", track: "사회과학대 · 행정학", mbti: "ISTP", role: "부원", hours: 92 },
+  { id: "m5", name: "최하늘", studentId: "2591137", birth: "061103", gender: "여", cohort: "26-1기", track: "인문대 · 국어국문", mbti: "ISFJ", role: "부원", hours: 41 },
 ];
 
 /* ---------- 팀짜기 ---------- */
@@ -166,14 +167,14 @@ export interface TeamMemberRow {
 }
 
 export const teamPool: TeamMemberRow[] = [
-  { id: "t1", name: "김해랑", cohort: "58기", gender: "남", team: 3 },
-  { id: "t2", name: "재겸", cohort: "59기", gender: "남", team: 3 },
-  { id: "t3", name: "서지우", cohort: "58기", gender: "여", team: 3 },
-  { id: "t4", name: "이준호", cohort: "59기", gender: "남", team: 3 },
-  { id: "t5", name: "박서연", cohort: "59기", gender: "여", team: 3 },
-  { id: "t6", name: "최민재", cohort: "58기", gender: "여", team: 3 },
-  { id: "t7", name: "정다은", cohort: "59기", gender: "여", team: null },
-  { id: "t8", name: "강태현", cohort: "58기", gender: "남", team: null },
+  { id: "t1", name: "김해랑", cohort: "25-2기", gender: "남", team: 3 },
+  { id: "t2", name: "재겸", cohort: "26-1기", gender: "남", team: 3 },
+  { id: "t3", name: "서지우", cohort: "25-2기", gender: "여", team: 3 },
+  { id: "t4", name: "이준호", cohort: "26-1기", gender: "남", team: 3 },
+  { id: "t5", name: "박서연", cohort: "26-1기", gender: "여", team: 3 },
+  { id: "t6", name: "최민재", cohort: "25-2기", gender: "여", team: 3 },
+  { id: "t7", name: "정다은", cohort: "26-1기", gender: "여", team: null },
+  { id: "t8", name: "강태현", cohort: "25-2기", gender: "남", team: null },
 ];
 
 /* ---------- 운영진 게시판 ---------- */
@@ -190,7 +191,7 @@ export const boardPosts: BoardPost[] = [
   { id: "bp1", category: "회의록", title: "8월 3주차 운영진 회의록", author: "김우영", date: "2026.08.19", files: 1 },
   { id: "bp2", category: "운영 공지", title: "2학기 예산 집행 기준 안내", author: "이서연", date: "2026.08.17", files: 2 },
   { id: "bp3", category: "자료", title: "MT 장소 후보 비교표", author: "박민준", date: "2026.08.15", files: 3 },
-  { id: "bp4", category: "회의록", title: "60기 모집 준비 회의록", author: "김우영", date: "2026.08.11", files: 0 },
+  { id: "bp4", category: "회의록", title: "26-2기 모집 준비 회의록", author: "김우영", date: "2026.08.11", files: 0 },
 ];
 
 /* ---------- 협력기관 ---------- */

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/TextField/TextField";
-import { isValidBirth, isValidStudentId } from "@/lib/signup";
+import { isValidPassword, isValidStudentId } from "@/lib/signup";
 import styles from "./page.module.css";
 import { Logo } from "@/components/ui/Logo/Logo";
 
@@ -17,18 +17,18 @@ const IdCardIcon = () => (
   </svg>
 );
 
-const CakeIcon = () => (
+const LockIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 20h16v-6a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3z" />
-    <path d="M12 8V5M9 8V6M15 8V6" />
+    <rect x="4.5" y="10" width="15" height="10.5" rx="2.5" />
+    <path d="M8 10V7.5a4 4 0 0 1 8 0V10" />
   </svg>
 );
 
 export default function LoginPage() {
   const router = useRouter();
   const [studentId, setStudentId] = useState("");
-  const [birth, setBirth] = useState("");
-  const [errors, setErrors] = useState<{ studentId?: string; birth?: string }>({});
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ studentId?: string; password?: string }>({});
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
@@ -38,15 +38,15 @@ export default function LoginPage() {
     if (!isValidStudentId(studentId.trim())) {
       next.studentId = "학번 7자리를 정확히 입력해 주세요.";
     }
-    if (!isValidBirth(birth.trim())) {
-      next.birth = "생년월일 6자리를 정확히 입력해 주세요. (예: 060312)";
+    if (!isValidPassword(password.trim())) {
+      next.password = "비밀번호 4자리를 입력해 주세요.";
     }
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
 
     setSubmitting(true);
-    // TODO: Supabase Auth — 학번 + 생년월일로 인증하고, 승인된 회원만 통과시킨다
+    // TODO: Supabase Auth — 학번 + 비밀번호로 인증하고, 승인된 회원만 통과시킨다
     await new Promise((r) => setTimeout(r, 400));
     setSubmitting(false);
     router.push("/home");
@@ -58,7 +58,7 @@ export default function LoginPage() {
         <div className={styles.brand}>
           <Logo size={64} className={styles.mascot} priority />
           <h1 className={styles.wordmark}>해랑사리우</h1>
-          <p className={styles.tagline}>학번과 생년월일로 로그인하세요</p>
+          <p className={styles.tagline}>학번과 비밀번호로 로그인하세요</p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -74,18 +74,18 @@ export default function LoginPage() {
             errorText={errors.studentId}
           />
           <TextField
-            label="생년월일 6자리"
-            name="birth"
-            icon={<CakeIcon />}
-            placeholder="예: 060312"
+            label="비밀번호"
+            name="password"
+            icon={<LockIcon />}
+            placeholder="숫자 4자리"
             inputMode="numeric"
             type="password"
-            maxLength={6}
+            maxLength={4}
             autoComplete="current-password"
-            value={birth}
-            onChange={(e) => setBirth(e.target.value)}
-            errorText={errors.birth}
-            helperText={!errors.birth ? "생년월일 앞 6자리(YYMMDD)를 입력해 주세요." : undefined}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            errorText={errors.password}
+            helperText={!errors.password ? "회원가입 때 정한 숫자 4자리입니다." : undefined}
           />
 
           <Button type="submit" variant="navy" size="lg" fullWidth disabled={submitting}>

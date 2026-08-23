@@ -116,6 +116,42 @@
   background: var(--warn-bg);
 }
 
+/* 가입 시기 */
+.joinRow {
+  display: flex;
+  gap: 10px;
+}
+
+.joinRow .select {
+  flex: 1;
+  min-width: 0;
+}
+
+.semesterRow {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+
+.semesterBtn {
+  flex: 1;
+  height: 56px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.semesterBtn.on {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
 /* MBTI 그리드 */
 .mbtiGrid {
   display: grid;

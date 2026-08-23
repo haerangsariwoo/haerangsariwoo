@@ -1,6 +1,6 @@
 import { cn } from "@/lib/cn";
 import { Panel, ui } from "@/components/admin/Panel";
-import { activityCards, applicationFields, motivationField, recruitConfig } from "@/lib/recruit-config";
+import { cohortLabel, activityCards, applicationFields, motivationField, recruitConfig } from "@/lib/recruit-config";
 import styles from "./settings.module.css";
 
 export const metadata = { title: "모집 설정 · 해랑사리우" };
@@ -48,7 +48,7 @@ export default function RecruitSettingsPage() {
               <input
                 id="cohort"
                 className={styles.input}
-                defaultValue={`제${recruitConfig.cohort}기 · ${recruitConfig.semester}`}
+                defaultValue={`${cohortLabel(recruitConfig.year, recruitConfig.semesterNo)} · ${recruitConfig.semester}`}
               />
             </div>
             {schedule.map((s) => (

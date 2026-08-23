@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
 import {
+  cohortLabel,
   interviewPlace,
   interviewSlots,
   nextSteps,
@@ -81,7 +82,7 @@ export default function StatusPage() {
 
           <div className={styles.timeline}>
             <p className={styles.timelineTitle}>
-              {recruitConfig.semester} {recruitConfig.cohort}기 신입부원 모집
+              {recruitConfig.semester} {cohortLabel(recruitConfig.year, recruitConfig.semesterNo)} 신입부원 모집
             </p>
             {[
               { label: "지원서 제출", done: true },

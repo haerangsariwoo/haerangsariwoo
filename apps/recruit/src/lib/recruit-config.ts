@@ -7,7 +7,10 @@
 export type RecruitPhase = "before" | "open" | "closed" | "announced";
 
 export interface RecruitConfig {
-  cohort: number;
+  /** 모집 연도 (예: 2026) */
+  year: number;
+  /** 모집 학기 (1 또는 2) */
+  semesterNo: 1 | 2;
   semester: string;
   /** 지원 접수 on/off — 오프시즌에도 랜딩 소개는 계속 공개된다 */
   applicationsOpen: boolean;
@@ -20,7 +23,8 @@ export interface RecruitConfig {
 }
 
 export const recruitConfig: RecruitConfig = {
-  cohort: 60,
+  year: 2026,
+  semesterNo: 2,
   semester: "2026학년도 2학기",
   applicationsOpen: true,
   phase: "open",
@@ -30,6 +34,11 @@ export const recruitConfig: RecruitConfig = {
   interviewRange: "9.11 (목) – 9.13 (토)",
   finalResultDate: "9.16 (화)",
 };
+
+/** 가입 연도·학기를 "26-2기" 형태로 표기한다 (회원 앱과 동일 규칙) */
+export function cohortLabel(year: number, semester: 1 | 2) {
+  return `${String(year).slice(2)}-${semester}기`;
+}
 
 export const brand = {
   name: "해랑사리우",

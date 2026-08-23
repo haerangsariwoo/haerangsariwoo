@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AdminNav } from "./AdminNav";
-import { recruitConfig } from "@/lib/recruit-config";
+import { cohortLabel, recruitConfig } from "@/lib/recruit-config";
 import styles from "./layout.module.css";
 import { AdminTitle } from "./AdminTitle";
 import { Logo } from "@/components/ui/Logo/Logo";
@@ -18,7 +18,7 @@ export default function RecruitAdminLayout({ children }: LayoutProps<"/admin">) 
         <p className={styles.season}>
           신규모집 운영
           <b>
-            제{recruitConfig.cohort}기 · {recruitConfig.semester.replace("학년도 ", "-")}
+            {cohortLabel(recruitConfig.year, recruitConfig.semesterNo)} · {recruitConfig.semester}
           </b>
         </p>
 

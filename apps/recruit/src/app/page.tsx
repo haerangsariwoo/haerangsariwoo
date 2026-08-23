@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
 import {
+  cohortLabel,
   activityCards,
   brand,
   faqs,
@@ -13,7 +14,8 @@ import styles from "./page.module.css";
 import { Logo } from "@/components/ui/Logo/Logo";
 
 export default function LandingPage() {
-  const { applicationsOpen, cohort, semester } = recruitConfig;
+  const { applicationsOpen, semester } = recruitConfig;
+  const cohort = cohortLabel(recruitConfig.year, recruitConfig.semesterNo);
 
   const schedule = [
     { label: "지원서 접수", value: `${recruitConfig.applyStart} – ${recruitConfig.applyEnd}` },
@@ -40,7 +42,7 @@ export default function LandingPage() {
 
           <div className={styles.badgeRow}>
             <span className={cn(styles.badge, !applicationsOpen && styles.closed)}>
-              {applicationsOpen ? `${cohort}기 신입부원 모집 중` : "모집 준비 중"}
+              {applicationsOpen ? `${cohort} 신입부원 모집 중` : "모집 준비 중"}
             </span>
           </div>
 

@@ -11,7 +11,7 @@ export interface Profile {
 export const profile: Profile = {
   name: "재겸",
   studentId: "2591001",
-  cohort: "59기",
+  cohort: "26-1기",
   track: "IT공과대 · 컴퓨터공학",
   role: "운영진",
 };

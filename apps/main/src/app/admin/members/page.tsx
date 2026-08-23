@@ -2,7 +2,7 @@ import { cn } from "@/lib/cn";
 import { Panel } from "@/components/admin/Panel/Panel";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import { adminMembers } from "@/lib/admin-data";
-import { signupRequests } from "@/lib/signup";
+import { cohortLabel, signupRequests } from "@/lib/signup";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 
 export const metadata = { title: "회원·기수·권한 · 해랑사리우" };
@@ -15,7 +15,7 @@ export default function AdminMembersPage() {
       <Panel
         title="가입 승인 대기"
         count={`${pending.length}건`}
-        desc="회원가입 신청을 확인하고 승인하면 학번과 생년월일로 로그인할 수 있습니다."
+        desc="회원가입 신청을 확인하고 승인하면 학번과 비밀번호로 로그인할 수 있습니다."
       >
         <div className={toolbar.toolbar}>
           <input className={toolbar.search} placeholder="이름·학번 검색" aria-label="신청자 검색" />
@@ -29,7 +29,7 @@ export default function AdminMembersPage() {
         </div>
 
         <DataTable
-          columns={["이름", "성별", "트랙 (학과)", "학번", "생년월일", "MBTI", "신청일", "상태", ""]}
+          columns={["이름", "성별", "트랙 (학과)", "학번", "생년월일", "기수", "MBTI", "신청일", "상태", ""]}
           isEmpty={signupRequests.length === 0}
           empty="가입 신청이 없습니다."
         >
@@ -40,6 +40,7 @@ export default function AdminMembersPage() {
               <td className={tableStyles.muted}>{r.track}</td>
               <td className={cn(tableStyles.muted, tableStyles.numeric)}>{r.studentId}</td>
               <td className={cn(tableStyles.muted, tableStyles.numeric)}>{r.birth}</td>
+              <td className={tableStyles.muted}>{cohortLabel(r.joinYear, r.joinSemester)}</td>
               <td className={tableStyles.muted}>{r.mbti ?? "—"}</td>
               <td className={cn(tableStyles.muted, tableStyles.numeric)}>{r.requestedAt}</td>
               <td>
@@ -62,14 +63,15 @@ export default function AdminMembersPage() {
       <Panel
         title="회원 관리"
         count={`${adminMembers.length}명`}
-        desc="승인된 부원 목록입니다. 로그인은 학번(ID)과 생년월일 6자리(PW)로 합니다."
+        desc="승인된 부원 목록입니다. 로그인은 학번(ID)과 개인 비밀번호 4자리로 합니다."
       >
         <div className={toolbar.toolbar}>
           <input className={toolbar.search} placeholder="이름·학번 검색" aria-label="회원 검색" />
           <select className={toolbar.select} defaultValue="all" aria-label="기수 필터">
             <option value="all">기수: 전체</option>
-            <option value="59">59기</option>
-            <option value="58">58기</option>
+            <option value="26-1">26-1기</option>
+            <option value="25-2">25-2기</option>
+            <option value="24-1">24-1기</option>
           </select>
           <select className={toolbar.select} defaultValue="all" aria-label="권한 필터">
             <option value="all">권한: 전체</option>
@@ -101,7 +103,7 @@ export default function AdminMembersPage() {
               <td>{m.name}</td>
               <td className={tableStyles.muted}>{m.gender}</td>
               <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.studentId}</td>
-              <td className={cn(tableStyles.muted, tableStyles.numeric)}>••••••</td>
+              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.birth}</td>
               <td className={tableStyles.muted}>{m.cohort}</td>
               <td className={tableStyles.muted}>{m.track}</td>
               <td className={tableStyles.muted}>{m.mbti ?? "—"}</td>

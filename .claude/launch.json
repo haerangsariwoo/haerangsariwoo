@@ -2,18 +2,24 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "main",
+      "name": "main-redesign",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "apps/main",
-      "port": 3000
+      "port": 3010
     },
     {
-      "name": "recruit",
+      "name": "recruit-redesign",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "apps/recruit",
-      "port": 3001
+      "port": 3011
     }
   ]
 }

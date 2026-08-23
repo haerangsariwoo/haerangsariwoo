@@ -53,7 +53,7 @@ export default function LandingPage() {
           </p>
 
           <span className={styles.dolphinCircle}>
-            <Logo size={48} />
+            <Logo size={48} priority />
           </span>
         </section>
 

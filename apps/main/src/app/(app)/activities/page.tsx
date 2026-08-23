@@ -6,7 +6,6 @@ import { cn } from "@/lib/cn";
 import { FilterChips } from "@/components/ui/FilterChips/FilterChips";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { activities, activityTypes } from "@/lib/activities";
-import { noticeFor } from "@/lib/get-notice";
 import styles from "./activities.module.css";
 
 export default function ActivitiesPage() {
@@ -92,9 +91,6 @@ export default function ActivitiesPage() {
         </>
       )}
 
-      <p className={styles.note}>
-        {noticeFor("활동")}
-      </p>
     </div>
   );
 }

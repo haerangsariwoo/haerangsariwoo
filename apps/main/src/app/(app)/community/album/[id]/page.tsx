@@ -32,7 +32,6 @@ export default async function AlbumDetailPage({ params }: PageProps<"/community/
         ))}
       </div>
 
-      <p className={styles.note}>사진은 운영진이 활동앨범 관리에서 업로드합니다.</p>
     </div>
   );
 }

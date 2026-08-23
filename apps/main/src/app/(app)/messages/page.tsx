@@ -112,18 +112,13 @@ export default function MessagesPage() {
       <section className={styles.askCard}>
         <p className={styles.askTitle}>운영진에게 익명으로 문의하기</p>
         <p className={styles.askDesc}>
-          이름이 드러나지 않는 채널톡 대화로 연결됩니다. 불편한 점이나 건의사항을 편하게 남겨주세요.
+          이름이 드러나지 않는 채널톡 대화로 연결됩니다. 개인 연락처 대신 이곳으로 남겨주세요.
         </p>
         <button type="button" className={styles.askButton}>
           익명 문의 열기
         </button>
       </section>
 
-      <p className={styles.note}>
-        쪽지는 운영진이 보내는 단방향 안내입니다.
-        <br />
-        개인 연락처 대신 공식 채널로만 소통해요.
-      </p>
     </div>
   );
 }

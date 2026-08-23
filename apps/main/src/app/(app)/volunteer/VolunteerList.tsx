@@ -11,7 +11,6 @@ import {
   filterExternal,
   type ExternalFilterValue,
 } from "./ExternalFilters";
-import { noticeFor } from "@/lib/get-notice";
 import styles from "./volunteer.module.css";
 
 const STATUS_ORDER = { closing: 0, open: 1, waitlist: 2, closed: 3 } as const;
@@ -109,7 +108,6 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
         )}
       </section>
 
-      <p className={styles.note}>{noticeFor("봉사 모집")}</p>
     </div>
   );
 }

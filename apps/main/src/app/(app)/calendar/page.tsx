@@ -6,7 +6,6 @@ import type { Route } from "next";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { buildEvents, kindLabel, type EventKind } from "@/lib/calendar-events";
-import { noticeFor } from "@/lib/get-notice";
 import styles from "./calendar.module.css";
 
 const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
@@ -173,7 +172,6 @@ export default function CalendarPage() {
         )}
       </section>
 
-      <p className={styles.note}>{noticeFor("봉사 모집")}</p>
     </div>
   );
 }

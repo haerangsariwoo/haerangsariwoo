@@ -23,9 +23,9 @@ export interface HourStat {
 }
 
 export const hourStats: HourStat[] = [
-  { label: "누적 봉사시간", value: "76", caption: "시간" },
-  { label: "이번 학기", value: "18", caption: "/ 20시간" },
-  { label: "출석률", value: "92", caption: "%" },
+  { label: "누적 봉사시간", value: "71", caption: "시간" },
+  { label: "이번 학기", value: "17", caption: "/ 20시간" },
+  { label: "출석률", value: "87", caption: "%" },
 ];
 
 export type RecordState = "참여확정" | "신청완료" | "대기" | "활동완료" | "취소" | "불참";
@@ -43,7 +43,7 @@ export const records: ActivityRecord[] = [
   { id: "r2", title: "한강 플로깅", date: "2026.08.29", hours: null, state: "신청완료" },
   { id: "r3", title: "유기견 보호소 봉사", date: "2026.09.12", hours: null, state: "대기" },
   { id: "r4", title: "여름 집중 봉사", date: "2026.08.05", hours: 8, state: "활동완료" },
-  { id: "r5", title: "무료급식 배식 봉사", date: "2026.07.18", hours: 4, state: "활동완료" },
+  { id: "r5", title: "무료급식 배식 봉사", date: "2026.07.18", hours: 3, state: "활동완료" },
   { id: "r6", title: "도서관 정리 봉사", date: "2026.07.04", hours: null, state: "취소" },
 ];
 

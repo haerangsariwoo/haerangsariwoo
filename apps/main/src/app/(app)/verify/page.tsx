@@ -109,7 +109,7 @@ export default function VerifyPage() {
               value={hours}
               onChange={(e) => setHours(e.target.value)}
             />
-            <p className={styles.hint}>실제 활동한 시간을 입력해 주세요. 운영진이 확인 후 조정할 수 있어요.</p>
+            <p className={styles.hint}>실제 활동한 시간을 입력해 주세요. 운영진 확인 후 반영됩니다.</p>
           </div>
 
           <div className={styles.field}>
@@ -178,11 +178,6 @@ export default function VerifyPage() {
         </div>
       </section>
 
-      <p className={styles.note}>
-        승인된 실적만 MY 페이지 봉사시간에 반영됩니다.
-        <br />
-        1365 · VMS 봉사는 각 사이트 실적과 별도로 동아리 시간에 합산돼요.
-      </p>
     </div>
   );
 }

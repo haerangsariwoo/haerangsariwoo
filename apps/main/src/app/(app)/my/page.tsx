@@ -4,7 +4,6 @@ import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { PushSettings } from "@/components/push/PushSettings/PushSettings";
 import { InstallPrompt } from "@/components/push/InstallPrompt/InstallPrompt";
 import { badges, hourStats, profile, records } from "@/lib/my";
-import { noticeFor } from "@/lib/get-notice";
 import styles from "./my.module.css";
 
 export const metadata = { title: "MY · 해랑사리우" };
@@ -102,9 +101,6 @@ export default function MyPage() {
         ))}
       </section>
 
-      <p className={styles.note}>
-        {noticeFor("마이")}
-      </p>
     </div>
   );
 }

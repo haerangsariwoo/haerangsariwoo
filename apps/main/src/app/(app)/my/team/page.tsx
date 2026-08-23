@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { myTeamDetail, profile } from "@/lib/my";
-import { noticeFor } from "@/lib/get-notice";
 import styles from "./team.module.css";
 
 export const metadata = { title: "내 조 · 해랑사리우" };
@@ -34,9 +33,6 @@ export default function TeamPage() {
         </ul>
       </section>
 
-      <p className={styles.note}>
-        {noticeFor("내 조")}
-      </p>
     </div>
   );
 }

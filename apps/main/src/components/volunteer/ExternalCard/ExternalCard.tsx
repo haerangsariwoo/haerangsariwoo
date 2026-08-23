@@ -90,10 +90,10 @@ export function ExternalCard({ item }: { item: ExternalVolunteer }) {
         </div>
       </div>
 
+      {/* 신청은 원본 사이트에서 이뤄진다. 화살표로 외부로 나감을 알린다 */}
       <span className={styles.action}>
-        원문
-        <br />
-        보기
+        <span>원문</span>
+        <span>보기 ↗</span>
       </span>
     </a>
   );

@@ -28,15 +28,15 @@ export interface VolunteerSummary {
 
 export const member = {
   name: "재겸",
-  totalHours: 76,
-  totalActivities: 12,
+  totalHours: 71,
+  totalActivities: 13,
 };
 
 export const semesterStatus = {
-  attendanceRate: 92,
-  hoursDone: 18,
+  attendanceRate: 87,
+  hoursDone: 17,
   hoursGoal: 20,
-  joinCount: 6,
+  joinCount: 7,
 };
 
 export const nextActivity = {
@@ -44,7 +44,7 @@ export const nextActivity = {
   title: "교육 봉사",
   dateLabel: "8.22 (토) · 13:00",
   place: "성북꿈나무센터",
-  capacityLabel: "12 / 16명 참여 확정",
+  capacityLabel: "13 / 16명 참여 확정",
   dday: 4,
 };
 
@@ -57,7 +57,7 @@ export const volunteers: VolunteerSummary[] = [
     timeLabel: "09:00 – 12:00",
     place: "성북천 분수마루 앞 집결",
     creditHours: 3,
-    applied: 9,
+    applied: 11,
     capacity: 15,
     category: "환경",
     source: "internal",
@@ -78,7 +78,7 @@ export const volunteers: VolunteerSummary[] = [
     timeLabel: "16:00 – 18:00",
     place: "한성대학교 상상관 앞",
     creditHours: 2,
-    applied: 12,
+    applied: 17,
     capacity: 20,
     category: "환경",
     source: "internal",
@@ -105,5 +105,5 @@ export const albumTones = ["sky", "mint", "peach", "lavender"] as const;
 
 export const myTeam = {
   eventLabel: "MT 3조",
-  memberCount: 6,
+  memberCount: 7,
 };

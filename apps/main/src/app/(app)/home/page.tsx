@@ -11,15 +11,32 @@ import {
   semesterStatus,
 } from "@/lib/mock-data";
 import { notices } from "@/lib/community";
+import { verifyRequests } from "@/lib/verify";
 import { homeCopy } from "@/lib/app-content";
 import styles from "./home.module.css";
 import { Mascot } from "@/components/ui/Logo/Mascot";
 
+const pendingVerifyCount = verifyRequests.filter((r) => r.state === "대기").length;
+
+/**
+ * 바로가기. 활동 기록·쪽지함은 MY 메뉴에 이미 있어 뺐고,
+ * 남긴 둘은 지금 상태를 함께 보여준다.
+ */
 const QUICK_MENU = [
-  { label: "봉사 캘린더", icon: "/icons/quick-calendar.svg", href: "/calendar" },
-  { label: "봉사 인증", icon: "/icons/quick-camera.svg", href: "/verify" },
-  { label: "활동 기록", icon: "/icons/quick-clipboard.svg", href: "/my/records" },
-  { label: "쪽지함", icon: "/icons/quick-envelope.svg", href: "/messages" },
+  {
+    label: "봉사 인증",
+    icon: "/icons/quick-camera.svg",
+    href: "/verify" as const,
+    meta: "참여한 봉사의 증빙 제출",
+    badge: pendingVerifyCount > 0 ? `검토 중 ${pendingVerifyCount}건` : null,
+  },
+  {
+    label: "봉사 캘린더",
+    icon: "/icons/quick-calendar.svg",
+    href: "/calendar" as const,
+    meta: "이번 달 일정 한눈에 보기",
+    badge: null,
+  },
 ];
 
 export default function HomePage() {
@@ -137,9 +154,9 @@ export default function HomePage() {
 
       <section>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>빠른 메뉴</h2>
+          <h2 className={styles.sectionTitle}>바로가기</h2>
         </div>
-        <div className={styles.quickGrid}>
+        <div className={styles.quickList}>
           {QUICK_MENU.map((item) => (
             <Link key={item.label} href={item.href} className={styles.quickItem}>
               <Image
@@ -150,7 +167,14 @@ export default function HomePage() {
                 className={styles.quickIcon}
                 unoptimized
               />
-              <span className={styles.quickLabel}>{item.label}</span>
+              <span className={styles.quickBody}>
+                <span className={styles.quickLabel}>{item.label}</span>
+                <span className={styles.quickMeta}>{item.meta}</span>
+              </span>
+              {item.badge && <span className={styles.quickBadge}>{item.badge}</span>}
+              <span className={styles.quickChev} aria-hidden="true">
+                ›
+              </span>
             </Link>
           ))}
         </div>

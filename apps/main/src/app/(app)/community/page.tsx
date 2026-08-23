@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { albums, notices } from "@/lib/community";
-import { noticeFor } from "@/lib/get-notice";
 import styles from "./community.module.css";
 
 type Tab = "공지" | "앨범";
@@ -90,9 +89,6 @@ function CommunityBoard({ initialTab }: { initialTab: Tab }) {
         </div>
       )}
 
-      <p className={styles.note}>
-        {noticeFor("커뮤니티")}
-      </p>
     </div>
   );
 }

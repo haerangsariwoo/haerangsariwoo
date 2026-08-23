@@ -151,13 +151,14 @@
 
 .action {
   flex: none;
-  width: 74px;
-  height: 46px;
-  border-radius: var(--radius-md);
-  background: var(--brand);
-  color: #fff;
+  width: 72px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
   font-size: 11px;
   font-weight: 700;
+  line-height: 1.35;
   display: grid;
   place-items: center;
   text-align: center;

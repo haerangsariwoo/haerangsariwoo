@@ -90,9 +90,9 @@ export interface AdminVolunteer {
 }
 
 export const adminVolunteers: AdminVolunteer[] = [
-  { id: "v3", title: "아동센터 교육 봉사", date: "8.22 (토)", place: "성북꿈나무센터", applied: 12, capacity: 16, creditHours: 3, source: "내부", status: "마감 임박", tone: "orange" },
+  { id: "v3", title: "아동센터 교육 봉사", date: "8.22 (토)", place: "성북꿈나무센터", applied: 13, capacity: 16, creditHours: 3, source: "내부", status: "마감 임박", tone: "orange" },
   { id: "v1", title: "한강 플로깅", date: "8.29 (토)", place: "뚝섬한강공원", applied: 9, capacity: 15, creditHours: 3, source: "내부", status: "모집 중", tone: "blue" },
-  { id: "v2", title: "무료급식 배식 봉사", date: "9.05 (토)", place: "성북종합사회복지관", applied: 14, capacity: 20, creditHours: 4, source: "1365", status: "모집 중", tone: "blue" },
+  { id: "v2", title: "무료급식 배식 봉사", date: "9.05 (토)", place: "성북종합사회복지관", applied: 17, capacity: 20, creditHours: 4, source: "1365", status: "모집 중", tone: "blue" },
   { id: "v4", title: "유기견 보호소 봉사", date: "9.12 (토)", place: "성북 동물보호센터", applied: 12, capacity: 12, creditHours: 3, source: "VMS", status: "모집 마감", tone: "grey" },
 ];
 
@@ -198,10 +198,10 @@ export const boardPosts: BoardPost[] = [
 
 /* ---------- 협력기관 ---------- */
 export const partners = [
-  { id: "p1", name: "성북종합사회복지관", contact: "02-000-0000", activities: 12, since: "2019" },
-  { id: "p2", name: "성북꿈나무센터", contact: "02-000-1111", activities: 24, since: "2016" },
-  { id: "p3", name: "성북구 자원봉사센터", contact: "02-000-2222", activities: 8, since: "2021" },
-  { id: "p4", name: "성북 동물보호센터", contact: "02-000-3333", activities: 5, since: "2023" },
+  { id: "p1", name: "성북종합사회복지관", contact: "02-921-4180", activities: 11, since: "2019" },
+  { id: "p2", name: "성북꿈나무센터", contact: "02-940-5327", activities: 26, since: "2016" },
+  { id: "p3", name: "성북구 자원봉사센터", contact: "02-2241-6068", activities: 8, since: "2021" },
+  { id: "p4", name: "성북 동물보호센터", contact: "02-914-7712", activities: 5, since: "2023" },
 ];
 
 /* ---------- 통계 ---------- */
@@ -217,6 +217,6 @@ export const monthlyStats = [
 export const categoryStats = [
   { label: "교육", value: 38, tone: "blue" as const },
   { label: "환경", value: 31, tone: "green" as const },
-  { label: "복지", value: 24, tone: "orange" as const },
+  { label: "복지", value: 21, tone: "orange" as const },
   { label: "기타", value: 7, tone: "purple" as const },
 ];

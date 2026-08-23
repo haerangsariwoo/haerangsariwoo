@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
+import { PushSettings } from "@/components/push/PushSettings/PushSettings";
+import { InstallPrompt } from "@/components/push/InstallPrompt/InstallPrompt";
 import { badges, hourStats, profile, records } from "@/lib/my";
 import { noticeFor } from "@/lib/get-notice";
 import styles from "./my.module.css";
@@ -81,6 +83,14 @@ export default function MyPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section>
+        <div className={styles.sectionHead}>
+          <h2 className={styles.sectionTitle}>알림 설정</h2>
+        </div>
+        <InstallPrompt />
+        <PushSettings />
       </section>
 
       <section className={styles.menuList}>

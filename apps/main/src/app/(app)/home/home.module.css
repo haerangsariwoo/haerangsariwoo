@@ -1,30 +1,33 @@
-/* ---------- Hero ---------- */
+/* ---------- Hero ----------
+   design.md §3.2 Explore : eyebrow + H2 를 위에 두고 가운데를 비운다 */
 .hero {
   position: relative;
-  background: var(--sky);
-  border-radius: 26px;
-  padding: 23px 22px 22px;
+  background: var(--surface-sheet);
+  border-radius: var(--radius-sheet);
+  padding: var(--space-24) var(--space-24) var(--space-20);
   overflow: hidden;
 }
 
+/* §1.2 --type-h2 : Montserrat 500 / 32 (한글이라 28 로 낮춘다) */
 .greeting {
-  font-size: 23px;
-  font-weight: 700;
-  color: var(--ink);
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink-900);
+  padding-right: 76px;
 }
 
 .subGreeting {
   font-size: 14px;
-  color: var(--ink-soft);
-  margin-top: 4px;
+  color: var(--ink-500);
+  margin-top: var(--space-6);
 }
 
 .heroMascot {
   position: absolute;
-  right: 18px;
-  top: 16px;
-  font-size: 60px;
-  line-height: 1;
+  right: var(--space-16);
+  top: var(--space-16);
 }
 
 .summaryRow {
@@ -35,27 +38,31 @@
 }
 
 .summaryCard {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: 13px 16px 12px;
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
+  padding: var(--space-14) var(--space-16);
+  box-shadow: var(--shadow-card);
 }
 
+/* §1.2 --type-meta : 12, --ink-600 */
 .summaryLabel {
   font-size: 12px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
+/* §1.2 --type-h4 : Montserrat 600 / 20 */
 .summaryValue {
-  font-size: 19px;
-  font-weight: 700;
-  color: var(--brand-text);
-  margin-top: 2px;
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--brand-blue-500);
+  margin-top: var(--space-4);
 }
 
 /* ---------- shared card ---------- */
 .card {
-  background: var(--surface);
-  border-radius: var(--radius-xl);
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
 }
 
@@ -173,19 +180,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-14);
 }
 
 .sectionTitle {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--ink);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink-800);
 }
 
+/* §1.2 --type-action-sm : 12 / 500 */
 .moreLink {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
 }
 
 /* ---------- volunteer cards ---------- */
@@ -285,15 +294,16 @@
 }
 
 .panelTitle {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--ink);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink-800);
 }
 
 .panelMore {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
 }
 
 .noticeList {

@@ -1,17 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Jua, Noto_Sans_KR } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-const notoSansKr = Noto_Sans_KR({
-  variable: "--font-body",
+/**
+ * design.md §1.2 — 제목 Montserrat, 본문은 CircularXX 대신 Pretendard.
+ * Pretendard 는 Google Fonts 에 없어 공식 CDN 을 쓴다.
+ */
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
-});
-
-const jua = Jua({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -22,12 +21,20 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#2E7CF6",
+  themeColor: "#176ff2",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${notoSansKr.variable} ${jua.variable}`}>
+    <html lang="ko" className={montserrat.variable}>
+      <head>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          as="style"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

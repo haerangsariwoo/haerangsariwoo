@@ -29,7 +29,7 @@
 }
 
 .wordmark {
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-heading);
   font-size: 26px;
   color: var(--ink);
 }

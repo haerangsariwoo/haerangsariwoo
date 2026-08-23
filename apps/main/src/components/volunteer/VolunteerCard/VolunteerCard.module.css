@@ -1,10 +1,17 @@
+/*
+ * design.md §2.5 Deal Card 를 가로형 목록에 맞춘 것.
+ * 면은 --surface-card 그라디언트 + 1px inset 보더, radius 16,
+ * 썸네일은 radius 12.
+ */
 .card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+  gap: var(--space-14);
+  padding: var(--space-4);
+  padding-right: var(--space-12);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
   box-shadow: var(--shadow-card);
 }
 
@@ -15,9 +22,10 @@
 
 .thumb {
   display: block;
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius-md);
+  width: 84px;
+  height: 84px;
+  /* §2.5 — 카드 안 썸네일 radius 12 */
+  border-radius: var(--radius-sm);
   flex: none;
   overflow: hidden;
 }
@@ -34,17 +42,12 @@
   display: block;
 }
 
-.thumb.mint {
-  background: var(--mint-bg);
-}
-.thumb.peach {
-  background: var(--peach-bg);
-}
-.thumb.sky {
-  background: var(--sky);
-}
+/* §1.6 — 이미지 로딩 전 면은 --ink-200 단색 */
+.thumb.mint,
+.thumb.peach,
+.thumb.sky,
 .thumb.lavender {
-  background: var(--lavender-bg);
+  background: var(--brand-tint-05);
 }
 
 .body {
@@ -52,64 +55,78 @@
   min-width: 0;
 }
 
+/* §1.2 --type-body-strong : 14 / 500, --ink-800 */
 .title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-800);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+/* §1.2 --type-caption : 10, --ink-500 */
 .meta {
-  font-size: 11px;
-  color: var(--ink-soft);
-  margin-top: 6px;
+  font-size: 10px;
+  color: var(--ink-500);
+  margin-top: var(--space-6);
 }
 
 .tagRow {
   display: flex;
-  gap: 6px;
-  margin-top: 10px;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  min-width: 0;
 }
 
+/* §2.6 Label chip — padding 4 12, radius 59 */
 .tag {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
   font-size: 10px;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: var(--space-4) var(--space-12);
   border-radius: var(--radius-pill);
 }
 
+/* 마감임박만 다른 색 — --accent-like */
 .tag.closing {
-  background: #ffe9e9;
-  color: #d14b57;
+  background: rgba(236, 86, 85, 0.14);
+  color: #b83b3a;
   font-weight: 700;
 }
 
+/* §2.1 Primary CTA 를 카드 크기에 맞춘 것 */
 .action {
   flex: none;
-  width: 74px;
-  height: 46px;
-  border-radius: var(--radius-md);
-  background: var(--brand);
-  color: #fff;
-  font-size: 11px;
+  width: 72px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-gradient);
+  color: var(--surface-white);
+  font-size: 12px;
   font-weight: 700;
   display: grid;
   place-items: center;
   border: none;
   cursor: pointer;
   text-align: center;
+  box-shadow: var(--shadow-cta-soft);
 }
 
 .action.done {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
+  box-shadow: none;
 }
 
 .action.closed {
-  background: #eef2f6;
-  color: #9aa7b4;
+  background: var(--surface-muted);
+  color: var(--ink-600);
+  box-shadow: none;
 }

@@ -70,18 +70,15 @@ export default function LandingPage() {
           <div className={cn(styles.sectionBody, styles.aboutGrid)}>
             <div>
               <p className={styles.aboutText}>{landing.about.body}</p>
-              <div className={styles.aboutStats}>
-                <div>
-                  <span className={styles.statValue}>1996</span>
-                  <span className={styles.statLabel}>창설</span>
+              {/* §5 — 성과를 숫자로 자랑하지 않고 연도 사실만 적는다 */}
+              <div className={styles.aboutFacts}>
+                <div className={styles.fact}>
+                  <span className={styles.factValue}>1996</span>
+                  <span className={styles.factLabel}>한성대학교 중앙 봉사동아리로 창설</span>
                 </div>
-                <div>
-                  <span className={styles.statValue}>30년</span>
-                  <span className={styles.statLabel}>이어온 전통</span>
-                </div>
-                <div>
-                  <span className={styles.statValue}>중앙</span>
-                  <span className={styles.statLabel}>봉사동아리</span>
+                <div className={styles.fact}>
+                  <span className={styles.factValue}>30년</span>
+                  <span className={styles.factLabel}>지금까지 이어온 봉사의 전통</span>
                 </div>
               </div>
             </div>
@@ -134,8 +131,10 @@ export default function LandingPage() {
             </div>
 
             <div className={styles.scheduleCard}>
-              <p className={styles.scheduleHead}>모집 일정</p>
-              <span className={styles.cohortTag}>{cohort}</span>
+              <p className={styles.scheduleHead}>
+                모집 일정
+                <span className={styles.cohortTag}>{cohort}</span>
+              </p>
 
               <div className={styles.scheduleList}>
                 {schedule.map((s) => (

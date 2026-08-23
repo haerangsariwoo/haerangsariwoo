@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
@@ -19,7 +19,6 @@ interface HeroSliderProps {
  */
 export function HeroSlider({ applicationsOpen, cohort }: HeroSliderProps) {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const total = heroSlides.length;
 
   const go = useCallback(
@@ -27,29 +26,26 @@ export function HeroSlider({ applicationsOpen, cohort }: HeroSliderProps) {
     [total],
   );
 
-  // 자동 전환 — 마우스가 올라가 있거나 포커스가 안에 있으면 멈춘다.
-  // index 를 의존성에 두어, 직접 넘긴 뒤에는 타이머가 처음부터 다시 돈다.
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /**
+   * 자동 전환. index 를 의존성에 두어 직접 넘긴 뒤에는 처음부터 다시 센다.
+   * 타이머 id 는 이 실행분을 지역 변수로 잡아둔다 — ref 에 담아두면
+   * 정리 시점에 다른 실행분의 id 를 지우게 되어 타이머가 쌓인다.
+   * 커서를 올려도 멈추지 않는다. 넘기는 방법은 화살표·점·자동 전환 셋뿐이다.
+   */
   useEffect(() => {
-    if (paused || total < 2) return;
+    if (total < 2) return;
     // 애니메이션을 줄이도록 설정한 사용자에게는 자동 전환을 걸지 않는다
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    timer.current = setTimeout(() => setIndex((i) => (i + 1) % total), heroInterval);
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [paused, total, index]);
+    const id = setTimeout(() => setIndex((i) => (i + 1) % total), heroInterval);
+    return () => clearTimeout(id);
+  }, [total, index]);
 
   const current = heroSlides[index];
 
   return (
     <section
       className={styles.hero}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
       aria-roledescription="캐러셀"
       aria-label="해랑사리우 소개"
     >

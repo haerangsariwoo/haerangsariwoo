@@ -69,7 +69,7 @@ export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
           const photoIndex = withPhoto.findIndex((p) => p.id === a.id);
           const body = (
             <>
-              <span className={styles.photo}>
+              <span className={styles.thumb}>
                 {a.photoUrl ? (
                   <Image
                     className={styles.thumbImage}

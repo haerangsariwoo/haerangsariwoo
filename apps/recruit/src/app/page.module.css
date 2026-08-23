@@ -189,13 +189,25 @@
   max-width: 60ch;
 }
 
-.aboutStats {
+.aboutFacts {
   display: flex;
-  gap: var(--space-44);
+  align-items: stretch;
   margin-top: var(--space-32);
+  border-top: 1px solid rgba(23, 111, 242, 0.14);
+  border-bottom: 1px solid rgba(23, 111, 242, 0.14);
 }
 
-.statValue {
+.fact {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-20) var(--space-16);
+}
+
+.fact + .fact {
+  border-left: 1px solid rgba(23, 111, 242, 0.14);
+}
+
+.factValue {
   display: block;
   font-family: var(--font-heading);
   font-weight: 700;
@@ -204,11 +216,12 @@
   color: var(--brand-blue-500);
 }
 
-.statLabel {
+.factLabel {
   display: block;
   font-size: 12px;
+  line-height: 1.5;
   color: var(--ink-600);
-  margin-top: var(--space-6);
+  margin-top: var(--space-8);
 }
 
 .aboutPhoto {
@@ -342,6 +355,10 @@
 }
 
 .scheduleHead {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-10);
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 18px;
@@ -349,12 +366,11 @@
 }
 
 .cohortTag {
-  display: inline-block;
-  margin-top: var(--space-8);
   padding: 4px var(--space-12);
   border-radius: var(--radius-pill);
   background: var(--brand-tint-10);
   color: var(--brand-blue-500);
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 700;
 }

@@ -57,7 +57,8 @@
 
 .thumb {
   position: relative;
-  aspect-ratio: 16 / 10;
+  /* 사람이 담긴 활동 사진이라 세로로 길게 잡는다 */
+  aspect-ratio: 4 / 6;
   overflow: hidden;
   background: var(--ink-500);
   display: grid;

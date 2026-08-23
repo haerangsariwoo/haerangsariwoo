@@ -67,22 +67,33 @@
   box-shadow: var(--shadow-card);
 }
 
+/* 카드를 나란히 두면 중요도가 같아 보인다.
+   시간이 걸린 '다음 활동'을 크게 두고, 현황은 카드를 벗겨 배경 위에 얹는다. */
 .duo {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-/* ---------- Semester status ---------- */
-.statusCard {
-  min-height: 212px;
-  padding: 18px;
   display: flex;
   flex-direction: column;
+  gap: var(--space-20);
+}
+
+/* ---------- 이번 학기 현황 — 카드가 아니라 배경 위의 띠 ---------- */
+.statusCard {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: var(--space-4) 0 var(--space-20);
+  border-bottom: 1px solid rgba(23, 111, 242, 0.12);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "title title"
+    "donut lines";
   align-items: center;
+  column-gap: var(--space-20);
+  row-gap: var(--space-14);
 }
 
 .cardTitle {
+  grid-area: title;
   align-self: flex-start;
   font-family: var(--font-accent);
   font-size: 19px;
@@ -92,10 +103,10 @@
 }
 
 .donutWrap {
+  grid-area: donut;
   position: relative;
   width: 82px;
   height: 82px;
-  margin: 18px 0 20px;
 }
 
 .donutValue {
@@ -109,10 +120,11 @@
 }
 
 .statusLines {
-  align-self: flex-start;
+  grid-area: lines;
+  align-self: center;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-6);
 }
 
 .statusPrimary {
@@ -128,10 +140,13 @@
 
 /* ---------- Next activity ---------- */
 .nextCard {
-  min-height: 212px;
-  padding: 18px;
+  padding: var(--space-20);
   display: flex;
   flex-direction: column;
+  /* 화면에서 가장 먼저 눈에 들어와야 하는 카드 */
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 28px rgba(23, 111, 242, 0.13);
 }
 
 .nextHead {

@@ -17,7 +17,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
       <div className={`adminScope ${styles.shell}`}>
         <aside className={styles.sidebar}>
           <Link href="/admin" className={styles.brand} aria-label="관리자 홈으로">
-            <Logo size={26} className={styles.mascot} priority />
+            <Logo size={40} src="/logo-admin.avif" className={styles.mascot} priority />
             <span className={styles.adminTag}>ADMIN</span>
           </Link>
 

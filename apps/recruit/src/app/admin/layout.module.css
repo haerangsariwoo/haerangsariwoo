@@ -21,12 +21,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 10px;
+  padding: 0 10px 20px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .mascot {
   font-size: 18px;
   line-height: 1;
+}
+
+.adminTag {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.62);
+  margin-left: auto;
 }
 
 .wordmark {

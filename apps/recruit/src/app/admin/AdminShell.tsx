@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AdminNav } from "./AdminNav";
 import { AdminTitle } from "./AdminTitle";
-import { recruitConfig, cohortLabel } from "@/lib/recruit-config";
+import { recruitConfig } from "@/lib/recruit-config";
 import { Logo } from "@/components/ui/Logo/Logo";
 import styles from "./layout.module.css";
 
@@ -18,15 +18,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <Link href="/admin" className={styles.brand} aria-label="관리자 홈으로">
-          <Logo size={26} className={styles.mascot} priority />
+          <Logo size={40} src="/logo-admin.avif" className={styles.mascot} priority />
+          <span className={styles.adminTag}>ADMIN</span>
         </Link>
-        <p className={styles.season}>
-          신규모집 운영
-          <b>
-            {cohortLabel(recruitConfig.year, recruitConfig.semesterNo)} ·{" "}
-            {recruitConfig.semester}
-          </b>
-        </p>
 
         <AdminNav />
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/cn";
 import type { TeamMemberRow } from "@/lib/admin-data";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
@@ -15,8 +15,12 @@ interface TeamBoardProps {
   participants: TeamMemberRow[];
   assignments: Record<string, number | null>;
   onAssignmentsChange: (next: Record<string, number | null>) => void;
+  /** 자동 편성 계산에만 쓰는 참고값 — 실제 조 개수는 teamCount 다 */
   teamSize: number;
   onTeamSizeChange: (size: number) => void;
+  /** 조 개수. 사람을 안 넣어도 빈 조를 미리 만들어 둘 수 있다 */
+  teamCount: number;
+  onTeamCountChange: (count: number) => void;
 }
 
 export function TeamBoard({
@@ -25,18 +29,21 @@ export function TeamBoard({
   onAssignmentsChange,
   teamSize,
   onTeamSizeChange,
+  teamCount,
+  onTeamCountChange,
 }: TeamBoardProps) {
   const [dragging, setDragging] = useState<string | null>(null);
   const [over, setOver] = useState<Slot | null>(null);
   /** 키보드로 옮길 때 고른 사람 */
   const [picked, setPicked] = useState<string | null>(null);
 
-  const teams = useMemo(() => {
-    const nums = [...new Set(Object.values(assignments).filter((t): t is number => t !== null))];
-    return nums.sort((a, b) => a - b);
-  }, [assignments]);
+  const teams = Array.from({ length: teamCount }, (_, i) => i + 1);
 
-  const unassigned = participants.filter((m) => (assignments[m.id] ?? null) === null);
+  // 조 개수를 줄여서 지금 조 번호가 더는 없는 사람도 "미배정" 으로 본다.
+  // 데이터를 지우지 않고 화면에서만 그렇게 보이게 한다 — 조 개수를 다시
+  // 늘리면 원래 있던 조로 그대로 돌아온다.
+  const inRange = (t: number | null) => t !== null && t >= 1 && t <= teamCount;
+  const unassigned = participants.filter((m) => !inRange(assignments[m.id] ?? null));
 
   function moveTo(id: string, slot: Slot) {
     onAssignmentsChange({ ...assignments, [id]: slot === POOL ? null : slot });
@@ -46,7 +53,7 @@ export function TeamBoard({
   function autoAssign() {
     const men = participants.filter((m) => m.gender === "남");
     const women = participants.filter((m) => m.gender === "여");
-    const count = Math.max(1, Math.ceil(participants.length / teamSize));
+    const count = Math.max(1, teamCount);
     const buckets: TeamMemberRow[][] = Array.from({ length: count }, () => []);
 
     [men, women].forEach((group) => {
@@ -68,11 +75,11 @@ export function TeamBoard({
     onAssignmentsChange(next);
   }
 
-  function addTeam() {
-    // 빈 조를 하나 늘린다 — 옮겨 담을 자리를 만들기 위해
-    const next = (teams.at(-1) ?? 0) + 1;
-    const first = participants.find((m) => (assignments[m.id] ?? null) === null);
-    if (first) moveTo(first.id, next);
+  /** 조당 인원을 바꾸면 지금 인원수 기준으로 조 개수를 다시 계산해 준다 */
+  function changeTeamSize(size: number) {
+    const safeSize = Math.max(1, size);
+    onTeamSizeChange(safeSize);
+    onTeamCountChange(Math.max(1, Math.ceil(participants.length / safeSize)));
   }
 
   /** 드롭 대상 공통 속성 */
@@ -121,26 +128,37 @@ export function TeamBoard({
     tabIndex: 0,
     role: "button",
     "aria-pressed": picked === m.id,
-    "aria-label": `${m.name} ${(assignments[m.id] ?? null) === null ? "미배정" : `${assignments[m.id]}조`}. 누르거나 끌어서 옮깁니다`,
+    "aria-label": `${m.name} ${inRange(assignments[m.id] ?? null) ? `${assignments[m.id]}조` : "미배정"}. 누르거나 끌어서 옮깁니다`,
   });
 
   return (
     <>
       <div className={toolbar.toolbar}>
-        <select
-          className={toolbar.select}
-          value={teamSize}
-          onChange={(e) => onTeamSizeChange(Number(e.target.value))}
-          aria-label="조당 인원"
-        >
-          <option value={4}>조당 4명</option>
-          <option value={5}>조당 5명</option>
-          <option value={6}>조당 6명</option>
-        </select>
+        <label className={toolbar.numberField}>
+          조당 인원
+          <input
+            type="number"
+            min={1}
+            className={toolbar.number}
+            value={teamSize}
+            onChange={(e) => changeTeamSize(Number(e.target.value) || 1)}
+            aria-label="조당 인원"
+          />
+          명
+        </label>
+        <label className={toolbar.numberField}>
+          조 개수
+          <input
+            type="number"
+            min={1}
+            className={toolbar.number}
+            value={teamCount}
+            onChange={(e) => onTeamCountChange(Math.max(1, Number(e.target.value) || 1))}
+            aria-label="조 개수"
+          />
+          개
+        </label>
         <span className={toolbar.spacer} />
-        <button type="button" className={toolbar.button} onClick={addTeam}>
-          ＋ 조 추가
-        </button>
         <button type="button" className={toolbar.button} onClick={resetAll}>
           전체 해제
         </button>
@@ -186,7 +204,7 @@ export function TeamBoard({
         </div>
 
         <div>
-          <h3 className={styles.colTitle}>편성된 조 {teams.length}개</h3>
+          <h3 className={styles.colTitle}>조 {teams.length}개</h3>
           <div className={styles.teamGrid}>
             {teams.map((t) => {
               const members = participants.filter((m) => assignments[m.id] === t);
@@ -226,11 +244,6 @@ export function TeamBoard({
                 </div>
               );
             })}
-            {teams.length === 0 && (
-              <p className={styles.emptyHint}>
-                아직 편성된 조가 없습니다. 자동 편성을 누르거나 조를 추가해 보세요.
-              </p>
-            )}
           </div>
         </div>
       </div>

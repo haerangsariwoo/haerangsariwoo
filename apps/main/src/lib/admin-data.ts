@@ -189,7 +189,10 @@ export const teamPool: TeamMemberRow[] = [
 export interface TeamEventDraft {
   id: string;
   activityId: string;
+  /** 자동 편성 계산에만 쓰는 참고값. 실제로 몇 조가 있는지는 teamCount 가 정한다 */
   teamSize: number;
+  /** 조 개수. 빈 조도 미리 만들어 둘 수 있어 assignments 에서 그냥 셀 수 없다 */
+  teamCount: number;
   /** 이 행사에 참여하는 사람 (teamPool 중 일부) */
   participantIds: string[];
   /** 참여자 id → 조 번호. 아직 안 나눴으면 null */
@@ -203,6 +206,7 @@ export const teamEvents: TeamEventDraft[] = [
     id: "te1",
     activityId: "a2",
     teamSize: 6,
+    teamCount: 3,
     participantIds: ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"],
     assignments: { t1: 3, t2: 3, t3: 3, t4: 3, t5: 3, t6: 3, t7: null, t8: null },
     published: true,

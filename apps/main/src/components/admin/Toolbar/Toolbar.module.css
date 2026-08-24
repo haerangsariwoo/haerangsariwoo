@@ -61,3 +61,44 @@
   border-color: transparent;
   color: #0f9d57;
 }
+
+/* 숫자 하나만 정하는 필드 — "조당 인원 [4] 명" 처럼 라벨 사이에 낀다 */
+.numberField {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--a-radius-md);
+  border: 1px solid var(--a-line);
+  background: var(--a-surface);
+  color: var(--a-ink-soft);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.number {
+  width: 40px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink);
+  text-align: center;
+}
+
+.number:focus {
+  outline: none;
+}
+
+/* 브라우저 기본 스핀 버튼은 이 폭에서 숫자를 가려 숨긴다 */
+.number::-webkit-outer-spin-button,
+.number::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.number {
+  -moz-appearance: textfield;
+}

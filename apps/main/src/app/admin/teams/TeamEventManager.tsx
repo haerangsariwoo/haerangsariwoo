@@ -89,6 +89,8 @@ export function TeamEventManager() {
       id,
       activityId: draftActivityId,
       teamSize: draftTeamSize,
+      // 처음엔 지정한 인원수 기준으로 조 개수를 잡아 준다 — 만들고 나서도 바꿀 수 있다
+      teamCount: Math.max(1, Math.ceil(participantIds.length / draftTeamSize)),
       participantIds,
       assignments,
       published: false,
@@ -161,16 +163,18 @@ export function TeamEventManager() {
                 </option>
               ))}
             </select>
-            <select
-              className={toolbar.select}
-              value={draftTeamSize}
-              onChange={(e) => setDraftTeamSize(Number(e.target.value))}
-              aria-label="조당 인원"
-            >
-              <option value={4}>조당 4명</option>
-              <option value={5}>조당 5명</option>
-              <option value={6}>조당 6명</option>
-            </select>
+            <label className={toolbar.numberField}>
+              조당 인원
+              <input
+                type="number"
+                min={1}
+                className={toolbar.number}
+                value={draftTeamSize}
+                onChange={(e) => setDraftTeamSize(Math.max(1, Number(e.target.value) || 1))}
+                aria-label="조당 인원"
+              />
+              명
+            </label>
           </div>
 
           <p className={styles.colTitle}>참여 인원 선택 ({draftParticipants.size}명)</p>
@@ -222,6 +226,8 @@ export function TeamEventManager() {
             onAssignmentsChange={(next) => updateSelected({ assignments: next })}
             teamSize={selected.teamSize}
             onTeamSizeChange={(size) => updateSelected({ teamSize: size })}
+            teamCount={selected.teamCount}
+            onTeamCountChange={(count) => updateSelected({ teamCount: count })}
           />
 
           <div className={styles.publishBar}>

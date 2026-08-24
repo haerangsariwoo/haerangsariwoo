@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ADMIN_NAV } from "./AdminNav";
 import { hourRequests } from "@/lib/admin-data";
+import { SEMESTERS, useSemester } from "./SemesterContext";
+import { cn } from "@/lib/cn";
 import styles from "./layout.module.css";
 
 const TITLES: Record<string, string> = {
@@ -17,16 +19,29 @@ export function AdminTopbar() {
   );
   const title = TITLES[pathname] ?? match?.label ?? "운영진";
   const pendingHours = hourRequests.filter((h) => h.state === "대기").length;
+  const { semester, setSemester, readOnly } = useSemester();
 
   return (
     <header className={styles.topbar}>
       <h1 className={styles.pageTitle}>{title}</h1>
 
-      <select className={styles.semesterSelect} defaultValue="2026-2" aria-label="학기 선택">
-        <option value="2026-2">2026-2학기</option>
-        <option value="2026-1">2026-1학기</option>
-        <option value="2025-2">2025-2학기</option>
+      <select
+        className={cn(styles.semesterSelect, readOnly && styles.semesterReadOnly)}
+        value={semester}
+        onChange={(e) => setSemester(e.target.value)}
+        aria-label="학기 선택"
+      >
+        {SEMESTERS.map((s) => (
+          <option key={s.value} value={s.value}>
+            {s.label}
+          </option>
+        ))}
       </select>
+      {readOnly && (
+        <span className={styles.readOnlyTag} title="지난 학기 기록 — 읽기 전용">
+          읽기 전용
+        </span>
+      )}
 
       {/* 처리할 일이 있는 곳으로 보낸다 */}
       <Link href="/admin/hours" className={styles.iconButton} aria-label={`승인 대기 ${pendingHours}건`}>

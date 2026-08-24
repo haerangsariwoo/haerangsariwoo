@@ -10,6 +10,7 @@ import {
   type NoticeCopy,
 } from "@/lib/app-content";
 import { albums as albumsSeed, type Album } from "@/lib/community";
+import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "./content.module.css";
 
@@ -35,6 +36,7 @@ let faqSeq = 0;
 
 /* ---------- 홈 화면 문구 ---------- */
 export function HomeCopyPanel() {
+  const { readOnly } = useSemester();
   const [greetingSuffix, setGreetingSuffix] = useState(homeCopySeed.greetingSuffix);
   const [subGreeting, setSubGreeting] = useState(homeCopySeed.subGreeting);
   const [saved, flash] = useSaved();
@@ -54,6 +56,7 @@ export function HomeCopyPanel() {
             className={styles.input}
             value={greetingSuffix}
             onChange={(e) => setGreetingSuffix(e.target.value)}
+            disabled={readOnly}
           />
         </div>
         <div className={styles.field}>
@@ -65,6 +68,7 @@ export function HomeCopyPanel() {
             className={styles.input}
             value={subGreeting}
             onChange={(e) => setSubGreeting(e.target.value)}
+            disabled={readOnly}
           />
         </div>
       </div>
@@ -73,7 +77,12 @@ export function HomeCopyPanel() {
         <p className={styles.saveNote}>
           {saved ? "저장했습니다." : "저장하면 부원 홈 화면에 즉시 반영됩니다."}
         </p>
-        <button type="button" className={cn(toolbar.button, toolbar.primary)} onClick={flash}>
+        <button
+          type="button"
+          className={cn(toolbar.button, toolbar.primary)}
+          onClick={flash}
+          disabled={readOnly}
+        >
           저장
         </button>
       </div>
@@ -83,6 +92,7 @@ export function HomeCopyPanel() {
 
 /* ---------- 자주 묻는 질문 ---------- */
 export function FaqPanel() {
+  const { readOnly } = useSemester();
   const [faqs, setFaqs] = useState<AppFaq[]>(memberFaqsSeed);
   const [saved, flash] = useSaved();
 
@@ -120,7 +130,7 @@ export function FaqPanel() {
               <button
                 type="button"
                 className={styles.iconBtn}
-                disabled={i === 0}
+                disabled={readOnly || i === 0}
                 onClick={() => move(i, -1)}
                 aria-label="위로"
               >
@@ -129,7 +139,7 @@ export function FaqPanel() {
               <button
                 type="button"
                 className={styles.iconBtn}
-                disabled={i === faqs.length - 1}
+                disabled={readOnly || i === faqs.length - 1}
                 onClick={() => move(i, 1)}
                 aria-label="아래로"
               >
@@ -139,6 +149,7 @@ export function FaqPanel() {
                 type="button"
                 className={cn(styles.iconBtn, styles.danger)}
                 onClick={() => remove(f.id)}
+                disabled={readOnly}
               >
                 삭제
               </button>
@@ -153,6 +164,7 @@ export function FaqPanel() {
                 value={f.q}
                 onChange={(e) => update(f.id, { q: e.target.value })}
                 placeholder="예: 봉사시간은 언제 반영되나요?"
+                disabled={readOnly}
               />
             </div>
             <div className={styles.field}>
@@ -165,6 +177,7 @@ export function FaqPanel() {
                 value={f.a}
                 onChange={(e) => update(f.id, { a: e.target.value })}
                 placeholder="부원이 볼 답변을 적어주세요."
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -173,7 +186,7 @@ export function FaqPanel() {
       </div>
 
       <div className={styles.addRow}>
-        <button type="button" className={toolbar.button} onClick={add}>
+        <button type="button" className={toolbar.button} onClick={add} disabled={readOnly}>
           ＋ 질문 추가
         </button>
       </div>
@@ -182,7 +195,12 @@ export function FaqPanel() {
         <p className={styles.saveNote}>
           {saved ? "저장했습니다." : "순서를 바꾸면 앱에도 같은 순서로 표시됩니다."}
         </p>
-        <button type="button" className={cn(toolbar.button, toolbar.primary)} onClick={flash}>
+        <button
+          type="button"
+          className={cn(toolbar.button, toolbar.primary)}
+          onClick={flash}
+          disabled={readOnly}
+        >
           저장
         </button>
       </div>
@@ -192,6 +210,7 @@ export function FaqPanel() {
 
 /* ---------- 화면 안내 문구 ---------- */
 export function NoticeCopyPanel() {
+  const { readOnly } = useSemester();
   const [notices, setNotices] = useState<NoticeCopy[]>(noticeCopiesSeed);
   const [saved, flash] = useSaved();
 
@@ -212,6 +231,7 @@ export function NoticeCopyPanel() {
               className={styles.textarea}
               value={n.text}
               onChange={(e) => update(n.id, e.target.value)}
+              disabled={readOnly}
             />
           </div>
         ))}
@@ -221,7 +241,12 @@ export function NoticeCopyPanel() {
         <p className={styles.saveNote}>
           {saved ? "저장했습니다." : "저장하면 해당 화면에 즉시 반영됩니다."}
         </p>
-        <button type="button" className={cn(toolbar.button, toolbar.primary)} onClick={flash}>
+        <button
+          type="button"
+          className={cn(toolbar.button, toolbar.primary)}
+          onClick={flash}
+          disabled={readOnly}
+        >
           저장
         </button>
       </div>
@@ -231,6 +256,7 @@ export function NoticeCopyPanel() {
 
 /* ---------- 활동 사진 (앨범) ---------- */
 export function AlbumPanel() {
+  const { readOnly } = useSemester();
   const [albumsState, setAlbumsState] = useState<Album[]>(albumsSeed);
   /** 실제로 고른 사진의 미리보기. 새로고침하면 사라진다 — 서버에 올리지 않고 브라우저 메모리에만 둔다. */
   const [previews, setPreviews] = useState<Record<string, string>>({});
@@ -280,6 +306,7 @@ export function AlbumPanel() {
                 value={a.title}
                 onChange={(e) => rename(a.id, e.target.value)}
                 aria-label={`${a.title} 앨범 이름`}
+                disabled={readOnly}
               />
               <p className={styles.albumMeta}>
                 {a.date}
@@ -298,7 +325,12 @@ export function AlbumPanel() {
               hidden
               onChange={(e) => onFileChosen(a.id, e.target.files)}
             />
-            <button type="button" className={styles.albumUpload} onClick={() => pickFile(a.id)}>
+            <button
+              type="button"
+              className={styles.albumUpload}
+              onClick={() => pickFile(a.id)}
+              disabled={readOnly}
+            >
               사진 업로드
             </button>
           </div>
@@ -311,7 +343,12 @@ export function AlbumPanel() {
             ? "저장했습니다."
             : "앨범을 만들면 커뮤니티 탭에 바로 보입니다. 업로드한 사진은 이 화면을 벗어나면 사라집니다."}
         </p>
-        <button type="button" className={cn(toolbar.button, toolbar.primary)} onClick={flash}>
+        <button
+          type="button"
+          className={cn(toolbar.button, toolbar.primary)}
+          onClick={flash}
+          disabled={readOnly}
+        >
           저장
         </button>
       </div>

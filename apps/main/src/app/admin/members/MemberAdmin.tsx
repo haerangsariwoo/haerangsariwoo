@@ -6,10 +6,12 @@ import { Panel } from "@/components/admin/Panel/Panel";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import { adminMembers as memberSeed } from "@/lib/admin-data";
 import { cohortLabel, signupRequests as signupSeed } from "@/lib/signup";
+import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "../volunteers/volunteers.module.css";
 
 export function MemberAdmin() {
+  const { readOnly } = useSemester();
   // ---------- 가입 승인 대기 ----------
   const [requests, setRequests] = useState(signupSeed);
   const [reqQ, setReqQ] = useState("");
@@ -79,7 +81,7 @@ export function MemberAdmin() {
             type="button"
             className={toolbar.button}
             onClick={() => decidePicked("반려")}
-            disabled={picked.size === 0}
+            disabled={readOnly || picked.size === 0}
           >
             선택 반려{picked.size > 0 ? ` ${picked.size}` : ""}
           </button>
@@ -87,7 +89,7 @@ export function MemberAdmin() {
             type="button"
             className={cn(toolbar.button, toolbar.primary)}
             onClick={() => decidePicked("승인")}
-            disabled={picked.size === 0}
+            disabled={readOnly || picked.size === 0}
           >
             선택 일괄 승인{picked.size > 0 ? ` ${picked.size}` : ""}
           </button>
@@ -100,6 +102,7 @@ export function MemberAdmin() {
               type="checkbox"
               aria-label="대기 신청 전체 선택"
               checked={allPicked}
+              disabled={readOnly}
               onChange={() =>
                 setPicked(allPicked ? new Set() : new Set(pendingVisible.map((r) => r.id)))
               }
@@ -126,6 +129,7 @@ export function MemberAdmin() {
                     type="checkbox"
                     aria-label={`${r.name} 선택`}
                     checked={picked.has(r.id)}
+                    disabled={readOnly}
                     onChange={() =>
                       setPicked((prev) => {
                         const n = new Set(prev);
@@ -153,13 +157,19 @@ export function MemberAdmin() {
               <td className={styles.rowActions}>
                 {r.state === "대기" ? (
                   <>
-                    <RowAction primary onClick={() => decide(r.id, "승인")}>
+                    <RowAction primary onClick={() => decide(r.id, "승인")} disabled={readOnly}>
                       승인
                     </RowAction>
-                    <RowAction onClick={() => decide(r.id, "반려")}>반려</RowAction>
+                    <RowAction onClick={() => decide(r.id, "반려")} disabled={readOnly}>
+                      반려
+                    </RowAction>
                   </>
                 ) : (
-                  <RowAction onClick={() => decide(r.id, "대기")} title="대기로 되돌리기">
+                  <RowAction
+                    onClick={() => decide(r.id, "대기")}
+                    title="대기로 되돌리기"
+                    disabled={readOnly}
+                  >
                     되돌리기
                   </RowAction>
                 )}
@@ -238,6 +248,7 @@ export function MemberAdmin() {
                 <RowAction
                   onClick={() => toggleRole(m.id)}
                   title={m.role === "운영진" ? "부원으로 내리기" : "운영진으로 올리기"}
+                  disabled={readOnly}
                 >
                   {m.role === "운영진" ? "부원으로" : "운영진으로"}
                 </RowAction>

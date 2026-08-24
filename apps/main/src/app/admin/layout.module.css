@@ -174,6 +174,20 @@
   font-weight: 500;
 }
 
+.semesterReadOnly {
+  color: var(--a-orange);
+}
+
+.readOnlyTag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--a-orange);
+  background: var(--a-orange-soft);
+  padding: 4px 10px;
+  border-radius: var(--a-radius-pill);
+  white-space: nowrap;
+}
+
 .iconButton {
   width: 40px;
   height: 40px;
@@ -199,6 +213,22 @@
 /* ---------- mobile guard ---------- */
 .mobileNote {
   display: none;
+}
+
+/* ---------- 지난 학기 읽기 전용 안내 ---------- */
+.readOnlyNotice {
+  background: var(--a-orange-soft);
+  color: var(--a-orange);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  border-radius: var(--a-radius-md);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.readOnlyNotice b {
+  font-weight: 700;
 }
 
 @media (max-width: 900px) {

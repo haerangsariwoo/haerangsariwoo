@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import type { BadgeTone } from "@/components/admin/DataTable/DataTable";
 import { applicants as seed } from "@/lib/admin-data";
+import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 
 const STATE_TONE: Record<string, BadgeTone> = {
@@ -19,6 +20,7 @@ const STATE_TONE: Record<string, BadgeTone> = {
 const CYCLE = ["신청완료", "참여확정", "불참", "노쇼"] as const;
 
 export function ApplicantTable() {
+  const { readOnly } = useSemester();
   const [rows, setRows] = useState(seed);
   const [q, setQ] = useState("");
   const [volunteer, setVolunteer] = useState("all");
@@ -105,11 +107,16 @@ export function ApplicantTable() {
           type="button"
           className={toolbar.button}
           onClick={confirmAll}
-          disabled={pendingCount === 0}
+          disabled={readOnly || pendingCount === 0}
         >
           일괄 참여확정{pendingCount > 0 ? ` ${pendingCount}` : ""}
         </button>
-        <button type="button" className={cn(toolbar.button, toolbar.primary)} onClick={markAttendance}>
+        <button
+          type="button"
+          className={cn(toolbar.button, toolbar.primary)}
+          onClick={markAttendance}
+          disabled={readOnly}
+        >
           출석 처리
         </button>
       </div>
@@ -133,6 +140,7 @@ export function ApplicantTable() {
                 primary={a.state === "대기"}
                 onClick={() => advance(a.id)}
                 title={a.state === "대기" ? "참여확정으로 승격" : "다음 상태로 변경"}
+                disabled={readOnly}
               >
                 {a.state === "대기" ? "승격" : "변경"}
               </RowAction>

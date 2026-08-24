@@ -13,11 +13,13 @@ export function RowAction({
   primary,
   onClick,
   title,
+  disabled,
 }: {
   children: ReactNode;
   primary?: boolean;
   onClick?: () => void;
   title?: string;
+  disabled?: boolean;
 }) {
   return (
     <button
@@ -25,6 +27,7 @@ export function RowAction({
       className={cn(styles.rowAction, primary && styles.primary)}
       onClick={onClick}
       title={title}
+      disabled={disabled}
     >
       {children}
     </button>

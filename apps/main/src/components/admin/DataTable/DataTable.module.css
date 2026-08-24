@@ -96,6 +96,11 @@
   color: var(--surface-white);
 }
 
+.rowAction:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .empty {
   padding: 40px 0;
   text-align: center;

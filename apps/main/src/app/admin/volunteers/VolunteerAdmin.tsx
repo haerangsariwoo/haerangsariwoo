@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import { adminVolunteers as seed, type AdminVolunteer } from "@/lib/admin-data";
+import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "./volunteers.module.css";
 
@@ -16,6 +17,7 @@ const EMPTY = {
 };
 
 export function VolunteerAdmin() {
+  const { readOnly } = useSemester();
   const [rows, setRows] = useState<AdminVolunteer[]>(seed);
   const [q, setQ] = useState("");
   const [source, setSource] = useState("all");
@@ -109,6 +111,7 @@ export function VolunteerAdmin() {
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
           onClick={() => setOpen((o) => !o)}
+          disabled={readOnly && !open}
         >
           {open ? "닫기" : "＋ 봉사활동 만들기"}
         </button>
@@ -200,10 +203,12 @@ export function VolunteerAdmin() {
               <Badge tone={v.tone}>{v.status}</Badge>
             </td>
             <td className={styles.rowActions}>
-              <RowAction onClick={() => toggleStatus(v.id)}>
+              <RowAction onClick={() => toggleStatus(v.id)} disabled={readOnly}>
                 {v.status === "모집 마감" ? "재개" : "마감"}
               </RowAction>
-              <RowAction onClick={() => remove(v.id)}>삭제</RowAction>
+              <RowAction onClick={() => remove(v.id)} disabled={readOnly}>
+                삭제
+              </RowAction>
             </td>
           </tr>
         ))}

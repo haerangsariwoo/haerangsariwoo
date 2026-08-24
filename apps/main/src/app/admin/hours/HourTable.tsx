@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import type { BadgeTone } from "@/components/admin/DataTable/DataTable";
 import { hourRequests as seed } from "@/lib/admin-data";
+import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "../volunteers/volunteers.module.css";
 
@@ -15,6 +16,7 @@ const STATE_TONE: Record<string, BadgeTone> = {
 };
 
 export function HourTable() {
+  const { readOnly } = useSemester();
   const [rows, setRows] = useState(seed);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState("대기");
@@ -78,7 +80,7 @@ export function HourTable() {
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
           onClick={approveChecked}
-          disabled={checked.size === 0}
+          disabled={readOnly || checked.size === 0}
         >
           선택 항목 일괄 승인{checked.size > 0 ? ` ${checked.size}` : ""}
         </button>
@@ -91,6 +93,7 @@ export function HourTable() {
             type="checkbox"
             aria-label="대기 항목 전체 선택"
             checked={allChecked}
+            disabled={readOnly}
             onChange={() =>
               setChecked(allChecked ? new Set() : new Set(pendingVisible.map((h) => h.id)))
             }
@@ -113,6 +116,7 @@ export function HourTable() {
                   type="checkbox"
                   aria-label={`${h.name} 선택`}
                   checked={checked.has(h.id)}
+                  disabled={readOnly}
                   onChange={() => toggleCheck(h.id)}
                 />
               )}
@@ -129,13 +133,19 @@ export function HourTable() {
             <td className={styles.rowActions}>
               {h.state === "대기" ? (
                 <>
-                  <RowAction primary onClick={() => setState(h.id, "승인")}>
+                  <RowAction primary onClick={() => setState(h.id, "승인")} disabled={readOnly}>
                     승인
                   </RowAction>
-                  <RowAction onClick={() => setState(h.id, "반려")}>반려</RowAction>
+                  <RowAction onClick={() => setState(h.id, "반려")} disabled={readOnly}>
+                    반려
+                  </RowAction>
                 </>
               ) : (
-                <RowAction onClick={() => setState(h.id, "대기")} title="대기 상태로 되돌리기">
+                <RowAction
+                  onClick={() => setState(h.id, "대기")}
+                  title="대기 상태로 되돌리기"
+                  disabled={readOnly}
+                >
                   되돌리기
                 </RowAction>
               )}

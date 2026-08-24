@@ -5,6 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Badge, DataTable, tableStyles } from "@/components/admin/DataTable/DataTable";
 import { pendingHours as pendingHoursSeed, todayVolunteers } from "@/lib/admin-data";
+import { useSemester } from "./SemesterContext";
 import styles from "./dashboard.module.css";
 
 const STATUS_OPTIONS = [
@@ -79,6 +80,7 @@ export function TodayVolunteersPanel() {
  * 버튼은 거기로 보낸다 — 같은 화면을 두 곳에 만들지 않는다.
  */
 export function PendingHoursPanel() {
+  const { readOnly } = useSemester();
   const [rows, setRows] = useState(pendingHoursSeed);
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
@@ -107,6 +109,7 @@ export function PendingHoursPanel() {
               checked={checked.has(p.id)}
               onChange={() => toggle(p.id)}
               aria-label={`${p.name} 선택`}
+              disabled={readOnly}
             />
             <span className={cn(styles.approvalAvatar, styles[p.tone])}>{p.name.charAt(0)}</span>
             <div className={styles.approvalBody}>
@@ -128,7 +131,7 @@ export function PendingHoursPanel() {
         <button
           type="button"
           className={styles.batchBar}
-          disabled={checked.size === 0}
+          disabled={readOnly || checked.size === 0}
           onClick={approveChecked}
         >
           {checked.size > 0 ? "☑" : "☐"} {checked.size}건 선택 · 일괄 승인

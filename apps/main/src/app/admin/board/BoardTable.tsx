@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import type { BadgeTone } from "@/components/admin/DataTable/DataTable";
 import { boardPosts as seed } from "@/lib/admin-data";
+import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import formStyles from "../volunteers/volunteers.module.css";
 import styles from "./BoardTable.module.css";
@@ -25,6 +26,7 @@ type Category = (typeof CATEGORIES)[number];
  * (네이버 카페의 "전체글보기" 와 같은 자리).
  */
 export function BoardTable() {
+  const { readOnly } = useSemester();
   const [rows, setRows] = useState(seed);
   const [openBoard, setOpenBoard] = useState<"all" | Category | null>(null);
   const [q, setQ] = useState("");
@@ -141,6 +143,7 @@ export function BoardTable() {
             if (openBoard !== "all") setForm((f) => ({ ...f, category: openBoard }));
             setOpen((o) => !o);
           }}
+          disabled={readOnly && !open}
         >
           {open ? "닫기" : "＋ 글 작성"}
         </button>
@@ -220,7 +223,9 @@ export function BoardTable() {
               <RowAction onClick={() => setReading((r) => (r === p.id ? null : p.id))}>
                 {reading === p.id ? "접기" : "열기"}
               </RowAction>
-              <RowAction onClick={() => remove(p.id)}>삭제</RowAction>
+              <RowAction onClick={() => remove(p.id)} disabled={readOnly}>
+                삭제
+              </RowAction>
             </td>
           </tr>
         ))}

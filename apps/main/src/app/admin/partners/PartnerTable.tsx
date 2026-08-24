@@ -4,12 +4,14 @@ import { useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import { partners as seed } from "@/lib/admin-data";
+import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "../volunteers/volunteers.module.css";
 
 const EMPTY = { name: "", contact: "", since: String(new Date().getFullYear()) };
 
 export function PartnerTable() {
+  const { readOnly } = useSemester();
   const [rows, setRows] = useState(seed);
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
@@ -77,6 +79,7 @@ export function PartnerTable() {
             setForm(EMPTY);
             setOpen((o) => !o);
           }}
+          disabled={readOnly && !open}
         >
           {open && !editing ? "닫기" : "＋ 기관 등록"}
         </button>
@@ -144,8 +147,12 @@ export function PartnerTable() {
             <td className={tableStyles.numeric}>{p.activities}회</td>
             <td className={cn(tableStyles.muted, tableStyles.numeric)}>{p.since}년</td>
             <td className={styles.rowActions}>
-              <RowAction onClick={() => startEdit(p.id)}>수정</RowAction>
-              <RowAction onClick={() => remove(p.id)}>삭제</RowAction>
+              <RowAction onClick={() => startEdit(p.id)} disabled={readOnly}>
+                수정
+              </RowAction>
+              <RowAction onClick={() => remove(p.id)} disabled={readOnly}>
+                삭제
+              </RowAction>
             </td>
           </tr>
         ))}

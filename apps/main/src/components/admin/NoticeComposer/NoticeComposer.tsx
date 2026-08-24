@@ -11,9 +11,11 @@ const CATEGORIES = ["필독", "일정", "후기", "MT"] as const;
 interface NoticeComposerProps {
   /** 공지를 만들면 목록에 추가하도록 부모에 알린다 */
   onCreate?: (n: { title: string; body: string; category: string; pinned: boolean }) => void;
+  /** 지난 학기를 보는 중이면 새 공지를 못 쓰게 막는다 — 실제로 푸시 알림까지 나가는 동작이라 열기 전에 막는다 */
+  disabled?: boolean;
 }
 
-export function NoticeComposer({ onCreate }: NoticeComposerProps) {
+export function NoticeComposer({ onCreate, disabled }: NoticeComposerProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -71,6 +73,7 @@ export function NoticeComposer({ onCreate }: NoticeComposerProps) {
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
           onClick={() => setOpen(true)}
+          disabled={disabled}
         >
           ＋ 공지 작성
         </button>

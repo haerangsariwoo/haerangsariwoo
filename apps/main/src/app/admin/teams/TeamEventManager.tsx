@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { activities } from "@/lib/activities";
 import { teamEvents as teamEventsSeed, teamPool, type TeamEventDraft } from "@/lib/admin-data";
+import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "./teams.module.css";
 import { TeamBoard } from "./TeamBoard";
@@ -26,6 +27,7 @@ let seq = 0;
  * 지금 할 수 있는 일이다.
  */
 export function TeamEventManager() {
+  const { readOnly } = useSemester();
   const [events, setEvents] = useState<TeamEventDraft[]>(teamEventsSeed);
   const [selectedId, setSelectedId] = useState<string | null>(events[0]?.id ?? null);
   const [creating, setCreating] = useState(false);
@@ -128,7 +130,12 @@ export function TeamEventManager() {
         </select>
         <span className={toolbar.spacer} />
         {selected && (
-          <button type="button" className={toolbar.button} onClick={removeSelected}>
+          <button
+            type="button"
+            className={toolbar.button}
+            onClick={removeSelected}
+            disabled={readOnly}
+          >
             이 행사 삭제
           </button>
         )}
@@ -136,7 +143,7 @@ export function TeamEventManager() {
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
           onClick={startCreate}
-          disabled={availableActivities.length === 0}
+          disabled={readOnly || availableActivities.length === 0}
         >
           ＋ 새 행사 팀짜기
         </button>
@@ -228,6 +235,7 @@ export function TeamEventManager() {
             onTeamSizeChange={(size) => updateSelected({ teamSize: size })}
             teamCount={selected.teamCount}
             onTeamCountChange={(count) => updateSelected({ teamCount: count })}
+            readOnly={readOnly}
           />
 
           <div className={styles.publishBar}>
@@ -238,6 +246,8 @@ export function TeamEventManager() {
                 <>
                   <b>{selectedActivity?.title}</b> 이(가) 부원 홈 · 내 조에 노출 중입니다.
                 </>
+              ) : readOnly ? (
+                "지난 학기 행사는 발행 상태를 바꿀 수 없습니다."
               ) : (
                 <>
                   발행하면 부원이 <b>홈 · 내 조</b>에서 이 행사의 결과를 확인할 수 있습니다.
@@ -245,13 +255,13 @@ export function TeamEventManager() {
                 </>
               )}
             </p>
-            <button type="button" className={toolbar.button} onClick={flashSave}>
+            <button type="button" className={toolbar.button} onClick={flashSave} disabled={readOnly}>
               임시 저장
             </button>
             <button
               type="button"
               className={cn(toolbar.button, toolbar.primary)}
-              disabled={selected.published}
+              disabled={readOnly || selected.published}
               onClick={() => publish(selected.id)}
             >
               {selected.published ? "발행됨" : "이 행사로 발행"}

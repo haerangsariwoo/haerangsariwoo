@@ -5,9 +5,11 @@ import { cn } from "@/lib/cn";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import { NoticeComposer } from "@/components/admin/NoticeComposer/NoticeComposer";
 import { notices as seed, type NoticeItem } from "@/lib/community";
+import { useSemester } from "../SemesterContext";
 import styles from "../volunteers/volunteers.module.css";
 
 export function NoticeTable() {
+  const { readOnly } = useSemester();
   const [rows, setRows] = useState<NoticeItem[]>(seed);
 
   function togglePin(id: string) {
@@ -39,7 +41,7 @@ export function NoticeTable() {
 
   return (
     <>
-      <NoticeComposer onCreate={add} />
+      <NoticeComposer onCreate={add} disabled={readOnly} />
 
       <DataTable columns={["카테고리", "제목", "작성자", "작성일", "상단 고정", ""]}>
         {sorted.map((n) => (
@@ -61,10 +63,13 @@ export function NoticeTable() {
               <RowAction
                 onClick={() => togglePin(n.id)}
                 title={n.pinned ? "상단 고정 해제" : "상단에 고정"}
+                disabled={readOnly}
               >
                 {n.pinned ? "고정 해제" : "고정"}
               </RowAction>
-              <RowAction onClick={() => remove(n.id)}>삭제</RowAction>
+              <RowAction onClick={() => remove(n.id)} disabled={readOnly}>
+                삭제
+              </RowAction>
             </td>
           </tr>
         ))}

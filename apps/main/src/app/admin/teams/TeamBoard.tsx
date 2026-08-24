@@ -21,6 +21,8 @@ interface TeamBoardProps {
   /** 조 개수. 사람을 안 넣어도 빈 조를 미리 만들어 둘 수 있다 */
   teamCount: number;
   onTeamCountChange: (count: number) => void;
+  /** 지난 학기 행사면 끌기·자동 편성·인원 수 조정을 모두 막는다 */
+  readOnly?: boolean;
 }
 
 export function TeamBoard({
@@ -31,6 +33,7 @@ export function TeamBoard({
   onTeamSizeChange,
   teamCount,
   onTeamCountChange,
+  readOnly = false,
 }: TeamBoardProps) {
   const [dragging, setDragging] = useState<string | null>(null);
   const [over, setOver] = useState<Slot | null>(null);
@@ -85,11 +88,13 @@ export function TeamBoard({
   /** 드롭 대상 공통 속성 */
   const dropZone = (slot: Slot) => ({
     onDragOver: (e: React.DragEvent) => {
+      if (readOnly) return;
       e.preventDefault();
       setOver(slot);
     },
     onDragLeave: () => setOver((o) => (o === slot ? null : o)),
     onDrop: (e: React.DragEvent) => {
+      if (readOnly) return;
       e.preventDefault();
       const id = e.dataTransfer.getData("text/plain") || dragging;
       if (id) moveTo(id, slot);
@@ -98,6 +103,7 @@ export function TeamBoard({
     },
     // 키보드로 고른 사람이 있으면 눌러서 옮긴다
     onClick: () => {
+      if (readOnly) return;
       if (picked) {
         moveTo(picked, slot);
         setPicked(null);
@@ -106,8 +112,9 @@ export function TeamBoard({
   });
 
   const memberProps = (m: TeamMemberRow) => ({
-    draggable: true,
+    draggable: !readOnly,
     onDragStart: (e: React.DragEvent) => {
+      if (readOnly) return;
       e.dataTransfer.setData("text/plain", m.id);
       e.dataTransfer.effectAllowed = "move";
       setDragging(m.id);
@@ -118,17 +125,18 @@ export function TeamBoard({
     },
     // 드래그가 어려운 환경을 위해 키보드·클릭으로도 옮길 수 있게 한다
     onKeyDown: (e: React.KeyboardEvent) => {
+      if (readOnly) return;
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         setPicked((p) => (p === m.id ? null : m.id));
       }
       if (e.key === "Escape") setPicked(null);
     },
-    onClick: () => setPicked((p) => (p === m.id ? null : m.id)),
+    onClick: () => !readOnly && setPicked((p) => (p === m.id ? null : m.id)),
     tabIndex: 0,
     role: "button",
     "aria-pressed": picked === m.id,
-    "aria-label": `${m.name} ${inRange(assignments[m.id] ?? null) ? `${assignments[m.id]}조` : "미배정"}. 누르거나 끌어서 옮깁니다`,
+    "aria-label": `${m.name} ${inRange(assignments[m.id] ?? null) ? `${assignments[m.id]}조` : "미배정"}${readOnly ? " (읽기 전용)" : ". 누르거나 끌어서 옮깁니다"}`,
   });
 
   return (
@@ -143,6 +151,7 @@ export function TeamBoard({
             value={teamSize}
             onChange={(e) => changeTeamSize(Number(e.target.value) || 1)}
             aria-label="조당 인원"
+            disabled={readOnly}
           />
           명
         </label>
@@ -155,19 +164,25 @@ export function TeamBoard({
             value={teamCount}
             onChange={(e) => onTeamCountChange(Math.max(1, Number(e.target.value) || 1))}
             aria-label="조 개수"
+            disabled={readOnly}
           />
           개
         </label>
         <span className={toolbar.spacer} />
-        <button type="button" className={toolbar.button} onClick={resetAll}>
+        <button type="button" className={toolbar.button} onClick={resetAll} disabled={readOnly}>
           전체 해제
         </button>
-        <button type="button" className={cn(toolbar.button, toolbar.primary)} onClick={autoAssign}>
+        <button
+          type="button"
+          className={cn(toolbar.button, toolbar.primary)}
+          onClick={autoAssign}
+          disabled={readOnly}
+        >
           성비 균등 자동 편성
         </button>
       </div>
 
-      {picked && (
+      {picked && !readOnly && (
         <p className={styles.pickHint}>
           <b>{participants.find((m) => m.id === picked)?.name}</b> 을(를) 고른 상태입니다. 옮길
           조를 누르세요. (Esc 로 취소)

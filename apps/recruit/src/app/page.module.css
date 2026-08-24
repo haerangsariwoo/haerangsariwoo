@@ -54,10 +54,24 @@
   white-space: nowrap;
 }
 
+/*
+ * 태블릿·폴더블 펼친 화면까지도 "모바일" 로 본다 — 아이패드 세로가
+ * 768px, 갤럭시 Z 폴드 펼친 화면이 대략 880px 이라 768px 기준으로는
+ * 이미 다 "PC" 로 취급돼 버린다. 소개·활동·모집안내·Q&A 링크 네 개가
+ * 로고 옆에 끼어들 만큼 폭이 넉넉한 화면(1200px, 이 페이지의 2단 구성이
+ * 시작되는 기준과 같다)에서만 보여준다. 그보다 좁으면 아예 렌더링하지
+ * 않는다 — 옆으로 스크롤해서 봐야 하는 메뉴는 메뉴가 아니다.
+ */
 .nav {
-  display: flex;
-  align-items: center;
-  gap: var(--space-28);
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-28);
+  }
 }
 
 /* §2.3 Category Tab — 비활성 라벨은 §6 에 따라 --ink-600 으로 올린다 */
@@ -72,26 +86,6 @@
 .navLink:hover {
   font-weight: 700;
   color: var(--brand-blue-500);
-}
-
-@media (max-width: 767px) {
-  /* 좁은 화면에서는 간격을 줄이고, 모자라면 가로로 넘긴다 */
-  .nav {
-    gap: var(--space-20);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .navLink {
-    flex: none;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-  }
 }
 
 /* ================= Section 공통 ================= */

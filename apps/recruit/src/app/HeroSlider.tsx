@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
@@ -18,6 +18,8 @@ interface HeroSliderProps {
 export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
   const [index, setIndex] = useState(0);
   const total = heroSlides.length;
+  const heroRef = useRef<HTMLElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   const go = useCallback(
     (step: number) => setIndex((i) => (i + step + total) % total),
@@ -60,10 +62,33 @@ export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
     return () => window.removeEventListener("orientationchange", onRotate);
   }, []);
 
+  /**
+   * 화살표를 "사진 세로 가운데" 에 두되, 캡션(부제·제목·버튼) 과는
+   * 겹치면 안 된다. 캡션은 화면이 좁을수록, 제목이 길수록 사진 아래
+   * 절반 넘게 차지할 수 있어 고정 비율로는 못 피한다 — 실제 렌더된
+   * 높이를 재서, 캡션 위에 남는 영역 안에서만 가운데로 둔다.
+   * 슬라이드가 바뀌어 제목 길이가 달라져도 ResizeObserver 가 다시 잰다.
+   */
+  useEffect(() => {
+    const hero = heroRef.current;
+    const body = bodyRef.current;
+    if (!hero || !body) return;
+
+    const setCaptionH = () => {
+      hero.style.setProperty("--caption-h", `${body.getBoundingClientRect().height}px`);
+    };
+    setCaptionH();
+
+    const ro = new ResizeObserver(setCaptionH);
+    ro.observe(body);
+    return () => ro.disconnect();
+  }, []);
+
   const current = heroSlides[index];
 
   return (
     <section
+      ref={heroRef}
       className={styles.hero}
       aria-roledescription="캐러셀"
       aria-label="해랑사리우 소개"
@@ -89,7 +114,7 @@ export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
         <span className={styles.scrim} />
       </div>
 
-      <div className={styles.body}>
+      <div ref={bodyRef} className={styles.body}>
         <p className={styles.eyebrow}>{landing.heroLead}</p>
 
         {/* 슬라이드마다 바뀌는 문구 */}

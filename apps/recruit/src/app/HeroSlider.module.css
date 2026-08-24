@@ -227,46 +227,50 @@
   background: rgba(255, 255, 255, 0.34);
 }
 
-/* 조작부 전체 — 모바일에서는 화살표를 점 양옆에 둔다.
-   세로 가운데에 두면 짧은 화면에서 제목을 덮는다. */
+/*
+ * 조작부 전체 — 화면 크기에 상관없이 화살표는 사진 좌우 세로 가운데,
+ * 점은 아래 가운데. 전에는 768px 아래에서만 화살표를 점 옆으로
+ * 옮겼는데, 그러면 폰에서는 PC 와 다르게 보이고 정작 그 기준을 넘는
+ * 태블릿·펼친 폴더블에서만 PC 취급을 받았다 — 화면 크기와 실제
+ * "휴대기기냐 아니냐" 가 안 맞아떨어졌다.
+ *
+ * 조작부가 히어로 전체를 덮게 하되(inset: 0), 클릭은 버튼 자신만
+ * 받는다(pointer-events: none → auto).
+ */
 .controls {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: var(--space-16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-8);
+  inset: 0;
   z-index: 2;
+  pointer-events: none;
 }
 
+.arrow,
 .dots {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
+  pointer-events: auto;
+  position: absolute;
 }
 
-/* 넓은 화면에서는 화살표를 사진 좌우 세로 가운데로 되돌린다.
-   조작부가 히어로 전체를 덮게 하되, 클릭은 버튼에서만 받는다. */
+/*
+ * --caption-h 는 HeroSlider.tsx 가 실측해서 채워 넣는 캡션 블록의
+ * 실제 높이다. "50% - 캡션 높이의 절반" 은 곧 캡션 위에 남는 영역
+ * [0, 100% - 캡션] 의 가운데 지점이다 — 캡션이 두꺼워지면 화살표는
+ * 자동으로 더 위로 올라가 겹치지 않는다. 값이 아직 없으면(첫 페인트)
+ * 0px 로 두어 기존처럼 화면 정중앙에서 시작한다.
+ */
+.arrow {
+  top: calc(50% - (var(--caption-h, 0px) / 2));
+  transform: translateY(-50%);
+}
+
+.prev {
+  left: var(--space-16);
+}
+
+.next {
+  right: var(--space-16);
+}
+
 @media (min-width: 768px) {
-  .controls {
-    inset: 0;
-    bottom: 0;
-    pointer-events: none;
-  }
-
-  .arrow,
-  .dots {
-    pointer-events: auto;
-    position: absolute;
-  }
-
-  .arrow {
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
   .prev {
     left: var(--space-24);
   }
@@ -274,10 +278,19 @@
   .next {
     right: var(--space-24);
   }
+}
 
+.dots {
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: var(--space-16);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+@media (min-width: 768px) {
   .dots {
-    left: 50%;
-    transform: translateX(-50%);
     bottom: var(--space-24);
   }
 }

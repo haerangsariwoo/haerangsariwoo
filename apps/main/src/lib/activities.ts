@@ -7,6 +7,13 @@ export interface Activity {
   type: ActivityType;
   title: string;
   dateLabel: string;
+  /**
+   * 목록 왼쪽 날짜 칸에 쓰는 값.
+   * dateLabel 에서 뽑아 쓸 수도 있지만 그건 표기가 바뀌면 조용히 깨진다.
+   * 기간 활동은 시작일만 둔다 — 전체 기간은 dateLabel 에 그대로 있다.
+   */
+  dateShort: string;
+  weekday: string;
   timeLabel: string;
   place: string;
   target: string;
@@ -27,6 +34,8 @@ export const activities: Activity[] = [
     type: "총회",
     title: "2학기 정기총회",
     dateLabel: "8.22 (금)",
+    dateShort: "8.22",
+    weekday: "금",
     timeLabel: "18:30 – 20:30",
     place: "한성대 미래관 401호",
     target: "전 부원",
@@ -42,6 +51,8 @@ export const activities: Activity[] = [
     type: "MT",
     title: "제26회 해랑사리우 MT",
     dateLabel: "9.19 (금) – 9.21 (일)",
+    dateShort: "9.19",
+    weekday: "금",
     timeLabel: "1박 2일",
     place: "가평 청평유원지",
     target: "전 부원 (신청자)",
@@ -58,6 +69,8 @@ export const activities: Activity[] = [
     type: "개강파티",
     title: "2학기 개강파티",
     dateLabel: "9.05 (금)",
+    dateShort: "9.05",
+    weekday: "금",
     timeLabel: "19:00 – 22:00",
     place: "성북구 삼선교 일대",
     target: "전 부원",
@@ -73,6 +86,8 @@ export const activities: Activity[] = [
     type: "친목",
     title: "친해지길 바라 3차",
     dateLabel: "8.08 (금)",
+    dateShort: "8.08",
+    weekday: "금",
     timeLabel: "18:00 – 21:00",
     place: "성북구 보드게임 카페",
     target: "희망 부원",

@@ -14,7 +14,7 @@
   flex: none;
   height: 34px;
   padding: 0 16px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-xs);
   border: 1px solid var(--hairline);
   background: var(--surface-white);
   color: var(--ink-600);
@@ -27,5 +27,5 @@
   background: var(--brand-blue-500);
   border-color: var(--brand-blue-500);
   color: var(--surface-white);
-  font-weight: 700;
+  font-weight: 600;
 }

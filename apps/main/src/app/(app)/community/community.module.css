@@ -1,22 +1,22 @@
-.page {
+.head {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--space-14);
 }
 
 .segment {
   display: flex;
   background: var(--surface-muted);
-  border-radius: var(--radius-md);
-  padding: 4px;
-  gap: 4px;
+  border-radius: var(--radius-xs);
+  padding: 3px;
+  gap: 3px;
 }
 
 .segmentBtn {
   flex: 1;
-  height: 38px;
+  height: 36px;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
   background: transparent;
   color: var(--ink-600);
   font-size: 14px;
@@ -27,53 +27,57 @@
 .segmentBtn.active {
   background: var(--surface-white);
   color: var(--brand-blue-500);
-  box-shadow: var(--shadow-card);
 }
 
+/* ---------- 목록 ----------
+   줄과 줄은 여백이 아니라 실선으로 나눈다 */
 .list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
-.noticeCard {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-white);
-  box-shadow: var(--shadow-card);
+.noticeRow,
+.albumRow {
+  display: block;
+  padding: var(--space-16) 0;
   color: inherit;
 }
 
-.noticeCard.pinned {
-  border: 1px solid var(--brand-blue-500);
+.noticeRow + .noticeRow,
+.albumRow + .albumRow {
+  border-top: 1px solid var(--hairline);
+}
+
+/* 고정 공지는 테두리 대신 분류 표를 채워서 알린다.
+   한 면 위에서 한 줄만 테두리를 두르면 그 줄이 다시 카드처럼 떠 보인다. */
+.pinned .catTag {
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
 }
 
 .noticeTop {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .catTag {
   font-size: 10px;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
   background: var(--brand-surface);
   color: var(--brand-blue-500);
 }
 
 .catTag.urgent {
   background: var(--state-danger-bg);
-  color: var(--state-warn);
+  color: var(--state-danger);
 }
 
 .pinFlag {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--brand-blue-500);
   margin-left: auto;
 }
@@ -82,31 +86,24 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--ink-800);
+  margin-top: var(--space-8);
 }
 
 .noticeMeta {
   font-size: 12px;
   color: var(--ink-600);
+  margin-top: var(--space-6);
 }
 
-.albumCard {
-  padding: 14px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-white);
-  box-shadow: var(--shadow-card);
-  color: inherit;
-  display: block;
-}
-
+/* ---------- 앨범 ---------- */
 .albumGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: 2px;
 }
 
 .photo {
   aspect-ratio: 1;
-  border-radius: var(--radius-sm);
 }
 
 .photo.sky {
@@ -126,8 +123,8 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  margin-top: 12px;
+  gap: var(--space-10);
+  margin-top: var(--space-12);
 }
 
 .albumTitle {
@@ -140,14 +137,4 @@
   font-size: 12px;
   color: var(--ink-600);
   white-space: nowrap;
-}
-
-.note {
-  background: var(--brand-surface);
-  color: var(--brand-blue-500);
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  line-height: 1.6;
 }

@@ -1,7 +1,7 @@
 .card {
   background: var(--brand-canvas);
-  border-radius: var(--radius-lg);
-  padding: 16px 18px;
+  border-radius: var(--radius-xs);
+  padding: 14px 16px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;

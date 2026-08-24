@@ -1,22 +1,20 @@
-.page {
+.head {
   display: flex;
   flex-direction: column;
-  gap: 18px;
 }
 
+/* ---------- 프로필 ---------- */
 .profileCard {
   background: #1a1a1a;
-  border-radius: var(--radius-lg);
-  padding: 20px 18px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-16);
 }
 
 .avatar {
   width: 56px;
   height: 56px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xs);
   background: rgba(255, 255, 255, 0.14);
   display: grid;
   place-items: center;
@@ -44,24 +42,25 @@
   align-self: flex-start;
   font-size: 10px;
   font-weight: 700;
-  padding: 5px 11px;
-  border-radius: var(--radius-pill);
+  padding: 4px 9px;
+  border-radius: var(--radius-xs);
   background: rgba(255, 255, 255, 0.16);
   color: var(--surface-white);
 }
 
+/* ---------- 시간 요약 ----------
+   세 칸을 카드로 띄우지 않고 선으로만 나눈다 */
 .statRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
 }
 
 .statCard {
-  background: var(--surface-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 16px 12px;
   text-align: center;
+}
+
+.statCard + .statCard {
+  border-left: 1px solid var(--hairline);
 }
 
 .statLabel {
@@ -73,7 +72,7 @@
   font-size: 20px;
   font-weight: 600;
   color: var(--brand-blue-500);
-  margin-top: 6px;
+  margin-top: var(--space-6);
 }
 
 .statCaption {
@@ -83,11 +82,12 @@
   font-weight: 500;
 }
 
+/* ---------- 공통 ---------- */
 .sectionHead {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-12);
 }
 
 .sectionTitle {
@@ -103,20 +103,21 @@
   color: var(--brand-blue-500);
 }
 
+/* ---------- 신청 내역 ---------- */
 .recordList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
-.recordCard {
+.recordRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: var(--surface-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 14px 16px;
+  gap: var(--space-12);
+  padding: var(--space-12) 0;
+}
+
+.recordRow + .recordRow {
+  border-top: 1px solid var(--hairline);
 }
 
 .recordBody {
@@ -142,9 +143,9 @@
 .state {
   flex: none;
   font-size: 12px;
-  font-weight: 700;
-  padding: 5px 11px;
-  border-radius: var(--radius-pill);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
 }
 
 .state.참여확정 {
@@ -169,17 +170,18 @@
   color: var(--ink-400);
 }
 
+/* ---------- 배지 ----------
+   면 위에 얹는 타일이라 그림자 없이 옅은 바탕으로만 구분한다 */
 .badgeGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: var(--space-8);
 }
 
 .badge {
-  background: var(--surface-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 14px 8px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-xs);
+  padding: var(--space-14) var(--space-8);
   text-align: center;
 }
 
@@ -191,61 +193,49 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  margin: 0 auto 8px;
+  margin: 0 auto var(--space-8);
   background: var(--brand-surface);
+  display: block;
 }
 
 .badge.locked .badgeDot {
-  background: #e9eef3;
+  background: var(--surface-white);
 }
 
 .badgeLabel {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--ink-800);
 }
 
 .badgeDesc {
   font-size: 10px;
   color: var(--ink-600);
-  margin-top: 4px;
+  margin-top: var(--space-4);
   line-height: 1.4;
 }
 
+/* ---------- 메뉴 ---------- */
 .menuList {
+  --block-pad-y: 0;
   display: flex;
   flex-direction: column;
-  background: var(--surface-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
 }
 
 .menuItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--hairline);
+  padding: var(--space-16) 0;
   font-size: 14px;
   font-weight: 500;
   color: var(--ink-800);
 }
 
-.menuItem:last-child {
-  border-bottom: none;
+.menuItem + .menuItem {
+  border-top: 1px solid var(--hairline);
 }
 
 .chev {
   color: var(--ink-600);
-}
-
-.note {
-  background: var(--brand-surface);
-  color: var(--brand-blue-500);
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  line-height: 1.6;
 }

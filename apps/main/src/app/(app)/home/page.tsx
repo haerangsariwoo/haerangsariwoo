@@ -15,6 +15,7 @@ import { verifyRequests } from "@/lib/verify";
 import { homeCopy } from "@/lib/app-content";
 import styles from "./home.module.css";
 import { Mascot } from "@/components/ui/Logo/Mascot";
+import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 
 const pendingVerifyCount = verifyRequests.filter((r) => r.state === "대기").length;
 
@@ -45,10 +46,9 @@ const QUICK_MENU = [
  */
 export default function HomePage() {
   return (
-    /* data-full-bleed : (app) 레이아웃의 좌우·위아래 여백을 걷는 표시 */
-    <div className={styles.page} data-full-bleed>
+    <Sheet>
       {/* ① 나 */}
-      <div className={cn(styles.group, styles.groupFirst)}>
+      <SheetGroup>
         <section className={styles.hero}>
           <Mascot size={68} className={styles.heroMascot} priority />
           <h1 className={styles.greeting}>
@@ -68,10 +68,10 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-      </div>
+      </SheetGroup>
 
       {/* ② 이번 학기에 할 일 */}
-      <div className={styles.group}>
+      <SheetGroup>
         <section className={styles.duo}>
           <article className={styles.statusCard}>
             <h2 className={styles.cardTitle}>이번 학기 현황</h2>
@@ -153,10 +153,10 @@ export default function HomePage() {
             </div>
           </article>
         </section>
-      </div>
+      </SheetGroup>
 
       {/* ③ 내 자리 */}
-      <div className={cn(styles.group, styles.groupLast)}>
+      <SheetGroup>
         <Link href="/my/team" className={styles.teamCard}>
           <div>
             <p className={styles.teamLabel}>내 조</p>
@@ -192,7 +192,7 @@ export default function HomePage() {
             ))}
           </div>
         </section>
-      </div>
-    </div>
+      </SheetGroup>
+    </Sheet>
   );
 }

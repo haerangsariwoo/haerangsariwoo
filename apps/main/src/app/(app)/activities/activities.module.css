@@ -1,13 +1,8 @@
-.page {
+/* 제목과 거르개는 한 블록에 둔다. 둘로 나누면 사이에 실선이 생긴다. */
+.head {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: var(--space-14);
 }
 
 .groupLabel {
@@ -15,40 +10,51 @@
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--ink-800);
-  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
-.card {
+.list {
   display: flex;
-  gap: 14px;
-  padding: 16px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-white);
-  box-shadow: var(--shadow-card);
+  flex-direction: column;
+}
+
+/* ---------- 활동 한 줄 ---------- */
+.row {
+  display: flex;
+  gap: var(--space-14);
+  padding: var(--space-16) 0;
   color: inherit;
 }
 
-.card.past {
+.row + .row {
+  border-top: 1px solid var(--hairline);
+}
+
+.pastRow {
   opacity: 0.62;
 }
 
-.stripe {
-  width: 6px;
-  border-radius: var(--radius-pill);
+/* 왼쪽 날짜 칸. 목록을 훑을 때 눈이 처음 닿는 자리다. */
+.date {
   flex: none;
+  width: 46px;
+  padding-top: 2px;
+  text-align: center;
 }
 
-.stripe.sky {
-  background: var(--brand-blue-500);
+.dateNum {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink-800);
+  letter-spacing: -0.02em;
 }
-.stripe.mint {
-  background: #34b98d;
-}
-.stripe.peach {
-  background: var(--state-warn);
-}
-.stripe.lavender {
-  background: var(--state-accent);
+
+.dateDay {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-600);
+  margin-top: 2px;
 }
 
 .body {
@@ -56,24 +62,24 @@
   min-width: 0;
 }
 
-.topRow {
+.rowTop {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .typeTag {
   font-size: 10px;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
   background: var(--brand-surface);
   color: var(--brand-blue-500);
 }
 
 .dday {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--brand-blue-500);
   margin-left: auto;
 }
@@ -82,33 +88,27 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--ink-800);
-  margin-top: var(--space-10);
-}
-
-.metaRow {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 8px;
+  margin-top: var(--space-8);
 }
 
 .meta {
   font-size: 12px;
   color: var(--ink-600);
+  margin-top: var(--space-6);
 }
 
 .attendRow {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 12px;
+  gap: var(--space-8);
+  margin-top: var(--space-10);
 }
 
 .attend {
   font-size: 12px;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: var(--radius-pill);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
 }
 
 .attend.참석 {
@@ -121,7 +121,7 @@
 }
 .attend.불참 {
   background: var(--surface-muted);
-  color: var(--ink-400);
+  color: var(--ink-600);
 }
 .attend.none {
   background: var(--brand-surface);
@@ -130,26 +130,13 @@
 
 .teamFlag {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--brand-blue-500);
 }
 
 .empty {
-  background: var(--surface-white);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-lg);
-  padding: 32px 20px;
+  padding: var(--space-32) var(--screen-pad);
   text-align: center;
   color: var(--ink-600);
   font-size: 14px;
-}
-
-.note {
-  background: var(--brand-surface);
-  color: var(--brand-blue-500);
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  line-height: 1.6;
 }

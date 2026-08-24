@@ -1,0 +1,39 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  /* 마지막 묶음이 하단 네비게이션에 닿지 않게 한 칸 띄운다 */
+  padding-bottom: var(--space-10);
+}
+
+.group {
+  background: var(--surface-white);
+  display: flex;
+  flex-direction: column;
+  /* 안쪽 블록의 배경(어두운 띠 등)이 둥근 모서리를 넘지 않게 자른다 */
+  overflow: hidden;
+}
+
+/*
+ * 블록 여백을 값이 아니라 변수로 둔다. 다른 파일의 규칙과 특정도가 같아
+ * 순서로 이기려 하면 번들 순서에 따라 조용히 뒤집힌다. 변수는 다른 속성이라
+ * 그런 다툼이 없다.
+ */
+.group > * {
+  padding: var(--block-pad-y, var(--space-20)) var(--block-pad-x, var(--screen-pad));
+  border-bottom: 1px solid var(--hairline);
+}
+
+.group > *:last-child {
+  border-bottom: none;
+}
+
+/* 첫 묶음은 헤더와 만나는 위쪽만 깎는다 */
+.group:first-child {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+/* 마지막 묶음은 아래가 열려 있어 네 모서리를 모두 깎는다 */
+.group:last-child {
+  border-radius: var(--radius-md);
+}

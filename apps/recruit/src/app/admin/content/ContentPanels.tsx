@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { ui } from "@/components/admin/Panel";
 import {
   activityCards as activityCardsSeed,
+  defaultPhotoFocus,
   faqs as faqsSeed,
   heroSlides as heroSlidesSeed,
   interviewPlace as interviewPlaceSeed,
@@ -13,8 +14,10 @@ import {
   nextSteps as nextStepsSeed,
   type ActivityCard,
   type HeroSlide,
+  type PhotoFocus,
 } from "@/lib/recruit-config";
 import styles from "@/components/admin/ContentEditor.module.css";
+import { PhotoFocusEditor } from "./PhotoFocusEditor";
 import { SaveBar } from "./SaveBar";
 
 /**
@@ -24,24 +27,45 @@ import { SaveBar } from "./SaveBar";
  * 그 위 필드·목록에 진짜 상태를 붙이는 게 이 파일이 하는 일이다.
  */
 
-/** 사진 자리 — 등록돼 있으면 미리보기, 없으면 안내 문구. 눌러서 실제로 고를 수 있다. */
+/**
+ * 사진 자리 — 등록돼 있으면 미리보기, 없으면 안내 문구. 눌러서 실제로 고를 수 있다.
+ * 홈에서는 고정 비율 박스에 object-fit: cover 로 잘려 보이므로, 사진마다
+ * 어느 부분이 보일지(focus) 직접 정할 수 있게 "위치 조정" 을 둔다.
+ */
 function Photo({
   src,
   alt,
   shape,
+  focus,
   onChange,
+  onFocusChange,
 }: {
   src: string | null;
   alt: string;
   shape: "hero" | "card" | "wide";
+  focus: PhotoFocus;
   onChange: (url: string) => void;
+  onFocusChange: (focus: PhotoFocus) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [editing, setEditing] = useState(false);
 
   return (
     <div className={cn(styles.photoPreview, styles[shape])}>
       {src ? (
-        <Image className={styles.photoImage} src={src} alt={alt} fill sizes="320px" unoptimized />
+        <Image
+          className={styles.photoImage}
+          src={src}
+          alt={alt}
+          fill
+          sizes="320px"
+          unoptimized
+          style={{
+            objectPosition: `${focus.x}% ${focus.y}%`,
+            transform: `scale(${focus.zoom})`,
+            transformOrigin: `${focus.x}% ${focus.y}%`,
+          }}
+        />
       ) : (
         <span className={styles.photoEmpty}>사진 없음</span>
       )}
@@ -54,15 +78,32 @@ function Photo({
           const file = e.target.files?.[0];
           if (!file) return;
           onChange(URL.createObjectURL(file));
+          onFocusChange(defaultPhotoFocus);
           // 같은 파일을 다시 골라도 change 가 다시 뜨도록 비운다
           e.target.value = "";
         }}
       />
       <div className={styles.photoActions}>
+        {src && (
+          <button type="button" className={styles.photoBtn} onClick={() => setEditing(true)}>
+            위치 조정
+          </button>
+        )}
         <button type="button" className={styles.photoBtn} onClick={() => inputRef.current?.click()}>
           {src ? "교체" : "업로드"}
         </button>
       </div>
+
+      {editing && src && (
+        <PhotoFocusEditor
+          src={src}
+          alt={alt}
+          shape={shape}
+          focus={focus}
+          onChange={onFocusChange}
+          onClose={() => setEditing(false)}
+        />
+      )}
     </div>
   );
 }
@@ -138,7 +179,9 @@ export function HeroSlidesPanel() {
               src={s.photoUrl || null}
               alt={`${s.title} 슬라이드 사진`}
               shape="hero"
+              focus={s.focus ?? defaultPhotoFocus}
               onChange={(url) => update(s.id, { photoUrl: url })}
+              onFocusChange={(focus) => update(s.id, { focus })}
             />
 
             <div className={styles.field}>
@@ -194,6 +237,7 @@ export function AboutPanel() {
   const [body, setBody] = useState<string>(landing.about.body);
   const [facts, setFacts] = useState<Fact[]>(factsSeed);
   const [photoUrl, setPhotoUrl] = useState("/landing/about-photo.avif");
+  const [photoFocus, setPhotoFocus] = useState<PhotoFocus>(defaultPhotoFocus);
 
   function updateFact(id: string, patch: Partial<Fact>) {
     setFacts((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));
@@ -265,7 +309,14 @@ export function AboutPanel() {
 
         <div className={styles.field}>
           <span className={styles.label}>소개 사진</span>
-          <Photo src={photoUrl} alt="소개 사진" shape="wide" onChange={setPhotoUrl} />
+          <Photo
+            src={photoUrl}
+            alt="소개 사진"
+            shape="wide"
+            focus={photoFocus}
+            onChange={setPhotoUrl}
+            onFocusChange={setPhotoFocus}
+          />
         </div>
       </div>
 
@@ -306,7 +357,9 @@ export function ActivityCardsPanel() {
               src={a.photoUrl}
               alt={`${a.title} 사진`}
               shape="card"
+              focus={a.focus ?? defaultPhotoFocus}
               onChange={(url) => update(a.id, { photoUrl: url })}
+              onFocusChange={(focus) => update(a.id, { focus })}
             />
             <div className={styles.field}>
               <label className={styles.label} htmlFor={`${a.id}-title`}>

@@ -47,12 +47,25 @@ export const brand = {
   tradition: "1996년부터 이어온 30년 봉사의 전통",
 };
 
+/**
+ * 고정 비율 박스에 사진을 올릴 때 어느 부분이 보일지 정하는 값.
+ * x·y 는 기준점 위치(%), zoom 은 그 지점을 중심으로 한 확대 배율.
+ */
+export interface PhotoFocus {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
+export const defaultPhotoFocus: PhotoFocus = { x: 50, y: 50, zoom: 1 };
+
 /** 랜딩 활동 카드 — 사진은 관리자가 상시 업로드·교체 */
 export interface ActivityCard {
   id: string;
   title: string;
   desc: string;
   photoUrl: string | null;
+  focus?: PhotoFocus;
 }
 
 export const activityCards: ActivityCard[] = [
@@ -86,6 +99,7 @@ export interface HeroSlide {
   title: string;
   subtitle: string;
   photoUrl: string;
+  focus?: PhotoFocus;
 }
 
 export const heroSlides: HeroSlide[] = [

@@ -1,21 +1,41 @@
-/* ---------- 화면 한 장 ----------
-   카드를 띄워 늘어놓지 않고 블록을 맞붙여 한 화면으로 보이게 한다.
-   경계는 여백이 아니라 실선 한 줄로 만들고, 모서리는 각지게 둔다.
-   레이아웃 여백은 (app)/layout.module.css 가 data-full-bleed 를 보고 걷는다. */
-.sheet {
-  flex: 1;
+/* ---------- 세 묶음 ----------
+   홈은 나 → 이번 학기에 할 일 → 내 자리, 세 묶음이다.
+   묶음 안은 여백 없이 선으로만 나누고, 묶음끼리만 여백으로 띄운다.
+   좌우는 화면 끝까지 붙인다. 레이아웃 여백은
+   (app)/layout.module.css 가 data-full-bleed 를 보고 걷는다. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  /* 마지막 묶음이 하단 네비게이션에 닿지 않게 한 칸 띄운다 */
+  padding-bottom: var(--space-10);
+}
+
+.group {
   background: var(--surface-white);
   display: flex;
   flex-direction: column;
+  /* 안쪽 블록의 배경(어두운 내 조 띠 등)이 둥근 모서리를 넘지 않게 자른다 */
+  overflow: hidden;
 }
 
-.sheet > * {
+.group > * {
   padding: var(--space-20) var(--screen-pad);
   border-bottom: 1px solid var(--hairline);
 }
 
-.sheet > *:last-child {
+.group > *:last-child {
   border-bottom: none;
+}
+
+/* 첫 묶음은 헤더와 만나는 위쪽만 깎는다 */
+.groupFirst {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+/* 마지막 묶음은 아래가 열려 있어 네 모서리를 모두 깎는다 */
+.groupLast {
+  border-radius: var(--radius-md);
 }
 
 /* ---------- Hero ----------

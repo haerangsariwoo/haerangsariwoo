@@ -57,6 +57,13 @@
   gap: 10px;
 }
 
+.empty {
+  padding: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--a-ink-soft);
+}
+
 .item {
   border: 1px solid var(--a-line);
   border-radius: var(--a-radius-md);
@@ -159,6 +166,15 @@
 
 .thumb {
   border-radius: var(--radius-pill);
+}
+
+/* 실제로 고른 사진이 있으면 4분할 대신 이걸 통째로 채운다 */
+.thumbPhoto {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .thumb.sky {

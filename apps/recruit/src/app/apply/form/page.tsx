@@ -71,7 +71,6 @@ export default function ApplicationFormPage() {
         <>
           <div className={styles.intro}>
             <h1 className={styles.introTitle}>기본 정보를 입력해 주세요</h1>
-            <p className={styles.introDesc}>입력 내용은 자동으로 임시 저장됩니다.</p>
           </div>
 
           <form className={styles.form} onSubmit={handleNext} noValidate>
@@ -107,7 +106,6 @@ export default function ApplicationFormPage() {
               </Button>
             </div>
           </form>
-          <p className={styles.stepNote}>2단계 / 4단계</p>
         </>
       )}
 
@@ -115,9 +113,6 @@ export default function ApplicationFormPage() {
         <>
           <div className={styles.intro}>
             <h1 className={styles.introTitle}>마지막으로 지원 동기를 들려주세요</h1>
-            <p className={styles.introDesc}>
-              해랑사리우와 함께하고 싶은 이유를 자유롭게 작성해 주세요.
-            </p>
           </div>
 
           <form className={styles.form} onSubmit={handleNext} noValidate>
@@ -141,7 +136,6 @@ export default function ApplicationFormPage() {
               </Button>
             </div>
           </form>
-          <p className={styles.stepNote}>3단계 / 4단계</p>
         </>
       )}
 
@@ -149,9 +143,6 @@ export default function ApplicationFormPage() {
         <>
           <div className={styles.intro}>
             <h1 className={styles.introTitle}>제출 전 확인해 주세요</h1>
-            <p className={styles.introDesc}>
-              제출 후에도 마감 전까지는 지원 내용을 다시 확인할 수 있어요.
-            </p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>
@@ -207,9 +198,9 @@ export default function ApplicationFormPage() {
               </Button>
             </div>
           </form>
-          <p className={styles.stepNote}>
-            {allAgreed ? "4단계 / 4단계" : "모든 항목에 동의해야 제출할 수 있어요."}
-          </p>
+          {!allAgreed && (
+            <p className={styles.stepNote}>모든 항목에 동의해야 제출할 수 있어요.</p>
+          )}
         </>
       )}
     </Shell>

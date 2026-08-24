@@ -20,13 +20,6 @@
   line-height: 1.35;
 }
 
-.centerDesc {
-  text-align: center;
-  font-size: 12px;
-  color: var(--ink-500);
-  line-height: 1.7;
-}
-
 /* ---------- 진행 상황 ---------- */
 .timeline {
   background: var(--surface-white);

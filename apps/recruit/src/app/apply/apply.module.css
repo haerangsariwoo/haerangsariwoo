@@ -27,29 +27,6 @@
   gap: var(--space-20);
 }
 
-.privacyNote {
-  display: flex;
-  gap: var(--space-10);
-  background: var(--brand-surface);
-  border-radius: var(--radius-md);
-  padding: var(--space-14) var(--space-16);
-}
-
-.lockIcon {
-  color: var(--brand-blue-500);
-  flex: none;
-}
-
-.privacyText {
-  font-size: 12px;
-  color: var(--ink-500);
-  line-height: 1.7;
-}
-
-.privacyText b {
-  color: var(--ink-800);
-}
-
 /* ---------- 강조 안내 ---------- */
 /* 본인 지정번호 분실 주의처럼 놓치면 곤란한 안내 */
 .warnNote {

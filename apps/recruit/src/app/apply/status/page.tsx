@@ -74,9 +74,6 @@ export default function StatusPage() {
             <CheckIcon size={34} />
           </div>
           <h1 className={styles.centerTitle}>지원서가 제출됐어요!</h1>
-          <p className={styles.centerDesc}>
-            입력한 정보는 마감 전까지 다시 확인할 수 있어요.
-          </p>
 
           <div className={styles.timeline}>
             <p className={styles.timelineTitle}>

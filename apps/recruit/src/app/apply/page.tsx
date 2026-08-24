@@ -40,10 +40,6 @@ export default function IdentifyPage() {
     <Shell title="지원자 확인" back="/">
       <div className={styles.intro}>
         <h1 className={styles.introTitle}>지원 정보를 확인할게요</h1>
-        <p className={styles.introDesc}>
-          지원 시 사용할 학번과 본인 지정번호를 입력해 주세요. 처음이라면 새로 지원서를 작성하고,
-          이미 지원했다면 결과를 확인할 수 있어요.
-        </p>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -68,7 +64,6 @@ export default function IdentifyPage() {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           error={errors.code}
-          help="지원자가 직접 정하는 번호입니다."
         />
 
         <div className={styles.warnNote}>
@@ -79,17 +74,6 @@ export default function IdentifyPage() {
             <span className={styles.warnTitle}>본인 지정번호를 꼭 기억해 주세요.</span>
             앞으로 <b>결과 확인</b>과 <b>면접 시간 선택</b>에 계속 사용됩니다. 운영진도 번호를 대신
             확인해 드릴 수 없으니 분실하지 않도록 주의해 주세요.
-          </p>
-        </div>
-
-        <div className={styles.privacyNote}>
-          <svg className={styles.lockIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
-            <rect x="4.5" y="10" width="15" height="10.5" rx="2.5" />
-            <path d="M8 10V7.5a4 4 0 0 1 8 0V10" />
-          </svg>
-          <p className={styles.privacyText}>
-            개인정보는 <b>지원 절차 확인 용도</b>로만 사용되며, 운영진 연락처는 직접 노출되지
-            않습니다.
           </p>
         </div>
 

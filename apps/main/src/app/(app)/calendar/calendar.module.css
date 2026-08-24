@@ -158,9 +158,8 @@
 }
 
 .dayTitle {
-  font-family: var(--font-accent);
-  font-weight: 400;
-  letter-spacing: 0.01em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   font-size: 20px;
   color: var(--ink-800);
 }

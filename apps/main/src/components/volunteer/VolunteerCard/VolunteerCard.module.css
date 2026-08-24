@@ -107,7 +107,7 @@
   height: 40px;
   padding: 0 var(--space-12);
   border: none;
-  border-radius: var(--radius-xs);
+  border-radius: 0;
   background: var(--brand-blue-500);
   color: var(--surface-white);
   font-family: inherit;

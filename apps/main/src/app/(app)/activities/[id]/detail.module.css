@@ -149,7 +149,7 @@
 .attendBtn {
   flex: 1;
   height: 46px;
-  border-radius: var(--radius-md);
+  border-radius: 0;
   border: 1px solid var(--hairline);
   background: var(--surface-white);
   color: var(--ink-600);

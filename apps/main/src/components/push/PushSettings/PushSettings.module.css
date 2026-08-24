@@ -96,7 +96,7 @@
 .testButton {
   height: 40px;
   border: 1px solid var(--hairline);
-  border-radius: var(--radius-xs);
+  border-radius: 0;
   background: var(--surface-white);
   color: var(--brand-blue-500);
   font-family: inherit;

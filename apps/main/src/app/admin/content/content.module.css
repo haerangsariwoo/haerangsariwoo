@@ -113,7 +113,7 @@
 .iconBtn {
   border: 1px solid var(--a-line);
   background: var(--a-surface);
-  border-radius: var(--radius-xs);
+  border-radius: 0;
   padding: 5px 10px;
   font-size: 12px;
   font-weight: 700;
@@ -239,7 +239,7 @@
   white-space: nowrap;
   height: 38px;
   padding: 0 16px;
-  border-radius: var(--a-radius-sm);
+  border-radius: 0;
   border: none;
   background: var(--a-brand-soft);
   color: var(--a-brand);

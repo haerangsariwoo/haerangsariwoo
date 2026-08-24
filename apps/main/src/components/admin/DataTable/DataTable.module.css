@@ -82,7 +82,7 @@
 .rowAction {
   border: 1px solid var(--a-line);
   background: var(--a-surface);
-  border-radius: var(--radius-xs);
+  border-radius: 0;
   padding: 6px 12px;
   font-size: 12px;
   font-weight: 700;

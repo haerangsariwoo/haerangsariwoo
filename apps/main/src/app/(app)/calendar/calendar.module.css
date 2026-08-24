@@ -15,7 +15,7 @@
 .monthBtn {
   width: 34px;
   height: 34px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   border: 1px solid var(--hairline);
   background: var(--surface-white);
   color: var(--ink-600);

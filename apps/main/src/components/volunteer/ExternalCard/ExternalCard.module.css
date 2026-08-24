@@ -153,7 +153,7 @@
   height: 40px;
   padding: 0 var(--space-12);
   border: none;
-  border-radius: var(--radius-xs);
+  border-radius: 0;
   /* 외부 사이트로 나가는 링크라 주 동작보다 한 단계 낮춘다 */
   background: var(--brand-tint-10);
   color: var(--brand-blue-500);

@@ -125,7 +125,7 @@
   gap: 10px;
   margin-top: 10px;
   padding: 12px 14px;
-  border-radius: var(--a-radius-md);
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.07);
   color: var(--a-sidebar-ink);
   font-size: 12px;

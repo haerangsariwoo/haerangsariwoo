@@ -38,7 +38,7 @@
   height: 38px;
   padding: 0 18px;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 0;
   background: var(--ink-800);
   color: var(--surface-white);
   font-family: inherit;

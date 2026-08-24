@@ -232,7 +232,7 @@
 .approvalButton {
   width: 64px;
   height: 36px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   background: var(--a-brand);
   color: var(--surface-white);
   border: none;
@@ -254,7 +254,7 @@
   margin-top: 18px;
   background: var(--a-bg);
   border: none;
-  border-radius: var(--a-radius-sm);
+  border-radius: 0;
   padding: 8px 12px;
   font-size: 12px;
   font-weight: 500;

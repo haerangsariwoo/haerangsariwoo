@@ -40,7 +40,7 @@
 .button {
   height: 40px;
   padding: 0 16px;
-  border-radius: var(--a-radius-md);
+  border-radius: 0;
   border: 1px solid var(--a-line);
   background: var(--a-surface);
   color: var(--a-ink);

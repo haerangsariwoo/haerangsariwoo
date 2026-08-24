@@ -5,6 +5,44 @@ import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
 import { applicants as seed, type FinalResult, type FirstResult } from "@/lib/admin-data";
 
+const RESULT_OPTIONS = [
+  { value: "합격", label: "합격", tone: "pass", activeBg: "var(--brand-blue-500)" },
+  { value: "불합격", label: "불합격", tone: "fail", activeBg: "#cf4444" },
+  { value: "대기", label: "보류", tone: "hold", activeBg: "#8a8a8a" },
+] as const;
+
+/** 합격/불합격/보류를 정하는 연결된 세 칸. 클릭한 칸의 색으로 즉시 굳는다. */
+function ResultSegmented<T extends string>({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className={ui.segmented} role="group" aria-label="심사 결과">
+      {RESULT_OPTIONS.map((o) => {
+        const active = value === o.value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            className={cn(ui.segment, ui[o.tone])}
+            style={active ? { background: o.activeBg, color: "#fff" } : undefined}
+            onClick={() => onChange(o.value as T)}
+            disabled={disabled}
+            aria-pressed={active}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function ReviewBoard() {
   const [rows, setRows] = useState(seed);
   const [q, setQ] = useState("");
@@ -115,7 +153,6 @@ export function ReviewBoard() {
                 <th>학부 · 트랙</th>
                 <th>지원 동기</th>
                 <th>1차</th>
-                <th />
               </tr>
             </thead>
             <tbody>
@@ -136,39 +173,7 @@ export function ReviewBoard() {
                   <td className={ui.muted}>{a.track}</td>
                   <td className={cn(ui.muted, ui.clip)}>{a.motivation}</td>
                   <td>
-                    <Badge
-                      tone={a.first === "합격" ? "green" : a.first === "불합격" ? "danger" : "grey"}
-                    >
-                      {a.first}
-                    </Badge>
-                  </td>
-                  <td className={ui.rowActions}>
-                    {a.first === "대기" ? (
-                      <>
-                        <button
-                          type="button"
-                          className={cn(ui.rowBtn, ui.rowBtnPrimary)}
-                          onClick={() => setFirst(a.id, "합격")}
-                        >
-                          합격
-                        </button>
-                        <button
-                          type="button"
-                          className={ui.rowBtnDanger}
-                          onClick={() => setFirst(a.id, "불합격")}
-                        >
-                          불합격
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        type="button"
-                        className={ui.rowBtn}
-                        onClick={() => setFirst(a.id, "대기")}
-                      >
-                        되돌리기
-                      </button>
-                    )}
+                    <ResultSegmented value={a.first} onChange={(v) => setFirst(a.id, v)} />
                   </td>
                 </tr>
               ))}
@@ -212,7 +217,6 @@ export function ReviewBoard() {
                 <th>면접 시간</th>
                 <th>1차</th>
                 <th>최종</th>
-                <th />
               </tr>
             </thead>
             <tbody>
@@ -228,47 +232,13 @@ export function ReviewBoard() {
                       <Badge tone="green">{a.first}</Badge>
                     </td>
                     <td>
-                      <Badge
-                        tone={
-                          a.final === "합격" ? "green" : a.final === "불합격" ? "danger" : "grey"
-                        }
-                      >
-                        {a.final}
-                      </Badge>
-                    </td>
-                    <td className={ui.rowActions}>
-                      {a.final === "대기" ? (
-                        <>
-                          <button
-                            type="button"
-                            className={cn(ui.rowBtn, ui.rowBtnPrimary)}
-                            onClick={() => setFinal(a.id, "합격")}
-                          >
-                            합격
-                          </button>
-                          <button
-                            type="button"
-                            className={ui.rowBtnDanger}
-                            onClick={() => setFinal(a.id, "불합격")}
-                          >
-                            불합격
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          type="button"
-                          className={ui.rowBtn}
-                          onClick={() => setFinal(a.id, "대기")}
-                        >
-                          되돌리기
-                        </button>
-                      )}
+                      <ResultSegmented value={a.final} onChange={(v) => setFinal(a.id, v)} />
                     </td>
                   </tr>
                 ))}
               {rows.filter((a) => a.first === "합격").length === 0 && (
                 <tr>
-                  <td colSpan={5} className={ui.muted}>
+                  <td colSpan={4} className={ui.muted}>
                     1차 합격자가 아직 없습니다.
                   </td>
                 </tr>

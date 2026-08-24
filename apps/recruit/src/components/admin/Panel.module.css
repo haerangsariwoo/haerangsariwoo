@@ -265,6 +265,56 @@
   border-color: #b83b3a;
 }
 
+/*
+ * 심사 결과를 정하는 연결된 세 칸 — 합격/불합격/보류.
+ * 평소엔 무난한 색으로 나란히 있다가, 칸 위에 커서를 올리면 그 칸이
+ * 결정될 색(파랑/빨강/회색)으로 미리 보인다. 굳은(선택된) 색은 인라인
+ * 스타일로 준다 — 클래스 조합으로 하면 다른 규칙에 밀리는 경우가 있었다.
+ */
+.segmented {
+  display: inline-flex;
+  border: 1px solid rgba(23, 111, 242, 0.14);
+}
+
+.segment {
+  flex: none;
+  width: 46px;
+  height: 26px;
+  padding: 0 4px;
+  border: none;
+  border-right: 1px solid rgba(23, 111, 242, 0.14);
+  background: var(--surface-white);
+  color: var(--ink-600);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.segment:last-child {
+  border-right: none;
+}
+
+.segment:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.segment.pass:hover:not(:disabled) {
+  background: var(--brand-blue-500);
+  color: #fff;
+}
+
+.segment.fail:hover:not(:disabled) {
+  background: #cf4444;
+  color: #fff;
+}
+
+.segment.hold:hover:not(:disabled) {
+  background: #8a8a8a;
+  color: #fff;
+}
+
 /* 표 위에 펼치는 한 줄 입력 폼 */
 .inlineForm {
   display: flex;

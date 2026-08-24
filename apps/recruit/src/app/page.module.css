@@ -156,19 +156,25 @@
     gap: var(--space-50);
   }
 
-  /* 늘어난 높이 안에서 글은 가운데로 — 위에 붙이면 아래만 빈다 */
   .aboutTextWrap {
     display: flex;
     flex-direction: column;
-    justify-content: center;
   }
 }
 
+/* 제목 바로 아래라 sectionBody 와 같은 간격(§1.3)을 직접 준다 */
 .aboutText {
   font-size: 14px;
   line-height: 1.85;
   color: var(--ink-500);
   max-width: 60ch;
+  margin-top: var(--space-32);
+}
+
+@media (min-width: 768px) {
+  .aboutText {
+    margin-top: 34px;
+  }
 }
 
 .aboutFacts {
@@ -248,11 +254,19 @@
   min-width: 0;
 }
 
+/* 제목·리드 바로 아래라 sectionBody 와 같은 간격(§1.3)을 직접 준다 */
 .checklistTitle {
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 18px;
   color: var(--ink-800);
+  margin-top: var(--space-32);
+}
+
+@media (min-width: 768px) {
+  .checklistTitle {
+    margin-top: 34px;
+  }
 }
 
 .checklist {

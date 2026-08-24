@@ -48,12 +48,14 @@ export default function LandingPage() {
 
       <HeroSlider applicationsOpen={applicationsOpen} />
 
-      {/* ---------- About ---------- */}
+      {/* ---------- About ----------
+          Recruiting 과 같은 이유로 제목을 그리드 안, 글 칼럼 맨 위로
+          옮긴다 — 사진 윗변과 "About" 제목이 같은 줄에서 시작해야 한다. */}
       <section id="about" className={styles.section}>
         <div className={styles.inner}>
-          <h2 className={styles.sectionTitle}>{landing.about.title}</h2>
-          <div className={cn(styles.sectionBody, styles.aboutGrid)}>
+          <div className={styles.aboutGrid}>
             <div className={styles.aboutTextWrap}>
+              <h2 className={styles.sectionTitle}>{landing.about.title}</h2>
               <p className={styles.aboutText}>{landing.about.body}</p>
               {/* §5 — 성과를 숫자로 자랑하지 않고 연도 사실만 적는다 */}
               <div className={styles.aboutFacts}>
@@ -93,14 +95,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---------- Recruiting ---------- */}
+      {/* ---------- Recruiting ----------
+          제목·리드를 그리드 밖에 두면 오른쪽 일정 카드보다 한참 아래에서
+          칼럼이 시작돼, 카드 윗변이 "우리는 이런 분들을..." 과 맞고
+          "Recruiting" 제목과는 어긋난다. 제목·리드를 왼쪽 칼럼 맨 위로
+          옮겨 카드 윗변과 "Recruiting" 이 같은 줄에서 시작하게 한다. */}
       <section id="recruiting" className={cn(styles.section, styles.sectionSheet)}>
         <div className={styles.inner}>
-          <h2 className={styles.sectionTitle}>{landing.recruiting.title}</h2>
-          <p className={styles.sectionLead}>{landing.recruiting.lead}</p>
-
-          <div className={cn(styles.sectionBody, styles.recruitGrid)}>
+          {/* sectionBody(제목 아래 여백)를 안 쓴다 — 제목이 이제 grid 안,
+              recruitLeft 맨 위에 있어서 grid 자체가 바로 .inner 상단에
+              붙어야 한다. 여백은 .checklistTitle 쪽에서 준다. */}
+          <div className={styles.recruitGrid}>
             <div className={styles.recruitLeft}>
+              <h2 className={styles.sectionTitle}>{landing.recruiting.title}</h2>
+              <p className={styles.sectionLead}>{landing.recruiting.lead}</p>
+
               <h3 className={styles.checklistTitle}>{landing.recruiting.checklistTitle}</h3>
               <ul className={styles.checklist}>
                 {landing.recruiting.checklist.map((item) => (

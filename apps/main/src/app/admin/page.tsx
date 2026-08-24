@@ -1,14 +1,8 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Panel } from "@/components/admin/Panel/Panel";
-import { Badge, DataTable, tableStyles } from "@/components/admin/DataTable/DataTable";
-import {
-  metrics,
-  pendingHours,
-  quickActions,
-  todayVolunteers,
-  upcomingEvents,
-} from "@/lib/admin-data";
+import { metrics, pendingHours, quickActions, upcomingEvents } from "@/lib/admin-data";
+import { PendingHoursPanel, TodayVolunteersPanel } from "./DashboardPanels";
 import styles from "./dashboard.module.css";
 
 const ICONS: Record<string, React.ReactNode> = {
@@ -64,54 +58,15 @@ export default function AdminDashboard() {
 
       <div className={styles.rowA}>
         <Panel title="오늘의 봉사·출석" action={{ label: "전체 보기", href: "/admin/volunteers" }}>
-          <div className={styles.toolbar}>
-            <input className={styles.search} placeholder="봉사명·장소 검색" aria-label="봉사 검색" />
-            <select className={styles.select} defaultValue="all" aria-label="상태 필터">
-              <option value="all">상태: 전체</option>
-              <option value="upcoming">진행 예정</option>
-              <option value="ongoing">진행 중</option>
-              <option value="closed">모집 마감</option>
-            </select>
-          </div>
-
-          <DataTable columns={["봉사활동", "시간", "신청/정원", "출석", "상태"]}>
-            {todayVolunteers.map((v) => (
-              <tr key={v.id}>
-                <td>{v.title}</td>
-                <td className={cn(tableStyles.muted, tableStyles.numeric)}>{v.time}</td>
-                <td className={tableStyles.numeric}>{v.applied}</td>
-                <td className={tableStyles.numeric}>{v.attended}</td>
-                <td>
-                  <Badge tone={v.tone}>{v.status}</Badge>
-                </td>
-              </tr>
-            ))}
-          </DataTable>
+          <TodayVolunteersPanel />
         </Panel>
 
         <Panel
           title="봉사시간 승인 대기"
-          count="7건"
+          count={`${pendingHours.length}건`}
           desc="증빙을 확인하고 실적을 반영하세요."
         >
-          <div className={styles.approvalList}>
-            {pendingHours.map((p) => (
-              <div key={p.id} className={styles.approvalRow}>
-                <span className={cn(styles.approvalAvatar, styles[p.tone])}>
-                  {p.name.charAt(0)}
-                </span>
-                <div className={styles.approvalBody}>
-                  <p className={styles.approvalName}>{p.name}</p>
-                  <p className={styles.approvalActivity}>{p.activity}</p>
-                </div>
-                <span className={styles.approvalHours}>{p.hours}</span>
-                <button type="button" className={styles.approvalButton}>
-                  검토
-                </button>
-              </div>
-            ))}
-          </div>
-          <p className={styles.batchBar}>☐ 3건 선택 · 일괄 승인</p>
+          <PendingHoursPanel />
         </Panel>
       </div>
 

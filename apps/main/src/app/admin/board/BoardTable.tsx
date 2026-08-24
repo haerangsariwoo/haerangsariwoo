@@ -20,18 +20,21 @@ const CATEGORIES = ["회의록", "운영 공지", "자료", "자유"] as const;
 export function BoardTable() {
   const [rows, setRows] = useState(seed);
   const [q, setQ] = useState("");
-  const [cat, setCat] = useState("all");
-  const [open, setOpen] = useState(false);
   type Category = (typeof CATEGORIES)[number];
+  const [cat, setCat] = useState<"all" | Category>("all");
+  const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ title: "", category: CATEGORIES[0] as Category, body: "" });
   /** 펼쳐서 본문을 보고 있는 글 */
   const [reading, setReading] = useState<string | null>(null);
 
-  const visible = rows.filter((p) => {
-    const hitQ = !q.trim() || p.title.includes(q.trim()) || p.author.includes(q.trim());
-    const hitC = cat === "all" || p.category === cat;
-    return hitQ && hitC;
-  });
+  /** 검색어만 반영한 목록 — 칩의 건수가 "지금 검색어로 이 카테고리엔 몇 건" 을 보여주게 한다 */
+  const bySearch = rows.filter(
+    (p) => !q.trim() || p.title.includes(q.trim()) || p.author.includes(q.trim()),
+  );
+  const visible = bySearch.filter((p) => cat === "all" || p.category === cat);
+
+  const countFor = (c: "all" | Category) =>
+    c === "all" ? bySearch.length : bySearch.filter((p) => p.category === c).length;
 
   function create(e: FormEvent) {
     e.preventDefault();
@@ -65,19 +68,6 @@ export function BoardTable() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-        <select
-          className={toolbar.select}
-          value={cat}
-          onChange={(e) => setCat(e.target.value)}
-          aria-label="카테고리 필터"
-        >
-          <option value="all">카테고리: 전체</option>
-          {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
         <span className={toolbar.spacer} />
         <button
           type="button"
@@ -86,6 +76,34 @@ export function BoardTable() {
         >
           {open ? "닫기" : "＋ 글 작성"}
         </button>
+      </div>
+
+      {/* 카테고리별로 나눠 본다. select 뒤에 숨어 있던 걸 항상 보이는
+          칩으로 꺼내고, 칩마다 지금 검색어 기준 건수를 붙였다. */}
+      <div className={toolbar.chipRow} role="tablist" aria-label="카테고리">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={cat === "all"}
+          className={cn(toolbar.chip, cat === "all" && toolbar.chipActive)}
+          onClick={() => setCat("all")}
+        >
+          전체
+          <span className={toolbar.chipCount}>{countFor("all")}</span>
+        </button>
+        {CATEGORIES.map((c) => (
+          <button
+            key={c}
+            type="button"
+            role="tab"
+            aria-selected={cat === c}
+            className={cn(toolbar.chip, cat === c && toolbar.chipActive)}
+            onClick={() => setCat(c)}
+          >
+            {c}
+            <span className={toolbar.chipCount}>{countFor(c)}</span>
+          </button>
+        ))}
       </div>
 
       {open && (

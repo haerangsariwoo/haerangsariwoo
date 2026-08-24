@@ -61,3 +61,43 @@
   border-color: transparent;
   color: #0f9d57;
 }
+
+/* ---------- 카테고리 칩 ---------- */
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--a-radius-pill, 999px);
+  border: 1px solid var(--a-line);
+  background: var(--a-surface);
+  color: var(--a-ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: var(--a-brand);
+  color: var(--a-ink);
+}
+
+.chipActive {
+  background: var(--a-brand);
+  border-color: var(--a-brand);
+  color: var(--surface-white);
+}
+
+.chipCount {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}

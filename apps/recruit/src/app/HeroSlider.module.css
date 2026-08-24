@@ -161,6 +161,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-8);
+  /* 두 글자 길이가 달라도 상자 크기는 같아야 한다 ("지원하기 →" 가
+     "결과 확인" 보다 길다) */
+  min-width: 160px;
   height: 52px;
   padding: 0 var(--space-24);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -187,10 +190,12 @@
   background: var(--brand-blue-500);
 }
 
+/* 커서를 올리면 어두워지는 대신 밝아진다 — 검은 사진 위에서 어두운
+   상자가 더 어두워지면 눌렀는지 알아보기 어렵다 */
 .actionPrimary:hover,
 .actionSecondary:hover {
-  background: rgba(10, 24, 40, 0.55);
-  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.75);
 }
 
 /* ---------- 조작부 ---------- */

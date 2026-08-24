@@ -243,6 +243,11 @@
   display: grid;
   place-items: center;
   text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.approvalButton:hover {
+  background: #1171b2;
 }
 
 .approvalEmpty {
@@ -262,6 +267,11 @@
   text-align: left;
   font-family: inherit;
   cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.batchBar:not(:disabled):hover {
+  background: var(--a-brand-soft);
 }
 
 .batchBar:disabled {

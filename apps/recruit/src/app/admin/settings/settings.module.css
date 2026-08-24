@@ -159,6 +159,12 @@
   font-weight: 700;
   color: var(--ink-600);
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.uploadBtn:hover {
+  background: var(--brand-tint-10);
+  border-color: var(--brand-blue-500);
 }
 
 .savedNote {

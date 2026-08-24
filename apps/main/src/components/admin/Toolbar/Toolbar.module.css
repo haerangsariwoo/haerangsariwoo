@@ -48,6 +48,12 @@
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.button:not(:disabled):hover {
+  background: var(--a-brand-soft);
+  border-color: var(--a-brand);
 }
 
 .button.primary {
@@ -56,10 +62,19 @@
   color: var(--surface-white);
 }
 
+.button.primary:not(:disabled):hover {
+  background: #1171b2;
+  border-color: #1171b2;
+}
+
 .button.sheet {
   background: #e6f6ed;
   border-color: transparent;
   color: #0f9d57;
+}
+
+.button.sheet:not(:disabled):hover {
+  background: #d3f2e2;
 }
 
 .button:disabled {

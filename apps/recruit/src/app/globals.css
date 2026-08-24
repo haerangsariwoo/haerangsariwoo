@@ -83,8 +83,8 @@
 
   /* ---------- type ---------- */
   --font-heading: var(--font-montserrat), "Montserrat", sans-serif;
-  --font-body: "Pretendard Variable", Pretendard, var(--font-montserrat),
-    system-ui, sans-serif;
+  /* next/font 가 만든 변수 안에 이미 폴백까지 들어 있다 */
+  --font-body: var(--font-pretendard);
 
   /* 레이아웃 */
   --content-max: 1200px;

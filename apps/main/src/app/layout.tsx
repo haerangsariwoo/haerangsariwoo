@@ -5,13 +5,29 @@ import "./globals.css";
 
 /**
  * design.md §1.2 — 제목 Montserrat, 본문은 CircularXX 대신 Pretendard.
- * Pretendard 는 Google Fonts 에 없어 공식 CDN 을 쓴다.
  */
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
+});
+
+/**
+ * 본문 글꼴 (Pretendard 1.3.9). CDN 대신 앱 안에 넣고 직접 낸다.
+ * 홈 화면에 추가해 쓰는 앱이라 네트워크가 없거나 CDN 이 막혀도
+ * 한글이 그대로 나와야 한다.
+ *
+ * scripts/build-pretendard.py 로 2,009KB → 1,234KB 로 줄였다.
+ * 굵기 축을 앱이 쓰는 400~700 으로 좁히고 한자·가나·키릴을 뺐다.
+ * 한글은 완성형 11,172자를 통째로 남겨 어떤 이름도 폴백으로 떨어지지 않는다.
+ */
+const pretendard = localFont({
+  src: "./fonts/pretendard.woff2",
+  variable: "--font-pretendard",
+  weight: "400 700",
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 /**
@@ -26,7 +42,7 @@ const inkLipquid = localFont({
   src: "./fonts/inklipquid-full.woff2",
   variable: "--font-accent",
   display: "swap",
-  fallback: ["Pretendard Variable", "Pretendard", "system-ui", "sans-serif"],
+  fallback: ["system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -42,15 +58,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${montserrat.variable} ${inkLipquid.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          as="style"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
-        />
-      </head>
+    <html lang="ko" className={`${pretendard.variable} ${montserrat.variable} ${inkLipquid.variable}`}>
       <body>{children}</body>
     </html>
   );

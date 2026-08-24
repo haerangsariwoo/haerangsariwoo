@@ -244,39 +244,8 @@
   gap: var(--space-32);
 }
 
-@media (min-width: 1200px) {
-  .recruitGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-50);
-    /* 좌우 칼럼 높이를 맞춘다 */
-    align-items: stretch;
-  }
-
-  .recruitLeft {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* 인용을 아래로 밀어 체크리스트와 일정 카드의 끝을 맞춘다 */
-  .quote {
-    margin-top: auto;
-    padding-top: var(--space-8);
-  }
-}
-
 .recruitLeft {
   min-width: 0;
-}
-
-.scheduleCard {
-  display: flex;
-  flex-direction: column;
-}
-
-/* 일정 목록 아래 남는 공간을 버튼이 밀어낸다 */
-.scheduleActions {
-  margin-top: auto;
-  padding-top: var(--space-24);
 }
 
 .checklistTitle {
@@ -330,6 +299,8 @@
 }
 
 .scheduleCard {
+  display: flex;
+  flex-direction: column;
   background: var(--surface-white);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
@@ -388,10 +359,14 @@
   text-align: right;
 }
 
+/* 일정 목록 아래 남는 공간을 버튼이 밀어낸다 (scheduleCard 가 항상
+   flex-column 이라 폭에 상관없이 적용된다) */
 .scheduleActions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-12);
+  margin-top: auto;
+  padding-top: var(--space-24);
 }
 
 .closedNote {
@@ -402,6 +377,35 @@
   font-size: 14px;
   line-height: 1.7;
   padding: var(--space-14) var(--space-16);
+}
+
+/*
+ * 1200px 이상 — 좌우 칼럼을 나란히 두고 높이를 맞춘다.
+ * 이 블록은 반드시 위의 기본 .quote 규칙보다 뒤에 와야 한다.
+ * 지정도가 같은 규칙은 미디어 쿼리 안에 있어도 우선순위가 오르지 않고
+ * "파일에서 나중에 나온 쪽" 이 이긴다 — 예전엔 이 블록이 앞쪽에 있어서
+ * 폭이 1200px 을 넘어도 아래 .quote { margin-top: 32px } 가 계속 이겼다.
+ * 칸 높이는 stretch 로 같아졌는데 인용문만 위에 붙어 있어 그 아래가
+ * 비어 보이는 걸로 나타났다.
+ */
+@media (min-width: 1200px) {
+  .recruitGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-50);
+    /* 좌우 칼럼 높이를 맞춘다 */
+    align-items: stretch;
+  }
+
+  .recruitLeft {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 인용을 아래로 밀어 체크리스트와 일정 카드의 끝을 맞춘다 */
+  .quote {
+    margin-top: auto;
+    padding-top: var(--space-8);
+  }
 }
 
 /* ================= Footer ================= */

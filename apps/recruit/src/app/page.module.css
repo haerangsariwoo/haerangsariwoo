@@ -380,31 +380,17 @@
 }
 
 /*
- * 1200px 이상 — 좌우 칼럼을 나란히 두고 높이를 맞춘다.
- * 이 블록은 반드시 위의 기본 .quote 규칙보다 뒤에 와야 한다.
- * 지정도가 같은 규칙은 미디어 쿼리 안에 있어도 우선순위가 오르지 않고
- * "파일에서 나중에 나온 쪽" 이 이긴다 — 예전엔 이 블록이 앞쪽에 있어서
- * 폭이 1200px 을 넘어도 아래 .quote { margin-top: 32px } 가 계속 이겼다.
- * 칸 높이는 stretch 로 같아졌는데 인용문만 위에 붙어 있어 그 아래가
- * 비어 보이는 걸로 나타났다.
+ * 1200px 이상 — 좌우 칼럼을 나란히 두고, 오른쪽 일정 카드 높이만큼
+ * 왼쪽 칼럼도 늘인다 (align-items: stretch). 글은 천장에 붙어 읽는
+ * 순서 그대로 흐르고, 카드보다 짧아 남는 높이는 recruitLeft 바닥의
+ * 빈 여백이 된다. 인용을 바닥까지 밀어 맞추면 체크리스트와 인용 사이
+ * 간격이 폭마다 달라져 오히려 어색하다.
  */
 @media (min-width: 1200px) {
   .recruitGrid {
     grid-template-columns: 1fr 1fr;
     gap: var(--space-50);
-    /* 좌우 칼럼 높이를 맞춘다 */
     align-items: stretch;
-  }
-
-  .recruitLeft {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* 인용을 아래로 밀어 체크리스트와 일정 카드의 끝을 맞춘다 */
-  .quote {
-    margin-top: auto;
-    padding-top: var(--space-8);
   }
 }
 

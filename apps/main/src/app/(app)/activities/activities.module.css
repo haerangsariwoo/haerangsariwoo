@@ -120,8 +120,8 @@
   color: var(--state-warn);
 }
 .attend.불참 {
-  background: var(--surface-muted);
-  color: var(--ink-600);
+  background: var(--state-danger-bg);
+  color: var(--state-danger);
 }
 .attend.none {
   background: var(--brand-surface);

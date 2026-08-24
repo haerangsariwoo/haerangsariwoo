@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
 import { findVolunteer, volunteers } from "@/lib/mock-data";
+import { ApplyButton } from "./ApplyButton";
 import styles from "./detail.module.css";
 
 export function generateStaticParams() {
@@ -190,9 +191,7 @@ export default async function VolunteerDetailPage({ params }: PageProps<"/volunt
             </Button>
           </a>
         ) : (
-          <Button variant="primary" size="lg" fullWidth className={styles.applyBtn}>
-            신청하기
-          </Button>
+          <ApplyButton label="신청하기" />
         )}
       </div>
     </div>

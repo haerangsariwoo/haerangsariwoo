@@ -253,6 +253,16 @@
   background: var(--brand-blue-600);
 }
 
+.rowBtnDanger {
+  background: #fdecec;
+  border-color: transparent;
+  color: #cf4444;
+}
+
+.rowBtnDanger:hover {
+  background: #fadbdb;
+}
+
 /* 표 위에 펼치는 한 줄 입력 폼 */
 .inlineForm {
   display: flex;

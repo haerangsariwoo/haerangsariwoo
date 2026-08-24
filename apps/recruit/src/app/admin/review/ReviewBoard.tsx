@@ -80,7 +80,7 @@ export function ReviewBoard() {
           <span className={ui.spacer} />
           <button
             type="button"
-            className={ui.btn}
+            className={cn(ui.btn, ui.danger)}
             onClick={() => bulkFirst("불합격")}
             disabled={picked.size === 0}
           >
@@ -154,7 +154,7 @@ export function ReviewBoard() {
                         </button>
                         <button
                           type="button"
-                          className={ui.rowBtn}
+                          className={ui.rowBtnDanger}
                           onClick={() => setFirst(a.id, "불합격")}
                         >
                           불합격
@@ -248,7 +248,7 @@ export function ReviewBoard() {
                           </button>
                           <button
                             type="button"
-                            className={ui.rowBtn}
+                            className={ui.rowBtnDanger}
                             onClick={() => setFinal(a.id, "불합격")}
                           >
                             불합격

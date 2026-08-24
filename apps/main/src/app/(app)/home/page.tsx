@@ -14,6 +14,7 @@ import { verifyRequests } from "@/lib/verify";
 import { homeCopy } from "@/lib/app-content";
 import styles from "./home.module.css";
 import { AlbumPreview } from "./AlbumPreview";
+import { HomeInstallPopup } from "./HomeInstallPopup";
 import { Mascot } from "@/components/ui/Logo/Mascot";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 
@@ -47,6 +48,7 @@ const QUICK_MENU = [
 export default function HomePage() {
   return (
     <Sheet>
+      <HomeInstallPopup />
       {/* ① 나 */}
       <SheetGroup>
         <section className={styles.hero}>

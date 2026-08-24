@@ -1,0 +1,77 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 16, 28, 0.55);
+  z-index: 60;
+}
+
+.content {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 61;
+  width: 100%;
+  max-width: 430px;
+  background: var(--surface-white);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--ink-600);
+  line-height: 1.7;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-800);
+  line-height: 1.6;
+}
+
+.installBtn {
+  height: 48px;
+  border: none;
+  border-radius: 0;
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.installBtn:hover {
+  background: var(--brand-blue-600);
+}
+
+.laterBtn {
+  height: 40px;
+  border: none;
+  background: none;
+  color: var(--ink-500);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.laterBtn:hover {
+  color: var(--ink-800);
+}

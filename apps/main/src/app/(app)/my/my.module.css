@@ -11,7 +11,13 @@
   gap: var(--space-16);
 }
 
+.avatarWrap {
+  position: relative;
+  flex: none;
+}
+
 .avatar {
+  position: relative;
   width: 56px;
   height: 56px;
   border-radius: var(--radius-xs);
@@ -21,7 +27,35 @@
   font-size: 20px;
   font-weight: 600;
   color: var(--surface-white);
-  flex: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.avatarPhoto {
+  object-fit: cover;
+}
+
+.avatarEdit {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--brand-blue-500);
+  background: var(--surface-white);
+  color: var(--brand-blue-500);
+  font-size: 12px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.avatarEdit:hover {
+  background: var(--brand-tint-10);
 }
 
 .name {
@@ -164,10 +198,13 @@
   background: var(--surface-muted);
   color: var(--ink-600);
 }
-.state.취소,
-.state.불참 {
+.state.취소 {
   background: var(--surface-muted);
   color: var(--ink-400);
+}
+.state.불참 {
+  background: var(--state-danger-bg);
+  color: var(--state-danger);
 }
 
 /* ---------- 배지 ----------

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import styles from "./DataTable.module.css";
 
-export type BadgeTone = "blue" | "green" | "orange" | "purple" | "grey";
+export type BadgeTone = "blue" | "green" | "orange" | "purple" | "grey" | "danger";
 
 export function Badge({ tone, children }: { tone: BadgeTone; children: ReactNode }) {
   return <span className={cn(styles.badge, styles[tone])}>{children}</span>;

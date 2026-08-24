@@ -5,6 +5,7 @@ import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 import { PushSettings } from "@/components/push/PushSettings/PushSettings";
 import { InstallPrompt } from "@/components/push/InstallPrompt/InstallPrompt";
 import { badges, hourStats, profile, records } from "@/lib/my";
+import { ProfilePhoto } from "./ProfilePhoto";
 import styles from "./my.module.css";
 
 export const metadata = { title: "MY · 해랑사리우" };
@@ -30,7 +31,7 @@ export default function MyPage() {
         </div>
 
         <section className={styles.profileCard}>
-          <span className={styles.avatar}>{profile.name.charAt(0)}</span>
+          <ProfilePhoto initial={profile.name.charAt(0)} />
           <div>
             <p className={styles.name}>{profile.name}</p>
             <p className={styles.profileMeta}>

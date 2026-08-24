@@ -101,6 +101,49 @@
   background: var(--a-purple);
 }
 
+.attendRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.attendChip {
+  flex: 1;
+  min-width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px;
+  border-radius: var(--a-radius-md);
+  background: var(--a-bg);
+}
+
+.attendValue {
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--a-ink);
+}
+
+.attendLabel {
+  font-size: 12px;
+  color: var(--a-ink-soft);
+}
+
+.attendChip.참석 .attendValue {
+  color: var(--a-green);
+}
+
+.attendChip.불참 {
+  background: var(--state-danger-bg);
+}
+
+.attendChip.불참 .attendValue,
+.attendChip.불참 .attendLabel {
+  color: var(--state-danger);
+}
+
 .exportRow {
   display: flex;
   gap: 12px;

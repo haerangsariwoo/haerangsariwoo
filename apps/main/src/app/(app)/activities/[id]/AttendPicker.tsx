@@ -17,7 +17,10 @@ export function AttendPicker({ initial }: { initial: AttendState | null }) {
           key={o}
           type="button"
           aria-pressed={value === o}
-          className={cn(styles.attendBtn, value === o && styles.selected)}
+          className={cn(
+            styles.attendBtn,
+            value === o && (o === "불참" ? styles.selectedDanger : styles.selected),
+          )}
           onClick={() => setValue(o)}
         >
           {o}

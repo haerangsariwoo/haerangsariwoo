@@ -78,6 +78,10 @@
   background: var(--a-grey-soft);
   color: var(--a-ink-soft);
 }
+.badge.danger {
+  background: var(--state-danger-bg);
+  color: var(--state-danger);
+}
 
 .rowAction {
   border: 1px solid var(--a-line);

@@ -12,8 +12,8 @@ const STATE_TONE: Record<string, BadgeTone> = {
   참여확정: "green",
   신청완료: "blue",
   대기: "orange",
-  불참: "grey",
-  노쇼: "grey",
+  불참: "danger",
+  노쇼: "danger",
 };
 
 /** 상태를 누를 때마다 이 순서로 돈다 */

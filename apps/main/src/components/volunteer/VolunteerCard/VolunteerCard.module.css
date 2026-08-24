@@ -2,6 +2,9 @@
  * design.md §2.5 Deal Card 를 가로형 목록에 맞춘 것.
  * 면은 --surface-card 그라디언트 + 1px inset 보더, radius 16,
  * 썸네일은 radius 12.
+ *
+ * 부모가 --vcard-corner 를 주면 모서리를 그 값으로 따른다.
+ * 홈처럼 각진 화면에서 이 카드만 둥글게 남는 것을 막는다.
  */
 .card {
   display: flex;
@@ -9,7 +12,7 @@
   gap: var(--space-14);
   padding: var(--space-4);
   padding-right: var(--space-12);
-  border-radius: var(--radius-md);
+  border-radius: var(--vcard-corner, var(--radius-md));
   background: var(--surface-card);
   border: 1px solid var(--surface-card-border);
   box-shadow: var(--shadow-card);
@@ -25,7 +28,7 @@
   width: 84px;
   height: 84px;
   /* §2.5 — 카드 안 썸네일 radius 12 */
-  border-radius: var(--radius-sm);
+  border-radius: var(--vcard-corner, var(--radius-sm));
   flex: none;
   overflow: hidden;
 }
@@ -91,7 +94,7 @@
   font-size: 10px;
   font-weight: 500;
   padding: var(--space-4) var(--space-12);
-  border-radius: var(--radius-pill);
+  border-radius: var(--vcard-corner, var(--radius-pill));
 }
 
 /* 마감임박만 다른 색 — --accent-like */
@@ -112,7 +115,7 @@
   height: 40px;
   padding: 0 var(--space-12);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--vcard-corner, var(--radius-sm));
   background: var(--brand-blue-500);
   color: var(--surface-white);
   font-family: inherit;

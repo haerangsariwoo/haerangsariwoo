@@ -16,7 +16,7 @@
   width: 34px;
   height: 34px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   background: var(--surface-white);
   color: var(--ink-600);
   font-size: 16px;
@@ -241,7 +241,7 @@
 
 .empty {
   background: var(--surface-white);
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-lg);
   padding: 28px 20px;
   text-align: center;

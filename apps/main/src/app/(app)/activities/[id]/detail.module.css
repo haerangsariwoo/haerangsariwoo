@@ -150,7 +150,7 @@
   flex: 1;
   height: 46px;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   background: var(--surface-white);
   color: var(--ink-600);
   font-size: 14px;

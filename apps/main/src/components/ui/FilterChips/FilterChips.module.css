@@ -15,7 +15,7 @@
   height: 34px;
   padding: 0 16px;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   background: var(--surface-white);
   color: var(--ink-600);
   font-size: 14px;

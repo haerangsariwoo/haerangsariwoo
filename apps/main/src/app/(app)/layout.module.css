@@ -16,3 +16,10 @@
   flex-direction: column;
   gap: var(--space-20);
 }
+
+/* 홈처럼 화면을 한 장으로 채우는 페이지는 레이아웃 여백을 걷는다.
+   페이지가 자기 여백을 직접 갖는다. */
+.content:has(> [data-full-bleed]) {
+  padding: 0;
+  gap: 0;
+}

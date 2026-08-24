@@ -1,10 +1,28 @@
+/* ---------- 화면 한 장 ----------
+   카드를 띄워 늘어놓지 않고 블록을 맞붙여 한 화면으로 보이게 한다.
+   경계는 여백이 아니라 실선 한 줄로 만들고, 모서리는 각지게 둔다.
+   레이아웃 여백은 (app)/layout.module.css 가 data-full-bleed 를 보고 걷는다. */
+.sheet {
+  flex: 1;
+  background: var(--surface-white);
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet > * {
+  padding: var(--space-20) var(--screen-pad);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.sheet > *:last-child {
+  border-bottom: none;
+}
+
 /* ---------- Hero ----------
    design.md §3.2 Explore : eyebrow + H2 를 위에 두고 가운데를 비운다 */
 .hero {
   position: relative;
   background: var(--surface-sheet);
-  border-radius: var(--radius-sheet);
-  padding: var(--space-20);
   overflow: hidden;
 }
 
@@ -29,18 +47,25 @@
   top: var(--space-16);
 }
 
+/* 두 숫자도 칸을 나누는 선만 두고 붙인다 */
 .summaryRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-10);
   margin-top: var(--space-16);
+  padding-top: var(--space-16);
+  border-top: 1px solid var(--hairline);
 }
 
 .summaryCard {
-  background: var(--surface-white);
-  border-radius: var(--radius-md);
-  padding: var(--space-12) var(--space-14);
-  box-shadow: var(--shadow-card);
+  padding-left: var(--space-14);
+}
+
+.summaryCard:first-child {
+  padding-left: 0;
+}
+
+.summaryCard + .summaryCard {
+  border-left: 1px solid var(--hairline);
 }
 
 /* §1.2 --type-meta : 12, --ink-600 */
@@ -58,30 +83,47 @@
   margin-top: var(--space-4);
 }
 
-/* ---------- shared card ---------- */
-.card {
-  background: var(--surface-white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-}
-
-/* 두 카드를 한 줄에. 좁은 화면에서는 세로로 쌓인다. */
+/* ---------- 두 칸 블록 ----------
+   칸 사이도 선 하나로만 나눈다. 바깥 여백은 다른 블록과 맞춘다. */
 .duo {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-12);
   align-items: stretch;
+  padding: 0;
 }
 
+.duo > * {
+  padding: var(--space-20) var(--space-14);
+}
+
+.duo > *:first-child {
+  padding-left: var(--screen-pad);
+}
+
+.duo > *:last-child {
+  padding-right: var(--screen-pad);
+}
+
+.duo > * + * {
+  border-left: 1px solid var(--hairline);
+}
+
+/* 좁은 화면에서는 세로로 쌓이니 경계선도 방향을 바꾼다 */
 @media (max-width: 359px) {
   .duo {
     grid-template-columns: 1fr;
   }
+  .duo > * {
+    padding: var(--space-20) var(--screen-pad);
+  }
+  .duo > * + * {
+    border-left: none;
+    border-top: 1px solid var(--hairline);
+  }
 }
 
-/* ---------- 이번 학기 현황 — 카드가 아니라 배경 위의 띠 ---------- */
+/* ---------- 이번 학기 현황 ---------- */
 .statusCard {
-  padding: var(--space-16);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -130,14 +172,10 @@
   color: var(--ink-600);
 }
 
-/* ---------- Next activity ---------- */
+/* ---------- 다음 활동 ---------- */
 .nextCard {
-  padding: var(--space-16);
   display: flex;
   flex-direction: column;
-  background: var(--surface-white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
 }
 
 .nextHead {
@@ -153,7 +191,7 @@
   font-size: 12px;
   font-weight: 700;
   padding: 4px 10px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-xs);
   flex: none;
 }
 
@@ -206,95 +244,29 @@
   color: var(--brand-blue-500);
 }
 
-/* ---------- volunteer cards ---------- */
+/* ---------- 모집 중인 봉사 ----------
+   홈에서는 카드가 아니라 목록의 한 줄이다.
+   VolunteerCard 가 들고 있는 면·그림자·모서리를 여기서 지운다. */
 .volunteerList {
+  /* 카드 안 썸네일·태그·버튼도 각지게 맞춘다 */
+  --vcard-corner: var(--radius-xs);
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-.volunteerCard {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-white);
-  box-shadow: var(--shadow-card);
-}
-
-.thumb {
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius-md);
-  flex: none;
-}
-
-.thumb.mint {
-  background: var(--state-success-bg);
-}
-.thumb.peach {
-  background: var(--state-warn-bg);
-}
-.thumb.sky {
-  background: var(--brand-canvas);
-}
-.thumb.lavender {
-  background: var(--state-accent-bg);
-}
-
-.volunteerBody {
-  flex: 1;
-  min-width: 0;
-}
-
-.volunteerTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-800);
-}
-
-.volunteerMeta {
-  font-size: 12px;
-  color: var(--ink-600);
-  margin-top: 6px;
-}
-
-.tagRow {
-  display: flex;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.tag {
-  background: var(--brand-surface);
-  color: var(--brand-blue-500);
-  font-size: 10px;
-  font-weight: 500;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
-}
-
-.volunteerAction {
-  flex: none;
-  width: 74px;
-  height: 46px;
-  border-radius: var(--radius-md);
-  background: var(--brand-blue-500);
-  color: var(--surface-white);
-  font-size: 12px;
-  font-weight: 700;
-  display: grid;
-  place-items: center;
+.volunteerList > article {
+  background: none;
   border: none;
-  cursor: pointer;
+  border-radius: 0;
+  box-shadow: none;
+  padding: var(--space-12) 0;
 }
 
-/* ---------- notice / album ---------- */
-.panel {
-  padding: 16px;
+.volunteerList > article + article {
+  border-top: 1px solid var(--hairline);
 }
 
+/* ---------- 공지 / 앨범 ---------- */
 .panelHead {
   display: flex;
   align-items: baseline;
@@ -322,7 +294,7 @@
 }
 
 .noticeItem {
-  border-bottom: 1px solid rgba(23, 111, 242, 0.14);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .noticeLink {
@@ -358,15 +330,15 @@
   white-space: nowrap;
 }
 
+/* 사진은 한 덩어리로 붙인다 */
 .albumGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 2px;
 }
 
 .photo {
   aspect-ratio: 70 / 66;
-  border-radius: var(--radius-sm);
 }
 
 .photo.sky {
@@ -386,8 +358,6 @@
 .teamCard {
   min-height: 100px;
   background: #1a1a1a;
-  border-radius: var(--radius-lg);
-  padding: 16px 18px 22px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -420,7 +390,6 @@
 .quickList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-10);
 }
 
 .quickItem {
@@ -428,11 +397,12 @@
   align-items: center;
   gap: var(--space-14);
   min-height: 64px;
-  padding: var(--space-12) var(--space-16);
-  border-radius: var(--radius-md);
-  background: var(--surface-white);
-  box-shadow: var(--shadow-card);
+  padding: var(--space-12) 0;
   color: var(--ink-800);
+}
+
+.quickItem + .quickItem {
+  border-top: 1px solid var(--hairline);
 }
 
 .quickIcon {
@@ -463,7 +433,7 @@
 .quickBadge {
   flex: none;
   padding: var(--space-4) var(--space-10);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-xs);
   background: var(--brand-tint-10);
   color: var(--brand-blue-500);
   font-size: 12px;

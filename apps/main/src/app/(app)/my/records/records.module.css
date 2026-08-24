@@ -21,7 +21,7 @@
 .divider {
   width: 1px;
   height: 36px;
-  background: rgba(23, 111, 242, 0.14);
+  background: var(--hairline);
   flex: none;
 }
 

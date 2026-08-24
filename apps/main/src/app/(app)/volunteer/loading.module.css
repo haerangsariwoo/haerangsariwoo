@@ -110,9 +110,9 @@
 .shine {
   background: linear-gradient(
     100deg,
-    rgba(23, 111, 242, 0.14) 20%,
+    var(--hairline) 20%,
     #eaf2f8 40%,
-    rgba(23, 111, 242, 0.14) 60%
+    var(--hairline) 60%
   );
   background-size: 300% 100%;
   animation: shine 1.3s ease-in-out infinite;

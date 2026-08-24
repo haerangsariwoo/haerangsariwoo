@@ -32,6 +32,8 @@
 
   /* ---------- surface ---------- */
   --surface-white: #ffffff;
+  /* 블록을 나누는 실선. 여백 대신 이 선으로 경계를 만든다 */
+  --hairline: rgba(23, 111, 242, 0.14);
   --surface-muted: #eef1f5;
   --surface-card: linear-gradient(125.69deg, #f6f6f6 2.94%, #fffcfc 93.57%);
   --surface-card-border: #f4f4f4;

@@ -41,7 +41,8 @@ const QUICK_MENU = [
 
 export default function HomePage() {
   return (
-    <>
+    /* data-full-bleed : (app) 레이아웃의 좌우·위아래 여백을 걷는 표시 */
+    <div className={styles.sheet} data-full-bleed>
       <section className={styles.hero}>
         <Mascot size={68} className={styles.heroMascot} priority />
         <h1 className={styles.greeting}>
@@ -63,7 +64,7 @@ export default function HomePage() {
       </section>
 
       <section className={styles.duo}>
-        <article className={cn(styles.card, styles.statusCard)}>
+        <article className={styles.statusCard}>
           <h2 className={styles.cardTitle}>이번 학기 현황</h2>
           <div className={styles.donutWrap}>
             <Image src="/icons/donut-92.svg" alt="" width={82} height={82} unoptimized />
@@ -80,7 +81,7 @@ export default function HomePage() {
           </div>
         </article>
 
-        <article className={cn(styles.card, styles.nextCard)}>
+        <article className={styles.nextCard}>
           <div className={styles.nextHead}>
             <h2 className={styles.cardTitle}>다음 활동</h2>
             <span className={styles.ddayBadge}>D-{nextActivity.dday}</span>
@@ -108,7 +109,7 @@ export default function HomePage() {
       </section>
 
       <section className={styles.duo}>
-        <article className={cn(styles.card, styles.panel)}>
+        <article>
           <div className={styles.panelHead}>
             <h2 className={styles.panelTitle}>공지사항</h2>
             <Link href="/community" className={styles.panelMore}>
@@ -129,7 +130,7 @@ export default function HomePage() {
           </ul>
         </article>
 
-        <article className={cn(styles.card, styles.panel)}>
+        <article>
           <div className={styles.panelHead}>
             <h2 className={styles.panelTitle}>앨범</h2>
             <Link href="/community?tab=앨범" className={styles.panelMore}>
@@ -179,6 +180,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-    </>
+    </div>
   );
 }

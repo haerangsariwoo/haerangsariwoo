@@ -39,7 +39,7 @@
   height: 28px;
   border: none;
   border-radius: var(--radius-pill);
-  background: rgba(23, 111, 242, 0.14);
+  background: var(--hairline);
   padding: 3px;
   cursor: pointer;
   transition: background 0.18s ease;
@@ -99,7 +99,7 @@
 
 .testButton {
   height: 40px;
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-md);
   background: var(--surface-white);
   color: var(--brand-blue-500);

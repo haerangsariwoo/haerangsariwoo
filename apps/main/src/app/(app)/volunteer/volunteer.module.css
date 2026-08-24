@@ -65,7 +65,7 @@
 
 .empty {
   background: var(--surface-white);
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-lg);
   padding: 32px 20px;
   text-align: center;
@@ -144,7 +144,7 @@
   min-width: 0;
   height: 40px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   background: var(--surface-white);
   padding: 0 10px;
   font-size: 12px;

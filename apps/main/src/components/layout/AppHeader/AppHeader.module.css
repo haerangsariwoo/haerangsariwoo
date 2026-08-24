@@ -151,7 +151,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 15px 4px;
-  border-bottom: 1px solid rgba(23, 111, 242, 0.14);
+  border-bottom: 1px solid var(--hairline);
   font-size: 14px;
   font-weight: 500;
   color: var(--ink-800);
@@ -206,7 +206,7 @@
 }
 
 .logout {
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   background: var(--surface-white);
   border-radius: var(--radius-md);
   padding: 13px;

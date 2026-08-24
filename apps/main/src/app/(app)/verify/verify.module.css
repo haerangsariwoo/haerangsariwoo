@@ -30,7 +30,7 @@
   left: 50%;
   width: 100%;
   height: 1px;
-  background: rgba(23, 111, 242, 0.14);
+  background: var(--hairline);
 }
 
 .stepDot {
@@ -88,7 +88,7 @@
 .textarea {
   width: 100%;
   min-width: 0;
-  border: 1px solid rgba(23, 111, 242, 0.14);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-sm);
   background: var(--brand-surface);
   color: var(--ink-800);
@@ -125,7 +125,7 @@
   justify-content: center;
   gap: 6px;
   min-height: 92px;
-  border: 1px dashed rgba(23, 111, 242, 0.14);
+  border: 1px dashed var(--hairline);
   border-radius: var(--radius-md);
   background: var(--brand-surface);
   color: var(--ink-600);
@@ -178,7 +178,7 @@
 }
 
 .submit:disabled {
-  background: rgba(23, 111, 242, 0.14);
+  background: var(--hairline);
   color: var(--ink-600);
   cursor: not-allowed;
 }

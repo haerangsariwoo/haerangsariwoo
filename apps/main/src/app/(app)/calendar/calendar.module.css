@@ -16,17 +16,17 @@
   width: 34px;
   height: 34px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--ink-soft);
+  border: 1px solid rgba(23, 111, 242, 0.14);
+  background: var(--surface-white);
+  color: var(--ink-600);
   font-size: 16px;
   cursor: pointer;
 }
 
 .monthLabel {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink-800);
   font-variant-numeric: tabular-nums;
   min-width: 108px;
   text-align: center;
@@ -44,8 +44,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
 }
 
 .dot {
@@ -56,19 +56,19 @@
 }
 
 .dot.volunteer {
-  background: var(--brand);
+  background: var(--brand-blue-500);
 }
 .dot.mine {
-  background: var(--mint-text);
+  background: var(--state-success);
 }
 .dot.activity {
-  background: #9a57d6;
+  background: var(--state-accent);
 }
 
 /* ---------- 달력 ---------- */
 .calendar {
-  background: var(--surface);
-  border-radius: var(--radius-xl);
+  background: var(--surface-white);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 16px 12px 18px;
 }
@@ -81,14 +81,14 @@
 
 .weekName {
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   padding-bottom: 8px;
 }
 
 .weekName.sun {
-  color: #e06b6b;
+  color: var(--state-danger);
 }
 
 .grid {
@@ -114,29 +114,29 @@
 
 .dayNum {
   font-size: 12px;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .day.sun .dayNum {
-  color: #e06b6b;
+  color: var(--state-danger);
 }
 
 .day.other .dayNum {
-  color: var(--ink-faint);
+  color: var(--ink-400);
 }
 
 .day.today .dayNum {
   font-weight: 700;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
 }
 
 .day.selected {
-  background: var(--brand-soft);
+  background: var(--brand-surface);
 }
 
 .day.selected .dayNum {
   font-weight: 700;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
 }
 
 .dots {
@@ -162,14 +162,14 @@
   font-weight: 400;
   letter-spacing: 0.01em;
   font-size: 20px;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .eventCard {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--surface);
+  background: var(--surface-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 14px 16px;
@@ -179,18 +179,18 @@
 .stripe {
   width: 4px;
   align-self: stretch;
-  border-radius: 2px;
+  border-radius: var(--radius-pill);
   flex: none;
 }
 
 .stripe.volunteer {
-  background: var(--brand);
+  background: var(--brand-blue-500);
 }
 .stripe.mine {
-  background: var(--mint-text);
+  background: var(--state-success);
 }
 .stripe.activity {
-  background: #9a57d6;
+  background: var(--state-accent);
 }
 
 .eventBody {
@@ -205,8 +205,8 @@
 .eventTitle {
   display: block;
   font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 600;
+  color: var(--ink-800);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -214,8 +214,8 @@
 
 .eventMeta {
   display: block;
-  font-size: 11.5px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
 }
 
 .eventTag {
@@ -228,32 +228,32 @@
 }
 
 .eventTag.volunteer {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
 }
 .eventTag.mine {
-  background: var(--mint-bg);
-  color: var(--mint-text);
+  background: var(--state-success-bg);
+  color: var(--state-success);
 }
 .eventTag.activity {
-  background: #f3eafb;
+  background: var(--state-accent-bg);
   color: #7b3fb5;
 }
 
 .empty {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--surface-white);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   border-radius: var(--radius-lg);
   padding: 28px 20px;
   text-align: center;
-  color: var(--ink-soft);
-  font-size: 13px;
+  color: var(--ink-600);
+  font-size: 14px;
 }
 
 .note {
-  background: var(--brand-soft);
-  color: var(--brand-text);
-  font-size: 11px;
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
+  font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);
   padding: 12px 14px;

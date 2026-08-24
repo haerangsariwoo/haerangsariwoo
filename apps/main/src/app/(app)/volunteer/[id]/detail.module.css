@@ -7,20 +7,20 @@
 
 .hero {
   height: 168px;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
 }
 
 .hero.mint {
-  background: var(--mint-bg);
+  background: var(--state-success-bg);
 }
 .hero.peach {
-  background: var(--peach-bg);
+  background: var(--state-warn-bg);
 }
 .hero.sky {
-  background: var(--sky);
+  background: var(--brand-canvas);
 }
 .hero.lavender {
-  background: var(--lavender-bg);
+  background: var(--state-accent-bg);
 }
 
 .titleRow {
@@ -31,22 +31,22 @@
 }
 
 .title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink-800);
   line-height: 1.35;
 }
 
 .org {
-  font-size: 13px;
-  color: var(--brand-text);
+  font-size: 14px;
+  color: var(--brand-blue-500);
   font-weight: 500;
   margin-top: 6px;
 }
 
 .statusBadge {
   flex: none;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 6px 12px;
   border-radius: var(--radius-pill);
@@ -54,21 +54,21 @@
 }
 
 .statusBadge.open {
-  background: var(--mint-bg);
-  color: var(--mint-text);
+  background: var(--state-success-bg);
+  color: var(--state-success);
 }
 .statusBadge.closing {
-  background: #ffe9e9;
-  color: #d14b57;
+  background: var(--state-danger-bg);
+  color: var(--state-danger);
 }
 .statusBadge.closed {
-  background: #eef2f6;
-  color: #9aa7b4;
+  background: var(--surface-muted);
+  color: var(--ink-400);
 }
 
 .factCard {
-  background: var(--surface);
-  border-radius: var(--radius-xl);
+  background: var(--surface-white);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 18px;
   display: flex;
@@ -86,57 +86,57 @@
   width: 34px;
   height: 34px;
   border-radius: var(--radius-sm);
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
   display: grid;
   place-items: center;
   flex: none;
 }
 
 .factLabel {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
 }
 
 .factValue {
   font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 600;
+  color: var(--ink-800);
   margin-top: 2px;
 }
 
 .capacityBar {
   height: 8px;
-  border-radius: 4px;
-  background: #e9eff5;
+  border-radius: var(--radius-pill);
+  background: var(--surface-muted);
   overflow: hidden;
   margin-top: 4px;
 }
 
 .capacityFill {
   height: 100%;
-  background: var(--brand);
-  border-radius: 4px;
+  background: var(--brand-blue-500);
+  border-radius: var(--radius-pill);
 }
 
 .section {
-  background: var(--surface);
-  border-radius: var(--radius-xl);
+  background: var(--surface-white);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 18px;
 }
 
 .sectionTitle {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-800);
   margin-bottom: 10px;
 }
 
 .body {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.7;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .list {
@@ -149,20 +149,20 @@
 .listItem {
   display: flex;
   gap: 8px;
-  font-size: 13px;
-  color: var(--ink-soft);
+  font-size: 14px;
+  color: var(--ink-600);
   line-height: 1.6;
 }
 
 .bullet {
-  color: var(--brand);
+  color: var(--brand-blue-500);
   flex: none;
   font-weight: 700;
 }
 
 .externalNote {
-  background: var(--warn-bg);
-  color: #8a5a12;
+  background: var(--state-warn-bg);
+  color: var(--state-warn);
   font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);
@@ -178,11 +178,11 @@
   max-width: 430px;
   margin: 0 auto;
   padding: 12px 16px;
-  background: linear-gradient(180deg, transparent, var(--bg) 30%);
+  background: linear-gradient(180deg, transparent, var(--brand-surface) 30%);
 }
 
 .backLink {
-  font-size: 13px;
-  color: var(--brand-text);
+  font-size: 14px;
+  color: var(--brand-blue-500);
   font-weight: 500;
 }

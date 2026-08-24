@@ -5,7 +5,7 @@
   overflow: hidden;
   padding: 14px;
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-white);
   box-shadow: var(--shadow-card);
   color: inherit;
 }
@@ -28,12 +28,12 @@
 }
 
 .thumb.p1365 {
-  background: var(--peach-bg);
+  background: var(--state-warn-bg);
   color: #a8620f;
 }
 
 .thumb.pvms {
-  background: var(--lavender-bg);
+  background: var(--state-accent-bg);
   color: #5b47c4;
 }
 
@@ -44,16 +44,16 @@
 
 .title {
   font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 600;
+  color: var(--ink-800);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .org {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
   margin-top: 5px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -71,8 +71,8 @@
 }
 
 .tag {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
   font-size: 10px;
   font-weight: 500;
   padding: 4px 10px;
@@ -86,14 +86,14 @@
 }
 
 .tag.source {
-  background: #eef1f6;
-  color: #5a6b7d;
+  background: var(--surface-muted);
+  color: var(--ink-600);
   font-weight: 700;
 }
 
 .tag.full {
-  background: #f3f4f6;
-  color: #9aa7b4;
+  background: var(--surface-muted);
+  color: var(--ink-400);
   font-weight: 700;
 }
 
@@ -114,20 +114,20 @@
   flex: none;
   font-size: 10px;
   font-weight: 700;
-  color: var(--ink-soft);
-  background: #eef2f6;
-  border-radius: 5px;
+  color: var(--ink-600);
+  background: var(--surface-muted);
+  border-radius: var(--radius-pill);
   padding: 2px 6px;
 }
 
 .periodLabel.recruit {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
 }
 
 .periodValue {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
   font-variant-numeric: tabular-nums;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -142,11 +142,11 @@
   flex: none;
   font-size: 10px;
   font-weight: 700;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
 }
 
 .dday.urgent {
-  color: #d14b57;
+  color: var(--state-danger);
 }
 
 .action {
@@ -160,7 +160,7 @@
   background: var(--brand-tint-10);
   color: var(--brand-blue-500);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1;

@@ -16,30 +16,30 @@
   font-weight: 700;
   padding: 5px 12px;
   border-radius: var(--radius-pill);
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
 }
 
 .catTag.urgent {
-  background: #ffeee0;
-  color: var(--orange);
+  background: var(--state-danger-bg);
+  color: var(--state-warn);
 }
 
 .title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink-800);
   line-height: 1.4;
 }
 
 .meta {
   font-size: 12px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .article {
-  background: var(--surface);
-  border-radius: var(--radius-xl);
+  background: var(--surface-white);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 20px 18px;
   display: flex;
@@ -50,5 +50,5 @@
 .paragraph {
   font-size: 14px;
   line-height: 1.75;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }

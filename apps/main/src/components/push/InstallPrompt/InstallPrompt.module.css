@@ -1,6 +1,6 @@
 .card {
-  background: var(--sky);
-  border-radius: var(--radius-xl);
+  background: var(--brand-canvas);
+  border-radius: var(--radius-lg);
   padding: 16px 18px;
   margin-bottom: 10px;
   display: flex;
@@ -9,14 +9,14 @@
 }
 
 .title {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--navy);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-800);
 }
 
 .desc {
-  font-size: 11.5px;
-  color: var(--navy);
+  font-size: 12px;
+  color: var(--ink-800);
   opacity: 0.8;
   line-height: 1.7;
 }
@@ -27,8 +27,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 11.5px;
-  color: var(--navy);
+  font-size: 12px;
+  color: var(--ink-800);
   opacity: 0.85;
   line-height: 1.6;
 }
@@ -39,10 +39,10 @@
   padding: 0 18px;
   border: none;
   border-radius: var(--radius-md);
-  background: var(--navy);
-  color: #fff;
+  background: var(--ink-800);
+  color: var(--surface-white);
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
 }

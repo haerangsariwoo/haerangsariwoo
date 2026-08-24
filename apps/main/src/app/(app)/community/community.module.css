@@ -6,7 +6,7 @@
 
 .segment {
   display: flex;
-  background: #e9eff5;
+  background: var(--surface-muted);
   border-radius: var(--radius-md);
   padding: 4px;
   gap: 4px;
@@ -18,15 +18,15 @@
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
 }
 
 .segmentBtn.active {
-  background: var(--surface);
-  color: var(--brand-text);
+  background: var(--surface-white);
+  color: var(--brand-blue-500);
   box-shadow: var(--shadow-card);
 }
 
@@ -42,13 +42,13 @@
   gap: 8px;
   padding: 16px;
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-white);
   box-shadow: var(--shadow-card);
   color: inherit;
 }
 
 .noticeCard.pinned {
-  border: 1px solid var(--brand);
+  border: 1px solid var(--brand-blue-500);
 }
 
 .noticeTop {
@@ -62,37 +62,37 @@
   font-weight: 700;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
 }
 
 .catTag.urgent {
-  background: #ffeee0;
-  color: var(--orange);
+  background: var(--state-danger-bg);
+  color: var(--state-warn);
 }
 
 .pinFlag {
   font-size: 10px;
   font-weight: 700;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
   margin-left: auto;
 }
 
 .noticeTitle {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-800);
 }
 
 .noticeMeta {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
 }
 
 .albumCard {
   padding: 14px;
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-white);
   box-shadow: var(--shadow-card);
   color: inherit;
   display: block;
@@ -106,20 +106,20 @@
 
 .photo {
   aspect-ratio: 1;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
 }
 
 .photo.sky {
-  background: var(--sky);
+  background: var(--brand-canvas);
 }
 .photo.mint {
-  background: var(--mint-bg);
+  background: var(--state-success-bg);
 }
 .photo.peach {
-  background: var(--peach-bg-2);
+  background: var(--state-warn-bg);
 }
 .photo.lavender {
-  background: var(--lavender-bg);
+  background: var(--state-accent-bg);
 }
 
 .albumFoot {
@@ -131,21 +131,21 @@
 }
 
 .albumTitle {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-800);
 }
 
 .albumMeta {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
   white-space: nowrap;
 }
 
 .note {
-  background: var(--brand-soft);
-  color: var(--brand-text);
-  font-size: 11px;
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
+  font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);
   padding: 12px 14px;

@@ -5,8 +5,8 @@
 }
 
 .profileCard {
-  background: var(--navy-deep);
-  border-radius: var(--radius-xl);
+  background: #1a1a1a;
+  border-radius: var(--radius-lg);
   padding: 20px 18px;
   display: flex;
   align-items: center;
@@ -20,21 +20,21 @@
   background: rgba(255, 255, 255, 0.14);
   display: grid;
   place-items: center;
-  font-size: 22px;
-  font-weight: 700;
-  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--surface-white);
   flex: none;
 }
 
 .name {
-  font-size: 19px;
-  font-weight: 700;
-  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--surface-white);
 }
 
 .profileMeta {
   font-size: 12px;
-  color: var(--navy-soft);
+  color: rgba(255, 255, 255, 0.72);
   margin-top: 5px;
   line-height: 1.5;
 }
@@ -47,7 +47,7 @@
   padding: 5px 11px;
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.16);
-  color: #fff;
+  color: var(--surface-white);
 }
 
 .statRow {
@@ -57,7 +57,7 @@
 }
 
 .statCard {
-  background: var(--surface);
+  background: var(--surface-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 16px 12px;
@@ -65,20 +65,20 @@
 }
 
 .statLabel {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
 }
 
 .statValue {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--brand-text);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--brand-blue-500);
   margin-top: 6px;
 }
 
 .statCaption {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
   margin-left: 2px;
   font-weight: 500;
 }
@@ -95,13 +95,13 @@
   font-weight: 400;
   letter-spacing: 0.01em;
   font-size: 20px;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .moreLink {
   font-size: 12px;
   font-weight: 500;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
 }
 
 .recordList {
@@ -114,7 +114,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--surface);
+  background: var(--surface-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 14px 16px;
@@ -127,47 +127,47 @@
 
 .recordTitle {
   font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 600;
+  color: var(--ink-800);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .recordMeta {
-  font-size: 11px;
-  color: var(--ink-soft);
+  font-size: 12px;
+  color: var(--ink-600);
   margin-top: 5px;
 }
 
 .state {
   flex: none;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 5px 11px;
   border-radius: var(--radius-pill);
 }
 
 .state.참여확정 {
-  background: var(--mint-bg);
-  color: var(--mint-text);
+  background: var(--state-success-bg);
+  color: var(--state-success);
 }
 .state.신청완료 {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
 }
 .state.대기 {
-  background: var(--warn-bg);
-  color: #8a5a12;
+  background: var(--state-warn-bg);
+  color: var(--state-warn);
 }
 .state.활동완료 {
-  background: #e8edf3;
-  color: #5a6b7d;
+  background: var(--surface-muted);
+  color: var(--ink-600);
 }
 .state.취소,
 .state.불참 {
-  background: #f3f4f6;
-  color: #9aa7b4;
+  background: var(--surface-muted);
+  color: var(--ink-400);
 }
 
 .badgeGrid {
@@ -177,7 +177,7 @@
 }
 
 .badge {
-  background: var(--surface);
+  background: var(--surface-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 14px 8px;
@@ -193,7 +193,7 @@
   height: 34px;
   border-radius: 50%;
   margin: 0 auto 8px;
-  background: var(--brand-soft);
+  background: var(--brand-surface);
 }
 
 .badge.locked .badgeDot {
@@ -203,12 +203,12 @@
 .badgeLabel {
   font-size: 12px;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .badgeDesc {
   font-size: 10px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
   margin-top: 4px;
   line-height: 1.4;
 }
@@ -216,7 +216,7 @@
 .menuList {
   display: flex;
   flex-direction: column;
-  background: var(--surface);
+  background: var(--surface-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
@@ -227,10 +227,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 18px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(23, 111, 242, 0.14);
   font-size: 14px;
   font-weight: 500;
-  color: var(--ink);
+  color: var(--ink-800);
 }
 
 .menuItem:last-child {
@@ -238,13 +238,13 @@
 }
 
 .chev {
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .note {
-  background: var(--brand-soft);
-  color: var(--brand-text);
-  font-size: 11px;
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
+  font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);
   padding: 12px 14px;

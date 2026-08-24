@@ -11,14 +11,14 @@
 }
 
 .title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink-800);
 }
 
 .meta {
   font-size: 12px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .grid {
@@ -33,22 +33,22 @@
 }
 
 .photo.sky {
-  background: var(--sky);
+  background: var(--brand-canvas);
 }
 .photo.mint {
-  background: var(--mint-bg);
+  background: var(--state-success-bg);
 }
 .photo.peach {
-  background: var(--peach-bg-2);
+  background: var(--state-warn-bg);
 }
 .photo.lavender {
-  background: var(--lavender-bg);
+  background: var(--state-accent-bg);
 }
 
 .note {
-  background: var(--brand-soft);
-  color: var(--brand-text);
-  font-size: 11px;
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
+  font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);
   padding: 12px 14px;

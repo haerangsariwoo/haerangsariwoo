@@ -10,7 +10,7 @@
 
 .table thead th {
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--a-ink-soft);
   padding: 0 12px 12px;
@@ -51,7 +51,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 5px 12px;
   border-radius: var(--a-radius-pill);
@@ -82,9 +82,9 @@
 .rowAction {
   border: 1px solid var(--a-line);
   background: var(--a-surface);
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   padding: 6px 12px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--a-ink-soft);
   cursor: pointer;
@@ -93,12 +93,12 @@
 .rowAction.primary {
   background: var(--a-brand);
   border-color: var(--a-brand);
-  color: #fff;
+  color: var(--surface-white);
 }
 
 .empty {
   padding: 40px 0;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--a-ink-soft);
 }

@@ -15,17 +15,17 @@
   height: 34px;
   padding: 0 16px;
   border-radius: var(--radius-pill);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--ink-soft);
-  font-size: 13px;
+  border: 1px solid rgba(23, 111, 242, 0.14);
+  background: var(--surface-white);
+  color: var(--ink-600);
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .chip.active {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: #fff;
+  background: var(--brand-blue-500);
+  border-color: var(--brand-blue-500);
+  color: var(--surface-white);
   font-weight: 700;
 }

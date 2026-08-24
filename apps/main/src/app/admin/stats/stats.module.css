@@ -29,7 +29,7 @@
 }
 
 .barValue {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--a-ink-soft);
   font-variant-numeric: tabular-nums;
@@ -39,12 +39,12 @@
   width: 100%;
   max-width: 40px;
   background: var(--a-brand);
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--radius-xs) 6px 0 0;
   min-height: 4px;
 }
 
 .barLabel {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--a-ink-soft);
 }
 
@@ -78,14 +78,14 @@
 
 .track {
   height: 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-pill);
   background: var(--a-bg);
   overflow: hidden;
 }
 
 .fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--radius-pill);
 }
 
 .fill.blue {
@@ -109,7 +109,7 @@
 
 .exportDone {
   margin-top: 10px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--a-green);
 }

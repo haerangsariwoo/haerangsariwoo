@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-family: var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-body);
   font-weight: 700;
   border: none;
   cursor: pointer;
@@ -23,31 +23,31 @@
 
 /* variants */
 .primary {
-  background: var(--brand);
-  color: #fff;
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
 }
 
 .navy {
-  background: var(--navy);
-  color: #fff;
+  background: var(--ink-800);
+  color: var(--surface-white);
 }
 
 .outline {
-  background: var(--surface);
-  color: var(--ink);
-  border: 1px solid var(--line);
+  background: var(--surface-white);
+  color: var(--ink-800);
+  border: 1px solid rgba(23, 111, 242, 0.14);
 }
 
 .ghost {
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 /* sizes */
 .md {
   height: 46px;
   padding: 0 18px;
-  font-size: 13px;
+  font-size: 14px;
   border-radius: var(--radius-md);
 }
 
@@ -61,7 +61,7 @@
 .lg {
   height: 48px;
   padding: 0 24px;
-  font-size: 15px;
+  font-size: 14px;
   border-radius: var(--radius-md);
 }
 

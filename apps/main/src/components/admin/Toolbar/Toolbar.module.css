@@ -53,7 +53,7 @@
 .button.primary {
   background: var(--a-brand);
   border-color: var(--a-brand);
-  color: #fff;
+  color: var(--surface-white);
 }
 
 .button.sheet {

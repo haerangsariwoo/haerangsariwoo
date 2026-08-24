@@ -4,12 +4,12 @@
 
 .introTitle {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--a-ink);
 }
 
 .introDesc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--a-ink-soft);
   margin-top: 6px;
 }
@@ -80,14 +80,14 @@
 }
 
 .metricValue {
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 600;
   color: var(--a-ink);
   font-variant-numeric: tabular-nums;
 }
 
 .metricCaption {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -178,8 +178,8 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   flex: none;
 }
 
@@ -192,7 +192,7 @@
   color: var(--a-green);
 }
 .approvalAvatar.orange {
-  background: #ffedd6;
+  background: var(--state-warn-bg);
   color: var(--a-orange);
 }
 
@@ -208,13 +208,13 @@
 }
 
 .approvalActivity {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--a-ink-soft);
   margin-top: 5px;
 }
 
 .approvalHours {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--a-ink);
   font-variant-numeric: tabular-nums;
@@ -224,11 +224,11 @@
 .approvalButton {
   width: 64px;
   height: 36px;
-  border-radius: 11px;
+  border-radius: var(--radius-sm);
   background: var(--a-brand);
-  color: #fff;
+  color: var(--surface-white);
   border: none;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   flex: none;
@@ -239,7 +239,7 @@
   background: var(--a-bg);
   border-radius: var(--a-radius-sm);
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--a-brand);
 }
@@ -272,14 +272,14 @@
 }
 
 .eventTitle {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--a-ink);
   flex: 1;
 }
 
 .eventTime {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--a-ink-soft);
   font-variant-numeric: tabular-nums;
 }
@@ -303,7 +303,7 @@
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--a-ink);
   border-radius: var(--a-radius-sm);
@@ -367,14 +367,14 @@
 
 .quickLabel {
   display: block;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--a-ink);
 }
 
 .quickDesc {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--a-ink-soft);
   margin-top: 5px;
 }

@@ -24,7 +24,7 @@
   gap: 14px;
   padding: 16px;
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-white);
   box-shadow: var(--shadow-card);
   color: inherit;
 }
@@ -35,21 +35,21 @@
 
 .stripe {
   width: 6px;
-  border-radius: 3px;
+  border-radius: var(--radius-pill);
   flex: none;
 }
 
 .stripe.sky {
-  background: var(--brand);
+  background: var(--brand-blue-500);
 }
 .stripe.mint {
   background: #34b98d;
 }
 .stripe.peach {
-  background: #f5a524;
+  background: var(--state-warn);
 }
 .stripe.lavender {
-  background: #9a57d6;
+  background: var(--state-accent);
 }
 
 .body {
@@ -68,20 +68,20 @@
   font-weight: 700;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
 }
 
 .dday {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
   margin-left: auto;
 }
 
 .title {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--ink-800);
   margin-top: var(--space-10);
 }
@@ -95,7 +95,7 @@
 
 .meta {
   font-size: 12px;
-  color: var(--ink-soft);
+  color: var(--ink-600);
 }
 
 .attendRow {
@@ -106,49 +106,49 @@
 }
 
 .attend {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 5px 12px;
   border-radius: var(--radius-pill);
 }
 
 .attend.참석 {
-  background: var(--mint-bg);
-  color: var(--mint-text);
+  background: var(--state-success-bg);
+  color: var(--state-success);
 }
 .attend.미정 {
-  background: var(--warn-bg);
-  color: #8a5a12;
+  background: var(--state-warn-bg);
+  color: var(--state-warn);
 }
 .attend.불참 {
-  background: #eef2f6;
-  color: #9aa7b4;
+  background: var(--surface-muted);
+  color: var(--ink-400);
 }
 .attend.none {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
 }
 
 .teamFlag {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--brand-text);
+  color: var(--brand-blue-500);
 }
 
 .empty {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--surface-white);
+  border: 1px solid rgba(23, 111, 242, 0.14);
   border-radius: var(--radius-lg);
   padding: 32px 20px;
   text-align: center;
-  color: var(--ink-soft);
-  font-size: 13px;
+  color: var(--ink-600);
+  font-size: 14px;
 }
 
 .note {
-  background: var(--brand-soft);
-  color: var(--brand-text);
-  font-size: 11px;
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
+  font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);
   padding: 12px 14px;

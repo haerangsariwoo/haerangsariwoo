@@ -81,8 +81,8 @@ export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
           </p>
         </div>
 
-        {/* 버튼 면 대신 텍스트 링크. 사진 위에서는 면이 있는 버튼 두 개보다
-            글자만 있는 편이 사진을 덜 가린다. */}
+        {/* 테두리 상자 + 아래쪽 강조선. 꽉 채운 버튼 두 개보다 사진을
+            덜 가리면서도, 밑줄 텍스트보다는 눌러야 할 자리라는 게 분명하다. */}
         <div className={styles.actions}>
           {applicationsOpen ? (
             <>

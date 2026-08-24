@@ -8,7 +8,11 @@
   border: none;
   cursor: pointer;
   border-radius: 0;
-  transition: opacity 0.15s ease, transform 0.05s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.05s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
   white-space: nowrap;
 }
 
@@ -27,9 +31,17 @@
   color: var(--surface-white);
 }
 
+.primary:hover:not(:disabled) {
+  background: var(--brand-blue-600);
+}
+
 .navy {
   background: var(--ink-800);
   color: var(--surface-white);
+}
+
+.navy:hover:not(:disabled) {
+  background: #3a3a3a;
 }
 
 .outline {
@@ -38,9 +50,18 @@
   border: 1px solid var(--hairline);
 }
 
+.outline:hover:not(:disabled) {
+  background: var(--brand-tint-05);
+  border-color: var(--brand-blue-500);
+}
+
 .ghost {
   background: transparent;
   color: var(--ink-600);
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--brand-tint-05);
 }
 
 /* sizes */

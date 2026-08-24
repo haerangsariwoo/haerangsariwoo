@@ -5,6 +5,21 @@
   padding-bottom: 84px;
 }
 
+/* 모집 앱 히어로 CTA처럼 신청 버튼에도 아래쪽 강조선을 준다 */
+.applyBtn {
+  position: relative;
+}
+
+.applyBtn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
 .hero {
   height: 168px;
   border-radius: var(--radius-lg);

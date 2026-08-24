@@ -305,7 +305,7 @@ export default function SignupPage() {
             입력한 정보는 부원 관리 목적으로만 사용되며, 운영진 승인 후 로그인할 수 있습니다.
           </p>
 
-          <Button type="submit" variant="navy" size="lg" fullWidth>
+          <Button type="submit" variant="navy" size="lg" fullWidth className={styles.applyBtn}>
             가입 신청하기
           </Button>
         </form>

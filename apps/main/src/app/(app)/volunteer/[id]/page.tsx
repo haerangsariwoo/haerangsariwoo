@@ -185,12 +185,12 @@ export default async function VolunteerDetailPage({ params }: PageProps<"/volunt
           </Button>
         ) : isExternal ? (
           <a href={item.externalUrl} target="_blank" rel="noopener noreferrer">
-            <Button variant="primary" size="lg" fullWidth>
+            <Button variant="primary" size="lg" fullWidth className={styles.applyBtn}>
               {item.source === "1365" ? "1365에서 신청하기" : "VMS에서 신청하기"}
             </Button>
           </a>
         ) : (
-          <Button variant="primary" size="lg" fullWidth>
+          <Button variant="primary" size="lg" fullWidth className={styles.applyBtn}>
             신청하기
           </Button>
         )}

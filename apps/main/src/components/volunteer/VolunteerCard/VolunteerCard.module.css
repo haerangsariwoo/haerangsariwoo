@@ -11,11 +11,6 @@
   padding: var(--space-12) 0;
 }
 
-.thumbLink {
-  flex: none;
-  display: block;
-}
-
 .thumb {
   display: block;
   width: 84px;
@@ -96,52 +91,9 @@
   font-weight: 700;
 }
 
-/*
- * 목록 안의 작은 실행 버튼.
- * §2.1 의 큰 CTA(52~56px, 그라디언트 + 강한 그림자)를 44px 버튼에 그대로 쓰면
- * 목록에서 혼자 튄다. 여기서는 단색·낮은 채도·그림자 없이 차분하게 둔다.
- */
-.action {
-  flex: none;
-  min-width: 76px;
-  height: 40px;
-  padding: 0 var(--space-12);
-  border: none;
-  border-radius: 0;
-  background: var(--brand-blue-500);
-  color: var(--surface-white);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
-  cursor: pointer;
-  text-align: center;
-  white-space: nowrap;
-  transition: background-color 0.15s ease;
-}
-
-.action:hover {
-  background: #1360d8;
-}
-
-.action:active {
-  background: #1157c2;
-}
-
-/* 이미 신청함 — 연한 면에 파란 글씨 */
-.action.done {
-  background: var(--brand-tint-10);
-  color: var(--brand-blue-500);
-}
-
-/* 마감 — 누를 수 없는 상태로 보이게 */
-.action.closed {
+/* 마감 — 눈에 띄지 않는 중립색 */
+.tag.closed {
   background: var(--surface-muted);
   color: var(--ink-600);
-  cursor: default;
+  font-weight: 700;
 }

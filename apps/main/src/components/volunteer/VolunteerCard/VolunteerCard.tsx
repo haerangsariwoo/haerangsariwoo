@@ -22,53 +22,33 @@ export function VolunteerCard({ item }: { item: VolunteerSummary }) {
   const closed = item.status === "closed";
 
   return (
-    <article className={styles.card}>
-      <Link href={`/volunteer/${item.id}`} className={styles.thumbLink} aria-label={item.title}>
-        <span
-          className={cn(
-            styles.thumb,
-            styles[item.thumbTone],
-            isExternal && !item.imageUrl && styles.logoThumb,
-          )}
-        >
-          <Image
-            className={styles.thumbImage}
-            src={item.imageUrl ?? SOURCE_IMAGE[item.source]}
-            alt=""
-            width={160}
-            height={160}
-          />
-        </span>
-      </Link>
+    <Link href={`/volunteer/${item.id}`} className={styles.card} aria-label={item.title}>
+      <span
+        className={cn(
+          styles.thumb,
+          styles[item.thumbTone],
+          isExternal && !item.imageUrl && styles.logoThumb,
+        )}
+      >
+        <Image
+          className={styles.thumbImage}
+          src={item.imageUrl ?? SOURCE_IMAGE[item.source]}
+          alt=""
+          width={160}
+          height={160}
+        />
+      </span>
 
       <div className={styles.body}>
-        <Link href={`/volunteer/${item.id}`}>
-          <h3 className={styles.title}>{item.title}</h3>
-        </Link>
+        <h3 className={styles.title}>{item.title}</h3>
         <p className={styles.meta}>{item.dateLabel}</p>
         <div className={styles.tagRow}>
           <span className={styles.tag}>{item.category}</span>
           <span className={styles.tag}>{SOURCE_LABEL[item.source]}</span>
           {item.status === "closing" && <span className={cn(styles.tag, styles.closing)}>마감임박</span>}
+          {closed && <span className={cn(styles.tag, styles.closed)}>마감</span>}
         </div>
       </div>
-
-      {closed ? (
-        <span className={cn(styles.action, styles.closed)}>마감</span>
-      ) : isExternal ? (
-        <a
-          href={item.externalUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.action}
-        >
-          원문 보기
-        </a>
-      ) : (
-        <Link href={`/volunteer/${item.id}`} className={styles.action}>
-          신청
-        </Link>
-      )}
-    </article>
+    </Link>
   );
 }

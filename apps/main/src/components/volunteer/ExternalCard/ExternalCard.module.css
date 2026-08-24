@@ -1,19 +1,17 @@
+/* 목록의 한 줄. 면과 그림자는 이 줄을 담는 묶음이 이미 갖고 있다. */
 .card {
   display: flex;
   align-items: center;
   gap: 14px;
   overflow: hidden;
-  padding: 14px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-white);
-  box-shadow: var(--shadow-card);
+  padding: var(--space-12) 0;
   color: inherit;
 }
 
 .thumb {
   width: 64px;
   height: 64px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xs);
   flex: none;
   display: grid;
   place-items: center;
@@ -75,8 +73,8 @@
   color: var(--brand-blue-500);
   font-size: 10px;
   font-weight: 500;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
   /* 한 줄로 두되, 넘치면 카드 폭에 맞춰 줄임표로 자른다 */
   white-space: nowrap;
   max-width: 100%;
@@ -116,7 +114,7 @@
   font-weight: 700;
   color: var(--ink-600);
   background: var(--surface-muted);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-xs);
   padding: 2px 6px;
 }
 
@@ -155,7 +153,7 @@
   height: 40px;
   padding: 0 var(--space-12);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   /* 외부 사이트로 나가는 링크라 주 동작보다 한 단계 낮춘다 */
   background: var(--brand-tint-10);
   color: var(--brand-blue-500);

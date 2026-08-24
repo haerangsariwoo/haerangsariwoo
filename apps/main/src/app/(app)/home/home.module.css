@@ -230,21 +230,11 @@
    홈에서는 카드가 아니라 목록의 한 줄이다.
    VolunteerCard 가 들고 있는 면·그림자·모서리를 여기서 지운다. */
 .volunteerList {
-  /* 카드 안 썸네일·태그·버튼도 각지게 맞춘다 */
-  --vcard-corner: var(--radius-xs);
   display: flex;
   flex-direction: column;
 }
 
-.volunteerList > article {
-  background: none;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  padding: var(--space-12) 0;
-}
-
-.volunteerList > article + article {
+.volunteerList > * + * {
   border-top: 1px solid var(--hairline);
 }
 

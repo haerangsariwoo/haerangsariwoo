@@ -1,13 +1,13 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .head {
   display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+}
+
+.titleRow {
+  display: flex;
   align-items: baseline;
-  gap: 8px;
+  justify-content: space-between;
 }
 
 .title {
@@ -25,52 +25,50 @@
 
 .segment {
   display: flex;
-  gap: 6px;
-  background: var(--surface-white);
-  border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-card);
-  padding: 4px;
+  gap: 3px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-xs);
+  padding: 3px;
 }
 
 .segmentBtn {
   flex: 1;
-  height: 34px;
-  border-radius: var(--radius-pill);
+  height: 36px;
+  border-radius: 6px;
   display: grid;
   place-items: center;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--ink-600);
 }
 
 .segmentBtn:first-child {
-  background: var(--brand-blue-500);
-  color: var(--surface-white);
-  font-weight: 700;
+  background: var(--surface-white);
+  color: var(--brand-blue-500);
 }
 
+/* ---------- 뼈대 ---------- */
 .list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
-/* ---------- 스켈레톤 ---------- */
-.card {
+.row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: var(--surface-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 14px;
+  gap: var(--space-14);
+  padding: var(--space-12) 0;
+}
+
+.row + .row {
+  border-top: 1px solid var(--hairline);
 }
 
 .thumb {
-  width: 62px;
-  height: 62px;
+  width: 64px;
+  height: 64px;
   flex: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xs);
 }
 
 .body {
@@ -78,32 +76,32 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .lineLg {
   height: 14px;
   width: 72%;
-  border-radius: var(--radius-pill);
+  border-radius: 4px;
 }
 
 .lineSm {
   height: 11px;
   width: 52%;
-  border-radius: var(--radius-pill);
+  border-radius: 4px;
 }
 
 .pill {
   height: 20px;
   width: 90px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-xs);
 }
 
 .bar {
   width: 60px;
-  height: 30px;
+  height: 40px;
   flex: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
 }
 
 /* 은은하게 반짝이는 로딩 효과 */
@@ -134,6 +132,7 @@
 }
 
 .note {
+  margin-top: var(--space-16);
   font-size: 12px;
   color: var(--ink-600);
   line-height: 1.7;

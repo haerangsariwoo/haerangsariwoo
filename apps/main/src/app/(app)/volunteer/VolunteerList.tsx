@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import { ExternalCard } from "@/components/volunteer/ExternalCard/ExternalCard";
+import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 import { volunteers } from "@/lib/mock-data";
 import type { ExternalFetchResult } from "@/lib/external/types";
 import {
@@ -17,6 +18,9 @@ const STATUS_ORDER = { closing: 0, open: 1, waitlist: 2, closed: 3 } as const;
 
 type Tab = "전체" | "1365" | "VMS";
 const TABS: Tab[] = ["전체", "1365", "VMS"];
+
+/** 한 번에 더 붙이는 건수 */
+const PAGE = 8;
 
 export function VolunteerList({ external }: { external: ExternalFetchResult }) {
   const [tab, setTab] = useState<Tab>("전체");
@@ -43,7 +47,44 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
   }, [external.items, extFilter]);
 
   const externalList = externalByTab[tab];
-  // 전체 탭에서는 우리 동아리 봉사를 맨 위에 올린다
+
+  // 탭이나 필터가 바뀌면 처음부터 다시 센다.
+  // effect 로 되돌리면 이미 그린 긴 목록이 한 번 보였다가 잘린다.
+  const listKey = `${tab}|${extFilter.sido}|${extFilter.gugun}|${extFilter.category}`;
+  const [shownKey, setShownKey] = useState(listKey);
+  const [shown, setShown] = useState(PAGE);
+  if (shownKey !== listKey) {
+    setShownKey(listKey);
+    setShown(PAGE);
+  }
+
+  const visible = externalList.slice(0, shown);
+  const hasMore = shown < externalList.length;
+
+  /**
+   * 목록 끝이 화면에 들어오기 조금 전에 다음 묶음을 붙인다.
+   * 버튼을 누르게 하면 스크롤이 끊기고, 전부 한 번에 그리면
+   * 외부 포털에서 수십~수백 건이 올 때 첫 화면이 그만큼 느려진다.
+   *
+   * shown 이 바뀔 때마다 관찰자를 다시 단다. 관찰자는 '겹침 상태가 바뀔 때'만
+   * 알려주므로, 새로 붙인 줄이 화면보다 짧아 끝자리가 계속 보이는 채로 남으면
+   * 다시 알려주지 않고 그대로 멈춘다. 다시 달면 지금 상태로 한 번 더 판정한다.
+   * 다 불러오면 이 자리를 그리지 않으므로 멈춘다.
+   */
+  const sentinel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setShown((n) => n + PAGE);
+      },
+      { rootMargin: "300px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [shown, hasMore, listKey]);
+
   const totalCount =
     tab === "전체" ? internalList.length + externalList.length : externalList.length;
 
@@ -57,57 +98,74 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.head}>
-        <h1 className={styles.title}>봉사 모집</h1>
-        <span className={styles.count}>{totalCount}건</span>
-      </div>
+    <Sheet>
+      <SheetGroup>
+        {/* 제목·탭·거르개는 한 블록. 나누면 사이마다 실선이 생긴다. */}
+        <div className={styles.head}>
+          <div className={styles.titleRow}>
+            <h1 className={styles.title}>봉사 모집</h1>
+            <span className={styles.count}>{totalCount}건</span>
+          </div>
 
-      <Tabs.Root value={tab} onValueChange={(v) => setTab(v as Tab)}>
-        <Tabs.List className={styles.segment} aria-label="봉사 출처">
-          {TABS.map((t) => (
-            <Tabs.Trigger key={t} value={t} className={styles.segmentBtn}>
-              {t}
-              <span className={styles.segmentCount}>{tabCount(t)}</span>
-            </Tabs.Trigger>
-          ))}
-        </Tabs.List>
-      </Tabs.Root>
+          <Tabs.Root value={tab} onValueChange={(v) => setTab(v as Tab)}>
+            <Tabs.List className={styles.segment} aria-label="봉사 출처">
+              {TABS.map((t) => (
+                <Tabs.Trigger key={t} value={t} className={styles.segmentBtn}>
+                  {t}
+                  <span className={styles.segmentCount}>{tabCount(t)}</span>
+                </Tabs.Trigger>
+              ))}
+            </Tabs.List>
+          </Tabs.Root>
 
-      <ExternalFilters items={external.items} value={extFilter} onChange={setExtFilter} />
+          <ExternalFilters items={external.items} value={extFilter} onChange={setExtFilter} />
 
-      {!external.live && (
-        <p className={styles.sampleNote}>
-          외부 포털 연동 전이라 예시 목록을 보여주고 있어요.
-        </p>
-      )}
+          {!external.live && (
+            <p className={styles.sampleNote}>외부 포털 연동 전이라 예시 목록을 보여주고 있어요.</p>
+          )}
+        </div>
+      </SheetGroup>
 
       {tab === "전체" && internalList.length > 0 && (
-        <section className={styles.group}>
-          <h2 className={styles.groupTitle}>해랑사리우 봉사</h2>
-          <div className={styles.list}>
-            {internalList.map((v) => (
-              <VolunteerCard key={v.id} item={v} />
-            ))}
-          </div>
-        </section>
+        <SheetGroup>
+          <section>
+            <h2 className={styles.groupTitle}>해랑사리우 봉사</h2>
+            <div className={styles.list}>
+              {internalList.map((v) => (
+                <VolunteerCard key={v.id} item={v} />
+              ))}
+            </div>
+          </section>
+        </SheetGroup>
       )}
 
-      <section className={styles.group}>
-        {tab === "전체" && externalList.length > 0 && (
-          <h2 className={styles.groupTitle}>1365 · VMS 봉사</h2>
-        )}
-        {externalList.length === 0 ? (
-          <p className={styles.empty}>조건에 맞는 봉사가 없어요.</p>
-        ) : (
-          <div className={styles.list}>
-            {externalList.map((v) => (
-              <ExternalCard key={v.id} item={v} />
-            ))}
-          </div>
-        )}
-      </section>
+      <SheetGroup>
+        <section>
+          {tab === "전체" && externalList.length > 0 && (
+            <h2 className={styles.groupTitle}>1365 · VMS 봉사</h2>
+          )}
 
-    </div>
+          {externalList.length === 0 ? (
+            <p className={styles.empty}>조건에 맞는 봉사가 없어요.</p>
+          ) : (
+            <>
+              <div className={styles.list}>
+                {visible.map((v) => (
+                  <ExternalCard key={v.id} item={v} />
+                ))}
+              </div>
+
+              {hasMore ? (
+                <div ref={sentinel} className={styles.sentinel} aria-hidden="true" />
+              ) : (
+                externalList.length > PAGE && (
+                  <p className={styles.listEnd}>{externalList.length}건을 모두 봤어요</p>
+                )
+              )}
+            </>
+          )}
+        </section>
+      </SheetGroup>
+    </Sheet>
   );
 }

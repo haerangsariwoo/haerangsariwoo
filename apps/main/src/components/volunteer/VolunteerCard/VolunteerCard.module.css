@@ -1,21 +1,14 @@
 /*
- * design.md §2.5 Deal Card 를 가로형 목록에 맞춘 것.
- * 면은 --surface-card 그라디언트 + 1px inset 보더, radius 16,
- * 썸네일은 radius 12.
- *
- * 부모가 --vcard-corner 를 주면 모서리를 그 값으로 따른다.
- * 홈처럼 각진 화면에서 이 카드만 둥글게 남는 것을 막는다.
+ * design.md §2.5 Deal Card 를 목록의 한 줄로 옮긴 것.
+ * 면·그림자·모서리는 두지 않는다. 이 줄은 이미 한 장짜리 면 위에 있고,
+ * 그 위에 또 카드를 얹으면 면이 두 겹으로 보인다.
+ * 줄과 줄의 경계는 이 줄을 담는 목록이 실선으로 긋는다.
  */
 .card {
   display: flex;
   align-items: center;
   gap: var(--space-14);
-  padding: var(--space-4);
-  padding-right: var(--space-12);
-  border-radius: var(--vcard-corner, var(--radius-md));
-  background: var(--surface-card);
-  border: 1px solid var(--surface-card-border);
-  box-shadow: var(--shadow-card);
+  padding: var(--space-12) 0;
 }
 
 .thumbLink {
@@ -27,8 +20,7 @@
   display: block;
   width: 84px;
   height: 84px;
-  /* §2.5 — 카드 안 썸네일 radius 12 */
-  border-radius: var(--vcard-corner, var(--radius-sm));
+  border-radius: var(--radius-xs);
   flex: none;
   overflow: hidden;
 }
@@ -94,7 +86,7 @@
   font-size: 10px;
   font-weight: 500;
   padding: var(--space-4) var(--space-12);
-  border-radius: var(--vcard-corner, var(--radius-pill));
+  border-radius: var(--radius-xs);
 }
 
 /* 마감임박만 다른 색 — --accent-like */
@@ -115,7 +107,7 @@
   height: 40px;
   padding: 0 var(--space-12);
   border: none;
-  border-radius: var(--vcard-corner, var(--radius-sm));
+  border-radius: var(--radius-xs);
   background: var(--brand-blue-500);
   color: var(--surface-white);
   font-family: inherit;

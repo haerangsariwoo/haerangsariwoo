@@ -35,13 +35,6 @@ export function AdminTopbar() {
         </svg>
         {pendingHours > 0 && <span className={styles.iconDot} />}
       </Link>
-
-      {/* 봉사활동 만들기는 봉사활동 관리 화면에서 한다 */}
-      {!pathname.startsWith("/admin/volunteers") && (
-        <Link href="/admin/volunteers" className={styles.createButton}>
-          ＋ 봉사활동 만들기
-        </Link>
-      )}
     </header>
   );
 }

@@ -186,19 +186,6 @@
   cursor: pointer;
 }
 
-.createButton {
-  height: 40px;
-  padding: 0 18px;
-  border-radius: var(--a-radius-md);
-  background: var(--a-brand);
-  color: var(--surface-white);
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
 .content {
   flex: 1;
   padding: 28px 32px 40px;
@@ -227,8 +214,7 @@
   .pageTitle {
     font-size: 18px;
   }
-  .semesterSelect,
-  .createButton {
+  .semesterSelect {
     display: none;
   }
   .mobileNote {

@@ -193,7 +193,7 @@ const factsSeed: Fact[] = [
 export function AboutPanel() {
   const [body, setBody] = useState<string>(landing.about.body);
   const [facts, setFacts] = useState<Fact[]>(factsSeed);
-  const [photoUrl, setPhotoUrl] = useState("/landing/about.svg");
+  const [photoUrl, setPhotoUrl] = useState("/landing/about-photo.avif");
 
   function updateFact(id: string, patch: Partial<Fact>) {
     setFacts((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));

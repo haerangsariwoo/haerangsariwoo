@@ -73,7 +73,7 @@ export default function LandingPage() {
             <div className={styles.aboutPhoto}>
               <Image
                 className={styles.aboutPhotoImage}
-                src="/landing/about.svg"
+                src="/landing/about-photo.avif"
                 alt="해랑사리우 활동 사진"
                 fill
                 sizes="(min-width: 1200px) 560px, 100vw"
@@ -91,6 +91,13 @@ export default function LandingPage() {
           <p className={styles.sectionLead}>{landing.activities.lead}</p>
           <div className={styles.sectionBody}>
             <ActivityGallery cards={activityCards} />
+          </div>
+          <div className={styles.moreRow}>
+            <Link href="/instagram">
+              <Button variant="outline" size="md">
+                더 알아보기 →
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

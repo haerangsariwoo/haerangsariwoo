@@ -58,16 +58,16 @@ export interface ActivityCard {
 export const activityCards: ActivityCard[] = [
   // photoUrl 은 관리자 페이지에서 실제 활동 사진으로 교체한다
   {
-    id: "ac1",
-    title: "봉사 활동",
-    desc: "지역사회와 함께하는 정기 봉사로 나눔의 가치를 실천하고, 꾸준한 관계 속에서 실질적인 도움을 전합니다.",
-    photoUrl: "/activity/volunteer.svg",
-  },
-  {
     id: "ac2",
     title: "친해지길 바라",
     desc: "매주 이어지는 친목 활동으로 부원들과 유대감을 쌓고, 함께 성장하는 공동체 문화를 만들어갑니다.",
     photoUrl: "/activity/friendship.svg",
+  },
+  {
+    id: "ac1",
+    title: "봉사 활동",
+    desc: "지역사회와 함께하는 정기 봉사로 나눔의 가치를 실천하고, 꾸준한 관계 속에서 실질적인 도움을 전합니다.",
+    photoUrl: "/activity/volunteer.svg",
   },
   {
     id: "ac3",

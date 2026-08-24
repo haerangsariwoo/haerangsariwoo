@@ -208,7 +208,9 @@
 
 .aboutPhoto {
   position: relative;
-  aspect-ratio: 4 / 3;
+  /* 실제 사진(2000×1410) 비율에 맞췄다. 4:3 박스에 그대로 넣으면
+     좌우가 잘려 나간다 — 박스를 사진 비율로 넓혀 안 잘리게 한다. */
+  aspect-ratio: 2000 / 1410;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--ink-200);
@@ -236,6 +238,12 @@
   .cardGrid {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+.moreRow {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-32);
 }
 
 /* ================= Recruiting ================= */

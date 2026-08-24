@@ -69,24 +69,23 @@ export interface ActivityCard {
 }
 
 export const activityCards: ActivityCard[] = [
-  // photoUrl 은 관리자 페이지에서 실제 활동 사진으로 교체한다
   {
     id: "ac2",
     title: "친해지길 바라",
     desc: "매주 이어지는 친목 활동으로 부원들과 유대감을 쌓고, 함께 성장하는 공동체 문화를 만들어갑니다.",
-    photoUrl: "/activity/friendship.svg",
+    photoUrl: "/activity/friendship.jpg",
   },
   {
     id: "ac1",
     title: "봉사 활동",
     desc: "지역사회와 함께하는 정기 봉사로 나눔의 가치를 실천하고, 꾸준한 관계 속에서 실질적인 도움을 전합니다.",
-    photoUrl: "/activity/volunteer.svg",
+    photoUrl: "/activity/volunteer.jpg",
   },
   {
     id: "ac3",
     title: "MT",
     desc: "학기마다 떠나는 MT 에서 추억을 쌓고 팀워크를 다지며, 봉사에 대한 마음을 함께 나눕니다.",
-    photoUrl: "/activity/mt.svg",
+    photoUrl: "/activity/mt.jpg",
   },
 ];
 
@@ -107,25 +106,25 @@ export const heroSlides: HeroSlide[] = [
     id: "hs1",
     title: "해랑사리우",
     subtitle: "나눔으로 하나되는 우리, 봉사로 빛나는 청춘",
-    photoUrl: "/landing/hero-1.svg",
+    photoUrl: "/landing/hero-1.jpg",
   },
   {
     id: "hs2",
     title: "함께하는 봉사",
     subtitle: "지역사회와 함께 성장하는 중앙 봉사동아리",
-    photoUrl: "/landing/hero-2.svg",
+    photoUrl: "/landing/hero-2.jpg",
   },
   {
     id: "hs3",
     title: "1996년부터 현재까지",
     subtitle: "30년간 이어온 봉사의 전통",
-    photoUrl: "/landing/hero-3.svg",
+    photoUrl: "/landing/hero-3.jpg",
   },
   {
     id: "hs4",
     title: "매 학기 새로운 시작",
     subtitle: "신입 부원과 함께 다음 이야기를 씁니다",
-    photoUrl: "/landing/hero-4.svg",
+    photoUrl: "/landing/hero-4.jpg",
   },
 ];
 

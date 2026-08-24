@@ -4,9 +4,10 @@ import type { ExternalVolunteer } from "./types";
  * API 키가 없거나 외부 포털 호출이 실패했을 때 보여줄 예시 데이터.
  * 실제 응답과 같은 형태라 화면 검증에 그대로 쓸 수 있다.
  *
- * 날짜는 오늘을 기준으로 만든다. 고정 날짜로 적어두면 그 날이 지나는 순간
- * normalize() 의 마감 필터에 전부 걸려 목록이 통째로 비어버린다.
- * 예시 데이터는 언제 열어도 보여야 한다.
+ * 날짜는 부를 때마다 그날 기준으로 다시 만든다. 고정 날짜로 적어두면 그 날이
+ * 지나는 순간 normalize() 의 마감 필터에 전부 걸려 목록이 통째로 비어버린다.
+ * 모듈을 읽을 때 한 번만 계산해도 같은 일이 생긴다 — 서버가 며칠 켜져 있으면
+ * 그 값이 그대로 굳는다. 예시 데이터는 언제 열어도 보여야 한다.
  */
 
 interface Seed {
@@ -59,27 +60,29 @@ function iso(daysFromToday: number) {
   return new Date(Date.now() + daysFromToday * DAY).toISOString().slice(0, 10);
 }
 
-export const sampleExternal: ExternalVolunteer[] = SEEDS.map((s, i) => {
-  // 마감이 가까운 것부터 두 달 뒤까지 고르게 퍼뜨린다
-  const recruitEndIn = 2 + i * 2;
-  const startIn = recruitEndIn + 3;
+export function buildSampleExternal(): ExternalVolunteer[] {
+  return SEEDS.map((s, i) => {
+    // 마감이 가까운 것부터 두 달 뒤까지 고르게 퍼뜨린다
+    const recruitEndIn = 2 + i * 2;
+    const startIn = recruitEndIn + 3;
 
-  return {
-    id: `${s.source}-sample-${i + 1}`,
-    source: s.source,
-    title: s.title,
-    org: s.org,
-    area: `서울 ${s.gugun}`,
-    sido: "서울",
-    gugun: s.gugun,
-    category: s.category,
-    recruitStart: iso(recruitEndIn - 14),
-    recruitEnd: iso(recruitEndIn),
-    startDate: iso(startIn),
-    endDate: iso(startIn + (s.span ?? 0)),
-    capacity: s.capacity,
-    applied: s.applied,
-    time: s.time,
-    url: s.source === "1365" ? "https://www.1365.go.kr" : "https://www.vms.or.kr",
-  };
-});
+    return {
+      id: `${s.source}-sample-${i + 1}`,
+      source: s.source,
+      title: s.title,
+      org: s.org,
+      area: `서울 ${s.gugun}`,
+      sido: "서울",
+      gugun: s.gugun,
+      category: s.category,
+      recruitStart: iso(recruitEndIn - 14),
+      recruitEnd: iso(recruitEndIn),
+      startDate: iso(startIn),
+      endDate: iso(startIn + (s.span ?? 0)),
+      capacity: s.capacity,
+      applied: s.applied,
+      time: s.time,
+      url: s.source === "1365" ? "https://www.1365.go.kr" : "https://www.vms.or.kr",
+    };
+  });
+}

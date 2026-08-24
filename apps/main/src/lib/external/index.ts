@@ -1,7 +1,7 @@
 import "server-only";
 import { fetch1365 } from "./portal-1365";
 import { fetchVms } from "./portal-vms";
-import { sampleExternal } from "./sample";
+import { buildSampleExternal } from "./sample";
 import { normalizeServiceKey } from "./service-key";
 import type { ExternalFetchResult, ExternalVolunteer } from "./types";
 
@@ -56,7 +56,7 @@ export async function getExternalVolunteers(options?: {
   // 1365 키가 없어도 VMS 는 동작하므로 둘 다 불가능할 때만 예시로 대체한다
   if (!serviceKey && process.env.DISABLE_VMS === "1") {
     const value: ExternalFetchResult = {
-      items: normalize(sampleExternal),
+      items: normalize(buildSampleExternal()),
       live: false,
       error: "DATA_GO_KR_SERVICE_KEY 가 설정되지 않아 예시 데이터를 표시합니다.",
       fetchedAt: new Date().toISOString(),
@@ -91,7 +91,7 @@ export async function getExternalVolunteers(options?: {
   // 둘 다 실패하면 예시 데이터로 화면을 유지한다
   if (items.length === 0) {
     const value: ExternalFetchResult = {
-      items: normalize(sampleExternal),
+      items: normalize(buildSampleExternal()),
       live: false,
       error: errors.join(" / ") || "외부 포털에서 가져온 결과가 없습니다.",
       fetchedAt: new Date().toISOString(),

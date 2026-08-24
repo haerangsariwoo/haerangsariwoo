@@ -85,17 +85,22 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
     return () => io.disconnect();
   }, [shown, hasMore, listKey]);
 
-  const totalCount =
-    tab === "전체" ? internalList.length + externalList.length : externalList.length;
+  /**
+   * 탭에 붙는 수. 지역·유형 거르개를 적용한 뒤 센다.
+   * 거르개를 무시하고 세면 탭에는 97 이라고 적혀 있는데 눌러보면 19건만
+   * 나오는 일이 생긴다. 탭의 수는 "지금 조건에서 그 탭을 누르면 나올 수" 다.
+   */
+  const tabCount = (t: Tab) =>
+    t === "전체" ? internalList.length + externalByTab.전체.length : externalByTab[t].length;
 
-  const tabCount = (t: Tab) => {
-    const ext =
-      t === "전체"
-        ? external.items.length
-        : external.items.filter((v) => (t === "1365" ? v.source === "1365" : v.source === "vms"))
-            .length;
-    return t === "전체" ? volunteers.length + ext : ext;
-  };
+  /** 거르개를 걷었을 때의 수. 지금 수와 다르면 거르개가 줄이고 있다는 뜻이다. */
+  const unfilteredCount =
+    tab === "전체"
+      ? internalList.length + external.items.length
+      : external.items.filter((v) => (tab === "1365" ? v.source === "1365" : v.source === "vms"))
+          .length;
+
+  const totalCount = tabCount(tab);
 
   return (
     <Sheet>
@@ -104,7 +109,11 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
         <div className={styles.head}>
           <div className={styles.titleRow}>
             <h1 className={styles.title}>봉사 모집</h1>
-            <span className={styles.count}>{totalCount}건</span>
+            <span className={styles.count}>
+              {totalCount === unfilteredCount
+                ? `${totalCount}건`
+                : `${unfilteredCount}건 중 ${totalCount}건`}
+            </span>
           </div>
 
           <Tabs.Root value={tab} onValueChange={(v) => setTab(v as Tab)}>

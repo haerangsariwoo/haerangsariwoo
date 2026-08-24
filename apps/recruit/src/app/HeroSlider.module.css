@@ -2,10 +2,14 @@
 
 .hero {
   position: relative;
-  /* svh 로 고정한다. dvh 를 쓰면 모바일 주소창이 접히고 펴질 때마다
-     높이가 바뀌어 사진 크롭이 흔들린다.
-     헤더(72px)가 위에 쌓이므로 그만큼 빼야 한 화면에 딱 맞는다. */
-  height: calc(100svh - 72px);
+  /*
+   * --hero-vh 는 HeroSlider.tsx 가 처음 한 번만 재서 고정해 두는
+   * 실제 window.innerHeight 값이다. JS 가 아직 안 붙은 첫 페인트에는
+   * svh 로 대신한다 — 100dvh 는 쓰지 않는다, 그건 주소창이 움직일 때마다
+   * 매 프레임 다시 계산돼 사진이 늘었다 줄었다 하는 원인 그 자체다.
+   * 헤더(72px)가 위에 쌓이므로 그만큼 빼야 한 화면에 딱 맞는다.
+   */
+  height: calc(var(--hero-vh, 100svh) - 72px);
   display: flex;
   align-items: flex-end;
   overflow: hidden;

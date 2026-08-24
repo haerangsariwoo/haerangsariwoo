@@ -39,6 +39,27 @@ export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
     return () => clearTimeout(id);
   }, [total, index]);
 
+  /**
+   * 모바일 주소창이 스크롤 중 접히고 펴지면서 svh 값 자체가 흔들리는
+   * 브라우저가 있다 (특히 iOS Safari). 매 프레임 다시 재는 CSS 단위
+   * 대신, 처음 한 번만 실제 높이를 재서 --hero-vh 로 고정해 둔다.
+   * 이후엔 스크롤이 아무리 요동쳐도 이 값은 안 바뀐다.
+   *
+   * resize 는 듣지 않는다 — 그 이벤트 자체가 주소창 접힘/펴짐에도
+   * 걸려서, 들으면 지금 없애려는 흔들림이 그대로 재현된다.
+   * 실제 회전(가로/세로 전환)만 orientationchange 로 다시 잰다.
+   */
+  useEffect(() => {
+    const setHeroVh = () => {
+      document.documentElement.style.setProperty("--hero-vh", `${window.innerHeight}px`);
+    };
+    setHeroVh();
+    // 회전 직후엔 아직 이전 치수일 수 있어 한 프레임 늦춰 다시 잰다
+    const onRotate = () => requestAnimationFrame(setHeroVh);
+    window.addEventListener("orientationchange", onRotate);
+    return () => window.removeEventListener("orientationchange", onRotate);
+  }, []);
+
   const current = heroSlides[index];
 
   return (

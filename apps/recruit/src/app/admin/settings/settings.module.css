@@ -152,7 +152,7 @@
   margin-top: 8px;
   width: 100%;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 0;
   border: 1px solid rgba(23, 111, 242, 0.14);
   background: var(--surface-white);
   font-size: 12px;

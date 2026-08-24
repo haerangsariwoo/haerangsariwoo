@@ -89,7 +89,7 @@
 .resetBtn {
   height: 36px;
   padding: 0 var(--space-14);
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   background: var(--brand-surface);
   color: var(--ink-800);
   font-size: 13px;
@@ -103,7 +103,7 @@
 .doneBtn {
   height: 36px;
   padding: 0 var(--space-20);
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   background: var(--brand-gradient);
   color: #fff;
   font-size: 13px;

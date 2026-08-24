@@ -108,13 +108,14 @@
 }
 
 .btn.danger {
-  background: #fdecec;
-  border-color: transparent;
-  color: #cf4444;
+  background: #cf4444;
+  border-color: #cf4444;
+  color: #fff;
 }
 
 .btn.danger:hover {
-  background: #fadbdb;
+  background: #b83b3a;
+  border-color: #b83b3a;
 }
 
 /* table */
@@ -254,13 +255,14 @@
 }
 
 .rowBtnDanger {
-  background: #fdecec;
-  border-color: transparent;
-  color: #cf4444;
+  background: #cf4444;
+  border-color: #cf4444;
+  color: #fff;
 }
 
 .rowBtnDanger:hover {
-  background: #fadbdb;
+  background: #b83b3a;
+  border-color: #b83b3a;
 }
 
 /* 표 위에 펼치는 한 줄 입력 폼 */

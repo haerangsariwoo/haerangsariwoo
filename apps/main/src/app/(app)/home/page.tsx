@@ -3,7 +3,6 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import {
-  albumTones,
   member,
   myTeam,
   nextActivity,
@@ -14,6 +13,7 @@ import { notices } from "@/lib/community";
 import { verifyRequests } from "@/lib/verify";
 import { homeCopy } from "@/lib/app-content";
 import styles from "./home.module.css";
+import { AlbumPreview } from "./AlbumPreview";
 import { Mascot } from "@/components/ui/Logo/Mascot";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 
@@ -146,11 +146,7 @@ export default function HomePage() {
                 전체&nbsp;&nbsp;›
               </Link>
             </div>
-            <div className={styles.albumGrid}>
-              {albumTones.map((tone, i) => (
-                <div key={i} className={cn(styles.photo, styles[tone])} />
-              ))}
-            </div>
+            <AlbumPreview />
           </article>
         </section>
       </SheetGroup>

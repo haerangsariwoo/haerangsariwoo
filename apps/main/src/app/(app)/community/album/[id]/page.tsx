@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { albums, findAlbum } from "@/lib/community";
+import { AlbumPhotoGrid } from "./AlbumPhotoGrid";
 import styles from "./album.module.css";
 
 export function generateStaticParams() {
@@ -12,8 +12,6 @@ export default async function AlbumDetailPage({ params }: PageProps<"/community/
   const { id } = await params;
   const item = findAlbum(id);
   if (!item) notFound();
-
-  const photos = Array.from({ length: item.photoCount }, (_, i) => item.tones[i % item.tones.length]);
 
   return (
     <div className={styles.page}>
@@ -26,12 +24,7 @@ export default async function AlbumDetailPage({ params }: PageProps<"/community/
         </p>
       </div>
 
-      <div className={styles.grid}>
-        {photos.map((tone, i) => (
-          <span key={i} className={cn(styles.photo, styles[tone])} />
-        ))}
-      </div>
-
+      <AlbumPhotoGrid albumId={id} seed={item} />
     </div>
   );
 }

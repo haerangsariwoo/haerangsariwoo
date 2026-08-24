@@ -28,8 +28,14 @@
 }
 
 .photo {
+  position: relative;
   aspect-ratio: 1;
   border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.photoImage {
+  object-fit: cover;
 }
 
 .photo.sky {

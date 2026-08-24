@@ -145,71 +145,34 @@
   margin-top: 14px;
 }
 
-/* ---------- 앨범 행 ---------- */
-.albumRow {
+/* ---------- 앨범 블록 ---------- */
+.albumBlock {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 12px;
   border: 1px solid var(--a-line);
   border-radius: var(--a-radius-lg);
-  padding: 14px 16px;
+  padding: 16px;
   background: var(--a-surface);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.albumRow:hover {
+.albumBlock:hover {
   border-color: #c3d6e4;
   box-shadow: var(--a-shadow);
 }
 
-/* 부원 커뮤니티 앨범과 같은 4분할 썸네일 */
-.thumbGrid {
-  flex: none;
-  width: 56px;
-  height: 56px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3px;
-  border-radius: var(--a-radius-sm);
-  overflow: hidden;
-}
-
-.thumb {
-  border-radius: var(--radius-pill);
-}
-
-/* 실제로 고른 사진이 있으면 4분할 대신 이걸 통째로 채운다 */
-.thumbPhoto {
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumb.sky {
-  background: #c9ebfa;
-}
-.thumb.mint {
-  background: var(--a-green-soft);
-}
-.thumb.peach {
-  background: var(--state-warn-bg);
-}
-.thumb.lavender {
-  background: var(--state-accent-bg);
-}
-
-.albumBody {
-  flex: 1;
-  min-width: 0;
+.albumHead {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .albumTitle {
-  width: 100%;
+  flex: 1;
+  min-width: 160px;
+  max-width: 320px;
   height: 38px;
   border-radius: var(--a-radius-sm);
   border: 1px solid transparent;
@@ -236,7 +199,6 @@
   color: var(--a-ink-soft);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  padding-left: 2px;
 }
 
 .dot {
@@ -244,23 +206,91 @@
   opacity: 0.6;
 }
 
-.albumUpload {
-  flex: none;
-  white-space: nowrap;
-  height: 38px;
-  padding: 0 16px;
-  border-radius: 0;
-  border: none;
-  background: var(--a-brand-soft);
-  color: var(--a-brand);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
+/* 앨범 안의 실제 사진 — 위치 조정·삭제가 가능한 작은 타일 */
+.photoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.albumUpload:hover {
-  opacity: 0.82;
+.photoThumb {
+  position: relative;
+  flex: none;
+  width: 88px;
+  height: 88px;
+  border-radius: var(--a-radius-sm);
+  overflow: hidden;
+  background: var(--a-bg);
+}
+
+.photoThumbImage {
+  object-fit: cover;
+}
+
+.photoRemove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(11, 22, 31, 0.65);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.photoRemove:hover {
+  background: rgba(11, 22, 31, 0.85);
+}
+
+.photoAdjust {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24px;
+  border: none;
+  border-radius: 0;
+  background: rgba(11, 22, 31, 0.62);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.photoAdjust:hover {
+  background: rgba(11, 22, 31, 0.8);
+}
+
+.addPhotoTile {
+  flex: none;
+  width: 88px;
+  height: 88px;
+  border-radius: var(--a-radius-sm);
+  border: 1px dashed var(--a-line);
+  background: var(--a-bg);
+  color: var(--a-ink-soft);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.addPhotoTile:hover {
+  background: var(--a-brand-soft);
+  border-color: var(--a-brand);
+}
+
+.addPhotoTile:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .saveBar {

@@ -103,7 +103,13 @@
 }
 
 .photo {
+  position: relative;
   aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.photoImage {
+  object-fit: cover;
 }
 
 .photo.sky {

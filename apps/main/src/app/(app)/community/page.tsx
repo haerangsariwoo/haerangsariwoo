@@ -1,12 +1,15 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
-import { albums, notices } from "@/lib/community";
+import { albumPreviewTiles, albums as albumsSeed, notices, type Album } from "@/lib/community";
+import { useContentOverride } from "@/lib/content-store";
+import { defaultPhotoFocus } from "@/lib/photo-focus";
 import styles from "./community.module.css";
 
 type Tab = "공지" | "앨범";
@@ -28,6 +31,7 @@ function CommunityFromQuery() {
 
 function CommunityBoard({ initialTab }: { initialTab: Tab }) {
   const [tab, setTab] = useState<Tab>(initialTab);
+  const albums = useContentOverride<Album[]>("albums", albumsSeed);
   const sorted = [...notices].sort((a, b) => Number(b.pinned) - Number(a.pinned));
 
   return (
@@ -80,9 +84,28 @@ function CommunityBoard({ initialTab }: { initialTab: Tab }) {
             {albums.map((a) => (
               <Link key={a.id} href={`/community/album/${a.id}`} className={styles.albumRow}>
                 <div className={styles.albumGrid}>
-                  {a.tones.map((tone, i) => (
-                    <span key={i} className={cn(styles.photo, styles[tone])} />
-                  ))}
+                  {albumPreviewTiles(a, 4).map((tile, i) => {
+                    const focus = tile.photo?.focus ?? defaultPhotoFocus;
+                    return (
+                      <span key={i} className={cn(styles.photo, !tile.photo && styles[tile.tone])}>
+                        {tile.photo && (
+                          <Image
+                            className={styles.photoImage}
+                            src={tile.photo.url}
+                            alt=""
+                            fill
+                            sizes="90px"
+                            unoptimized
+                            style={{
+                              objectPosition: `${focus.x}% ${focus.y}%`,
+                              transform: `scale(${focus.zoom})`,
+                              transformOrigin: `${focus.x}% ${focus.y}%`,
+                            }}
+                          />
+                        )}
+                      </span>
+                    );
+                  })}
                 </div>
                 <div className={styles.albumFoot}>
                   <h2 className={styles.albumTitle}>{a.title}</h2>

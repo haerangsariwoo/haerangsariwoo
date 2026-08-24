@@ -101,8 +101,6 @@ export function findVolunteer(id: string) {
 
 export const recruitingVolunteers = volunteers.slice(0, 2);
 
-export const albumTones = ["sky", "mint", "peach", "lavender"] as const;
-
 export const myTeam = {
   eventLabel: "MT 3조",
   memberCount: 7,

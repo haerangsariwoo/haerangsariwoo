@@ -82,8 +82,9 @@
 /* 활동 이름을 사진 위에 항상 보여준다 (친바 / 봉사 / MT) */
 .thumbLabel {
   position: absolute;
-  left: var(--space-16);
+  left: 50%;
   bottom: var(--space-14);
+  transform: translateX(-50%);
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 18px;

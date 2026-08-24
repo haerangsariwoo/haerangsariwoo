@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { Button } from "@/components/ui/Button/Button";
 import { Logo } from "@/components/ui/Logo/Logo";
 import {
   activityCards,
@@ -33,7 +32,7 @@ export default function LandingPage() {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link href="/" className={styles.brand}>
-            <Logo size={34} priority />
+            <Logo size={44} priority />
           </Link>
 
           <nav className={styles.nav}>
@@ -84,10 +83,13 @@ export default function LandingPage() {
             <ActivityGallery cards={activityCards} />
           </div>
           <div className={styles.moreRow}>
-            <a href={landing.footer.instagram} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="md">
-                더 알아보기 →
-              </Button>
+            <a
+              className={styles.ctaSecondary}
+              href={landing.footer.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              더 알아보기 →
             </a>
           </div>
         </div>
@@ -139,13 +141,11 @@ export default function LandingPage() {
 
               {applicationsOpen ? (
                 <div className={styles.scheduleActions}>
-                  <Link href="/apply">
-                    <Button size="md">지원하기 →</Button>
+                  <Link href="/apply" className={styles.ctaPrimary}>
+                    지원하기 →
                   </Link>
-                  <Link href="/apply/status">
-                    <Button size="md" variant="secondary">
-                      결과 확인
-                    </Button>
+                  <Link href="/apply/status" className={styles.ctaSecondary}>
+                    결과 확인
                   </Link>
                 </div>
               ) : (

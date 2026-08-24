@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
@@ -11,6 +10,7 @@ import {
   navItems,
   recruitConfig,
 } from "@/lib/recruit-config";
+import { AboutPhoto } from "./AboutPhoto";
 import { ActivityGallery } from "./ActivityGallery";
 import { FaqList } from "./FaqList";
 import { HeroSlider } from "./HeroSlider";
@@ -70,16 +70,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className={styles.aboutPhoto}>
-              <Image
-                className={styles.aboutPhotoImage}
-                src="/landing/about-photo.avif"
-                alt="해랑사리우 활동 사진"
-                fill
-                sizes="(min-width: 1200px) 560px, 100vw"
-                unoptimized
-              />
-            </div>
+            <AboutPhoto />
           </div>
         </div>
       </section>

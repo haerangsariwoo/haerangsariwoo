@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/cn";
-import type { ActivityCard } from "@/lib/recruit-config";
+import { useContentOverride } from "@/lib/content-store";
+import { defaultPhotoFocus, type ActivityCard } from "@/lib/recruit-config";
 import styles from "./ActivityGallery.module.css";
 
 /**
@@ -17,7 +18,8 @@ import styles from "./ActivityGallery.module.css";
  * 모달은 Radix Dialog 를 쓴다. 포커스 가둠·배경 스크롤 잠금·Esc 닫기를
  * 직접 구현하면 상태가 어긋나기 쉬워 예전에 실제로 버그가 났었다.
  */
-export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
+export function ActivityGallery({ cards: seedCards }: { cards: ActivityCard[] }) {
+  const cards = useContentOverride<ActivityCard[]>("activityCards", seedCards);
   const withPhoto = cards.filter((c) => c.photoUrl);
   const [index, setIndex] = useState<number | null>(null);
 
@@ -46,6 +48,7 @@ export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
       <div className={styles.grid}>
         {cards.map((a) => {
           const photoIndex = withPhoto.findIndex((p) => p.id === a.id);
+          const focus = a.focus ?? defaultPhotoFocus;
           const thumb = (
             <span className={styles.thumb}>
               {a.photoUrl ? (
@@ -56,14 +59,23 @@ export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
                   fill
                   sizes="(min-width: 1200px) 380px, (min-width: 768px) 50vw, 100vw"
                   unoptimized
+                  style={{
+                    objectPosition: `${focus.x}% ${focus.y}%`,
+                    transform: `scale(${focus.zoom})`,
+                    transformOrigin: `${focus.x}% ${focus.y}%`,
+                  }}
                 />
               ) : (
                 <Image src="/icons/photo.svg" alt="" width={32} height={32} unoptimized />
               )}
               {a.photoUrl && (
-                <span className={styles.zoomHint} aria-hidden="true">
-                  ⤢
-                </span>
+                <>
+                  <span className={styles.thumbScrim} aria-hidden="true" />
+                  <span className={styles.thumbLabel}>{a.shortLabel}</span>
+                  <span className={styles.zoomHint} aria-hidden="true">
+                    ⤢
+                  </span>
+                </>
               )}
             </span>
           );

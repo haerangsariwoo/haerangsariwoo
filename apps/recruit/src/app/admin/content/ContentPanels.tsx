@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { ui } from "@/components/admin/Panel";
+import { loadOverride, saveOverride } from "@/lib/content-store";
 import {
   activityCards as activityCardsSeed,
   defaultPhotoFocus,
@@ -21,8 +22,11 @@ import { PhotoFocusEditor } from "./PhotoFocusEditor";
 import { SaveBar } from "./SaveBar";
 
 /**
- * 랜딩 콘텐츠 관리 일곱 패널. Supabase 연동 전이라 저장은 이 화면
+ * 랜딩 콘텐츠 관리 일곱 패널. Supabase 연동 전까지는 대부분 이 화면
  * 세션 안에서만 유지된다 — 새로고침하면 시드 값으로 돌아간다.
+ * 다만 히어로 슬라이더·소개 사진·활동 카드는 사진이 실제로 홈에
+ * 어떻게 보일지 확인할 수 있어야 해서, [[content-store]] 를 통해
+ * localStorage 에 저장하고 공개 페이지에서 그 값을 읽는다.
  * SaveBar 는 그대로 두고(그 자체로 완성된 "저장했습니다" 확인 표시),
  * 그 위 필드·목록에 진짜 상태를 붙이는 게 이 파일이 하는 일이다.
  */
@@ -113,7 +117,9 @@ const nextId = (prefix: string) => `${prefix}-new-${++idSeq}`;
 
 /* ---------- 히어로 슬라이더 ---------- */
 export function HeroSlidesPanel() {
-  const [slides, setSlides] = useState<HeroSlide[]>(heroSlidesSeed);
+  const [slides, setSlides] = useState<HeroSlide[]>(
+    () => loadOverride<HeroSlide[]>("heroSlides") ?? heroSlidesSeed,
+  );
 
   function update(id: string, patch: Partial<HeroSlide>) {
     setSlides((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
@@ -216,7 +222,10 @@ export function HeroSlidesPanel() {
         </button>
       </div>
 
-      <SaveBar note="사진이 한 장이면 자동 전환과 좌우 화살표는 표시되지 않습니다." />
+      <SaveBar
+        note="사진이 한 장이면 자동 전환과 좌우 화살표는 표시되지 않습니다."
+        onSave={() => saveOverride("heroSlides", slides)}
+      />
     </>
   );
 }
@@ -233,11 +242,18 @@ const factsSeed: Fact[] = [
   { id: "fact-2", value: "30년", label: "지금까지 이어온 봉사의 전통" },
 ];
 
+const aboutPhotoSeed = { photoUrl: "/landing/about-photo.avif", focus: defaultPhotoFocus };
+
 export function AboutPanel() {
   const [body, setBody] = useState<string>(landing.about.body);
   const [facts, setFacts] = useState<Fact[]>(factsSeed);
-  const [photoUrl, setPhotoUrl] = useState("/landing/about-photo.avif");
-  const [photoFocus, setPhotoFocus] = useState<PhotoFocus>(defaultPhotoFocus);
+  const [aboutPhoto, setAboutPhoto] = useState(
+    () => loadOverride<typeof aboutPhotoSeed>("aboutPhoto") ?? aboutPhotoSeed,
+  );
+  const photoUrl = aboutPhoto.photoUrl;
+  const photoFocus = aboutPhoto.focus;
+  const setPhotoUrl = (url: string) => setAboutPhoto((prev) => ({ ...prev, photoUrl: url }));
+  const setPhotoFocus = (focus: PhotoFocus) => setAboutPhoto((prev) => ({ ...prev, focus }));
 
   function updateFact(id: string, patch: Partial<Fact>) {
     setFacts((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));
@@ -320,7 +336,10 @@ export function AboutPanel() {
         </div>
       </div>
 
-      <SaveBar note="저장하면 공개 랜딩에 즉시 반영됩니다." />
+      <SaveBar
+        note="저장하면 공개 랜딩에 즉시 반영됩니다."
+        onSave={() => saveOverride("aboutPhoto", aboutPhoto)}
+      />
     </>
   );
 }
@@ -328,7 +347,9 @@ export function AboutPanel() {
 /* ---------- 활동 카드 ---------- */
 export function ActivityCardsPanel() {
   const [lead, setLead] = useState<string>(landing.activities.lead);
-  const [cards, setCards] = useState<ActivityCard[]>(activityCardsSeed);
+  const [cards, setCards] = useState<ActivityCard[]>(
+    () => loadOverride<ActivityCard[]>("activityCards") ?? activityCardsSeed,
+  );
 
   function update(id: string, patch: Partial<ActivityCard>) {
     setCards((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)));
@@ -373,6 +394,18 @@ export function ActivityCardsPanel() {
               />
             </div>
             <div className={styles.field}>
+              <label className={styles.label} htmlFor={`${a.id}-short`}>
+                짧은 이름
+                <span className={styles.hint}>사진 위에 항상 보입니다 (예: 친바)</span>
+              </label>
+              <input
+                id={`${a.id}-short`}
+                className={styles.input}
+                value={a.shortLabel}
+                onChange={(e) => update(a.id, { shortLabel: e.target.value })}
+              />
+            </div>
+            <div className={styles.field}>
               <label className={styles.label} htmlFor={`${a.id}-desc`}>
                 설명
                 <span className={styles.hint}>1–2문장, 세 카드 길이를 비슷하게</span>
@@ -389,7 +422,10 @@ export function ActivityCardsPanel() {
         ))}
       </div>
 
-      <SaveBar note="사진은 4:3 비율로 잘려 보입니다." />
+      <SaveBar
+        note="사진은 4:3 비율로 잘려 보입니다."
+        onSave={() => saveOverride("activityCards", cards)}
+      />
     </>
   );
 }

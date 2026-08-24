@@ -70,6 +70,27 @@
   transition: transform 0.4s ease;
 }
 
+/* 사진 아래쪽을 어둡게 깔아 라벨 글자가 어떤 사진 위에서도 읽히게 한다 */
+.thumbScrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45%;
+  background: linear-gradient(to top, rgba(10, 24, 40, 0.72), transparent);
+  pointer-events: none;
+}
+
+/* 활동 이름을 사진 위에 항상 보여준다 (친바 / 봉사 / MT) */
+.thumbLabel {
+  position: absolute;
+  left: var(--space-16);
+  bottom: var(--space-14);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--surface-white);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
 /* 확대 가능하다는 힌트 */
 .zoomHint {
   position: absolute;

@@ -4,7 +4,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { heroInterval, heroSlides, landing } from "@/lib/recruit-config";
+import { useContentOverride } from "@/lib/content-store";
+import {
+  defaultPhotoFocus,
+  heroInterval,
+  heroSlides as heroSlidesSeed,
+  landing,
+  type HeroSlide,
+} from "@/lib/recruit-config";
 import styles from "./HeroSlider.module.css";
 
 interface HeroSliderProps {
@@ -17,6 +24,8 @@ interface HeroSliderProps {
  */
 export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
   const [index, setIndex] = useState(0);
+  const heroSlidesOverride = useContentOverride<HeroSlide[]>("heroSlides", heroSlidesSeed);
+  const heroSlides = heroSlidesOverride.length > 0 ? heroSlidesOverride : heroSlidesSeed;
   const total = heroSlides.length;
   const heroRef = useRef<HTMLElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -94,23 +103,31 @@ export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
       aria-label="해랑사리우 소개"
     >
       <div className={styles.slides}>
-        {heroSlides.map((s, i) => (
-          <div
-            key={s.id}
-            className={cn(styles.slide, i === index && styles.active)}
-            aria-hidden={i !== index}
-          >
-            <Image
-              className={styles.slideImage}
-              src={s.photoUrl}
-              alt=""
-              fill
-              sizes="100vw"
-              priority={i === 0}
-              unoptimized
-            />
-          </div>
-        ))}
+        {heroSlides.map((s, i) => {
+          const focus = s.focus ?? defaultPhotoFocus;
+          return (
+            <div
+              key={s.id}
+              className={cn(styles.slide, i === index && styles.active)}
+              aria-hidden={i !== index}
+            >
+              <Image
+                className={styles.slideImage}
+                src={s.photoUrl}
+                alt=""
+                fill
+                sizes="100vw"
+                priority={i === 0}
+                unoptimized
+                style={{
+                  objectPosition: `${focus.x}% ${focus.y}%`,
+                  transform: `scale(${focus.zoom})`,
+                  transformOrigin: `${focus.x}% ${focus.y}%`,
+                }}
+              />
+            </div>
+          );
+        })}
         <span className={styles.scrim} />
       </div>
 

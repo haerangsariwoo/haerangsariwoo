@@ -63,6 +63,8 @@ export const defaultPhotoFocus: PhotoFocus = { x: 50, y: 50, zoom: 1 };
 export interface ActivityCard {
   id: string;
   title: string;
+  /** 사진 위에 항상 보이는 짧은 이름 (예: "친바") */
+  shortLabel: string;
   desc: string;
   photoUrl: string | null;
   focus?: PhotoFocus;
@@ -72,18 +74,21 @@ export const activityCards: ActivityCard[] = [
   {
     id: "ac2",
     title: "친해지길 바라",
+    shortLabel: "친바",
     desc: "매주 이어지는 친목 활동으로 부원들과 유대감을 쌓고, 함께 성장하는 공동체 문화를 만들어갑니다.",
     photoUrl: "/activity/friendship.jpg",
   },
   {
     id: "ac1",
     title: "봉사 활동",
+    shortLabel: "봉사",
     desc: "지역사회와 함께하는 정기 봉사로 나눔의 가치를 실천하고, 꾸준한 관계 속에서 실질적인 도움을 전합니다.",
     photoUrl: "/activity/volunteer.jpg",
   },
   {
     id: "ac3",
     title: "MT",
+    shortLabel: "MT",
     desc: "학기마다 떠나는 MT 에서 추억을 쌓고 팀워크를 다지며, 봉사에 대한 마음을 함께 나눕니다.",
     photoUrl: "/activity/mt.jpg",
   },

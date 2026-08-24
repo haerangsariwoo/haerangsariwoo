@@ -93,11 +93,11 @@ export default function LandingPage() {
             <ActivityGallery cards={activityCards} />
           </div>
           <div className={styles.moreRow}>
-            <Link href="/instagram">
+            <a href={landing.footer.instagram} target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="md">
                 더 알아보기 →
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </section>

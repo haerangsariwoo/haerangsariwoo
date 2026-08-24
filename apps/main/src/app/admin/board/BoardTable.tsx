@@ -6,7 +6,8 @@ import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/Dat
 import type { BadgeTone } from "@/components/admin/DataTable/DataTable";
 import { boardPosts as seed } from "@/lib/admin-data";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
-import styles from "../volunteers/volunteers.module.css";
+import formStyles from "../volunteers/volunteers.module.css";
+import styles from "./BoardTable.module.css";
 
 const CAT_TONE: Record<string, BadgeTone> = {
   회의록: "blue",
@@ -16,25 +17,36 @@ const CAT_TONE: Record<string, BadgeTone> = {
 };
 
 const CATEGORIES = ["회의록", "운영 공지", "자료", "자유"] as const;
+type Category = (typeof CATEGORIES)[number];
 
+/**
+ * 카페처럼 게시판을 폴더로 늘어놓고, 눌러서 들어간 게시판의 글만 보여준다.
+ * "전체글" 은 실제 게시판이 아니라 폴더 목록 맨 위에 있는 통합 보기다
+ * (네이버 카페의 "전체글보기" 와 같은 자리).
+ */
 export function BoardTable() {
   const [rows, setRows] = useState(seed);
+  const [openBoard, setOpenBoard] = useState<"all" | Category | null>(null);
   const [q, setQ] = useState("");
-  type Category = (typeof CATEGORIES)[number];
-  const [cat, setCat] = useState<"all" | Category>("all");
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ title: "", category: CATEGORIES[0] as Category, body: "" });
   /** 펼쳐서 본문을 보고 있는 글 */
   const [reading, setReading] = useState<string | null>(null);
 
-  /** 검색어만 반영한 목록 — 칩의 건수가 "지금 검색어로 이 카테고리엔 몇 건" 을 보여주게 한다 */
+  const countOf = (c: Category) => rows.filter((p) => p.category === c).length;
+  const latestOf = (c: Category) => rows.find((p) => p.category === c) ?? null;
+
+  const inBoard = openBoard !== null;
   const bySearch = rows.filter(
     (p) => !q.trim() || p.title.includes(q.trim()) || p.author.includes(q.trim()),
   );
-  const visible = bySearch.filter((p) => cat === "all" || p.category === cat);
+  const visible = bySearch.filter((p) => openBoard === "all" || p.category === openBoard);
 
-  const countFor = (c: "all" | Category) =>
-    c === "all" ? bySearch.length : bySearch.filter((p) => p.category === c).length;
+  function enter(board: "all" | Category) {
+    setOpenBoard(board);
+    setQ("");
+    setReading(null);
+  }
 
   function create(e: FormEvent) {
     e.preventDefault();
@@ -50,7 +62,7 @@ export function BoardTable() {
       },
       ...prev,
     ]);
-    setForm({ title: "", category: CATEGORIES[0], body: "" });
+    setForm({ title: "", category: form.category, body: "" });
     setOpen(false);
   }
 
@@ -58,8 +70,61 @@ export function BoardTable() {
     setRows((prev) => prev.filter((p) => p.id !== id));
   }
 
+  /* ---------- 폴더 목록 ---------- */
+  if (!inBoard) {
+    return (
+      <div className={styles.folderList}>
+        <button type="button" className={styles.folderRow} onClick={() => enter("all")}>
+          <span className={cn(styles.folderIcon, styles.blue)} aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+            </svg>
+          </span>
+          <span className={styles.folderName}>전체글</span>
+          <span className={styles.folderCount}>{rows.length}</span>
+          <span className={styles.folderLatest} />
+          <span className={styles.folderChevron} aria-hidden="true">›</span>
+        </button>
+
+        {CATEGORIES.map((c) => {
+          const latest = latestOf(c);
+          return (
+            <button key={c} type="button" className={styles.folderRow} onClick={() => enter(c)}>
+              <span className={cn(styles.folderIcon, styles[CAT_TONE[c]])} aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+                </svg>
+              </span>
+              <span className={styles.folderName}>{c}</span>
+              <span className={styles.folderCount}>{countOf(c)}</span>
+              <span className={styles.folderLatest}>
+                {latest ? (
+                  <>
+                    <span className={styles.folderLatestTitle}>{latest.title}</span>
+                    <span className={styles.folderLatestDate}>{latest.date}</span>
+                  </>
+                ) : (
+                  <span className={styles.folderEmpty}>등록된 글 없음</span>
+                )}
+              </span>
+              <span className={styles.folderChevron} aria-hidden="true">›</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  /* ---------- 게시판 안 ---------- */
   return (
     <>
+      <div className={styles.crumb}>
+        <button type="button" className={styles.back} onClick={() => setOpenBoard(null)}>
+          ‹ 게시판 목록
+        </button>
+        <span className={styles.crumbBoard}>{openBoard === "all" ? "전체글" : openBoard}</span>
+      </div>
+
       <div className={toolbar.toolbar}>
         <input
           className={toolbar.search}
@@ -72,47 +137,22 @@ export function BoardTable() {
         <button
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => {
+            if (openBoard !== "all") setForm((f) => ({ ...f, category: openBoard }));
+            setOpen((o) => !o);
+          }}
         >
           {open ? "닫기" : "＋ 글 작성"}
         </button>
       </div>
 
-      {/* 카테고리별로 나눠 본다. select 뒤에 숨어 있던 걸 항상 보이는
-          칩으로 꺼내고, 칩마다 지금 검색어 기준 건수를 붙였다. */}
-      <div className={toolbar.chipRow} role="tablist" aria-label="카테고리">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={cat === "all"}
-          className={cn(toolbar.chip, cat === "all" && toolbar.chipActive)}
-          onClick={() => setCat("all")}
-        >
-          전체
-          <span className={toolbar.chipCount}>{countFor("all")}</span>
-        </button>
-        {CATEGORIES.map((c) => (
-          <button
-            key={c}
-            type="button"
-            role="tab"
-            aria-selected={cat === c}
-            className={cn(toolbar.chip, cat === c && toolbar.chipActive)}
-            onClick={() => setCat(c)}
-          >
-            {c}
-            <span className={toolbar.chipCount}>{countFor(c)}</span>
-          </button>
-        ))}
-      </div>
-
       {open && (
-        <form className={styles.createForm} onSubmit={create}>
-          <div className={styles.formRow}>
-            <label className={cn(styles.field, styles.narrow)}>
-              <span className={styles.label}>카테고리</span>
+        <form className={formStyles.createForm} onSubmit={create}>
+          <div className={formStyles.formRow}>
+            <label className={cn(formStyles.field, formStyles.narrow)}>
+              <span className={formStyles.label}>카테고리</span>
               <select
-                className={styles.input}
+                className={formStyles.input}
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value as Category })}
               >
@@ -123,10 +163,10 @@ export function BoardTable() {
                 ))}
               </select>
             </label>
-            <label className={styles.field}>
-              <span className={styles.label}>제목</span>
+            <label className={formStyles.field}>
+              <span className={formStyles.label}>제목</span>
               <input
-                className={styles.input}
+                className={formStyles.input}
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder="예: 9월 정기 회의록"
@@ -134,17 +174,17 @@ export function BoardTable() {
               />
             </label>
           </div>
-          <label className={styles.field}>
-            <span className={styles.label}>내용</span>
+          <label className={formStyles.field}>
+            <span className={formStyles.label}>내용</span>
             <textarea
-              className={styles.input}
+              className={formStyles.input}
               rows={4}
               value={form.body}
               onChange={(e) => setForm({ ...form, body: e.target.value })}
               placeholder="회의 내용이나 자료 설명을 적어주세요."
             />
           </label>
-          <div className={styles.formActions}>
+          <div className={formStyles.formActions}>
             <button
               type="submit"
               className={cn(toolbar.button, toolbar.primary)}
@@ -176,7 +216,7 @@ export function BoardTable() {
             <td className={cn(tableStyles.muted, tableStyles.numeric)}>
               {p.files > 0 ? `${p.files}개` : "—"}
             </td>
-            <td className={styles.rowActions}>
+            <td className={formStyles.rowActions}>
               <RowAction onClick={() => setReading((r) => (r === p.id ? null : p.id))}>
                 {reading === p.id ? "접기" : "열기"}
               </RowAction>

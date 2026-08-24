@@ -1,0 +1,138 @@
+/* 네이버 카페처럼 게시판을 폴더로 늘어놓고, 누르면 그 게시판 안으로 들어간다 */
+
+.folderList {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-lg);
+  overflow: hidden;
+}
+
+.folderRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--a-surface);
+  border: none;
+  border-bottom: 1px solid var(--a-line);
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+}
+
+.folderRow:last-child {
+  border-bottom: none;
+}
+
+.folderRow:hover {
+  background: var(--a-bg);
+}
+
+.folderIcon {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--a-radius-md);
+  display: grid;
+  place-items: center;
+  color: var(--surface-white);
+}
+
+/* 카테고리 배지와 같은 색 계열로 폴더도 구분한다 */
+.folderIcon.blue {
+  background: var(--a-brand);
+}
+.folderIcon.orange {
+  background: var(--a-orange);
+}
+.folderIcon.green {
+  background: var(--a-green);
+}
+.folderIcon.grey {
+  background: var(--a-ink-soft);
+}
+
+.folderName {
+  flex: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--a-ink);
+  white-space: nowrap;
+}
+
+.folderCount {
+  flex: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--a-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.folderLatest {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--a-ink-soft);
+  overflow: hidden;
+}
+
+.folderLatestTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--a-ink);
+}
+
+.folderLatestDate {
+  flex: none;
+  font-size: 12px;
+  color: var(--a-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.folderEmpty {
+  font-size: 13px;
+  color: var(--a-ink-soft);
+  opacity: 0.7;
+}
+
+.folderChevron {
+  flex: none;
+  color: var(--a-ink-soft);
+}
+
+/* ---------- 게시판 안 ---------- */
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--a-ink-soft);
+  cursor: pointer;
+}
+
+.back:hover {
+  color: var(--a-brand);
+}
+
+.crumbBoard {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink);
+}

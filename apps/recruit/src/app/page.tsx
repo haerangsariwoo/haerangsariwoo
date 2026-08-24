@@ -46,14 +46,14 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <HeroSlider applicationsOpen={applicationsOpen} cohort={cohort} />
+      <HeroSlider applicationsOpen={applicationsOpen} />
 
       {/* ---------- About ---------- */}
       <section id="about" className={styles.section}>
         <div className={styles.inner}>
           <h2 className={styles.sectionTitle}>{landing.about.title}</h2>
           <div className={cn(styles.sectionBody, styles.aboutGrid)}>
-            <div>
+            <div className={styles.aboutTextWrap}>
               <p className={styles.aboutText}>{landing.about.body}</p>
               {/* §5 — 성과를 숫자로 자랑하지 않고 연도 사실만 적는다 */}
               <div className={styles.aboutFacts}>

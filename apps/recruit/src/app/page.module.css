@@ -150,8 +150,17 @@
 @media (min-width: 1200px) {
   .aboutGrid {
     grid-template-columns: 1.05fr 0.95fr;
-    align-items: center;
+    /* 사진 높이(자기 비율로 정해짐)에 글 칼럼을 맞춘다.
+       center 로 두면 글이 사진보다 짧을 때 위아래에 빈 칸이 남는다. */
+    align-items: stretch;
     gap: var(--space-50);
+  }
+
+  /* 늘어난 높이 안에서 글은 가운데로 — 위에 붙이면 아래만 빈다 */
+  .aboutTextWrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 

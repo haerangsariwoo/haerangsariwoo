@@ -4,20 +4,18 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { Button } from "@/components/ui/Button/Button";
 import { heroInterval, heroSlides, landing } from "@/lib/recruit-config";
 import styles from "./HeroSlider.module.css";
 
 interface HeroSliderProps {
   applicationsOpen: boolean;
-  cohort: string;
 }
 
 /**
  * design.md §4.1 — 풀블리드 사진 슬라이더 (4장, 자동 전환).
  * 사진은 확대하지 않는다. 넘기기 전용.
  */
-export function HeroSlider({ applicationsOpen, cohort }: HeroSliderProps) {
+export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
   const [index, setIndex] = useState(0);
   const total = heroSlides.length;
 
@@ -83,30 +81,21 @@ export function HeroSlider({ applicationsOpen, cohort }: HeroSliderProps) {
           </p>
         </div>
 
-        <p className={styles.status}>
-          <span className={cn(styles.statusDot, !applicationsOpen && styles.off)} />
-          {applicationsOpen ? `${cohort} 신입 부원 모집 중` : "다음 모집을 준비하고 있습니다"}
-        </p>
-
+        {/* 버튼 면 대신 텍스트 링크. 사진 위에서는 면이 있는 버튼 두 개보다
+            글자만 있는 편이 사진을 덜 가린다. */}
         <div className={styles.actions}>
           {applicationsOpen ? (
             <>
-              <Link href="/apply">
-                <Button size="md" onPhoto>
-                  지원하기 →
-                </Button>
+              <Link href="/apply" className={styles.actionPrimary}>
+                지원하기 <span aria-hidden="true">→</span>
               </Link>
-              <Link href="/apply/status">
-                <Button size="md" variant="ghost">
-                  결과 확인
-                </Button>
+              <Link href="/apply/status" className={styles.actionSecondary}>
+                결과 확인
               </Link>
             </>
           ) : (
-            <a href="#about">
-              <Button size="md" variant="ghost">
-                동아리 알아보기
-              </Button>
+            <a href="#about" className={styles.actionSecondary}>
+              동아리 알아보기 →
             </a>
           )}
         </div>

@@ -8,8 +8,11 @@ import type { ActivityCard } from "@/lib/recruit-config";
 import styles from "./ActivityGallery.module.css";
 
 /**
- * 홈의 활동 사진. 사진이 등록된 카드를 누르면 크게 볼 수 있다.
- * 사진이 아직 없는 카드는 확대할 것이 없어 버튼으로 만들지 않는다.
+ * 홈의 활동 사진. 그리드에는 사진만 두고, 제목·설명은 눌러서 크게 볼 때
+ * 나온다 — 사진마다 어두운 설명칸을 항상 깔아두면 사진이 좁아지고
+ * 카드 세 장이 늘어서면 같은 문구가 반복돼 눈에 걸린다.
+ * 사진이 아직 없는 카드는 확대할 것이 없어 버튼으로 만들지 않고,
+ * 제목만 한 줄 남긴다 (그마저 없으면 그 칸이 무슨 활동인지 알 길이 없다).
  *
  * 모달은 Radix Dialog 를 쓴다. 포커스 가둠·배경 스크롤 잠금·Esc 닫기를
  * 직접 구현하면 상태가 어긋나기 쉬워 예전에 실제로 버그가 났었다.
@@ -43,32 +46,26 @@ export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
       <div className={styles.grid}>
         {cards.map((a) => {
           const photoIndex = withPhoto.findIndex((p) => p.id === a.id);
-          const body = (
-            <>
-              <span className={styles.thumb}>
-                {a.photoUrl ? (
-                  <Image
-                    className={styles.thumbImage}
-                    src={a.photoUrl}
-                    alt={a.title}
-                    fill
-                    sizes="(min-width: 1200px) 380px, (min-width: 768px) 50vw, 100vw"
-                    unoptimized
-                  />
-                ) : (
-                  <Image src="/icons/photo.svg" alt="" width={32} height={32} unoptimized />
-                )}
-                {a.photoUrl && (
-                  <span className={styles.zoomHint} aria-hidden="true">
-                    ⤢
-                  </span>
-                )}
-              </span>
-              <span className={styles.body}>
-                <span className={styles.title}>{a.title}</span>
-                <span className={styles.desc}>{a.desc}</span>
-              </span>
-            </>
+          const thumb = (
+            <span className={styles.thumb}>
+              {a.photoUrl ? (
+                <Image
+                  className={styles.thumbImage}
+                  src={a.photoUrl}
+                  alt={a.title}
+                  fill
+                  sizes="(min-width: 1200px) 380px, (min-width: 768px) 50vw, 100vw"
+                  unoptimized
+                />
+              ) : (
+                <Image src="/icons/photo.svg" alt="" width={32} height={32} unoptimized />
+              )}
+              {a.photoUrl && (
+                <span className={styles.zoomHint} aria-hidden="true">
+                  ⤢
+                </span>
+              )}
+            </span>
           );
 
           return a.photoUrl ? (
@@ -79,11 +76,12 @@ export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
               onClick={() => setIndex(photoIndex)}
               aria-label={`${a.title} 사진 크게 보기`}
             >
-              {body}
+              {thumb}
             </button>
           ) : (
             <article key={a.id} className={styles.card}>
-              {body}
+              {thumb}
+              <span className={styles.fallbackTitle}>{a.title}</span>
             </article>
           );
         })}

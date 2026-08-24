@@ -14,7 +14,9 @@
 
 @media (min-width: 768px) {
   .hero {
-    height: min(88vh, 900px);
+    /* PC 에서는 주소창이 접히고 펴지는 문제가 없어 그냥 vh 로 고정한다.
+       첫 화면 전체를 사진이 채우도록 한다. */
+    height: calc(100vh - 72px);
   }
 }
 
@@ -142,38 +144,43 @@
 }
 
 /* 고정 영역 — 슬라이드가 바뀌어도 그대로 */
-.status {
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-24);
+  margin-top: var(--space-28);
+}
+
+/* 버튼 면 없이 글자만. 사진을 덜 가리면서도 무엇이 주 동작인지는
+   굵기·밑줄로 구분한다. */
+.actionPrimary,
+.actionSecondary {
   display: inline-flex;
   align-items: center;
   gap: var(--space-8);
-  height: 34px;
-  padding: 0 var(--space-16);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(8px);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 16px;
   color: var(--surface-white);
-  margin-top: var(--space-24);
+  text-underline-offset: 4px;
+  transition: opacity 0.15s ease;
 }
 
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-success);
-  flex: none;
+.actionPrimary {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
-.statusDot.off {
-  background: var(--ink-300);
+.actionSecondary {
+  font-weight: 500;
+  opacity: 0.8;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.5);
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-12);
-  margin-top: var(--space-28);
+.actionPrimary:hover,
+.actionSecondary:hover {
+  opacity: 1;
 }
 
 /* ---------- 조작부 ---------- */

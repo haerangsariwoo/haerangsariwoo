@@ -159,24 +159,54 @@ export const adminMembers: AdminMember[] = [
   { id: "m5", name: "최하늘", studentId: "2591137", birth: "061103", gender: "여", cohort: "26-1기", track: "인문대 · 국어국문", mbti: "ISFJ", role: "부원", hours: 41 },
 ];
 
-/* ---------- 팀짜기 ---------- */
+/* ---------- 팀짜기 ----------
+   "회원 명부"(누가 있는지)와 "행사별 조 편성"(이번 행사엔 누가 참여하고
+   어느 조인지)을 나눈다. 예전엔 이 둘이 한 행에 뒤섞여 있어서(팀짜기
+   화면 하나가 곧 한 행사였다), 행사를 여러 개 만들 수가 없었다. */
 export interface TeamMemberRow {
   id: string;
   name: string;
   cohort: string;
   gender: "남" | "여";
-  team: number | null;
 }
 
+/** 팀짜기에 올릴 수 있는 회원 명부 */
 export const teamPool: TeamMemberRow[] = [
-  { id: "t1", name: "김해랑", cohort: "25-2기", gender: "남", team: 3 },
-  { id: "t2", name: "재겸", cohort: "26-1기", gender: "남", team: 3 },
-  { id: "t3", name: "서지우", cohort: "25-2기", gender: "여", team: 3 },
-  { id: "t4", name: "이준호", cohort: "26-1기", gender: "남", team: 3 },
-  { id: "t5", name: "박서연", cohort: "26-1기", gender: "여", team: 3 },
-  { id: "t6", name: "최민재", cohort: "25-2기", gender: "여", team: 3 },
-  { id: "t7", name: "정다은", cohort: "26-1기", gender: "여", team: null },
-  { id: "t8", name: "강태현", cohort: "25-2기", gender: "남", team: null },
+  { id: "t1", name: "김해랑", cohort: "25-2기", gender: "남" },
+  { id: "t2", name: "재겸", cohort: "26-1기", gender: "남" },
+  { id: "t3", name: "서지우", cohort: "25-2기", gender: "여" },
+  { id: "t4", name: "이준호", cohort: "26-1기", gender: "남" },
+  { id: "t5", name: "박서연", cohort: "26-1기", gender: "여" },
+  { id: "t6", name: "최민재", cohort: "25-2기", gender: "여" },
+  { id: "t7", name: "정다은", cohort: "26-1기", gender: "여" },
+  { id: "t8", name: "강태현", cohort: "25-2기", gender: "남" },
+];
+
+/**
+ * 행사 하나의 조 편성. activityId 로 lib/activities 의 실제 활동과
+ * 이어진다 — 팀짜기 화면에 날짜·장소를 다시 적지 않고 거기서 가져온다.
+ */
+export interface TeamEventDraft {
+  id: string;
+  activityId: string;
+  teamSize: number;
+  /** 이 행사에 참여하는 사람 (teamPool 중 일부) */
+  participantIds: string[];
+  /** 참여자 id → 조 번호. 아직 안 나눴으면 null */
+  assignments: Record<string, number | null>;
+  /** 부원 홈·내 조에 노출할 행사인지. 한 번에 하나만 켜진다 */
+  published: boolean;
+}
+
+export const teamEvents: TeamEventDraft[] = [
+  {
+    id: "te1",
+    activityId: "a2",
+    teamSize: 6,
+    participantIds: ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"],
+    assignments: { t1: 3, t2: 3, t3: 3, t4: 3, t5: 3, t6: 3, t7: null, t8: null },
+    published: true,
+  },
 ];
 
 /* ---------- 운영진 게시판 ---------- */

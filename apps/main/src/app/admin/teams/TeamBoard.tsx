@@ -6,40 +6,47 @@ import type { TeamMemberRow } from "@/lib/admin-data";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "./teams.module.css";
 
-/** 미배정을 뜻하는 값. team === null 과 같다 */
+/** 미배정을 뜻하는 값. assignments[id] === null 과 같다 */
 const POOL = "pool";
 type Slot = number | typeof POOL;
 
-function slotOf(m: TeamMemberRow): Slot {
-  return m.team ?? POOL;
+interface TeamBoardProps {
+  /** 이 행사에 참여하는 사람만 놓고 짠다 — 회원 명부 전체가 아니다 */
+  participants: TeamMemberRow[];
+  assignments: Record<string, number | null>;
+  onAssignmentsChange: (next: Record<string, number | null>) => void;
+  teamSize: number;
+  onTeamSizeChange: (size: number) => void;
 }
 
-export function TeamBoard({ initial }: { initial: TeamMemberRow[] }) {
-  const [pool, setPool] = useState<TeamMemberRow[]>(initial);
+export function TeamBoard({
+  participants,
+  assignments,
+  onAssignmentsChange,
+  teamSize,
+  onTeamSizeChange,
+}: TeamBoardProps) {
   const [dragging, setDragging] = useState<string | null>(null);
   const [over, setOver] = useState<Slot | null>(null);
   /** 키보드로 옮길 때 고른 사람 */
   const [picked, setPicked] = useState<string | null>(null);
-  const [teamSize, setTeamSize] = useState(6);
 
   const teams = useMemo(() => {
-    const nums = [...new Set(pool.map((m) => m.team).filter((t): t is number => t !== null))];
+    const nums = [...new Set(Object.values(assignments).filter((t): t is number => t !== null))];
     return nums.sort((a, b) => a - b);
-  }, [pool]);
+  }, [assignments]);
 
-  const unassigned = pool.filter((m) => m.team === null);
+  const unassigned = participants.filter((m) => (assignments[m.id] ?? null) === null);
 
   function moveTo(id: string, slot: Slot) {
-    setPool((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, team: slot === POOL ? null : slot } : m)),
-    );
+    onAssignmentsChange({ ...assignments, [id]: slot === POOL ? null : slot });
   }
 
   /** 성비를 맞춰 자동 편성 — 남녀를 번갈아 채운다 */
   function autoAssign() {
-    const men = pool.filter((m) => m.gender === "남");
-    const women = pool.filter((m) => m.gender === "여");
-    const count = Math.max(1, Math.ceil(pool.length / teamSize));
+    const men = participants.filter((m) => m.gender === "남");
+    const women = participants.filter((m) => m.gender === "여");
+    const count = Math.max(1, Math.ceil(participants.length / teamSize));
     const buckets: TeamMemberRow[][] = Array.from({ length: count }, () => []);
 
     [men, women].forEach((group) => {
@@ -50,19 +57,21 @@ export function TeamBoard({ initial }: { initial: TeamMemberRow[] }) {
       });
     });
 
-    const next = new Map<string, number>();
-    buckets.forEach((b, i) => b.forEach((m) => next.set(m.id, i + 1)));
-    setPool((prev) => prev.map((m) => ({ ...m, team: next.get(m.id) ?? null })));
+    const next: Record<string, number | null> = {};
+    buckets.forEach((b, i) => b.forEach((m) => (next[m.id] = i + 1)));
+    onAssignmentsChange(next);
   }
 
   function resetAll() {
-    setPool((prev) => prev.map((m) => ({ ...m, team: null })));
+    const next: Record<string, number | null> = {};
+    participants.forEach((m) => (next[m.id] = null));
+    onAssignmentsChange(next);
   }
 
   function addTeam() {
     // 빈 조를 하나 늘린다 — 옮겨 담을 자리를 만들기 위해
     const next = (teams.at(-1) ?? 0) + 1;
-    const first = pool.find((m) => m.team === null);
+    const first = participants.find((m) => (assignments[m.id] ?? null) === null);
     if (first) moveTo(first.id, next);
   }
 
@@ -112,21 +121,16 @@ export function TeamBoard({ initial }: { initial: TeamMemberRow[] }) {
     tabIndex: 0,
     role: "button",
     "aria-pressed": picked === m.id,
-    "aria-label": `${m.name} ${slotOf(m) === POOL ? "미배정" : `${slotOf(m)}조`}. 누르거나 끌어서 옮깁니다`,
+    "aria-label": `${m.name} ${(assignments[m.id] ?? null) === null ? "미배정" : `${assignments[m.id]}조`}. 누르거나 끌어서 옮깁니다`,
   });
 
   return (
     <>
       <div className={toolbar.toolbar}>
-        <select className={toolbar.select} defaultValue="a2" aria-label="행사 선택">
-          <option value="a2">제26회 해랑사리우 MT</option>
-          <option value="a3">2학기 개강파티</option>
-          <option value="a1">2학기 정기총회</option>
-        </select>
         <select
           className={toolbar.select}
           value={teamSize}
-          onChange={(e) => setTeamSize(Number(e.target.value))}
+          onChange={(e) => onTeamSizeChange(Number(e.target.value))}
           aria-label="조당 인원"
         >
           <option value={4}>조당 4명</option>
@@ -147,8 +151,8 @@ export function TeamBoard({ initial }: { initial: TeamMemberRow[] }) {
 
       {picked && (
         <p className={styles.pickHint}>
-          <b>{pool.find((m) => m.id === picked)?.name}</b> 을(를) 고른 상태입니다. 옮길 조를
-          누르세요. (Esc 로 취소)
+          <b>{participants.find((m) => m.id === picked)?.name}</b> 을(를) 고른 상태입니다. 옮길
+          조를 누르세요. (Esc 로 취소)
         </p>
       )}
 
@@ -185,7 +189,7 @@ export function TeamBoard({ initial }: { initial: TeamMemberRow[] }) {
           <h3 className={styles.colTitle}>편성된 조 {teams.length}개</h3>
           <div className={styles.teamGrid}>
             {teams.map((t) => {
-              const members = pool.filter((m) => m.team === t);
+              const members = participants.filter((m) => assignments[m.id] === t);
               const male = members.filter((m) => m.gender === "남").length;
               const female = members.length - male;
               return (
@@ -195,7 +199,7 @@ export function TeamBoard({ initial }: { initial: TeamMemberRow[] }) {
                   {...dropZone(t)}
                 >
                   <div className={styles.teamHead}>
-                    <span className={styles.teamName}>MT {t}조</span>
+                    <span className={styles.teamName}>{t}조</span>
                     <span className={styles.ratio}>
                       남 {male} · 여 {female}
                     </span>
@@ -222,6 +226,11 @@ export function TeamBoard({ initial }: { initial: TeamMemberRow[] }) {
                 </div>
               );
             })}
+            {teams.length === 0 && (
+              <p className={styles.emptyHint}>
+                아직 편성된 조가 없습니다. 자동 편성을 누르거나 조를 추가해 보세요.
+              </p>
+            )}
           </div>
         </div>
       </div>

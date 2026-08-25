@@ -3,7 +3,7 @@ export interface Profile {
   studentId: string;
   cohort: string;
   track: string;
-  role: "부원" | "운영진";
+  role: "부원" | "운영진" | "관리자";
 }
 
 // 데모 계정: 관리자 화면까지 확인할 수 있도록 운영진으로 설정.

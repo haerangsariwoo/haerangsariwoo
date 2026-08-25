@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Route } from "next";
+import { createClient } from "@/lib/supabase/client";
 import { profile } from "@/lib/my";
 import styles from "./AppHeader.module.css";
 import { Logo } from "@/components/ui/Logo/Logo";
@@ -16,7 +18,15 @@ const MENU: { label: string; href: Route }[] = [
 ];
 
 export function AppHeader() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  async function logout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -27,7 +37,7 @@ export function AppHeader() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const isAdmin = profile.role === "운영진";
+  const isAdmin = profile.role === "운영진" || profile.role === "관리자";
 
   return (
     <>
@@ -113,11 +123,9 @@ export function AppHeader() {
               </Link>
             )}
 
-            <Link href="/">
-              <button type="button" className={styles.logout}>
-                로그아웃
-              </button>
-            </Link>
+            <button type="button" className={styles.logout} onClick={logout}>
+              로그아웃
+            </button>
           </aside>
         </>
       )}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/TextField/TextField";
+import { createClient } from "@/lib/supabase/client";
 import {
   JOIN_YEARS,
   MBTI_TYPES,
@@ -12,6 +13,7 @@ import {
   isValidBirth,
   isValidPassword,
   isValidStudentId,
+  studentIdToEmail,
   type Gender,
   type Semester,
 } from "@/lib/signup";
@@ -45,12 +47,13 @@ export default function SignupPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function set<K extends keyof Values>(key: K, value: Values[K]) {
     setV((prev) => ({ ...prev, [key]: value }));
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const next: Record<string, string> = {};
 
@@ -60,7 +63,7 @@ export default function SignupPage() {
     if (!isValidStudentId(v.studentId.trim())) next.studentId = "학번 7자리를 정확히 입력해 주세요.";
 
     if (!isValidPassword(v.password.trim())) {
-      next.password = "비밀번호는 숫자 4자리로 정해 주세요.";
+      next.password = "비밀번호는 6자 이상으로 정해 주세요.";
     } else if (v.password !== v.passwordConfirm) {
       next.passwordConfirm = "비밀번호가 일치하지 않습니다.";
     }
@@ -71,7 +74,42 @@ export default function SignupPage() {
     setErrors(next);
     if (Object.keys(next).length > 0) return;
 
-    // TODO: Supabase — signup_requests 에 저장하고 운영진 승인을 기다린다
+    setSubmitting(true);
+    const supabase = createClient();
+    const studentId = v.studentId.trim();
+
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: studentIdToEmail(studentId),
+      password: v.password,
+    });
+
+    if (authError || !authData.user) {
+      setSubmitting(false);
+      setErrors({
+        studentId: authError?.message.includes("already registered")
+          ? "이미 가입 신청된 학번입니다."
+          : authError?.message ?? "가입 중 문제가 발생했습니다. 다시 시도해 주세요.",
+      });
+      return;
+    }
+
+    const { error: profileError } = await supabase.from("members").insert({
+      id: authData.user.id,
+      student_id: studentId,
+      name: v.name.trim(),
+      cohort: cohortLabel(v.joinYear!, v.joinSemester!),
+      track: v.track.trim(),
+      role: "부원",
+      status: "pending",
+    });
+
+    setSubmitting(false);
+
+    if (profileError) {
+      setErrors({ studentId: "가입 중 문제가 발생했습니다. 다시 시도해 주세요." });
+      return;
+    }
+
     setDone(true);
     window.scrollTo(0, 0);
   }
@@ -182,7 +220,7 @@ export default function SignupPage() {
           <TextField
             label="트랙 (학과)"
             name="track"
-            placeholder="예: IT공과대 컴퓨터공학트랙"
+            placeholder="예: 모바일소프트웨어 / 웹공학"
             value={v.track}
             onChange={(e) => set("track", e.target.value)}
             errorText={errors.track}
@@ -203,13 +241,11 @@ export default function SignupPage() {
             label="비밀번호"
             name="password"
             type="password"
-            placeholder="숫자 4자리"
-            inputMode="numeric"
-            maxLength={4}
+            placeholder="6자 이상"
             value={v.password}
             onChange={(e) => set("password", e.target.value)}
             errorText={errors.password}
-            helperText={!errors.password ? "로그인할 때 사용할 숫자 4자리를 정해 주세요." : undefined}
+            helperText={!errors.password ? "로그인할 때 사용할 비밀번호를 정해 주세요 (6자 이상)." : undefined}
           />
 
           <TextField
@@ -217,8 +253,6 @@ export default function SignupPage() {
             name="passwordConfirm"
             type="password"
             placeholder="비밀번호를 한 번 더 입력"
-            inputMode="numeric"
-            maxLength={4}
             value={v.passwordConfirm}
             onChange={(e) => set("passwordConfirm", e.target.value)}
             errorText={errors.passwordConfirm}
@@ -305,8 +339,15 @@ export default function SignupPage() {
             입력한 정보는 부원 관리 목적으로만 사용되며, 운영진 승인 후 로그인할 수 있습니다.
           </p>
 
-          <Button type="submit" variant="navy" size="lg" fullWidth className={styles.applyBtn}>
-            가입 신청하기
+          <Button
+            type="submit"
+            variant="navy"
+            size="lg"
+            fullWidth
+            className={styles.applyBtn}
+            disabled={submitting}
+          >
+            {submitting ? "가입 신청 중..." : "가입 신청하기"}
           </Button>
         </form>
       </div>

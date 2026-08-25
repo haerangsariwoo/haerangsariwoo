@@ -103,9 +103,14 @@ export function isValidStudentId(v: string) {
   return /^\d{7}$/.test(v);
 }
 
-/** 비밀번호 — 숫자 4자리 */
+/** 비밀번호 — 6자 이상 */
 export function isValidPassword(v: string) {
-  return /^\d{4}$/.test(v);
+  return v.length >= 6;
+}
+
+/** 학번을 Supabase Auth 가입에 쓸 이메일로 바꾼다 — 실제 이메일이 없어도 되게 하는 자리표시자 */
+export function studentIdToEmail(studentId: string) {
+  return `${studentId}@haerangsariwoo.internal`;
 }
 
 /** 생년월일 6자리 형식 검사 (YYMMDD) */

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/TextField/TextField";
-import { isValidPassword, isValidStudentId } from "@/lib/signup";
+import { createClient } from "@/lib/supabase/client";
+import { isValidPassword, isValidStudentId, studentIdToEmail } from "@/lib/signup";
 import styles from "./page.module.css";
 import { Logo } from "@/components/ui/Logo/Logo";
 
@@ -39,17 +40,47 @@ export default function LoginPage() {
       next.studentId = "학번 7자리를 정확히 입력해 주세요.";
     }
     if (!isValidPassword(password.trim())) {
-      next.password = "비밀번호 4자리를 입력해 주세요.";
+      next.password = "비밀번호를 입력해 주세요.";
     }
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
 
     setSubmitting(true);
-    // TODO: Supabase Auth — 학번 + 비밀번호로 인증하고, 승인된 회원만 통과시킨다
-    await new Promise((r) => setTimeout(r, 400));
+    const supabase = createClient();
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: studentIdToEmail(studentId.trim()),
+      password,
+    });
+
+    if (error || !data.user) {
+      setSubmitting(false);
+      setErrors({ password: "학번 또는 비밀번호가 올바르지 않습니다." });
+      return;
+    }
+
+    const { data: memberRow } = await supabase
+      .from("members")
+      .select("status")
+      .eq("id", data.user.id)
+      .single();
+
+    if (memberRow?.status !== "approved") {
+      await supabase.auth.signOut();
+      setSubmitting(false);
+      setErrors({
+        password:
+          memberRow?.status === "rejected"
+            ? "가입이 반려되었습니다. 운영진에게 문의해 주세요."
+            : "아직 운영진 승인 대기 중입니다.",
+      });
+      return;
+    }
+
     setSubmitting(false);
     router.push("/home");
+    router.refresh();
   }
 
   return (
@@ -76,15 +107,13 @@ export default function LoginPage() {
             label="비밀번호"
             name="password"
             icon={<LockIcon />}
-            placeholder="숫자 4자리"
-            inputMode="numeric"
+            placeholder="비밀번호"
             type="password"
-            maxLength={4}
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             errorText={errors.password}
-            helperText={!errors.password ? "회원가입 때 정한 숫자 4자리입니다." : undefined}
+            helperText={!errors.password ? "회원가입 때 정한 비밀번호입니다." : undefined}
           />
 
           <Button type="submit" variant="navy" size="lg" fullWidth disabled={submitting}>

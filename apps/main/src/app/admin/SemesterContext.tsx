@@ -22,16 +22,33 @@ interface SemesterContextValue {
   /** 지난 학기를 보는 중이면 true. 새로 쓰기·수정·삭제를 막는 기준으로 쓴다.
       읽기·검색·복사·내보내기는 이 값과 상관없이 항상 된다. */
   readOnly: boolean;
+  /** 학기 전환은 관리자만 — 운영진은 볼 수만 있고 바꿀 수 없다. */
+  canChangeSemester: boolean;
 }
 
 const SemesterContext = createContext<SemesterContextValue | null>(null);
 
-export function SemesterProvider({ children }: { children: ReactNode }) {
+export function SemesterProvider({
+  children,
+  role,
+}: {
+  children: ReactNode;
+  /** 로그인한 사람의 역할 — 관리자만 학기를 바꿀 수 있다 */
+  role: "운영진" | "관리자";
+}) {
   const [semester, setSemester] = useState<string>(CURRENT_SEMESTER);
   const isCurrent = semester === CURRENT_SEMESTER;
 
   return (
-    <SemesterContext.Provider value={{ semester, setSemester, isCurrent, readOnly: !isCurrent }}>
+    <SemesterContext.Provider
+      value={{
+        semester,
+        setSemester,
+        isCurrent,
+        readOnly: !isCurrent,
+        canChangeSemester: role === "관리자",
+      }}
+    >
       {children}
     </SemesterContext.Provider>
   );

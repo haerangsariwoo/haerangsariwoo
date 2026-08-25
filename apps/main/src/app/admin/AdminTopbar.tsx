@@ -19,7 +19,7 @@ export function AdminTopbar() {
   );
   const title = TITLES[pathname] ?? match?.label ?? "운영진";
   const pendingHours = hourRequests.filter((h) => h.state === "대기").length;
-  const { semester, setSemester, readOnly } = useSemester();
+  const { semester, setSemester, readOnly, canChangeSemester } = useSemester();
 
   return (
     <header className={styles.topbar}>
@@ -30,6 +30,8 @@ export function AdminTopbar() {
         value={semester}
         onChange={(e) => setSemester(e.target.value)}
         aria-label="학기 선택"
+        disabled={!canChangeSemester}
+        title={!canChangeSemester ? "학기 전환은 관리자만 할 수 있습니다." : undefined}
       >
         {SEMESTERS.map((s) => (
           <option key={s.value} value={s.value}>

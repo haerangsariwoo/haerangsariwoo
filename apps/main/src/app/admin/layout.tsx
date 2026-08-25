@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AdminNav } from "./AdminNav";
 import { AdminTopbar } from "./AdminTopbar";
 import { ReadOnlyNotice } from "./ReadOnlyNotice";
@@ -6,14 +7,33 @@ import { SemesterProvider } from "./SemesterContext";
 import "./admin-tokens.css";
 import styles from "./layout.module.css";
 import { Logo } from "@/components/ui/Logo/Logo";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "운영진 관리자 · 해랑사리우",
 };
 
-export default function AdminLayout({ children }: LayoutProps<"/admin">) {
+export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/");
+
+  const { data: member } = await supabase
+    .from("members")
+    .select("name, cohort, role, status")
+    .eq("id", user.id)
+    .single();
+
+  const isStaff =
+    !!member &&
+    (member.role === "운영진" || member.role === "관리자") &&
+    member.status === "approved";
+  if (!isStaff) redirect("/home");
+
   return (
-    <SemesterProvider>
+    <SemesterProvider role={member.role as "운영진" | "관리자"}>
       <div className={`adminScope ${styles.shell}`}>
         <aside className={styles.sidebar}>
           <Link href="/admin" className={styles.brand} aria-label="관리자 홈으로">
@@ -24,10 +44,14 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
           <AdminNav />
 
           <div className={styles.profile}>
-            <span className={styles.avatar}>우</span>
+            <span className={styles.avatar}>{member.name.charAt(0)}</span>
             <div>
-              <p className={styles.profileName}>김우영 운영진</p>
-              <p className={styles.profileMeta}>24-1기 관리자</p>
+              <p className={styles.profileName}>
+                {member.name} {member.role}
+              </p>
+              <p className={styles.profileMeta}>
+                {member.cohort} · {member.role}
+              </p>
             </div>
           </div>
 

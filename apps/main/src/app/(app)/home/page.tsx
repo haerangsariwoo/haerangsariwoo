@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import { member, myTeam, nextActivity, semesterStatus } from "@/lib/mock-data";
 import { notices } from "@/lib/community";
-import { verifyRequests } from "@/lib/verify";
+import { getMyProofSubmissions } from "@/lib/proof";
 import { homeCopy } from "@/lib/app-content";
 import { getCurrentMember } from "@/lib/get-current-member";
 import { getInternalActivities } from "@/lib/volunteers";
@@ -15,29 +15,6 @@ import { HomeInstallPopup } from "./HomeInstallPopup";
 import { Mascot } from "@/components/ui/Logo/Mascot";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 
-const pendingVerifyCount = verifyRequests.filter((r) => r.state === "대기").length;
-
-/**
- * 바로가기. 활동 기록·쪽지함은 MY 메뉴에 이미 있어 뺐고,
- * 남긴 둘은 지금 상태를 함께 보여준다.
- */
-const QUICK_MENU = [
-  {
-    label: "봉사 인증",
-    icon: "/icons/quick-camera.svg",
-    href: "/verify" as const,
-    meta: "참여한 봉사의 증빙 제출",
-    badge: pendingVerifyCount > 0 ? `검토 중 ${pendingVerifyCount}건` : null,
-  },
-  {
-    label: "봉사 캘린더",
-    icon: "/icons/quick-calendar.svg",
-    href: "/calendar" as const,
-    meta: "이번 달 일정 한눈에 보기",
-    badge: null,
-  },
-];
-
 /**
  * 홈은 세 묶음이다. 나 → 이번 학기에 할 일 → 내 자리.
  * 묶음 안은 선으로만 나누고, 묶음끼리만 여백으로 띄운다.
@@ -46,8 +23,30 @@ export default async function HomePage() {
   const profile = await getCurrentMember();
   if (!profile) redirect("/");
 
-  const internalActivities = await getInternalActivities();
+  const [internalActivities, proofSubmissions] = await Promise.all([
+    getInternalActivities(),
+    getMyProofSubmissions(),
+  ]);
   const recruitingVolunteers = internalActivities.filter((v) => v.status !== "closed").slice(0, 2);
+  const pendingVerifyCount = proofSubmissions.filter((r) => r.status === "대기").length;
+
+  /** 바로가기. 활동 기록·쪽지함은 MY 메뉴에 이미 있어 뺐고, 남긴 둘은 지금 상태를 함께 보여준다. */
+  const QUICK_MENU = [
+    {
+      label: "봉사 인증",
+      icon: "/icons/quick-camera.svg",
+      href: "/verify" as const,
+      meta: "참여한 봉사의 증빙 제출",
+      badge: pendingVerifyCount > 0 ? `검토 중 ${pendingVerifyCount}건` : null,
+    },
+    {
+      label: "봉사 캘린더",
+      icon: "/icons/quick-calendar.svg",
+      href: "/calendar" as const,
+      meta: "이번 달 일정 한눈에 보기",
+      badge: null,
+    },
+  ];
 
   return (
     <Sheet>

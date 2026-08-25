@@ -1,68 +1,147 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
+import { createClient } from "@/lib/supabase/client";
 import { Panel } from "@/components/admin/Panel/Panel";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
-import { adminMembers as memberSeed } from "@/lib/admin-data";
-import { cohortLabel, signupRequests as signupSeed } from "@/lib/signup";
 import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "../volunteers/volunteers.module.css";
 
+type Role = "부원" | "운영진" | "관리자";
+type Status = "pending" | "approved" | "rejected";
+
+interface MemberRow {
+  id: string;
+  student_id: string;
+  name: string;
+  gender: string | null;
+  birth: string | null;
+  cohort: string;
+  track: string;
+  mbti: string | null;
+  role: Role;
+  status: Status;
+  created_at: string;
+}
+
+const STATUS_LABEL: Record<Status, "대기" | "승인" | "반려"> = {
+  pending: "대기",
+  approved: "승인",
+  rejected: "반려",
+};
+
+const STATUS_TONE: Record<Status, "orange" | "green" | "grey"> = {
+  pending: "orange",
+  approved: "green",
+  rejected: "grey",
+};
+
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return `${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export function MemberAdmin() {
   const { readOnly } = useSemester();
+  const supabase = useMemo(() => createClient(), []);
+
+  const [rows, setRows] = useState<MemberRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const { data, error: fetchError } = await supabase
+        .from("members")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (cancelled) return;
+      if (fetchError) {
+        setError("회원 정보를 불러오지 못했습니다.");
+      } else {
+        setRows((data ?? []) as MemberRow[]);
+      }
+      setLoading(false);
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
+
   // ---------- 가입 승인 대기 ----------
-  const [requests, setRequests] = useState(signupSeed);
   const [reqQ, setReqQ] = useState("");
   const [picked, setPicked] = useState<Set<string>>(new Set());
 
-  const visibleReq = requests.filter(
-    (r) => !reqQ.trim() || r.name.includes(reqQ.trim()) || r.studentId.includes(reqQ.trim()),
+  const visibleReq = rows.filter(
+    (r) => !reqQ.trim() || r.name.includes(reqQ.trim()) || r.student_id.includes(reqQ.trim()),
   );
-  const pending = requests.filter((r) => r.state === "대기");
+  const pending = rows.filter((r) => r.status === "pending");
+  const pendingVisible = visibleReq.filter((r) => r.status === "pending");
+  const allPicked = pendingVisible.length > 0 && pendingVisible.every((r) => picked.has(r.id));
 
-  function decide(id: string, state: "승인" | "반려" | "대기") {
-    setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, state } : r)));
-    setPicked((prev) => {
-      const n = new Set(prev);
+  async function decide(id: string, status: Status) {
+    const prev = rows;
+    setRows((cur) => cur.map((r) => (r.id === id ? { ...r, status } : r)));
+    setPicked((cur) => {
+      const n = new Set(cur);
       n.delete(id);
       return n;
     });
+    const { error: updateError } = await supabase.from("members").update({ status }).eq("id", id);
+    if (updateError) {
+      setRows(prev);
+      setError("처리 중 문제가 발생했습니다. 다시 시도해 주세요.");
+    }
   }
 
-  function decidePicked(state: "승인" | "반려") {
-    setRequests((prev) => prev.map((r) => (picked.has(r.id) ? { ...r, state } : r)));
+  async function decidePicked(status: Status) {
+    const ids = [...picked];
+    if (ids.length === 0) return;
+    const prev = rows;
+    setRows((cur) => cur.map((r) => (ids.includes(r.id) ? { ...r, status } : r)));
     setPicked(new Set());
+    const { error: updateError } = await supabase.from("members").update({ status }).in("id", ids);
+    if (updateError) {
+      setRows(prev);
+      setError("처리 중 문제가 발생했습니다. 다시 시도해 주세요.");
+    }
   }
-
-  const pendingVisible = visibleReq.filter((r) => r.state === "대기");
-  const allPicked = pendingVisible.length > 0 && pendingVisible.every((r) => picked.has(r.id));
 
   // ---------- 회원 목록 ----------
-  const [members, setMembers] = useState(memberSeed);
+  const members = rows.filter((r) => r.status === "approved");
   const [q, setQ] = useState("");
   const [cohort, setCohort] = useState("all");
   const [role, setRole] = useState("all");
 
-  const cohorts = useMemo(() => [...new Set(memberSeed.map((m) => m.cohort))], []);
+  const cohorts = useMemo(() => [...new Set(members.map((m) => m.cohort))], [members]);
 
   const visibleMembers = members.filter((m) => {
-    const hitQ = !q.trim() || m.name.includes(q.trim()) || m.studentId.includes(q.trim());
+    const hitQ = !q.trim() || m.name.includes(q.trim()) || m.student_id.includes(q.trim());
     const hitC = cohort === "all" || m.cohort === cohort;
     const hitR = role === "all" || m.role === role;
     return hitQ && hitC && hitR;
   });
 
-  /** 부원 ↔ 운영진 */
-  function toggleRole(id: string) {
-    setMembers((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, role: m.role === "운영진" ? "부원" : "운영진" } : m)),
-    );
+  /** 부원 ↔ 운영진 — 관리자는 여기서 바꾸지 않는다 */
+  async function toggleRole(id: string, currentRole: Role) {
+    const nextRole: Role = currentRole === "운영진" ? "부원" : "운영진";
+    const prev = rows;
+    setRows((cur) => cur.map((r) => (r.id === id ? { ...r, role: nextRole } : r)));
+    const { error: updateError } = await supabase.from("members").update({ role: nextRole }).eq("id", id);
+    if (updateError) {
+      setRows(prev);
+      setError("처리 중 문제가 발생했습니다. 다시 시도해 주세요.");
+    }
   }
 
   return (
     <>
+      {error && <p className={tableStyles.muted}>{error}</p>}
+
       <Panel
         title="가입 승인 대기"
         count={`${pending.length}건`}
@@ -80,7 +159,7 @@ export function MemberAdmin() {
           <button
             type="button"
             className={toolbar.button}
-            onClick={() => decidePicked("반려")}
+            onClick={() => decidePicked("rejected")}
             disabled={readOnly || picked.size === 0}
           >
             선택 반려{picked.size > 0 ? ` ${picked.size}` : ""}
@@ -88,7 +167,7 @@ export function MemberAdmin() {
           <button
             type="button"
             className={cn(toolbar.button, toolbar.primary)}
-            onClick={() => decidePicked("승인")}
+            onClick={() => decidePicked("approved")}
             disabled={readOnly || picked.size === 0}
           >
             선택 일괄 승인{picked.size > 0 ? ` ${picked.size}` : ""}
@@ -118,13 +197,13 @@ export function MemberAdmin() {
             "상태",
             "",
           ]}
-          isEmpty={requests.length === 0}
-          empty="가입 신청이 없습니다."
+          isEmpty={!loading && rows.length === 0}
+          empty={loading ? "불러오는 중..." : "가입 신청이 없습니다."}
         >
           {visibleReq.map((r) => (
             <tr key={r.id}>
               <td>
-                {r.state === "대기" && (
+                {r.status === "pending" && (
                   <input
                     type="checkbox"
                     aria-label={`${r.name} 선택`}
@@ -142,31 +221,29 @@ export function MemberAdmin() {
                 )}
               </td>
               <td>{r.name}</td>
-              <td className={tableStyles.muted}>{r.gender}</td>
+              <td className={tableStyles.muted}>{r.gender ?? "—"}</td>
               <td className={tableStyles.muted}>{r.track}</td>
-              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{r.studentId}</td>
-              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{r.birth}</td>
-              <td className={tableStyles.muted}>{cohortLabel(r.joinYear, r.joinSemester)}</td>
+              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{r.student_id}</td>
+              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{r.birth ?? "—"}</td>
+              <td className={tableStyles.muted}>{r.cohort}</td>
               <td className={tableStyles.muted}>{r.mbti ?? "—"}</td>
-              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{r.requestedAt}</td>
+              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{formatDate(r.created_at)}</td>
               <td>
-                <Badge tone={r.state === "승인" ? "green" : r.state === "반려" ? "grey" : "orange"}>
-                  {r.state}
-                </Badge>
+                <Badge tone={STATUS_TONE[r.status]}>{STATUS_LABEL[r.status]}</Badge>
               </td>
               <td className={styles.rowActions}>
-                {r.state === "대기" ? (
+                {r.status === "pending" ? (
                   <>
-                    <RowAction primary onClick={() => decide(r.id, "승인")} disabled={readOnly}>
+                    <RowAction primary onClick={() => decide(r.id, "approved")} disabled={readOnly}>
                       승인
                     </RowAction>
-                    <RowAction onClick={() => decide(r.id, "반려")} disabled={readOnly}>
+                    <RowAction onClick={() => decide(r.id, "rejected")} disabled={readOnly}>
                       반려
                     </RowAction>
                   </>
                 ) : (
                   <RowAction
-                    onClick={() => decide(r.id, "대기")}
+                    onClick={() => decide(r.id, "pending")}
                     title="대기로 되돌리기"
                     disabled={readOnly}
                   >
@@ -182,7 +259,7 @@ export function MemberAdmin() {
       <Panel
         title="회원 관리"
         count={`${members.length}명`}
-        desc="승인된 부원 목록입니다. 로그인은 학번(ID)과 개인 비밀번호 4자리로 합니다."
+        desc="승인된 부원 목록입니다. 로그인은 학번(ID)과 비밀번호로 합니다."
       >
         <div className={toolbar.toolbar}>
           <input
@@ -214,6 +291,7 @@ export function MemberAdmin() {
             <option value="all">권한: 전체</option>
             <option value="부원">부원</option>
             <option value="운영진">운영진</option>
+            <option value="관리자">관리자</option>
           </select>
         </div>
 
@@ -227,41 +305,42 @@ export function MemberAdmin() {
             "트랙 (학과)",
             "MBTI",
             "권한",
-            "누적시간",
             "",
           ]}
+          isEmpty={!loading && members.length === 0}
+          empty={loading ? "불러오는 중..." : "조건에 맞는 회원이 없습니다."}
         >
           {visibleMembers.map((m) => (
             <tr key={m.id}>
               <td>{m.name}</td>
-              <td className={tableStyles.muted}>{m.gender}</td>
-              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.studentId}</td>
-              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.birth}</td>
+              <td className={tableStyles.muted}>{m.gender ?? "—"}</td>
+              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.student_id}</td>
+              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.birth ?? "—"}</td>
               <td className={tableStyles.muted}>{m.cohort}</td>
               <td className={tableStyles.muted}>{m.track}</td>
               <td className={tableStyles.muted}>{m.mbti ?? "—"}</td>
               <td>
-                <Badge tone={m.role === "운영진" ? "purple" : "grey"}>{m.role}</Badge>
+                <Badge tone={m.role === "관리자" ? "purple" : m.role === "운영진" ? "purple" : "grey"}>
+                  {m.role}
+                </Badge>
               </td>
-              <td className={tableStyles.numeric}>{m.hours}시간</td>
               <td>
-                <RowAction
-                  onClick={() => toggleRole(m.id)}
-                  title={m.role === "운영진" ? "부원으로 내리기" : "운영진으로 올리기"}
-                  disabled={readOnly}
-                >
-                  {m.role === "운영진" ? "부원으로" : "운영진으로"}
-                </RowAction>
+                {m.role === "관리자" ? (
+                  <span className={tableStyles.muted} title="관리자 권한은 여기서 바꾸지 않습니다.">
+                    —
+                  </span>
+                ) : (
+                  <RowAction
+                    onClick={() => toggleRole(m.id, m.role)}
+                    title={m.role === "운영진" ? "부원으로 내리기" : "운영진으로 올리기"}
+                    disabled={readOnly}
+                  >
+                    {m.role === "운영진" ? "부원으로" : "운영진으로"}
+                  </RowAction>
+                )}
               </td>
             </tr>
           ))}
-          {visibleMembers.length === 0 && (
-            <tr>
-              <td colSpan={10} className={tableStyles.muted}>
-                조건에 맞는 회원이 없습니다.
-              </td>
-            </tr>
-          )}
         </DataTable>
       </Panel>
     </>

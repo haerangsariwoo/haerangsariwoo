@@ -97,8 +97,11 @@ export default function SignupPage() {
       id: authData.user.id,
       student_id: studentId,
       name: v.name.trim(),
+      gender: v.gender,
+      birth: v.birth.trim(),
       cohort: cohortLabel(v.joinYear!, v.joinSemester!),
       track: v.track.trim(),
+      mbti: v.mbti,
       role: "부원",
       status: "pending",
     });

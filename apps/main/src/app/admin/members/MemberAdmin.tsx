@@ -142,16 +142,72 @@ export function MemberAdmin() {
     }
   }
 
-  /** 부원 ↔ 운영진 — 관리자는 여기서 바꾸지 않는다 */
-  async function toggleRole(id: string, currentRole: Role) {
-    const nextRole: Role = currentRole === "운영진" ? "부원" : "운영진";
+  /**
+   * 부원 ↔ 운영진은 운영진·관리자 누구나 바꿀 수 있다.
+   * 관리자 지정·해제는 관리자만 — DB 트리거로도 한 번 더 막혀 있다
+   * (isSelfAdmin 아니면 "관리자" 옵션 자체를 안 보여준다).
+   */
+  async function changeRole(id: string, nextRole: Role) {
     const prev = rows;
     setRows((cur) => cur.map((r) => (r.id === id ? { ...r, role: nextRole } : r)));
     const { error: updateError } = await supabase.from("members").update({ role: nextRole }).eq("id", id);
     if (updateError) {
       setRows(prev);
-      setError("처리 중 문제가 발생했습니다. 다시 시도해 주세요.");
+      setError("권한 변경 중 문제가 발생했습니다. 다시 시도해 주세요.");
     }
+  }
+
+  // ---------- 회원 정보 수정 ----------
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    gender: "",
+    birth: "",
+    cohort: "",
+    track: "",
+    mbti: "",
+  });
+
+  function startEdit(m: MemberRow) {
+    setEditingId(m.id);
+    setEditForm({
+      name: m.name,
+      gender: m.gender ?? "",
+      birth: m.birth ?? "",
+      cohort: m.cohort,
+      track: m.track,
+      mbti: m.mbti ?? "",
+    });
+  }
+
+  async function saveEdit(id: string) {
+    const patch = {
+      name: editForm.name.trim(),
+      gender: editForm.gender.trim() || null,
+      birth: editForm.birth.trim() || null,
+      cohort: editForm.cohort.trim(),
+      track: editForm.track.trim(),
+      mbti: editForm.mbti.trim() || null,
+    };
+    const prev = rows;
+    setRows((cur) => cur.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+    setEditingId(null);
+    const { error: updateError } = await supabase.from("members").update(patch).eq("id", id);
+    if (updateError) {
+      setRows(prev);
+      setError("수정 중 문제가 발생했습니다. 다시 시도해 주세요.");
+    }
+  }
+
+  async function resetPassword(id: string, name: string) {
+    if (!window.confirm(`${name}의 비밀번호를 초기화할까요? 초기화하면 qwer1234로 로그인해야 합니다.`)) return;
+    const res = await fetch(`/api/admin/members/${id}/reset-password`, { method: "POST" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setError(data.error ?? "초기화 중 문제가 발생했습니다.");
+      return;
+    }
+    window.alert(`비밀번호가 ${data.password}로 초기화됐습니다. 본인에게 안내해 주세요.`);
   }
 
   return (
@@ -326,42 +382,117 @@ export function MemberAdmin() {
           isEmpty={!loading && members.length === 0}
           empty={loading ? "불러오는 중..." : "조건에 맞는 회원이 없습니다."}
         >
-          {visibleMembers.map((m) => (
-            <tr key={m.id}>
-              <td>{m.name}</td>
-              <td className={tableStyles.muted}>{m.gender ?? "—"}</td>
-              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.student_id}</td>
-              <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.birth ?? "—"}</td>
-              <td className={tableStyles.muted}>{m.cohort}</td>
-              <td className={tableStyles.muted}>{m.track}</td>
-              <td className={tableStyles.muted}>{m.mbti ?? "—"}</td>
-              <td>
-                <Badge tone={m.role === "관리자" ? "purple" : m.role === "운영진" ? "purple" : "grey"}>
-                  {m.role}
-                </Badge>
-              </td>
-              <td className={styles.rowActions}>
-                {m.role === "관리자" ? (
-                  <span className={tableStyles.muted} title="관리자 권한은 여기서 바꾸지 않습니다.">
-                    —
-                  </span>
-                ) : (
+          {visibleMembers.map((m) =>
+            editingId === m.id ? (
+              <tr key={m.id}>
+                <td>
+                  <input
+                    className={toolbar.search}
+                    value={editForm.name}
+                    onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                    aria-label="이름 수정"
+                  />
+                </td>
+                <td>
+                  <input
+                    className={toolbar.search}
+                    value={editForm.gender}
+                    onChange={(e) => setEditForm((f) => ({ ...f, gender: e.target.value }))}
+                    aria-label="성별 수정"
+                  />
+                </td>
+                <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.student_id}</td>
+                <td>
+                  <input
+                    className={toolbar.search}
+                    value={editForm.birth}
+                    onChange={(e) => setEditForm((f) => ({ ...f, birth: e.target.value }))}
+                    aria-label="생년월일 수정"
+                  />
+                </td>
+                <td>
+                  <input
+                    className={toolbar.search}
+                    value={editForm.cohort}
+                    onChange={(e) => setEditForm((f) => ({ ...f, cohort: e.target.value }))}
+                    aria-label="기수 수정"
+                  />
+                </td>
+                <td>
+                  <input
+                    className={toolbar.search}
+                    value={editForm.track}
+                    onChange={(e) => setEditForm((f) => ({ ...f, track: e.target.value }))}
+                    aria-label="트랙 수정"
+                  />
+                </td>
+                <td>
+                  <input
+                    className={toolbar.search}
+                    value={editForm.mbti}
+                    onChange={(e) => setEditForm((f) => ({ ...f, mbti: e.target.value }))}
+                    aria-label="MBTI 수정"
+                  />
+                </td>
+                <td>
+                  <Badge tone={m.role === "관리자" ? "purple" : m.role === "운영진" ? "purple" : "grey"}>
+                    {m.role}
+                  </Badge>
+                </td>
+                <td className={styles.rowActions}>
+                  <RowAction primary onClick={() => saveEdit(m.id)}>
+                    저장
+                  </RowAction>
+                  <RowAction onClick={() => setEditingId(null)}>취소</RowAction>
+                </td>
+              </tr>
+            ) : (
+              <tr key={m.id}>
+                <td>{m.name}</td>
+                <td className={tableStyles.muted}>{m.gender ?? "—"}</td>
+                <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.student_id}</td>
+                <td className={cn(tableStyles.muted, tableStyles.numeric)}>{m.birth ?? "—"}</td>
+                <td className={tableStyles.muted}>{m.cohort}</td>
+                <td className={tableStyles.muted}>{m.track}</td>
+                <td className={tableStyles.muted}>{m.mbti ?? "—"}</td>
+                <td>
+                  {m.role === "관리자" && !isSelfAdmin ? (
+                    <Badge tone="purple">관리자</Badge>
+                  ) : (
+                    <select
+                      className={toolbar.select}
+                      value={m.role}
+                      onChange={(e) => changeRole(m.id, e.target.value as Role)}
+                      disabled={readOnly}
+                      aria-label={`${m.name} 권한 변경`}
+                      title={!isSelfAdmin ? "관리자 지정은 관리자만 할 수 있습니다." : undefined}
+                    >
+                      <option value="부원">부원</option>
+                      <option value="운영진">운영진</option>
+                      {isSelfAdmin && <option value="관리자">관리자</option>}
+                    </select>
+                  )}
+                </td>
+                <td className={styles.rowActions}>
+                  <RowAction onClick={() => startEdit(m)} disabled={readOnly} title="회원 정보 수정">
+                    수정
+                  </RowAction>
                   <RowAction
-                    onClick={() => toggleRole(m.id, m.role)}
-                    title={m.role === "운영진" ? "부원으로 내리기" : "운영진으로 올리기"}
+                    onClick={() => resetPassword(m.id, m.name)}
                     disabled={readOnly}
+                    title="비밀번호 초기화"
                   >
-                    {m.role === "운영진" ? "부원으로" : "운영진으로"}
+                    비밀번호 초기화
                   </RowAction>
-                )}
-                {isSelfAdmin && (
-                  <RowAction onClick={() => deleteMember(m.id, m.name)} disabled={readOnly} title="회원 삭제">
-                    삭제
-                  </RowAction>
-                )}
-              </td>
-            </tr>
-          ))}
+                  {isSelfAdmin && (
+                    <RowAction onClick={() => deleteMember(m.id, m.name)} disabled={readOnly} title="회원 삭제">
+                      삭제
+                    </RowAction>
+                  )}
+                </td>
+              </tr>
+            ),
+          )}
         </DataTable>
       </Panel>
     </>

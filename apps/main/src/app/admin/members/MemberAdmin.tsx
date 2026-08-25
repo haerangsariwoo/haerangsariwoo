@@ -50,19 +50,23 @@ export function MemberAdmin() {
   const [rows, setRows] = useState<MemberRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  /** 회원 삭제 버튼은 관리자한테만 보인다 — 실제 권한은 서버에서도 다시 확인한다 */
+  const [isSelfAdmin, setIsSelfAdmin] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      const { data, error: fetchError } = await supabase
-        .from("members")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const [{ data, error: fetchError }, { data: authData }] = await Promise.all([
+        supabase.from("members").select("*").order("created_at", { ascending: false }),
+        supabase.auth.getUser(),
+      ]);
       if (cancelled) return;
       if (fetchError) {
         setError("회원 정보를 불러오지 못했습니다.");
       } else {
         setRows((data ?? []) as MemberRow[]);
+        const me = (data ?? []).find((r) => r.id === authData.user?.id);
+        setIsSelfAdmin(me?.role === "관리자");
       }
       setLoading(false);
     }
@@ -125,6 +129,18 @@ export function MemberAdmin() {
     const hitR = role === "all" || m.role === role;
     return hitQ && hitC && hitR;
   });
+
+  async function deleteMember(id: string, name: string) {
+    if (!window.confirm(`${name} 회원을 삭제할까요? 로그인 계정도 함께 삭제되며 되돌릴 수 없습니다.`)) return;
+    const prev = rows;
+    setRows((cur) => cur.filter((r) => r.id !== id));
+    const res = await fetch(`/api/admin/members/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      setRows(prev);
+      const data = await res.json().catch(() => ({}));
+      setError(data.error ?? "삭제 중 문제가 발생했습니다.");
+    }
+  }
 
   /** 부원 ↔ 운영진 — 관리자는 여기서 바꾸지 않는다 */
   async function toggleRole(id: string, currentRole: Role) {
@@ -324,7 +340,7 @@ export function MemberAdmin() {
                   {m.role}
                 </Badge>
               </td>
-              <td>
+              <td className={styles.rowActions}>
                 {m.role === "관리자" ? (
                   <span className={tableStyles.muted} title="관리자 권한은 여기서 바꾸지 않습니다.">
                     —
@@ -336,6 +352,11 @@ export function MemberAdmin() {
                     disabled={readOnly}
                   >
                     {m.role === "운영진" ? "부원으로" : "운영진으로"}
+                  </RowAction>
+                )}
+                {isSelfAdmin && (
+                  <RowAction onClick={() => deleteMember(m.id, m.name)} disabled={readOnly} title="회원 삭제">
+                    삭제
                   </RowAction>
                 )}
               </td>

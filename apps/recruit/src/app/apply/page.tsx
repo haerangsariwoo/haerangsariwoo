@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/Field/Field";
-import { saveStudentId } from "@/lib/apply-session";
+import { saveApplySession } from "@/lib/apply-session";
 import styles from "./apply.module.css";
 
 export default function IdentifyPage() {
@@ -14,8 +14,9 @@ export default function IdentifyPage() {
   const [studentId, setStudentId] = useState("");
   const [code, setCode] = useState("");
   const [errors, setErrors] = useState<{ studentId?: string; code?: string }>({});
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const next: typeof errors = {};
 
@@ -29,11 +30,27 @@ export default function IdentifyPage() {
     setErrors(next);
     if (Object.keys(next).length > 0) return;
 
-    // 2단계에서 다시 묻지 않도록 학번을 넘긴다 (본인 지정번호는 저장하지 않는다)
-    saveStudentId(studentId.trim());
+    setSubmitting(true);
+    const res = await fetch("/api/apply/check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ studentId: studentId.trim(), code: code.trim() }),
+    });
+    const data = await res.json();
+    setSubmitting(false);
 
-    // TODO: Supabase — 학번+본인지정번호로 기존 지원 확인 후 분기
-    router.push("/apply/form");
+    if (!res.ok) {
+      setErrors({ code: data.error ?? "확인 중 문제가 발생했습니다." });
+      return;
+    }
+
+    saveApplySession(studentId.trim(), code.trim());
+
+    if (data.exists) {
+      router.push("/apply/status");
+    } else {
+      router.push("/apply/form");
+    }
   }
 
   return (
@@ -78,8 +95,8 @@ export default function IdentifyPage() {
         </div>
 
         <div className={styles.actions}>
-          <Button type="submit" variant="primary" size="lg" fullWidth>
-            지원 정보 확인
+          <Button type="submit" variant="primary" size="lg" fullWidth disabled={submitting}>
+            {submitting ? "확인 중..." : "지원 정보 확인"}
           </Button>
         </div>
       </form>

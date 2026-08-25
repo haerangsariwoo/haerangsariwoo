@@ -1,47 +1,70 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
-import { applicants as applicantSeed, slotRows as slotSeed } from "@/lib/admin-data";
+import { createClient } from "@/lib/supabase/client";
+import type { Applicant, SlotRow } from "@/lib/admin-data";
 
-const EMPTY_SLOT = { date: "", range: "", interval: "30분", capacity: "6" };
+const EMPTY_SLOT = { slot_date: "", time_range: "", interval_label: "30분", capacity: "6" };
 
 export function InterviewAdmin() {
-  const [slots, setSlots] = useState(slotSeed);
-  const [people, setPeople] = useState(applicantSeed);
+  const supabase = useMemo(() => createClient(), []);
+  const [slots, setSlots] = useState<SlotRow[]>([]);
+  const [people, setPeople] = useState<Applicant[]>([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_SLOT);
   const [editing, setEditing] = useState<string | null>(null);
   /** 시간을 고르는 중인 지원자 */
   const [assigning, setAssigning] = useState<string | null>(null);
 
-  const booked = people.filter((a) => a.interview);
-  const unbooked = people.filter((a) => a.first === "합격" && !a.interview);
-
-  function submitSlot(e: FormEvent) {
-    e.preventDefault();
-    const cap = Number(form.capacity) || 0;
-    if (editing) {
-      setSlots((prev) =>
-        prev.map((s) =>
-          s.id === editing
-            ? { ...s, date: form.date, range: form.range, interval: form.interval, capacity: cap }
-            : s,
-        ),
-      );
-    } else {
-      setSlots((prev) => [
-        ...prev,
-        {
-          id: `sr${Date.now()}`,
-          date: form.date.trim(),
-          range: form.range.trim(),
-          interval: form.interval,
-          booked: 0,
-          capacity: cap,
-        },
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const [{ data: slotData }, { data: peopleData }] = await Promise.all([
+        supabase.from("interview_slots").select("*").order("slot_date", { ascending: true }),
+        supabase
+          .from("applicants")
+          .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result")
+          .order("applied_at", { ascending: false }),
       ]);
+      if (cancelled) return;
+      setSlots((slotData ?? []) as SlotRow[]);
+      setPeople((peopleData ?? []) as Applicant[]);
+      setLoading(false);
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
+
+  const booked = people.filter((a) => a.interview);
+  const unbooked = people.filter((a) => a.first_result === "합격" && !a.interview);
+
+  function bookedCount(slotDate: string) {
+    return people.filter((a) => a.interview?.startsWith(slotDate)).length;
+  }
+
+  async function submitSlot(e: FormEvent) {
+    e.preventDefault();
+    const capacity = Number(form.capacity) || 0;
+    const payload = {
+      slot_date: form.slot_date.trim(),
+      time_range: form.time_range.trim(),
+      interval_label: form.interval_label,
+      capacity,
+    };
+
+    if (editing) {
+      const prev = slots;
+      setSlots((s) => s.map((row) => (row.id === editing ? { ...row, ...payload } : row)));
+      const { error } = await supabase.from("interview_slots").update(payload).eq("id", editing);
+      if (error) setSlots(prev);
+    } else {
+      const { data, error } = await supabase.from("interview_slots").insert(payload).select().single();
+      if (!error && data) setSlots((s) => [...s, data as SlotRow]);
     }
     setForm(EMPTY_SLOT);
     setEditing(null);
@@ -52,25 +75,29 @@ export function InterviewAdmin() {
     const s = slots.find((x) => x.id === id);
     if (!s) return;
     setForm({
-      date: s.date,
-      range: s.range,
-      interval: s.interval,
+      slot_date: s.slot_date,
+      time_range: s.time_range,
+      interval_label: s.interval_label,
       capacity: String(s.capacity),
     });
     setEditing(id);
     setOpen(true);
   }
 
-  function removeSlot(id: string) {
-    setSlots((prev) => prev.filter((s) => s.id !== id));
+  async function removeSlot(id: string) {
+    const prev = slots;
+    setSlots((s) => s.filter((row) => row.id !== id));
+    const { error } = await supabase.from("interview_slots").delete().eq("id", id);
+    if (error) setSlots(prev);
   }
 
   /** 지원자에게 면접 시간을 직접 배정한다 */
-  function assign(applicantId: string, slotDate: string | null) {
-    setPeople((prev) =>
-      prev.map((a) => (a.id === applicantId ? { ...a, interview: slotDate } : a)),
-    );
+  async function assign(applicantId: string, interview: string | null) {
+    const prev = people;
+    setPeople((p) => p.map((a) => (a.id === applicantId ? { ...a, interview } : a)));
     setAssigning(null);
+    const { error } = await supabase.from("applicants").update({ interview }).eq("id", applicantId);
+    if (error) setPeople(prev);
   }
 
   return (
@@ -78,7 +105,7 @@ export function InterviewAdmin() {
       <Panel
         title="면접 슬롯 관리"
         count={`${slots.length}일`}
-        desc="날짜와 시간대를 열어두면 1차 합격자가 직접 예약합니다."
+        desc="날짜와 시간대를 열어두면 배정 현황을 한눈에 볼 수 있습니다."
       >
         <div className={ui.toolbar}>
           <span className={ui.spacer} />
@@ -101,8 +128,8 @@ export function InterviewAdmin() {
               <span className={ui.inlineLabel}>날짜</span>
               <input
                 className={ui.inlineInput}
-                value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                value={form.slot_date}
+                onChange={(e) => setForm({ ...form, slot_date: e.target.value })}
                 placeholder="예: 9.14 (일)"
                 required
               />
@@ -111,8 +138,8 @@ export function InterviewAdmin() {
               <span className={ui.inlineLabel}>운영 시간</span>
               <input
                 className={ui.inlineInput}
-                value={form.range}
-                onChange={(e) => setForm({ ...form, range: e.target.value })}
+                value={form.time_range}
+                onChange={(e) => setForm({ ...form, time_range: e.target.value })}
                 placeholder="예: 13:00 – 17:00"
                 required
               />
@@ -121,8 +148,8 @@ export function InterviewAdmin() {
               <span className={ui.inlineLabel}>간격</span>
               <select
                 className={ui.inlineInput}
-                value={form.interval}
-                onChange={(e) => setForm({ ...form, interval: e.target.value })}
+                value={form.interval_label}
+                onChange={(e) => setForm({ ...form, interval_label: e.target.value })}
               >
                 <option value="20분">20분</option>
                 <option value="30분">30분</option>
@@ -140,7 +167,7 @@ export function InterviewAdmin() {
               />
             </label>
             <div className={ui.inlineActions}>
-              <button type="submit" className={cn(ui.btn, ui.primary)} disabled={!form.date.trim()}>
+              <button type="submit" className={cn(ui.btn, ui.primary)} disabled={!form.slot_date.trim()}>
                 {editing ? "수정 저장" : "추가"}
               </button>
               <button
@@ -171,14 +198,15 @@ export function InterviewAdmin() {
             </thead>
             <tbody>
               {slots.map((s) => {
-                const full = s.booked >= s.capacity;
+                const count = bookedCount(s.slot_date);
+                const full = count >= s.capacity;
                 return (
                   <tr key={s.id}>
-                    <td>{s.date}</td>
-                    <td className={cn(ui.muted, ui.numeric)}>{s.range}</td>
-                    <td className={ui.muted}>{s.interval}</td>
+                    <td>{s.slot_date}</td>
+                    <td className={cn(ui.muted, ui.numeric)}>{s.time_range}</td>
+                    <td className={ui.muted}>{s.interval_label}</td>
                     <td className={ui.numeric}>
-                      {s.booked} / {s.capacity}
+                      {count} / {s.capacity}
                     </td>
                     <td>
                       <Badge tone={full ? "danger" : "green"}>{full ? "마감" : "예약 가능"}</Badge>
@@ -194,7 +222,7 @@ export function InterviewAdmin() {
                   </tr>
                 );
               })}
-              {slots.length === 0 && (
+              {!loading && slots.length === 0 && (
                 <tr>
                   <td colSpan={6} className={ui.muted}>
                     열어둔 면접 슬롯이 없습니다.
@@ -209,7 +237,7 @@ export function InterviewAdmin() {
       <Panel
         title="예약 현황"
         count={`${booked.length}명 예약`}
-        desc={`미예약 ${unbooked.length}명 — 필요 시 운영진이 직접 배정할 수 있습니다.`}
+        desc={`미예약 ${unbooked.length}명 — 운영진이 직접 배정합니다.`}
       >
         <div className={ui.tableWrap}>
           <table className={ui.table}>
@@ -226,7 +254,7 @@ export function InterviewAdmin() {
               {[...booked, ...unbooked].map((a) => (
                 <tr key={a.id}>
                   <td>{a.name}</td>
-                  <td className={cn(ui.muted, ui.numeric)}>{a.studentId}</td>
+                  <td className={cn(ui.muted, ui.numeric)}>{a.student_id}</td>
                   <td className={cn(ui.muted, ui.numeric)}>{a.phone}</td>
                   <td className={ui.numeric}>
                     {assigning === a.id ? (
@@ -239,8 +267,8 @@ export function InterviewAdmin() {
                       >
                         <option value="">시간 선택</option>
                         {slots.map((s) => (
-                          <option key={s.id} value={`${s.date} ${s.range.split(" – ")[0]}`}>
-                            {s.date} {s.range}
+                          <option key={s.id} value={`${s.slot_date} ${s.time_range.split(" – ")[0]}`}>
+                            {s.slot_date} {s.time_range}
                           </option>
                         ))}
                       </select>
@@ -264,6 +292,13 @@ export function InterviewAdmin() {
                   </td>
                 </tr>
               ))}
+              {!loading && booked.length === 0 && unbooked.length === 0 && (
+                <tr>
+                  <td colSpan={5} className={ui.muted}>
+                    1차 합격자가 아직 없습니다.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

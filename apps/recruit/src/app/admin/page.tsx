@@ -1,10 +1,35 @@
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
-import { applicants, recruitMetrics, slotRows } from "@/lib/admin-data";
+import { createClient } from "@/lib/supabase/server";
 import { recruitConfig } from "@/lib/recruit-config";
+import type { Applicant, SlotRow } from "@/lib/admin-data";
 import styles from "./dashboard.module.css";
 
-export default function RecruitDashboard() {
+export default async function RecruitDashboard() {
+  const supabase = await createClient();
+
+  const [{ data: applicantData }, { data: slotData }] = await Promise.all([
+    supabase
+      .from("applicants")
+      .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result")
+      .order("applied_at", { ascending: false }),
+    supabase.from("interview_slots").select("*").order("slot_date", { ascending: true }),
+  ]);
+
+  const applicants = (applicantData ?? []) as Applicant[];
+  const slots = (slotData ?? []) as SlotRow[];
+
+  const firstPassCount = applicants.filter((a) => a.first_result === "합격").length;
+  const bookedCount = applicants.filter((a) => a.interview).length;
+  const finalPassCount = applicants.filter((a) => a.final_result === "합격").length;
+
+  const metrics = [
+    { label: "총 지원", value: String(applicants.length), unit: "명", tone: "blue" as const },
+    { label: "1차 합격", value: String(firstPassCount), unit: "명", tone: "green" as const },
+    { label: "면접 예약", value: String(bookedCount), unit: `/ ${firstPassCount}`, tone: "orange" as const },
+    { label: "최종 합격", value: String(finalPassCount), unit: "명", tone: "purple" as const },
+  ];
+
   const stages = [
     { no: 1, label: "지원서 접수", date: `${recruitConfig.applyStart} – ${recruitConfig.applyEnd}` },
     { no: 2, label: "1차 서류 발표", date: recruitConfig.firstResultDate },
@@ -17,7 +42,7 @@ export default function RecruitDashboard() {
   return (
     <>
       <div className={styles.metricRow}>
-        {recruitMetrics.map((m) => (
+        {metrics.map((m) => (
           <div key={m.label} className={styles.metric}>
             <p className={styles.metricLabel}>{m.label}</p>
             <p className={cn(styles.metricValue, styles[m.tone])}>
@@ -41,16 +66,17 @@ export default function RecruitDashboard() {
           </div>
         </Panel>
 
-        <Panel title="면접 슬롯 현황" count="예약 28 / 32">
+        <Panel title="면접 슬롯 현황" count={`예약 ${bookedCount} / ${slots.reduce((sum, s) => sum + s.capacity, 0)}`}>
           <div className={styles.progressWrap}>
-            {slotRows.map((s) => {
-              const pct = Math.round((s.booked / s.capacity) * 100);
+            {slots.map((s) => {
+              const count = applicants.filter((a) => a.interview?.startsWith(s.slot_date)).length;
+              const pct = s.capacity > 0 ? Math.round((count / s.capacity) * 100) : 0;
               return (
                 <div key={s.id} className={styles.progressRow}>
                   <div className={styles.progressHead}>
-                    <span className={styles.progressLabel}>{s.date}</span>
+                    <span className={styles.progressLabel}>{s.slot_date}</span>
                     <span className={styles.progressValue}>
-                      {s.booked}/{s.capacity}
+                      {count}/{s.capacity}
                     </span>
                   </div>
                   <div className={styles.track}>
@@ -62,6 +88,7 @@ export default function RecruitDashboard() {
                 </div>
               );
             })}
+            {slots.length === 0 && <p className={ui.muted}>열어둔 면접 슬롯이 없습니다.</p>}
           </div>
         </Panel>
       </div>
@@ -84,22 +111,29 @@ export default function RecruitDashboard() {
               {recent.map((a) => (
                 <tr key={a.id}>
                   <td>{a.name}</td>
-                  <td className={cn(ui.muted, ui.numeric)}>{a.studentId}</td>
+                  <td className={cn(ui.muted, ui.numeric)}>{a.student_id}</td>
                   <td className={ui.muted}>{a.track}</td>
-                  <td className={cn(ui.muted, ui.numeric)}>{a.appliedAt}</td>
+                  <td className={cn(ui.muted, ui.numeric)}>{a.applied_at?.slice(5, 10)}</td>
                   <td>
-                    <Badge tone={a.first === "합격" ? "green" : a.first === "불합격" ? "danger" : "grey"}>
-                      {a.first}
+                    <Badge tone={a.first_result === "합격" ? "green" : a.first_result === "불합격" ? "danger" : "grey"}>
+                      {a.first_result}
                     </Badge>
                   </td>
                   <td className={cn(ui.muted, ui.numeric)}>{a.interview ?? "미선택"}</td>
                   <td>
-                    <Badge tone={a.final === "합격" ? "green" : a.final === "불합격" ? "danger" : "grey"}>
-                      {a.final}
+                    <Badge tone={a.final_result === "합격" ? "green" : a.final_result === "불합격" ? "danger" : "grey"}>
+                      {a.final_result}
                     </Badge>
                   </td>
                 </tr>
               ))}
+              {recent.length === 0 && (
+                <tr>
+                  <td colSpan={7} className={ui.muted}>
+                    아직 지원자가 없습니다.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

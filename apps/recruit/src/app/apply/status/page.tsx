@@ -1,27 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import * as Tabs from "@radix-ui/react-tabs";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
-import {
-  cohortLabel,
-  interviewPlace,
-  interviewSlots,
-  nextSteps,
-  recruitConfig,
-} from "@/lib/recruit-config";
+import { TextField } from "@/components/ui/Field/Field";
+import { cohortLabel, nextSteps, recruitConfig } from "@/lib/recruit-config";
+import { useApplyCode, useStudentId } from "@/lib/apply-session";
 import styles from "./status.module.css";
 
-/** 데모용 상태 전환 — 실제로는 지원자의 심사 상태를 서버에서 내려준다 */
 type Stage = "submitted" | "firstPass" | "firstFail" | "finalPass" | "finalFail";
 
-const STAGES: { key: Stage; label: string }[] = [
-  { key: "submitted", label: "제출 완료" },
-  { key: "firstPass", label: "1차 결과" },
-  { key: "finalPass", label: "최종 결과" },
-];
+interface StatusResult {
+  firstResult: "대기" | "합격" | "불합격";
+  finalResult: "대기" | "합격" | "불합격";
+  interview: string | null;
+  firstPublished: boolean;
+  finalPublished: boolean;
+}
 
 const CheckIcon = ({ size = 26 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -29,46 +25,104 @@ const CheckIcon = ({ size = 26 }: { size?: number }) => (
   </svg>
 );
 
+function stageOf(r: StatusResult): Stage {
+  if (!r.firstPublished) return "submitted";
+  if (r.firstResult === "불합격") return "firstFail";
+  if (!r.finalPublished) return "firstPass";
+  if (r.finalResult === "합격") return "finalPass";
+  if (r.finalResult === "불합격") return "finalFail";
+  return "firstPass";
+}
+
 export default function StatusPage() {
-  const [stage, setStage] = useState<Stage>("submitted");
-  const [reject, setReject] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(interviewSlots[0].date);
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const sessionStudentId = useStudentId();
+  const sessionCode = useApplyCode();
 
-  const dates = useMemo(() => [...new Set(interviewSlots.map((s) => s.date))], []);
-  const slots = interviewSlots.filter((s) => s.date === selectedDate);
+  const [studentId, setStudentId] = useState("");
+  const [code, setCode] = useState("");
+  const [errors, setErrors] = useState<{ studentId?: string; code?: string }>({});
+  const [checking, setChecking] = useState(false);
+  const [result, setResult] = useState<StatusResult | null>(null);
+  const triedSession = useRef(false);
 
-  const showStage: Stage =
-    stage === "firstPass" && reject
-      ? "firstFail"
-      : stage === "finalPass" && reject
-        ? "finalFail"
-        : stage;
+  async function check(sid: string, c: string) {
+    setChecking(true);
+    setErrors({});
+    const res = await fetch("/api/apply/status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ studentId: sid, code: c }),
+    });
+    const data = await res.json();
+    setChecking(false);
+
+    if (!res.ok) {
+      setErrors({ code: data.error ?? "확인 중 문제가 발생했습니다." });
+      return false;
+    }
+    setResult(data);
+    return true;
+  }
+
+  useEffect(() => {
+    if (triedSession.current) return;
+    if (sessionStudentId && sessionCode) {
+      triedSession.current = true;
+      queueMicrotask(() => check(sessionStudentId, sessionCode));
+    }
+  }, [sessionStudentId, sessionCode]);
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    const next: typeof errors = {};
+    if (!/^\d{7}$/.test(studentId.trim())) next.studentId = "학번 7자리를 정확히 입력해 주세요.";
+    if (!/^\d{6}$/.test(code.trim())) next.code = "숫자 6자리를 입력해 주세요.";
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
+    check(studentId.trim(), code.trim());
+  }
+
+  if (!result) {
+    return (
+      <Shell title="지원 현황" back="/">
+        <h1 className={styles.centerTitle}>학번과 본인 지정번호로 확인해요</h1>
+        <form onSubmit={handleSubmit} noValidate>
+          <TextField
+            label="학번"
+            name="studentId"
+            required
+            placeholder="예: 2026000"
+            inputMode="numeric"
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value)}
+            error={errors.studentId}
+          />
+          <TextField
+            label="본인 지정번호"
+            name="code"
+            required
+            type="password"
+            placeholder="숫자 6자리"
+            inputMode="numeric"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            error={errors.code}
+          />
+          <div className={styles.footerAction}>
+            <Button type="submit" variant="primary" size="lg" fullWidth disabled={checking}>
+              {checking ? "확인 중..." : "지원 현황 확인"}
+            </Button>
+          </div>
+        </form>
+      </Shell>
+    );
+  }
+
+  const stage = stageOf(result);
 
   return (
     <Shell title="지원 현황" back="/">
-      {/* 데모 전환 스위처 — Supabase 연동 시 제거 */}
-      <Tabs.Root value={stage} onValueChange={(v) => setStage(v as Stage)}>
-        <Tabs.List className={styles.switcher} aria-label="지원 단계 보기">
-          {STAGES.map((s) => (
-            <Tabs.Trigger key={s.key} value={s.key} className={styles.switchBtn}>
-              {s.label}
-            </Tabs.Trigger>
-          ))}
-        </Tabs.List>
-      </Tabs.Root>
-      {stage !== "submitted" && (
-        <label className={styles.demoNote}>
-          <input
-            type="checkbox"
-            checked={reject}
-            onChange={(e) => setReject(e.target.checked)}
-          />{" "}
-          불합격 화면으로 보기 (데모)
-        </label>
-      )}
-
-      {showStage === "submitted" && (
+      {stage === "submitted" && (
         <>
           <div className={styles.successIcon}>
             <CheckIcon size={34} />
@@ -82,7 +136,7 @@ export default function StatusPage() {
             {[
               { label: "지원서 제출", done: true },
               { label: "1차 심사", done: false },
-              { label: "면접 일정 선택", done: false },
+              { label: "면접", done: false },
               { label: "최종 발표", done: false },
             ].map((s, i) => (
               <div key={s.label} className={styles.stepRow}>
@@ -98,73 +152,30 @@ export default function StatusPage() {
           </div>
 
           <p className={styles.infoNote}>
-            결과 발표 후 동일한 <b>학번과 본인 지정번호</b>로 로그인하면 결과를 확인할 수 있어요.
+            결과 발표 후 같은 <b>학번과 본인 지정번호</b>로 이 화면에서 결과를 확인할 수 있어요.
             1차 발표는 <b>{recruitConfig.firstResultDate}</b> 예정입니다.
           </p>
         </>
       )}
 
-      {showStage === "firstPass" && (
+      {stage === "firstPass" && (
         <>
           <div className={styles.resultCard}>
             <span className={styles.resultLabel}>1차 합격</span>
             <h1 className={styles.resultTitle}>면접에서 만나요!</h1>
-            <p className={styles.resultDesc}>희망하는 면접 시간을 선택해 주세요.</p>
+            <p className={styles.resultDesc}>
+              {result.interview
+                ? `면접 시간: ${result.interview}`
+                : "면접 시간은 운영진이 곧 안내드립니다."}
+            </p>
           </div>
-
-          <p className={styles.sectionTitle}>면접 날짜</p>
-          <Tabs.Root
-            value={selectedDate}
-            onValueChange={(v) => {
-              setSelectedDate(v);
-              setSelectedSlot(null);
-            }}
-          >
-            <Tabs.List className={styles.dateTabs} aria-label="면접 날짜">
-              {dates.map((d) => (
-                <Tabs.Trigger key={d} value={d} className={styles.dateTab}>
-                  {d}
-                </Tabs.Trigger>
-              ))}
-            </Tabs.List>
-          </Tabs.Root>
-
-          <p className={styles.sectionTitle}>시간 선택</p>
-          <div className={styles.slotGrid}>
-            {slots.map((s) => {
-              const left = s.capacity - s.taken;
-              const full = left <= 0;
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  disabled={full}
-                  className={cn(styles.slot, selectedSlot === s.id && styles.selected)}
-                  onClick={() => setSelectedSlot(s.id)}
-                >
-                  <span className={styles.slotTime}>{s.time}</span>
-                  <span className={styles.slotLeft}>
-                    {full ? "마감" : `${left}/${s.capacity}`}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          <p className={styles.placeNote}>
-            <span aria-hidden>📍</span>
-            {interviewPlace}
+          <p className={styles.infoNote}>
+            최종 발표는 <b>{recruitConfig.finalResultDate}</b> 예정입니다.
           </p>
-
-          <div className={styles.footerAction}>
-            <Button variant="primary" size="lg" fullWidth disabled={!selectedSlot}>
-              {selectedSlot ? "면접 시간 예약" : "시간을 선택해 주세요"}
-            </Button>
-          </div>
         </>
       )}
 
-      {showStage === "firstFail" && (
+      {stage === "firstFail" && (
         <>
           <div className={cn(styles.resultCard, styles.reject)}>
             <span className={styles.resultLabel}>1차 결과 안내</span>
@@ -179,20 +190,13 @@ export default function StatusPage() {
               보내주신 관심에 다시 한번 감사드립니다.
             </p>
           </div>
-
           <p className={styles.infoNote}>
             제출해 주신 개인정보는 모집 종료 후 관련 법령에 따라 안전하게 파기됩니다.
           </p>
-
-          <div className={styles.footerAction}>
-            <Button variant="outline" size="lg" fullWidth>
-              확인했어요
-            </Button>
-          </div>
         </>
       )}
 
-      {showStage === "finalPass" && (
+      {stage === "finalPass" && (
         <>
           <div className={styles.resultCard}>
             <span className={styles.resultEmblem}>
@@ -222,16 +226,10 @@ export default function StatusPage() {
           <p className={styles.infoNote}>
             개인 연락처 대신 <b>공식 문의 채널</b>을 이용해 주세요.
           </p>
-
-          <div className={styles.footerAction}>
-            <Button variant="primary" size="lg" fullWidth>
-              메인 회원 앱 안내 보기
-            </Button>
-          </div>
         </>
       )}
 
-      {showStage === "finalFail" && (
+      {stage === "finalFail" && (
         <>
           <div className={cn(styles.resultCard, styles.reject)}>
             <span className={styles.resultLabel}>최종 결과 안내</span>
@@ -246,16 +244,9 @@ export default function StatusPage() {
               면접까지 함께해 주셔서 감사합니다.
             </p>
           </div>
-
           <p className={styles.infoNote}>
             제출해 주신 개인정보와 면접 기록은 모집 종료 후 관련 법령에 따라 안전하게 파기됩니다.
           </p>
-
-          <div className={styles.footerAction}>
-            <Button variant="outline" size="lg" fullWidth>
-              확인했어요
-            </Button>
-          </div>
         </>
       )}
     </Shell>

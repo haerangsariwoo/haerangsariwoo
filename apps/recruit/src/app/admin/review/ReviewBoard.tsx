@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
-import { applicants as seed, type FinalResult, type FirstResult } from "@/lib/admin-data";
+import { createClient } from "@/lib/supabase/client";
+import type { Applicant, FinalResult, FirstResult } from "@/lib/admin-data";
 
 const RESULT_OPTIONS = [
   { value: "합격", label: "합격", tone: "pass", activeBg: "var(--brand-blue-500)" },
@@ -44,48 +45,68 @@ function ResultSegmented<T extends string>({
 }
 
 export function ReviewBoard() {
-  const [rows, setRows] = useState(seed);
+  const supabase = useMemo(() => createClient(), []);
+  const [rows, setRows] = useState<Applicant[]>([]);
+  const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [picked, setPicked] = useState<Set<string>>(new Set());
   /** 발표 여부 — 발표해야 지원자 화면에 결과가 보인다 */
   const [published, setPublished] = useState({ first: false, final: false });
 
-  const visible = rows.filter((a) => !q.trim() || a.name.includes(q.trim()));
-  const firstPending = rows.filter((a) => a.first === "대기");
-  const finalPending = rows.filter((a) => a.first === "합격" && a.final === "대기");
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const [{ data: applicants }, { data: settings }] = await Promise.all([
+        supabase
+          .from("applicants")
+          .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result")
+          .order("applied_at", { ascending: false }),
+        supabase.from("recruit_settings").select("first_published, final_published").eq("id", 1).single(),
+      ]);
+      if (cancelled) return;
+      setRows((applicants ?? []) as Applicant[]);
+      if (settings) setPublished({ first: settings.first_published, final: settings.final_published });
+      setLoading(false);
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
 
-  function setFirst(id: string, v: FirstResult) {
-    setRows((prev) =>
-      prev.map((a) =>
-        a.id === id
-          ? v === "합격"
-            ? { ...a, first: v }
-            : { ...a, first: v, interview: null, final: "대기" as FinalResult }
-          : a,
-      ),
-    );
+  const visible = rows.filter((a) => !q.trim() || a.name.includes(q.trim()));
+  const firstPending = rows.filter((a) => a.first_result === "대기");
+  const finalPending = rows.filter((a) => a.first_result === "합격" && a.final_result === "대기");
+
+  async function setFirst(id: string, v: FirstResult) {
+    const patch = v === "합격" ? { first_result: v } : { first_result: v, interview: null, final_result: "대기" as FinalResult };
+    const prev = rows;
+    setRows((r) => r.map((a) => (a.id === id ? { ...a, ...patch } : a)));
     setPicked((p) => {
       const n = new Set(p);
       n.delete(id);
       return n;
     });
+    const { error } = await supabase.from("applicants").update(patch).eq("id", id);
+    if (error) setRows(prev);
   }
 
-  function setFinal(id: string, v: FinalResult) {
-    setRows((prev) => prev.map((a) => (a.id === id ? { ...a, final: v } : a)));
+  async function setFinal(id: string, v: FinalResult) {
+    const prev = rows;
+    setRows((r) => r.map((a) => (a.id === id ? { ...a, final_result: v } : a)));
+    const { error } = await supabase.from("applicants").update({ final_result: v }).eq("id", id);
+    if (error) setRows(prev);
   }
 
-  function bulkFirst(v: FirstResult) {
-    setRows((prev) =>
-      prev.map((a) =>
-        picked.has(a.id)
-          ? v === "합격"
-            ? { ...a, first: v }
-            : { ...a, first: v, interview: null, final: "대기" as FinalResult }
-          : a,
-      ),
-    );
+  async function bulkFirst(v: FirstResult) {
+    const ids = [...picked];
+    if (ids.length === 0) return;
+    const patch = v === "합격" ? { first_result: v } : { first_result: v, interview: null, final_result: "대기" as FinalResult };
+    const prev = rows;
+    setRows((r) => r.map((a) => (ids.includes(a.id) ? { ...a, ...patch } : a)));
     setPicked(new Set());
+    const { error } = await supabase.from("applicants").update(patch).in("id", ids);
+    if (error) setRows(prev);
   }
 
   function toggle(id: string) {
@@ -97,7 +118,15 @@ export function ReviewBoard() {
     });
   }
 
-  const pendingVisible = visible.filter((a) => a.first === "대기");
+  async function publish(key: "first" | "final") {
+    setPublished((p) => ({ ...p, [key]: true }));
+    await supabase
+      .from("recruit_settings")
+      .update(key === "first" ? { first_published: true } : { final_published: true })
+      .eq("id", 1);
+  }
+
+  const pendingVisible = visible.filter((a) => a.first_result === "대기");
   const allPicked = pendingVisible.length > 0 && pendingVisible.every((a) => picked.has(a.id));
 
   return (
@@ -159,7 +188,7 @@ export function ReviewBoard() {
               {visible.map((a) => (
                 <tr key={a.id}>
                   <td>
-                    {a.first === "대기" && (
+                    {a.first_result === "대기" && (
                       <input
                         type="checkbox"
                         aria-label={`${a.name} 선택`}
@@ -169,14 +198,21 @@ export function ReviewBoard() {
                     )}
                   </td>
                   <td>{a.name}</td>
-                  <td className={cn(ui.muted, ui.numeric)}>{a.studentId}</td>
+                  <td className={cn(ui.muted, ui.numeric)}>{a.student_id}</td>
                   <td className={ui.muted}>{a.track}</td>
                   <td className={cn(ui.muted, ui.clip)}>{a.motivation}</td>
                   <td>
-                    <ResultSegmented value={a.first} onChange={(v) => setFirst(a.id, v)} />
+                    <ResultSegmented value={a.first_result} onChange={(v) => setFirst(a.id, v)} />
                   </td>
                 </tr>
               ))}
+              {!loading && visible.length === 0 && (
+                <tr>
+                  <td colSpan={6} className={ui.muted}>
+                    지원자가 없습니다.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -192,7 +228,7 @@ export function ReviewBoard() {
           <button
             type="button"
             className={ui.btn}
-            onClick={() => setPublished((p) => ({ ...p, first: true }))}
+            onClick={() => publish("first")}
             disabled={published.first || firstPending.length > 0}
             title={firstPending.length > 0 ? "심사가 끝나지 않았습니다" : undefined}
           >
@@ -201,7 +237,7 @@ export function ReviewBoard() {
           <button
             type="button"
             className={cn(ui.btn, ui.primary)}
-            onClick={() => setPublished((p) => ({ ...p, final: true }))}
+            onClick={() => publish("final")}
             disabled={published.final || finalPending.length > 0}
             title={finalPending.length > 0 ? "최종 심사가 끝나지 않았습니다" : undefined}
           >
@@ -221,7 +257,7 @@ export function ReviewBoard() {
             </thead>
             <tbody>
               {rows
-                .filter((a) => a.first === "합격")
+                .filter((a) => a.first_result === "합격")
                 .map((a) => (
                   <tr key={a.id}>
                     <td>{a.name}</td>
@@ -229,14 +265,14 @@ export function ReviewBoard() {
                       {a.interview ?? "미선택"}
                     </td>
                     <td>
-                      <Badge tone="green">{a.first}</Badge>
+                      <Badge tone="green">{a.first_result}</Badge>
                     </td>
                     <td>
-                      <ResultSegmented value={a.final} onChange={(v) => setFinal(a.id, v)} />
+                      <ResultSegmented value={a.final_result} onChange={(v) => setFinal(a.id, v)} />
                     </td>
                   </tr>
                 ))}
-              {rows.filter((a) => a.first === "합격").length === 0 && (
+              {rows.filter((a) => a.first_result === "합격").length === 0 && (
                 <tr>
                   <td colSpan={4} className={ui.muted}>
                     1차 합격자가 아직 없습니다.

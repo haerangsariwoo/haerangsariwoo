@@ -3,37 +3,46 @@
 import { useSyncExternalStore } from "react";
 
 /**
- * 지원 흐름 1단계에서 확인한 학번을 2단계로 넘긴다.
- * 학번은 개인 식별 정보라 URL 쿼리에 남기지 않고,
- * 탭을 닫으면 사라지는 sessionStorage 에만 둔다.
- * 본인 지정번호는 비밀번호 성격이라 저장하지 않는다.
- *
- * Supabase 연동 시 서버 세션으로 대체한다.
+ * 지원 흐름 1단계에서 확인한 학번·본인 지정번호를 2단계(제출)로 넘긴다.
+ * 개인 식별 정보라 URL 쿼리에 남기지 않고, 탭을 닫으면 사라지는
+ * sessionStorage 에만 둔다 — 지원 흐름이 끝나면 clearApplySession 으로 지운다.
+ * (나중에 결과를 다시 확인하려면 본인이 정한 번호를 기억해야 한다 —
+ * 여기 저장된 값은 이번 제출 흐름 안에서만 쓰인다.)
  */
-const KEY = "haerang.apply.studentId";
+const STUDENT_ID_KEY = "haerang.apply.studentId";
+const CODE_KEY = "haerang.apply.code";
 
-export function saveStudentId(studentId: string) {
+export function saveApplySession(studentId: string, code: string) {
   try {
-    sessionStorage.setItem(KEY, studentId);
+    sessionStorage.setItem(STUDENT_ID_KEY, studentId);
+    sessionStorage.setItem(CODE_KEY, code);
   } catch {
-    // 사생활 보호 모드 등에서 막힐 수 있다. 없으면 2단계에서 다시 묻는다.
+    // 사생활 보호 모드 등에서 막힐 수 있다. 없으면 폼에서 다시 확인이 필요하다.
   }
 }
 
-export function clearStudentId() {
+export function clearApplySession() {
   try {
-    sessionStorage.removeItem(KEY);
+    sessionStorage.removeItem(STUDENT_ID_KEY);
+    sessionStorage.removeItem(CODE_KEY);
   } catch {
     /* 무시 */
   }
 }
 
-/** 마운트 이후 값이 바뀌지 않으므로 구독은 비워둔다 */
 const noopSubscribe = () => () => {};
 
-function read(): string | null {
+function readStudentId(): string | null {
   try {
-    return sessionStorage.getItem(KEY);
+    return sessionStorage.getItem(STUDENT_ID_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function readCode(): string | null {
+  try {
+    return sessionStorage.getItem(CODE_KEY);
   } catch {
     return null;
   }
@@ -41,5 +50,9 @@ function read(): string | null {
 
 /** 서버 렌더에서는 알 수 없는 값이라 스냅샷을 나눠 준다 */
 export function useStudentId() {
-  return useSyncExternalStore(noopSubscribe, read, () => null);
+  return useSyncExternalStore(noopSubscribe, readStudentId, () => null);
+}
+
+export function useApplyCode() {
+  return useSyncExternalStore(noopSubscribe, readCode, () => null);
 }

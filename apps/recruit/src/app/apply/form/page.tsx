@@ -7,7 +7,7 @@ import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
 import { TextArea, TextField } from "@/components/ui/Field/Field";
 import { applicationFields, motivationField } from "@/lib/recruit-config";
-import { useStudentId } from "@/lib/apply-session";
+import { useApplyCode, useStudentId } from "@/lib/apply-session";
 import styles from "../apply.module.css";
 
 type Values = Record<string, string>;
@@ -16,12 +16,15 @@ const STEP_TOTAL = 4;
 
 export default function ApplicationFormPage() {
   const router = useRouter();
-  // 1단계에서 확인한 학번. 다시 묻지 않고 확인만 시켜준다.
+  // 1단계에서 확인한 학번·본인 지정번호. 다시 묻지 않고 확인만 시켜준다.
   const studentId = useStudentId();
+  const code = useApplyCode();
   const [step, setStep] = useState(2); // 1단계(지원자 확인)는 이전 화면에서 완료
   const [values, setValues] = useState<Values>({});
   const [errors, setErrors] = useState<Values>({});
   const [agreed, setAgreed] = useState({ info: false, code: false, privacy: false });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const set = (name: string) => (e: { target: { value: string } }) =>
     setValues((v) => ({ ...v, [name]: e.target.value }));
@@ -54,10 +57,32 @@ export default function ApplicationFormPage() {
 
   const allAgreed = agreed.info && agreed.code && agreed.privacy;
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!allAgreed) return;
-    // TODO: Supabase — applicants 테이블에 지원서 저장
+    if (!allAgreed || !studentId || !code) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+    const res = await fetch("/api/apply/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        studentId,
+        code,
+        name: values.name,
+        track: values.track,
+        phone: values.phone,
+        motivation: values.motivation,
+      }),
+    });
+    const data = await res.json();
+    setSubmitting(false);
+
+    if (!res.ok) {
+      setSubmitError(data.error ?? "제출 중 문제가 발생했습니다. 다시 시도해 주세요.");
+      return;
+    }
+
     router.push("/apply/status");
   }
 
@@ -192,15 +217,16 @@ export default function ApplicationFormPage() {
                 variant="primary"
                 size="lg"
                 className={styles.grow}
-                disabled={!allAgreed}
+                disabled={!allAgreed || submitting}
               >
-                지원서 제출
+                {submitting ? "제출 중..." : "지원서 제출"}
               </Button>
             </div>
           </form>
           {!allAgreed && (
             <p className={styles.stepNote}>모든 항목에 동의해야 제출할 수 있어요.</p>
           )}
+          {submitError && <p className={styles.stepNote}>{submitError}</p>}
         </>
       )}
     </Shell>

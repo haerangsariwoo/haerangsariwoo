@@ -108,9 +108,13 @@ export function isValidPassword(v: string) {
   return v.length >= 6;
 }
 
-/** 학번을 Supabase Auth 가입에 쓸 이메일로 바꾼다 — 실제 이메일이 없어도 되게 하는 자리표시자 */
+/**
+ * 학번을 Supabase Auth 가입에 쓸 이메일로 바꾼다 — 실제 이메일이 없어도 되게 하는 자리표시자.
+ * .internal 같은 예약된 TLD는 Supabase 이메일 형식 검사에서 막히기 때문에
+ * 우리가 실제로 소유한 도메인을 붙인다 (수신함은 없지만 형식은 유효하다).
+ */
 export function studentIdToEmail(studentId: string) {
-  return `${studentId}@haerangsariwoo.internal`;
+  return `${studentId}@haerangsariwoo.site`;
 }
 
 /** 생년월일 6자리 형식 검사 (YYMMDD) */

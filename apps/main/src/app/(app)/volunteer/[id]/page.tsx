@@ -2,13 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
-import { findVolunteer, volunteers } from "@/lib/mock-data";
+import { findInternalActivity, getMyApplicationState } from "@/lib/volunteers";
 import { ApplyButton } from "./ApplyButton";
 import styles from "./detail.module.css";
-
-export function generateStaticParams() {
-  return volunteers.map((v) => ({ id: v.id }));
-}
 
 const STATUS_LABEL = {
   open: "모집 중",
@@ -47,10 +43,9 @@ const UsersIcon = () => (
 
 export default async function VolunteerDetailPage({ params }: PageProps<"/volunteer/[id]">) {
   const { id } = await params;
-  const item = findVolunteer(id);
+  const [item, myState] = await Promise.all([findInternalActivity(id), getMyApplicationState(id)]);
   if (!item) notFound();
 
-  const isExternal = item.source !== "internal";
   const closed = item.status === "closed";
   const pct = Math.min(100, Math.round((item.applied / item.capacity) * 100));
 
@@ -105,8 +100,8 @@ export default async function VolunteerDetailPage({ params }: PageProps<"/volunt
             <ClockIcon />
           </span>
           <div>
-            <p className={styles.factLabel}>인정시간</p>
-            <p className={styles.factValue}>{item.creditHours}시간</p>
+            <p className={styles.factLabel}>봉사 시간 인정</p>
+            <p className={styles.factValue}>참여 확정 시 활동 횟수로 기록 (봉사시간 아님)</p>
           </div>
         </div>
 
@@ -172,26 +167,13 @@ export default async function VolunteerDetailPage({ params }: PageProps<"/volunt
         <p className={styles.body}>{item.manager}</p>
       </section>
 
-      {isExternal && (
-        <p className={styles.externalNote}>
-          이 봉사는 {item.source === "1365" ? "1365 자원봉사포털" : "VMS"}에 올라온 활동입니다.
-          신청은 원본 사이트에서 진행해 주세요.
-        </p>
-      )}
-
       <div className={styles.footer}>
         {closed ? (
           <Button variant="outline" size="lg" fullWidth disabled>
             모집이 마감되었어요
           </Button>
-        ) : isExternal ? (
-          <a href={item.externalUrl} target="_blank" rel="noopener noreferrer">
-            <Button variant="primary" size="lg" fullWidth className={styles.applyBtn}>
-              {item.source === "1365" ? "1365에서 신청하기" : "VMS에서 신청하기"}
-            </Button>
-          </a>
         ) : (
-          <ApplyButton label="신청하기" />
+          <ApplyButton activityId={item.id} initialState={myState} />
         )}
       </div>
     </div>

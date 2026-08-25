@@ -5,7 +5,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import { ExternalCard } from "@/components/volunteer/ExternalCard/ExternalCard";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
-import { volunteers } from "@/lib/mock-data";
+import type { VolunteerSummary } from "@/lib/mock-data";
 import type { ExternalFetchResult } from "@/lib/external/types";
 import {
   ExternalFilters,
@@ -22,7 +22,13 @@ const TABS: Tab[] = ["전체", "1365", "VMS"];
 /** 한 번에 더 붙이는 건수 */
 const PAGE = 8;
 
-export function VolunteerList({ external }: { external: ExternalFetchResult }) {
+export function VolunteerList({
+  external,
+  internal,
+}: {
+  external: ExternalFetchResult;
+  internal: VolunteerSummary[];
+}) {
   const [tab, setTab] = useState<Tab>("전체");
   const [extFilter, setExtFilter] = useState<ExternalFilterValue>({
     sido: external.items.some((v) => v.sido === "서울") ? "서울" : "전체",
@@ -32,8 +38,8 @@ export function VolunteerList({ external }: { external: ExternalFetchResult }) {
 
   /** 우리 동아리 봉사는 마감 임박한 순으로 */
   const internalList = useMemo(
-    () => [...volunteers].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]),
-    [],
+    () => [...internal].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]),
+    [internal],
   );
 
   /** 출처별로 나눈 뒤 지역·유형 필터를 적용 */

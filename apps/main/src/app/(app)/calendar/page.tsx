@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
-import { buildEvents, kindLabel, type EventKind } from "@/lib/calendar-events";
+import { buildEvents, kindLabel, type CalendarVolunteer, type EventKind } from "@/lib/calendar-events";
+import { createClient } from "@/lib/supabase/client";
 import styles from "./calendar.module.css";
 
 const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
@@ -21,8 +22,27 @@ export default function CalendarPage() {
   const [selected, setSelected] = useState(
     iso(today.getFullYear(), today.getMonth(), today.getDate()),
   );
+  const [volunteers, setVolunteers] = useState<CalendarVolunteer[]>([]);
 
-  const events = useMemo(() => buildEvents(cursor.y), [cursor.y]);
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("internal_activities")
+      .select("id, title, date_label, time_label, place")
+      .then(({ data }) => {
+        setVolunteers(
+          (data ?? []).map((row) => ({
+            id: row.id,
+            title: row.title,
+            dateLabel: row.date_label,
+            timeLabel: row.time_label,
+            place: row.place,
+          })),
+        );
+      });
+  }, []);
+
+  const events = useMemo(() => buildEvents(cursor.y, volunteers), [cursor.y, volunteers]);
 
   /** 날짜별로 묶어 점을 찍는다 */
   const byDate = useMemo(() => {

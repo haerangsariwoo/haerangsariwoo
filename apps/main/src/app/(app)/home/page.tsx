@@ -3,17 +3,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
-import {
-  member,
-  myTeam,
-  nextActivity,
-  recruitingVolunteers,
-  semesterStatus,
-} from "@/lib/mock-data";
+import { member, myTeam, nextActivity, semesterStatus } from "@/lib/mock-data";
 import { notices } from "@/lib/community";
 import { verifyRequests } from "@/lib/verify";
 import { homeCopy } from "@/lib/app-content";
 import { getCurrentMember } from "@/lib/get-current-member";
+import { getInternalActivities } from "@/lib/volunteers";
 import styles from "./home.module.css";
 import { AlbumPreview } from "./AlbumPreview";
 import { HomeInstallPopup } from "./HomeInstallPopup";
@@ -50,6 +45,9 @@ const QUICK_MENU = [
 export default async function HomePage() {
   const profile = await getCurrentMember();
   if (!profile) redirect("/");
+
+  const internalActivities = await getInternalActivities();
+  const recruitingVolunteers = internalActivities.filter((v) => v.status !== "closed").slice(0, 2);
 
   return (
     <Sheet>

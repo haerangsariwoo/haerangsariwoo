@@ -1,4 +1,5 @@
 import { getExternalVolunteers } from "@/lib/external";
+import { getInternalActivities } from "@/lib/volunteers";
 import { VolunteerList } from "./VolunteerList";
 
 export const metadata = { title: "봉사 모집 · 해랑사리우" };
@@ -7,6 +8,6 @@ export const metadata = { title: "봉사 모집 · 해랑사리우" };
 export const dynamic = "force-dynamic";
 
 export default async function VolunteerPage() {
-  const external = await getExternalVolunteers();
-  return <VolunteerList external={external} />;
+  const [external, internal] = await Promise.all([getExternalVolunteers(), getInternalActivities()]);
+  return <VolunteerList external={external} internal={internal} />;
 }

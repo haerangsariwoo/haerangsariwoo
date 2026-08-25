@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
+import { createClient } from "@/lib/supabase/client";
+import { Panel } from "@/components/admin/Panel/Panel";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
 import type { BadgeTone } from "@/components/admin/DataTable/DataTable";
-import { applicants as seed } from "@/lib/admin-data";
 import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 
@@ -19,55 +20,111 @@ const STATE_TONE: Record<string, BadgeTone> = {
 /** 상태를 누를 때마다 이 순서로 돈다 */
 const CYCLE = ["신청완료", "참여확정", "불참", "노쇼"] as const;
 
+interface Row {
+  id: string;
+  applied_at: string;
+  state: string;
+  wait_no: number | null;
+  members: { name: string; student_id: string; cohort: string } | null;
+  internal_activities: { title: string } | null;
+}
+
 export function ApplicantTable() {
   const { readOnly } = useSemester();
-  const [rows, setRows] = useState(seed);
+  const supabase = useMemo(() => createClient(), []);
+
+  const [rows, setRows] = useState<Row[]>([]);
+  const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [volunteer, setVolunteer] = useState("all");
   const [state, setState] = useState("all");
 
-  const volunteers = useMemo(() => [...new Set(seed.map((a) => a.volunteer))], []);
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const { data } = await supabase
+        .from("internal_activity_applications")
+        .select("id, applied_at, state, wait_no, members(name, student_id, cohort), internal_activities(title)")
+        .order("applied_at", { ascending: false });
+      if (!cancelled) {
+        setRows((data ?? []) as unknown as Row[]);
+        setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
+
+  const volunteers = useMemo(
+    () => [...new Set(rows.map((a) => a.internal_activities?.title).filter((t): t is string => !!t))],
+    [rows],
+  );
 
   const visible = rows.filter((a) => {
-    const hitQ =
-      !q.trim() || a.name.includes(q.trim()) || String(a.studentId).includes(q.trim());
-    const hitV = volunteer === "all" || a.volunteer === volunteer;
+    const name = a.members?.name ?? "";
+    const studentId = a.members?.student_id ?? "";
+    const title = a.internal_activities?.title ?? "";
+    const hitQ = !q.trim() || name.includes(q.trim()) || studentId.includes(q.trim());
+    const hitV = volunteer === "all" || title === volunteer;
     const hitS = state === "all" || a.state === state;
     return hitQ && hitV && hitS;
   });
 
+  async function setRowState(id: string, next: string) {
+    const prev = rows;
+    setRows((cur) => cur.map((a) => (a.id === id ? { ...a, state: next, wait_no: null } : a)));
+    const { error } = await supabase
+      .from("internal_activity_applications")
+      .update({ state: next, wait_no: null })
+      .eq("id", id);
+    if (error) setRows(prev);
+  }
+
   /** 대기자는 참여확정으로 승격, 나머지는 상태를 한 칸 돌린다 */
   function advance(id: string) {
-    setRows((prev) =>
-      prev.map((a) => {
-        if (a.id !== id) return a;
-        if (a.state === "대기") return { ...a, state: "참여확정", waitNo: undefined };
-        const i = CYCLE.indexOf(a.state as (typeof CYCLE)[number]);
-        return { ...a, state: CYCLE[(i + 1) % CYCLE.length] };
-      }),
-    );
+    const row = rows.find((a) => a.id === id);
+    if (!row) return;
+    if (row.state === "대기") {
+      setRowState(id, "참여확정");
+      return;
+    }
+    const i = CYCLE.indexOf(row.state as (typeof CYCLE)[number]);
+    setRowState(id, CYCLE[(i + 1) % CYCLE.length]);
   }
 
   /** 지금 보이는 신청완료·대기자를 한 번에 참여확정으로 */
-  function confirmAll() {
-    const ids = new Set(visible.filter((a) => a.state !== "참여확정").map((a) => a.id));
-    setRows((prev) =>
-      prev.map((a) => (ids.has(a.id) ? { ...a, state: "참여확정", waitNo: undefined } : a)),
-    );
+  async function confirmAll() {
+    const ids = visible.filter((a) => a.state !== "참여확정").map((a) => a.id);
+    if (ids.length === 0) return;
+    const prev = rows;
+    setRows((cur) => cur.map((a) => (ids.includes(a.id) ? { ...a, state: "참여확정", wait_no: null } : a)));
+    const { error } = await supabase
+      .from("internal_activity_applications")
+      .update({ state: "참여확정", wait_no: null })
+      .in("id", ids);
+    if (error) setRows(prev);
   }
 
   /** 출석 처리 — 참여확정을 그대로 두고 신청완료는 노쇼로 */
-  function markAttendance() {
-    const ids = new Set(visible.map((a) => a.id));
-    setRows((prev) =>
-      prev.map((a) => (ids.has(a.id) && a.state === "신청완료" ? { ...a, state: "노쇼" } : a)),
-    );
+  async function markAttendance() {
+    const ids = visible.filter((a) => a.state === "신청완료").map((a) => a.id);
+    if (ids.length === 0) return;
+    const prev = rows;
+    setRows((cur) => cur.map((a) => (ids.includes(a.id) ? { ...a, state: "노쇼" } : a)));
+    const { error } = await supabase.from("internal_activity_applications").update({ state: "노쇼" }).in("id", ids);
+    if (error) setRows(prev);
   }
 
   const pendingCount = visible.filter((a) => a.state !== "참여확정").length;
 
   return (
-    <>
+    <Panel
+      title="신청자·대기자 관리"
+      count={`${rows.length}명`}
+      desc="참여 여부는 활동 종료 후 운영진이 직접 처리합니다."
+    >
       <div className={toolbar.toolbar}>
         <input
           className={toolbar.search}
@@ -121,18 +178,24 @@ export function ApplicantTable() {
         </button>
       </div>
 
-      <DataTable columns={["이름", "학번", "기수", "신청 봉사", "신청일", "상태", ""]}>
+      <DataTable
+        columns={["이름", "학번", "기수", "신청 봉사", "신청일", "상태", ""]}
+        isEmpty={!loading && visible.length === 0}
+        empty={loading ? "불러오는 중..." : "조건에 맞는 신청자가 없습니다."}
+      >
         {visible.map((a) => (
           <tr key={a.id}>
-            <td>{a.name}</td>
-            <td className={cn(tableStyles.muted, tableStyles.numeric)}>{a.studentId}</td>
-            <td className={tableStyles.muted}>{a.cohort}</td>
-            <td className={tableStyles.muted}>{a.volunteer}</td>
-            <td className={cn(tableStyles.muted, tableStyles.numeric)}>{a.appliedAt}</td>
+            <td>{a.members?.name ?? "—"}</td>
+            <td className={cn(tableStyles.muted, tableStyles.numeric)}>{a.members?.student_id ?? "—"}</td>
+            <td className={tableStyles.muted}>{a.members?.cohort ?? "—"}</td>
+            <td className={tableStyles.muted}>{a.internal_activities?.title ?? "—"}</td>
+            <td className={cn(tableStyles.muted, tableStyles.numeric)}>
+              {new Date(a.applied_at).toLocaleDateString("ko-KR", { month: "2-digit", day: "2-digit" })}
+            </td>
             <td>
               <Badge tone={STATE_TONE[a.state]}>
                 {a.state}
-                {a.waitNo ? ` ${a.waitNo}번` : ""}
+                {a.wait_no ? ` ${a.wait_no}번` : ""}
               </Badge>
             </td>
             <td>
@@ -147,14 +210,7 @@ export function ApplicantTable() {
             </td>
           </tr>
         ))}
-        {visible.length === 0 && (
-          <tr>
-            <td colSpan={7} className={tableStyles.muted}>
-              조건에 맞는 신청자가 없습니다.
-            </td>
-          </tr>
-        )}
       </DataTable>
-    </>
+    </Panel>
   );
 }

@@ -1,6 +1,13 @@
 import { activities } from "./activities";
-import { volunteers } from "./mock-data";
 import { records } from "./my";
+
+export interface CalendarVolunteer {
+  id: string;
+  title: string;
+  dateLabel: string;
+  timeLabel: string;
+  place: string;
+}
 
 export type EventKind = "volunteer" | "mine" | "activity";
 
@@ -36,7 +43,7 @@ function fromDotted(v: string) {
   return v.replace(/\./g, "-");
 }
 
-export function buildEvents(year: number): CalendarEvent[] {
+export function buildEvents(year: number, volunteers: CalendarVolunteer[]): CalendarEvent[] {
   const events: CalendarEvent[] = [];
 
   // 내가 신청한 봉사 (취소 제외)

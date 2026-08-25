@@ -20,6 +20,29 @@
   background: rgba(255, 255, 255, 0.85);
 }
 
+.applyGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.cancelLink {
+  align-self: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-500);
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+.applyError {
+  text-align: center;
+  font-size: 12px;
+  color: var(--state-danger);
+}
+
 .hero {
   height: 168px;
   border-radius: var(--radius-lg);

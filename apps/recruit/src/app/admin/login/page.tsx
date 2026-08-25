@@ -45,24 +45,9 @@ export default function AdminLoginPage() {
       return;
     }
 
-    const { data: memberRow } = await supabase
-      .from("members")
-      .select("role, status")
-      .eq("id", data.user.id)
-      .single();
-
-    const isStaff =
-      !!memberRow &&
-      (memberRow.role === "운영진" || memberRow.role === "관리자") &&
-      memberRow.status === "approved";
-
-    if (!isStaff) {
-      await supabase.auth.signOut();
-      setSubmitting(false);
-      setErrors({ password: "운영진 계정으로만 로그인할 수 있습니다." });
-      return;
-    }
-
+    // 운영진/관리자 여부는 여기서 다시 확인하지 않는다 — 로그인 직후라 세션이
+    // 아직 완전히 자리잡기 전이라 조회가 꼬일 수 있다. /admin 진입 시
+    // AdminShell 이 새로 넘어간 페이지에서 다시 확인하고, 아니면 여기로 돌려보낸다.
     setSubmitting(false);
     router.push("/admin");
     router.refresh();

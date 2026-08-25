@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import {
@@ -12,6 +13,7 @@ import {
 import { notices } from "@/lib/community";
 import { verifyRequests } from "@/lib/verify";
 import { homeCopy } from "@/lib/app-content";
+import { getCurrentMember } from "@/lib/get-current-member";
 import styles from "./home.module.css";
 import { AlbumPreview } from "./AlbumPreview";
 import { HomeInstallPopup } from "./HomeInstallPopup";
@@ -45,7 +47,10 @@ const QUICK_MENU = [
  * 홈은 세 묶음이다. 나 → 이번 학기에 할 일 → 내 자리.
  * 묶음 안은 선으로만 나누고, 묶음끼리만 여백으로 띄운다.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const profile = await getCurrentMember();
+  if (!profile) redirect("/");
+
   return (
     <Sheet>
       <HomeInstallPopup />
@@ -54,7 +59,7 @@ export default function HomePage() {
         <section className={styles.hero}>
           <Mascot size={68} className={styles.heroMascot} priority />
           <h1 className={styles.greeting}>
-            안녕하세요, {member.name}
+            안녕하세요, {profile.name}
             {homeCopy.greetingSuffix}
           </h1>
           <p className={styles.subGreeting}>{homeCopy.subGreeting}</p>

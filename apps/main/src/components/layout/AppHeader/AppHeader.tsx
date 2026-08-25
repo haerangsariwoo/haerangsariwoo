@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import { createClient } from "@/lib/supabase/client";
-import { profile } from "@/lib/my";
+import type { CurrentMember } from "@/lib/get-current-member";
 import styles from "./AppHeader.module.css";
 import { Logo } from "@/components/ui/Logo/Logo";
 
@@ -17,7 +17,7 @@ const MENU: { label: string; href: Route }[] = [
   { label: "쪽지함 · 문의", href: "/messages" },
 ];
 
-export function AppHeader() {
+export function AppHeader({ profile }: { profile: CurrentMember }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 

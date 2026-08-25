@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 import { PushSettings } from "@/components/push/PushSettings/PushSettings";
 import { InstallPrompt } from "@/components/push/InstallPrompt/InstallPrompt";
-import { badges, hourStats, profile, records } from "@/lib/my";
+import { badges, hourStats, records } from "@/lib/my";
+import { getCurrentMember } from "@/lib/get-current-member";
 import { ProfilePhoto } from "./ProfilePhoto";
 import styles from "./my.module.css";
 
@@ -19,7 +21,10 @@ const MENU = [
 /**
  * MY 도 세 묶음이다. 나 → 내 활동 → 설정.
  */
-export default function MyPage() {
+export default async function MyPage() {
+  const profile = await getCurrentMember();
+  if (!profile) redirect("/");
+
   const upcoming = records.filter((r) => r.state !== "활동완료" && r.state !== "취소").slice(0, 3);
 
   return (

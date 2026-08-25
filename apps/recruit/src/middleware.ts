@@ -8,12 +8,13 @@ const cookieOptions =
 
 /**
  * 모집 사이트는 전부 공개다 — 관리자 화면(/admin)만 로그인이 필요하다.
- * 실제 권한(운영진/관리자) 확인은 admin 레이아웃에서 한다 — 여기서는
- * "로그인했는지"만 본다.
+ * /login 은 /admin 밖에 있어서 이 검사에 걸리지 않는다.
+ * 실제 권한(운영진/관리자) 확인은 admin 레이아웃에서 서버로 한 번 더 한다 —
+ * 여기서는 "로그인했는지"만 빠르게 본다.
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (!pathname.startsWith("/admin") || pathname === "/admin/login") {
+  if (!pathname.startsWith("/admin")) {
     return NextResponse.next();
   }
 
@@ -45,7 +46,7 @@ export async function middleware(request: NextRequest) {
 
   if (!user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/admin/login";
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 

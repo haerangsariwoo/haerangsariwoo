@@ -206,7 +206,7 @@ export default function LandingPage() {
 
           <div className={styles.footerBottom}>
             <span>© {recruitConfig.year} 해랑사리우. All rights reserved.</span>
-            <Link href="/admin/login" className={styles.adminLink}>
+            <Link href="/login" className={styles.adminLink}>
               관리자 페이지
             </Link>
           </div>

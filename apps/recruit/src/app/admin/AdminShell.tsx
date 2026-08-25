@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
 import { AdminNav } from "./AdminNav";
 import { AdminTitle } from "./AdminTitle";
 import { recruitConfig } from "@/lib/recruit-config";
@@ -15,67 +14,13 @@ interface StaffProfile {
   role: "운영진" | "관리자";
 }
 
-/** 로그인 화면에서는 사이드바·상단바 없이 내용만 보여준다 */
-export function AdminShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const supabase = useMemo(() => createClient(), []);
-  const [profile, setProfile] = useState<StaffProfile | null>(null);
-  const [checked, setChecked] = useState(false);
-
-  const isLoginPage = pathname === "/admin/login";
-
-  useEffect(() => {
-    if (isLoginPage) return;
-    let cancelled = false;
-
-    async function check() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.replace("/admin/login");
-        return;
-      }
-
-      const { data: member } = await supabase
-        .from("members")
-        .select("name, role, status")
-        .eq("id", user.id)
-        .single();
-
-      const isStaff =
-        !!member &&
-        (member.role === "운영진" || member.role === "관리자") &&
-        member.status === "approved";
-
-      if (cancelled) return;
-
-      if (!isStaff) {
-        await supabase.auth.signOut();
-        router.replace("/admin/login");
-        return;
-      }
-
-      setProfile({ name: member.name, role: member.role as "운영진" | "관리자" });
-      setChecked(true);
-    }
-
-    check();
-    return () => {
-      cancelled = true;
-    };
-  }, [isLoginPage, supabase, router]);
-
+export function AdminShell({ children, profile }: { children: ReactNode; profile: StaffProfile }) {
   async function logout() {
+    const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/admin/login");
-    router.refresh();
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.href = "/login";
   }
-
-  if (isLoginPage) return <>{children}</>;
-  if (!checked || !profile) return null;
 
   return (
     <div className={styles.shell}>

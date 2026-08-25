@@ -2,7 +2,6 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/Field/Field";
 import { Logo } from "@/components/ui/Logo/Logo";
@@ -11,7 +10,6 @@ import { isValidPassword, studentIdToEmail } from "@/lib/auth";
 import styles from "./login.module.css";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ studentId?: string; password?: string }>({});
@@ -45,12 +43,15 @@ export default function AdminLoginPage() {
       return;
     }
 
-    // 운영진/관리자 여부는 여기서 다시 확인하지 않는다 — 로그인 직후라 세션이
-    // 아직 완전히 자리잡기 전이라 조회가 꼬일 수 있다. /admin 진입 시
-    // AdminShell 이 새로 넘어간 페이지에서 다시 확인하고, 아니면 여기로 돌려보낸다.
+    // 운영진/관리자 승인 여부는 /admin 레이아웃이 서버에서 다시 확인한다.
+    // 여기서 다시 확인하지 않는 이유: 로그인 직후 같은 클라이언트로 바로
+    // 조회하면 세션이 자리잡기 전이라 꼬일 수 있어서, 서버 쪽 확인 하나로
+    // 통일했다.
     setSubmitting(false);
-    router.push("/admin");
-    router.refresh();
+    // 완전히 새로 요청해야 방금 로그인한 세션 쿠키를 /admin 레이아웃의
+    // 서버 확인이 확실히 읽는다 — router.push 는 타이밍에 따라 꼬였었다.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.href = "/admin";
   }
 
   return (

@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/Field/Field";
 import { Logo } from "@/components/ui/Logo/Logo";
+import { createClient } from "@/lib/supabase/client";
+import { isValidPassword, studentIdToEmail } from "@/lib/auth";
 import styles from "./login.module.css";
 
 export default function AdminLoginPage() {
@@ -22,18 +24,48 @@ export default function AdminLoginPage() {
     if (!/^\d{7}$/.test(studentId.trim())) {
       next.studentId = "학번 7자리를 정확히 입력해 주세요.";
     }
-    if (!/^\d{4}$/.test(password.trim())) {
-      next.password = "비밀번호 4자리를 입력해 주세요.";
+    if (!isValidPassword(password.trim())) {
+      next.password = "비밀번호를 입력해 주세요.";
     }
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
 
     setSubmitting(true);
-    // TODO: Supabase Auth — 회원 앱과 같은 계정으로 인증하고 운영진만 통과시킨다
-    await new Promise((r) => setTimeout(r, 400));
+    const supabase = createClient();
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: studentIdToEmail(studentId.trim()),
+      password,
+    });
+
+    if (error || !data.user) {
+      setSubmitting(false);
+      setErrors({ password: "학번 또는 비밀번호가 올바르지 않습니다." });
+      return;
+    }
+
+    const { data: memberRow } = await supabase
+      .from("members")
+      .select("role, status")
+      .eq("id", data.user.id)
+      .single();
+
+    const isStaff =
+      !!memberRow &&
+      (memberRow.role === "운영진" || memberRow.role === "관리자") &&
+      memberRow.status === "approved";
+
+    if (!isStaff) {
+      await supabase.auth.signOut();
+      setSubmitting(false);
+      setErrors({ password: "운영진 계정으로만 로그인할 수 있습니다." });
+      return;
+    }
+
     setSubmitting(false);
     router.push("/admin");
+    router.refresh();
   }
 
   return (
@@ -62,9 +94,7 @@ export default function AdminLoginPage() {
             name="password"
             required
             type="password"
-            placeholder="숫자 4자리"
-            inputMode="numeric"
-            maxLength={4}
+            placeholder="비밀번호"
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

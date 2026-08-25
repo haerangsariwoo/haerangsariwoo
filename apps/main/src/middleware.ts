@@ -55,10 +55,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // 승인 대기·반려 상태의 계정은 세션이 남아있어도 "/" 에서 그대로
+  // 로그인 화면을 보게 둔다 — 여기서 무조건 /home 으로 보내면, /home
+  // 이하의 각 페이지가 승인 여부를 다시 확인해 "/" 로 돌려보내면서
+  // 무한 리다이렉트에 빠진다.
   if (user && pathname === "/") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/home";
-    return NextResponse.redirect(url);
+    const { data: member } = await supabase
+      .from("members")
+      .select("status")
+      .eq("id", user.id)
+      .single();
+
+    if (member?.status === "approved") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/home";
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;

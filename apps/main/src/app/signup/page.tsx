@@ -113,6 +113,11 @@ export default function SignupPage() {
       return;
     }
 
+    // 승인 전까지는 로그인 세션을 남겨두지 않는다 — 그대로 두면 세션은
+    // 살아있는데 승인 안 된 상태라 화면 접근이 계속 막혀 리다이렉트를
+    // 반복하게 된다.
+    await supabase.auth.signOut();
+
     setDone(true);
     window.scrollTo(0, 0);
   }

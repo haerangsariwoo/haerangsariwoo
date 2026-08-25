@@ -167,7 +167,7 @@ export default function SignupPage() {
             </div>
 
             <p className={styles.note}>
-              로그인은 <b>학번</b>과 <b>비밀번호 4자리</b>로 합니다. 승인 후 이용해 주세요.
+              로그인은 <b>학번</b>과 <b>가입 때 정한 비밀번호</b>로 합니다. 승인 후 이용해 주세요.
             </p>
 
             <Link href="/" style={{ width: "100%" }}>

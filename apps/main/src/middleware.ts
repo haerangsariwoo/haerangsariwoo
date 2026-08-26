@@ -6,8 +6,17 @@ const cookieOptions =
     ? { domain: ".haerangsariwoo.site", sameSite: "lax" as const, secure: true }
     : undefined;
 
-/** 로그인 없이 들어갈 수 있는 경로 — 로그인(/)과 회원가입 */
-const PUBLIC_PATHS = ["/signup"];
+/** 로그인 없이 들어갈 수 있는 경로 — 로그인(/)과 회원가입, 그리고 상태 확인 */
+const PUBLIC_PATHS = ["/signup", "/api/health"];
+
+/**
+ * 로그인 뒤 돌아갈 곳. 남이 넣어준 주소로 튕겨 보내지 않도록 우리 앱 안의
+ * 경로만 받는다 — "//evil.com" 은 브라우저가 바깥 주소로 읽는다.
+ */
+function safeNext(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return null;
+  return value;
+}
 
 function isPublic(pathname: string) {
   if (pathname === "/") return true;
@@ -68,7 +77,11 @@ export async function middleware(request: NextRequest) {
 
     if (member?.status === "approved") {
       const url = request.nextUrl.clone();
-      url.pathname = "/home";
+      // 로그인하느라 끊겼던 자리로 돌려보낸다. 그냥 /home 으로 보내면
+      // 공유받은 링크를 눌러 들어온 사람이 목적지를 잃는다.
+      const next = safeNext(url.searchParams.get("next"));
+      url.pathname = next ?? "/home";
+      url.searchParams.delete("next");
       return NextResponse.redirect(url);
     }
   }

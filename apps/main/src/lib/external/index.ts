@@ -161,32 +161,16 @@ function describe(reason: unknown): string {
 const REFRESH_GAP_MS = 2 * 60 * 1000;
 let refreshStartedAt = 0;
 
-/** 갱신이 어디까지 갔는지 표에 남긴다 — 응답 뒤의 일이라 달리 볼 방법이 없다 */
-async function trace(step: string) {
-  try {
-    const supabase = createAdminClient();
-    await supabase.from("external_cache").upsert({
-      id: "refresh-trace",
-      payload: { step, at: new Date().toISOString(), region: runtimeRegion() },
-      fetched_at: new Date().toISOString(),
-    });
-  } catch {
-    // 흔적을 못 남겨도 갱신 자체는 계속한다
-  }
-}
-
 function scheduleRefresh() {
   if (Date.now() - refreshStartedAt < REFRESH_GAP_MS) return;
   refreshStartedAt = Date.now();
 
   after(async () => {
-    await trace("시작");
     try {
-      const v = await getExternalVolunteers({ force: true });
-      await trace(`끝 ${v.items.length}건${v.error ? ` (${v.error})` : ""}`);
-    } catch (e) {
-      await trace(`실패 ${describe(e)}`);
-      // 다음 사람이 다시 시도하도록 시각을 되돌린다
+      await getExternalVolunteers({ force: true });
+    } catch {
+      // 갱신에 실패해도 화면은 묵은 값으로 이미 그려졌다.
+      // 다음 사람이 다시 시도하도록 시각을 되돌린다.
       refreshStartedAt = 0;
     }
   });

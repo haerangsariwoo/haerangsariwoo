@@ -5,11 +5,11 @@ import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { createClient } from "@/lib/supabase/client";
 import { storagePath } from "@/lib/storage-name";
+import { compressImage, FileTooLargeError, PROOF_PRESET } from "@/lib/image-compress";
 import type { ProofSubmission, VerifySource } from "@/lib/verify";
 import styles from "./verify.module.css";
 
 const STEPS = ["증빙 제출", "운영진 검토", "시간 반영"];
-const MAX_PHOTOS = 5;
 
 interface PhotoFile {
   file: File;
@@ -24,7 +24,8 @@ export default function VerifyPage() {
   const [date, setDate] = useState("");
   const [hours, setHours] = useState("");
   const [memo, setMemo] = useState("");
-  const [photos, setPhotos] = useState<PhotoFile[]>([]);
+  /** 1365·VMS 봉사시간 인증서 캡처 한 장 */
+  const [photo, setPhoto] = useState<PhotoFile | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,23 +52,33 @@ export default function VerifyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function addPhotos(files: FileList | null) {
-    if (!files) return;
-    const next = Array.from(files)
-      .slice(0, MAX_PHOTOS - photos.length)
-      .map((file) => ({ file, previewUrl: URL.createObjectURL(file) }));
-    setPhotos((prev) => [...prev, ...next]);
+  /** 고른 즉시 줄여 둔다 — 미리보기도 줄인 그림으로 보여야 실제 올라갈 것과 같다 */
+  async function pickPhoto(files: FileList | null) {
+    const chosen = files?.[0];
+    if (!chosen) return;
+    setError(null);
+
+    try {
+      const small = await compressImage(chosen, PROOF_PRESET);
+      setPhoto((prev) => {
+        if (prev) URL.revokeObjectURL(prev.previewUrl);
+        return { file: small, previewUrl: URL.createObjectURL(small) };
+      });
+    } catch (e) {
+      setError(
+        e instanceof FileTooLargeError ? e.message : "사진을 읽지 못했어요. 다른 사진을 골라주세요.",
+      );
+    }
   }
 
-  function removePhoto(idx: number) {
-    setPhotos((prev) => {
-      URL.revokeObjectURL(prev[idx].previewUrl);
-      return prev.filter((_, i) => i !== idx);
+  function removePhoto() {
+    setPhoto((prev) => {
+      if (prev) URL.revokeObjectURL(prev.previewUrl);
+      return null;
     });
   }
 
-  const canSubmit =
-    title.trim() && date.trim() && Number(hours) > 0 && photos.length > 0 && !submitting;
+  const canSubmit = title.trim() && date.trim() && Number(hours) > 0 && photo && !submitting;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -85,16 +96,14 @@ export default function VerifyPage() {
       return;
     }
 
-    const photoPaths: string[] = [];
-    for (const p of photos) {
-      const path = storagePath(user.id, p.file.name);
-      const { error: uploadError } = await supabase.storage.from("proof-files").upload(path, p.file);
-      if (uploadError) {
-        setSubmitting(false);
-        setError("사진 업로드 중 문제가 발생했습니다. 다시 시도해 주세요.");
-        return;
-      }
-      photoPaths.push(path);
+    const path = storagePath(user.id, photo.file.name);
+    const { error: uploadError } = await supabase.storage
+      .from("proof-files")
+      .upload(path, photo.file);
+    if (uploadError) {
+      setSubmitting(false);
+      setError("사진 업로드 중 문제가 발생했습니다. 다시 시도해 주세요.");
+      return;
     }
 
     const { error: insertError } = await supabase.from("proof_submissions").insert({
@@ -104,7 +113,7 @@ export default function VerifyPage() {
       activity_org: org.trim(),
       activity_date: date,
       hours: Number(hours),
-      photo_paths: photoPaths,
+      photo_paths: [path],
       memo: memo.trim(),
     });
 
@@ -140,7 +149,7 @@ export default function VerifyPage() {
   }
 
   function resetForm() {
-    photos.forEach((p) => URL.revokeObjectURL(p.previewUrl));
+    if (photo) URL.revokeObjectURL(photo.previewUrl);
     setSubmitted(false);
     setSource("1365");
     setTitle("");
@@ -148,7 +157,7 @@ export default function VerifyPage() {
     setDate("");
     setHours("");
     setMemo("");
-    setPhotos([]);
+    setPhoto(null);
   }
 
   return (
@@ -262,39 +271,40 @@ export default function VerifyPage() {
           </div>
 
           <div className={styles.field}>
-            <span className={styles.label}>증빙 사진</span>
-            <label className={styles.upload}>
-              <span className={styles.uploadIcon}>＋</span>
-              사진 첨부하기
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                hidden
-                onChange={(e) => addPhotos(e.target.files)}
-                disabled={photos.length >= MAX_PHOTOS}
-              />
-            </label>
-            {photos.length > 0 && (
+            <span className={styles.label}>봉사시간 인증서</span>
+            {photo ? (
               <div className={styles.photoGrid}>
-                {photos.map((p, i) => (
-                  <div key={p.previewUrl} className={styles.photoThumb}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.previewUrl} alt="" />
-                    <button
-                      type="button"
-                      className={styles.photoRemove}
-                      onClick={() => removePhoto(i)}
-                      aria-label="사진 제거"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
+                <div className={styles.photoThumb}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo.previewUrl} alt="" />
+                  <button
+                    type="button"
+                    className={styles.photoRemove}
+                    onClick={removePhoto}
+                    aria-label="사진 다시 고르기"
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
+            ) : (
+              <label className={styles.upload}>
+                <span className={styles.uploadIcon}>＋</span>
+                인증서 캡처 올리기
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    pickPhoto(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
             )}
             <p className={styles.hint}>
-              <b>봉사활동 확인서</b> 사진과 <b>활동 사진</b>을 함께 올려주세요. (최대 {MAX_PHOTOS}장)
+              1365 · VMS 에서 <b>봉사시간이 인증된 화면</b>을 캡처해 한 장 올려주세요.
+              활동명과 시간이 보이면 됩니다.
             </p>
           </div>
 

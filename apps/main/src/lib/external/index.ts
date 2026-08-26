@@ -1,4 +1,5 @@
 import "server-only";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { fetch1365 } from "./portal-1365";
 import { fetchVms } from "./portal-vms";
 import { buildSampleExternal } from "./sample";
@@ -20,7 +21,51 @@ const TIMEOUT_VMS_MS = 14000;
 /** VMS 상세 보충을 여기까지만 시도한다 — 넘기면 목록 정보로 만족한다 */
 const VMS_DETAIL_BUDGET_MS = 9000;
 
-let cache: { at: number; value: ExternalFetchResult } | null = null;
+const CACHE_KEY = "external-volunteers";
+
+/**
+ * 같은 인스턴스 안에서 짧게 다시 쓰는 자리. 진짜 캐시는 아래 표에 있다 —
+ * Vercel 은 요청마다 다른 인스턴스가 처리하고 잠들면 메모리가 날아가서,
+ * 메모리만 믿으면 "1시간에 한 번" 이 지켜지지 않는다.
+ */
+let memoryCache: { at: number; value: ExternalFetchResult } | null = null;
+
+async function readCache(): Promise<ExternalFetchResult | null> {
+  if (memoryCache && Date.now() - memoryCache.at < TTL_MS) return memoryCache.value;
+
+  try {
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("external_cache")
+      .select("payload, fetched_at")
+      .eq("id", CACHE_KEY)
+      .maybeSingle();
+
+    const row = data as { payload: ExternalFetchResult; fetched_at: string } | null;
+    if (!row) return null;
+
+    const at = new Date(row.fetched_at).getTime();
+    if (Date.now() - at >= TTL_MS) return null;
+
+    memoryCache = { at, value: row.payload };
+    return row.payload;
+  } catch {
+    // 캐시를 못 읽는 건 화면을 못 그릴 이유가 아니다 — 그냥 새로 가져온다
+    return null;
+  }
+}
+
+async function writeCache(value: ExternalFetchResult) {
+  memoryCache = { at: Date.now(), value };
+  try {
+    const supabase = createAdminClient();
+    await supabase
+      .from("external_cache")
+      .upsert({ id: CACHE_KEY, payload: value, fetched_at: new Date().toISOString() });
+  } catch {
+    // 저장에 실패해도 이번 요청은 이미 값을 갖고 있다
+  }
+}
 
 function withinDeadline<T>(ms: number, p: (signal: AbortSignal) => Promise<T>): Promise<T> {
   const ac = new AbortController();
@@ -55,8 +100,9 @@ function normalize(items: ExternalVolunteer[]) {
 export async function getExternalVolunteers(options?: {
   force?: boolean;
 }): Promise<ExternalFetchResult> {
-  if (!options?.force && cache && Date.now() - cache.at < TTL_MS) {
-    return cache.value;
+  if (!options?.force) {
+    const cached = await readCache();
+    if (cached) return cached;
   }
 
   // Encoding/Decoding 어느 키를 넣어도 동작하도록 정규화한다
@@ -70,7 +116,7 @@ export async function getExternalVolunteers(options?: {
       error: "DATA_GO_KR_SERVICE_KEY 가 설정되지 않아 예시 데이터를 표시합니다.",
       fetchedAt: new Date().toISOString(),
     };
-    cache = { at: Date.now(), value };
+    await writeCache(value);
     return value;
   }
 
@@ -125,7 +171,7 @@ export async function getExternalVolunteers(options?: {
       error: errors.join(" / ") || "외부 포털에서 가져온 결과가 없습니다.",
       fetchedAt: new Date().toISOString(),
     };
-    cache = { at: Date.now(), value };
+    await writeCache(value);
     return value;
   }
 
@@ -135,6 +181,6 @@ export async function getExternalVolunteers(options?: {
     error: errors.length ? errors.join(" / ") : undefined,
     fetchedAt: new Date().toISOString(),
   };
-  cache = { at: Date.now(), value };
+  await writeCache(value);
   return value;
 }

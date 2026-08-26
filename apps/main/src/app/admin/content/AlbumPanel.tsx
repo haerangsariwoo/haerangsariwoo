@@ -5,6 +5,7 @@ import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { createClient } from "@/lib/supabase/client";
 import { storagePath } from "@/lib/storage-name";
+import { ALBUM_PRESET, compressImage, FileTooLargeError } from "@/lib/image-compress";
 import { tonesFor, type Album, type AlbumPhoto } from "@/lib/community";
 import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 import { Panel } from "@/components/admin/Panel/Panel";
@@ -168,7 +169,15 @@ export function AlbumPanel() {
     let order = album?.photos.length ?? 0;
     const added: EditableAlbum["photos"] = [];
 
-    for (const file of Array.from(files)) {
+    for (const original of Array.from(files)) {
+      let file: File;
+      try {
+        file = await compressImage(original, ALBUM_PRESET);
+      } catch (e) {
+        setBusy(false);
+        setError(e instanceof FileTooLargeError ? e.message : "사진을 읽지 못했습니다.");
+        return;
+      }
       const path = storagePath(user.id, file.name);
       const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file);
       if (uploadError) {

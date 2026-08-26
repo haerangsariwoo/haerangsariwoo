@@ -17,52 +17,46 @@ const KIND_TONE: Record<MessageKind, "blue" | "green" | "orange" | "purple"> = {
   승인: "purple",
 };
 
-interface SentRow {
-  id: string;
+/**
+ * 발송 한 번이 한 줄. inbox_message_batches 뷰가 DB 에서 묶어 준다 —
+ * 받는 사람마다 행이 하나씩 생기므로(각자 읽음 표시를 가져야 한다)
+ * 화면에서 묶으려면 전 행을 가져와야 하고, 부원이 늘수록 그게 깨진다.
+ */
+interface BatchRow {
   kind: MessageKind;
   title: string;
   body: string;
   sent_at: string;
-  is_read: boolean;
-  member_id: string | null;
+  total: number;
+  read_count: number;
 }
 
-/** 같은 내용으로 한 번에 보낸 쪽지들을 한 줄로 묶어 보여준다 */
 interface SentGroup {
   key: string;
   kind: MessageKind;
   title: string;
   body: string;
   sentAt: string;
+  /** 회수할 때 그 발송의 행들을 다시 찾는 기준 */
+  rawSentAt: string;
   total: number;
   read: number;
-  ids: string[];
 }
 
-function groupSent(rows: SentRow[]): SentGroup[] {
-  const map = new Map<string, SentGroup>();
-  for (const r of rows) {
-    // 같은 초에 같은 제목으로 나간 것들이 한 번의 발송이다
-    const key = `${r.title}|${r.kind}|${r.sent_at.slice(0, 19)}`;
-    const g = map.get(key);
-    if (g) {
-      g.total += 1;
-      g.read += r.is_read ? 1 : 0;
-      g.ids.push(r.id);
-    } else {
-      map.set(key, {
-        key,
-        kind: r.kind,
-        title: r.title,
-        body: r.body,
-        sentAt: formatSentAt(r.sent_at),
-        total: 1,
-        read: r.is_read ? 1 : 0,
-        ids: [r.id],
-      });
-    }
-  }
-  return [...map.values()];
+/** 최근 이 개수만큼의 "발송" 을 보여준다 — 받는 사람 수와 무관하다 */
+const BATCH_LIMIT = 200;
+
+function toGroup(r: BatchRow): SentGroup {
+  return {
+    key: `${r.kind}|${r.title}|${r.sent_at}`,
+    kind: r.kind,
+    title: r.title,
+    body: r.body,
+    sentAt: formatSentAt(r.sent_at),
+    rawSentAt: r.sent_at,
+    total: r.total,
+    read: r.read_count,
+  };
 }
 
 const EMPTY = { kind: "공지" as MessageKind, title: "", body: "", href: "" };
@@ -93,10 +87,10 @@ export function MessageSender() {
     async function load() {
       const [{ data, error: fetchError }, { count }] = await Promise.all([
         supabase
-          .from("inbox_messages")
-          .select("id, kind, title, body, sent_at, is_read, member_id")
+          .from("inbox_message_batches")
+          .select("kind, title, body, sent_at, total, read_count")
           .order("sent_at", { ascending: false })
-          .limit(500),
+          .limit(BATCH_LIMIT),
         supabase
           .from("members")
           .select("id", { count: "exact", head: true })
@@ -104,7 +98,7 @@ export function MessageSender() {
       ]);
       if (cancelled) return;
       if (fetchError) setError("보낸 쪽지를 불러오지 못했습니다.");
-      else setGroups(groupSent((data ?? []) as SentRow[]));
+      else setGroups(((data ?? []) as BatchRow[]).map(toGroup));
       setMemberCount(count ?? 0);
       setLoading(false);
     }
@@ -150,16 +144,14 @@ export function MessageSender() {
     }
 
     setGroups((prev) => [
-      {
-        key: `${form.title}|${form.kind}|${sentAt.slice(0, 19)}`,
+      toGroup({
         kind: form.kind,
         title: form.title.trim(),
         body: form.body.trim(),
-        sentAt: formatSentAt(sentAt),
+        sent_at: sentAt,
         total: payload.length,
-        read: 0,
-        ids: [],
-      },
+        read_count: 0,
+      }),
       ...prev,
     ]);
     setResult(`부원 ${payload.length}명에게 보냈습니다.`);
@@ -171,10 +163,13 @@ export function MessageSender() {
     if (!window.confirm(`"${group.title}" 쪽지를 회수할까요? 부원 쪽지함에서 사라집니다.`)) return;
     const prev = groups;
     setGroups((cur) => cur.filter((g) => g.key !== group.key));
+    // 그 발송으로 만들어진 행 전부 — 보낸 시각이 발송마다 하나뿐이라 이걸로 특정된다
     const { error: deleteError } = await supabase
       .from("inbox_messages")
       .delete()
-      .in("id", group.ids);
+      .eq("kind", group.kind)
+      .eq("title", group.title)
+      .eq("sent_at", group.rawSentAt);
     if (deleteError) {
       setGroups(prev);
       setError("회수하지 못했습니다.");
@@ -283,7 +278,7 @@ export function MessageSender() {
               {g.read} / {g.total}
             </td>
             <td className={styles.rowActions}>
-              <RowAction onClick={() => recall(g)} disabled={readOnly || g.ids.length === 0}>
+              <RowAction onClick={() => recall(g)} disabled={readOnly}>
                 회수
               </RowAction>
             </td>

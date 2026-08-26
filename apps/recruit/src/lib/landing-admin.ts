@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { compressImage, ALBUM_PRESET } from "@/lib/image-compress";
 
 const BUCKET = "landing-photos";
 
@@ -15,8 +16,15 @@ function safePath(fileName: string) {
 }
 
 /** 사진을 공개 버킷에 올리고 랜딩에서 바로 쓸 수 있는 주소를 돌려준다 */
-export async function uploadLandingPhoto(file: File): Promise<string | null> {
+export async function uploadLandingPhoto(original: File): Promise<string | null> {
   const supabase = createClient();
+  // 랜딩 사진은 방문자가 가장 먼저 보는 큰 사진이라 앨범과 같은 설정을 쓴다
+  let file: File;
+  try {
+    file = await compressImage(original, ALBUM_PRESET);
+  } catch {
+    return null;
+  }
   const path = safePath(file.name);
   const { error } = await supabase.storage.from(BUCKET).upload(path, file);
   if (error) return null;

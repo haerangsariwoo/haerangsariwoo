@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { storagePath } from "@/lib/storage-name";
+import { compressImage, FileTooLargeError, SCREEN_PRESET } from "@/lib/image-compress";
 import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 import { ProfilePhotoEditor } from "./ProfilePhotoEditor";
 import styles from "./my.module.css";
@@ -32,11 +33,20 @@ export function ProfilePhoto({ initial, photoUrl, focus: initialFocus }: Props) 
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function onFileChosen(files: FileList | null) {
-    const file = files?.[0];
-    if (!file) return;
+    const chosen = files?.[0];
+    if (!chosen) return;
 
     setBusy(true);
     setError(null);
+
+    let file: File;
+    try {
+      file = await compressImage(chosen, SCREEN_PRESET);
+    } catch (e) {
+      setBusy(false);
+      setError(e instanceof FileTooLargeError ? e.message : "사진을 읽지 못했어요.");
+      return;
+    }
 
     const {
       data: { user },

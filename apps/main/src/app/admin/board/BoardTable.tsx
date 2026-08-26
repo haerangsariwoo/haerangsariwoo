@@ -5,6 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { createClient } from "@/lib/supabase/client";
 import { storagePath } from "@/lib/storage-name";
+import { compressImage, FileTooLargeError, SCREEN_PRESET } from "@/lib/image-compress";
 import {
   imageMarkdown,
   imagePathsIn,
@@ -235,7 +236,16 @@ export function BoardTable() {
     }
 
     const paths: string[] = [];
-    for (const file of files) {
+    for (const original of files) {
+      // 문서 첨부는 compressImage 가 그대로 돌려준다
+      let file: File;
+      try {
+        file = await compressImage(original, SCREEN_PRESET);
+      } catch (e) {
+        setBusy(false);
+        setError(e instanceof FileTooLargeError ? e.message : "첨부파일을 읽지 못했습니다.");
+        return;
+      }
       const path = storagePath(user.id, file.name);
       const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file);
       if (uploadError) {
@@ -250,8 +260,16 @@ export function BoardTable() {
     let body = form.body.trim();
     for (const img of visibleInline) {
       if (!body.includes(img.token)) continue;
-      const path = storagePath(user.id, img.file.name);
-      const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, img.file);
+      let small: File;
+      try {
+        small = await compressImage(img.file, SCREEN_PRESET);
+      } catch (e) {
+        setBusy(false);
+        setError(e instanceof FileTooLargeError ? e.message : "본문 사진을 읽지 못했습니다.");
+        return;
+      }
+      const path = storagePath(user.id, small.name);
+      const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, small);
       if (uploadError) {
         setBusy(false);
         setError("본문 사진을 올리지 못했습니다.");

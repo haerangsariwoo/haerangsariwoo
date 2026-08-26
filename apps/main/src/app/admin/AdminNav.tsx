@@ -25,7 +25,6 @@ export const ADMIN_NAV: { href: Route; label: string; icon: React.ReactNode }[] 
   { href: "/admin/members", label: "회원 관리", icon: I("M9 11a3.2 3.2 0 1 0 0-6.4A3.2 3.2 0 0 0 9 11ZM3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M16.5 10.6a3 3 0 0 0 0-5.8M18.5 20c0-2.6-1-4.3-2.8-5.1") },
   { href: "/admin/activities", label: "활동 관리", icon: I("M12 20s-7-4.5-7-9.5A3.5 3.5 0 0 1 12 8a3.5 3.5 0 0 1 7 2.5C19 15.5 12 20 12 20Z") },
   { href: "/admin/messages", label: "메신저", icon: I("M4 5h16v11H4zM8 20l4-4M12 16l4 4") },
-  { href: "/admin/hours", label: "봉사시간 승인", icon: I("M5 12.5l4.5 4.5L19 7") },
   { href: "/admin/teams", label: "팀짜기", icon: I("M7 4v16M17 4v16M4 9h16M4 15h16") },
   { href: "/admin/board", label: "운영진 게시판", icon: I("M5 4h14v16H5zM8.5 8.5h7M8.5 12h7M8.5 15.5h4") },
   { href: "/admin/content", label: "콘텐츠 관리", icon: I("M4 5h16v11H4zM9 20h6M12 16v4") },

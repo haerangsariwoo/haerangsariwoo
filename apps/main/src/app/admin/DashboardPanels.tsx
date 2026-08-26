@@ -133,7 +133,7 @@ export function PendingHoursPanel({ items }: { items: PendingHour[] }) {
               <p className={styles.approvalActivity}>{p.activity}</p>
             </div>
             <span className={styles.approvalHours}>{p.hours}</span>
-            <Link href="/admin/hours" className={styles.approvalButton}>
+            <Link href="/admin/activities?tab=hours" className={styles.approvalButton}>
               검토
             </Link>
           </label>

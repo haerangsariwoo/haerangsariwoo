@@ -5,18 +5,20 @@ import { useSearchParams } from "next/navigation";
 import { SubTabs, type SubTab } from "@/components/admin/SubTabs/SubTabs";
 import { VolunteerAdmin } from "../volunteers/VolunteerAdmin";
 import { ApplicantTable } from "../applicants/ApplicantTable";
+import { HourTable } from "../hours/HourTable";
 import { ActivityAdmin } from "./ActivityAdmin";
 
 const TABS: SubTab[] = [
   { value: "volunteers", label: "봉사활동" },
   { value: "events", label: "동아리 활동" },
   { value: "applicants", label: "신청자" },
+  { value: "hours", label: "봉사시간 승인" },
 ];
 
 /**
- * 봉사활동·동아리 활동·신청자는 결국 "이번 학기에 뭘 하고 누가 오는가"
- * 하나를 세 각도에서 보는 화면이라 한 메뉴로 묶었다.
- * ?tab= 으로 바로 들어올 수 있어 대시보드에서 곧장 신청자 탭을 연다.
+ * 봉사활동·동아리 활동·신청자·봉사시간 승인은 결국 "이번 학기에 뭘 하고
+ * 누가 왔고 그게 인정됐는가" 하나를 네 각도에서 보는 화면이라 한 메뉴로
+ * 묶었다. ?tab= 으로 바로 들어올 수 있어 대시보드에서 곧장 해당 탭을 연다.
  */
 export function ActivityHub() {
   return (
@@ -42,6 +44,7 @@ function Hub({ initial }: { initial: string }) {
       {tab === "volunteers" && <VolunteerAdmin />}
       {tab === "events" && <ActivityAdmin />}
       {tab === "applicants" && <ApplicantTable />}
+      {tab === "hours" && <HourTable />}
     </>
   );
 }

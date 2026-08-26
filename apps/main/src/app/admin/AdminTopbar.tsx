@@ -64,7 +64,7 @@ export function AdminTopbar() {
       )}
 
       {/* 처리할 일이 있는 곳으로 보낸다 */}
-      <Link href="/admin/hours" className={styles.iconButton} aria-label={`승인 대기 ${pendingHours}건`}>
+      <Link href="/admin/activities?tab=hours" className={styles.iconButton} aria-label={`승인 대기 ${pendingHours}건`}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
           <path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 13 6 9ZM10 18a2 2 0 0 0 4 0" />
         </svg>

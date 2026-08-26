@@ -31,8 +31,9 @@ export function VolunteerList({
 }) {
   const [tab, setTab] = useState<Tab>("전체");
   const [extFilter, setExtFilter] = useState<ExternalFilterValue>({
-    // 1365 는 서울 건이 많지만 VMS 는 전국 단위라, 서울로 좁히면 절반이 가려진다
-    sido: "전체",
+    // 부원 대부분이 서울에서 활동하므로 서울부터 보여준다.
+    // 다른 지역이 필요하면 "지역 전체" 로 바꿔서 보면 된다.
+    sido: "서울",
     gugun: "전체",
     category: "전체",
   });

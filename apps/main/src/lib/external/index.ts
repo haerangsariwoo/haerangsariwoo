@@ -1,4 +1,5 @@
 import "server-only";
+import { after } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { fetch1365 } from "./portal-1365";
 import { fetchVms } from "./portal-vms";
@@ -23,6 +24,19 @@ function ttlFor(value: ExternalFetchResult) {
 }
 
 /**
+ * 묵은 값이라도 이만큼까지는 화면에 먼저 내준다.
+ *
+ * 포털을 새로 읽는 데 최대 14초가 걸리는데, 그 시간을 하필 그때 들어온
+ * 부원 한 명이 통째로 기다렸다. 값이 있으면 바로 보여주고 갱신은 응답을
+ * 보낸 뒤에 돌린다 — 그 사람은 한 판 묵은 목록을 보지만 기다리지 않고,
+ * 다음 사람부터는 새 목록을 본다.
+ *
+ * 하루가 넘게 묵은 것은 안 내놓는다. 마감된 모집만 잔뜩 보여주느니
+ * 기다리게 하는 편이 낫다.
+ */
+const SERVE_STALE_MS = 24 * 60 * 60 * 1000;
+
+/**
  * 출처마다 걸리는 시간이 다르다. 1365 는 API 한 번이면 끝나지만 VMS 는
  * 공개 페이지를 목록·상세로 나눠 읽어야 해서 훨씬 오래 걸린다.
  * 예전에는 둘 다 8초로 묶어 두는 바람에 VMS 만 늘 잘려 나갔다.
@@ -41,9 +55,24 @@ const CACHE_KEY = "external-volunteers";
  */
 let memoryCache: { at: number; value: ExternalFetchResult } | null = null;
 
-async function readCache(): Promise<ExternalFetchResult | null> {
-  if (memoryCache && Date.now() - memoryCache.at < ttlFor(memoryCache.value)) {
-    return memoryCache.value;
+interface Cached {
+  value: ExternalFetchResult;
+  /** 갱신할 때가 지났는가 */
+  stale: boolean;
+}
+
+function classify(value: ExternalFetchResult, at: number): Cached | null {
+  const age = Date.now() - at;
+  if (age >= SERVE_STALE_MS) return null;
+  return { value, stale: age >= ttlFor(value) };
+}
+
+async function readCache(): Promise<Cached | null> {
+  if (memoryCache) {
+    const hit = classify(memoryCache.value, memoryCache.at);
+    // 메모리가 신선하면 표까지 갈 것 없다. 묵었으면 표를 한 번 더 본다 —
+    // 다른 서버가 이미 갱신해 뒀을 수 있다.
+    if (hit && !hit.stale) return hit;
   }
 
   try {
@@ -58,10 +87,8 @@ async function readCache(): Promise<ExternalFetchResult | null> {
     if (!row) return null;
 
     const at = new Date(row.fetched_at).getTime();
-    if (Date.now() - at >= ttlFor(row.payload)) return null;
-
     memoryCache = { at, value: row.payload };
-    return row.payload;
+    return classify(row.payload, at);
   } catch {
     // 캐시를 못 읽는 건 화면을 못 그릴 이유가 아니다 — 그냥 새로 가져온다
     return null;
@@ -121,6 +148,29 @@ function describe(reason: unknown): string {
   return `${parts.join(" ← ")} @${runtimeRegion()}`;
 }
 
+/**
+ * 응답을 보낸 뒤 캐시를 새로 채운다.
+ *
+ * 같은 서버에서 두 번 겹쳐 돌지 않게 잠가둔다. 여러 서버가 동시에 도는
+ * 것까지는 막지 못하지만, 포털 입장에서는 한 시간에 몇 번이라 문제가 없다.
+ */
+let refreshing = false;
+
+function scheduleRefresh() {
+  if (refreshing) return;
+  refreshing = true;
+
+  after(async () => {
+    try {
+      await getExternalVolunteers({ force: true });
+    } catch {
+      // 갱신에 실패해도 화면은 묵은 값으로 이미 그려졌다
+    } finally {
+      refreshing = false;
+    }
+  });
+}
+
 function withinDeadline<T>(ms: number, p: (signal: AbortSignal) => Promise<T>): Promise<T> {
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), ms);
@@ -156,7 +206,12 @@ export async function getExternalVolunteers(options?: {
 }): Promise<ExternalFetchResult> {
   if (!options?.force) {
     const cached = await readCache();
-    if (cached) return cached;
+    if (cached) {
+      // 갱신할 때가 됐으면 응답을 보낸 뒤에 새로 읽는다. 지금 기다리게 하면
+      // 그 부원 한 명이 14초를 통째로 뒤집어쓴다.
+      if (cached.stale) scheduleRefresh();
+      return cached.value;
+    }
   }
 
   // Encoding/Decoding 어느 키를 넣어도 동작하도록 정규화한다

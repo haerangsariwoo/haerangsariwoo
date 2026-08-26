@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { cn } from "@/lib/cn";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import { getNotices } from "@/lib/notices";
@@ -10,6 +11,7 @@ import { getMyStats } from "@/lib/my-stats";
 import { getAppContent } from "@/lib/app-content-queries";
 import { getCurrentMember } from "@/lib/get-current-member";
 import { getInternalActivities } from "@/lib/volunteers";
+import { getExternalVolunteers } from "@/lib/external";
 import styles from "./home.module.css";
 import { AlbumPreview } from "./AlbumPreview";
 import { HomeInstallPopup } from "./HomeInstallPopup";
@@ -23,6 +25,19 @@ import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 export default async function HomePage() {
   const profile = await getCurrentMember();
   if (!profile) redirect("/");
+
+  /*
+   * 외부 포털 목록을 미리 데워둔다.
+   *
+   * 부원은 거의 홈을 거쳐 봉사 모집으로 간다. 그때 캐시가 비어 있으면
+   * 포털 두 곳을 읽는 십여 초를 그 사람이 통째로 기다린다. 홈 응답을 보낸
+   * 뒤에 미리 채워두면 정작 누를 때는 이미 준비돼 있다.
+   *
+   * 홈이 느려지지는 않는다 — 응답을 보낸 다음에 도는 일이다. 포털에
+   * 가는 부담도 늘지 않는다. 캐시가 신선하면 표만 한 번 읽고 끝나서,
+   * 포털을 실제로 읽는 것은 여전히 한 시간에 한 번이다.
+   */
+  after(() => getExternalVolunteers());
 
   const [internalActivities, proofSubmissions, notices, myTeam, stats, content] =
     await Promise.all([

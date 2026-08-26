@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/Logo/Logo";
-import { brand, cohortLabel, instagramLabel, landing, navItems } from "@/lib/recruit-config";
+import { brand, cohortLabel, credits, instagramLabel, landing, navItems } from "@/lib/recruit-config";
 import { getLandingContent, getRecruitSettings } from "@/lib/content-queries";
 import { AboutPhoto } from "./AboutPhoto";
 import { ActivityGallery } from "./ActivityGallery";
@@ -187,18 +187,17 @@ export default async function LandingPage() {
                 >
                   Instagram {instagramLabel(content.footerInstagram)}
                 </a>
-                <Link className={styles.footerLink} href="/apply">
-                  신입 부원 지원하기
-                </Link>
-                <Link className={styles.footerLink} href="/apply/status">
-                  지원 결과 확인
-                </Link>
               </div>
             </div>
           </div>
 
           <div className={styles.footerBottom}>
             <span>© {config.year} 해랑사리우. All rights reserved.</span>
+            <span className={styles.credit}>
+              Created by {credits.createdBy}
+              <span className={styles.creditDot}>·</span>
+              Assisted by {credits.assistedBy.join(" · ")}
+            </span>
             <Link href="/login" className={styles.adminLink}>
               관리자 페이지
             </Link>

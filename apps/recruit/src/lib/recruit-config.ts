@@ -171,6 +171,17 @@ export const landing = {
   },
 } as const;
 
+/**
+ * 푸터 제작 크레딧.
+ *
+ * 관리자 화면에서 고치지 않는다 — 기수마다 바뀌는 값이 아니라서 표에
+ * 둘 만큼은 아니다. 다음에 만든 사람이 바뀌면 이 줄만 고치면 된다.
+ */
+export const credits = {
+  createdBy: "김재겸",
+  assistedBy: ["김우영", "김동하"],
+} as const;
+
 /** 헤더 내비게이션 — 우리 앱 구조에 맞춘 항목 */
 export const navItems = [
   { href: "#about", label: "소개" },

@@ -517,6 +517,18 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
+/* 저작권 줄에 조용히 얹는 제작 크레딧 */
+.credit {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.creditDot {
+  opacity: 0.5;
+}
+
 .adminLink {
   margin-left: auto;
   font-size: 12px;

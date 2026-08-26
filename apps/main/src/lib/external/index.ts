@@ -12,6 +12,16 @@ export type { ExternalVolunteer, ExternalFetchResult } from "./types";
 const TTL_MS = 60 * 60 * 1000;
 
 /**
+ * 한쪽 포털이 빠진 결과는 짧게만 붙들고 있는다. 1시간을 그대로 두면
+ * 잠깐 삐끗한 것 때문에 한 시간 내내 반쪽짜리 목록이 보인다.
+ */
+const TTL_PARTIAL_MS = 10 * 60 * 1000;
+
+function ttlFor(value: ExternalFetchResult) {
+  return value.error ? TTL_PARTIAL_MS : TTL_MS;
+}
+
+/**
  * 출처마다 걸리는 시간이 다르다. 1365 는 API 한 번이면 끝나지만 VMS 는
  * 공개 페이지를 목록·상세로 나눠 읽어야 해서 훨씬 오래 걸린다.
  * 예전에는 둘 다 8초로 묶어 두는 바람에 VMS 만 늘 잘려 나갔다.
@@ -31,7 +41,9 @@ const CACHE_KEY = "external-volunteers";
 let memoryCache: { at: number; value: ExternalFetchResult } | null = null;
 
 async function readCache(): Promise<ExternalFetchResult | null> {
-  if (memoryCache && Date.now() - memoryCache.at < TTL_MS) return memoryCache.value;
+  if (memoryCache && Date.now() - memoryCache.at < ttlFor(memoryCache.value)) {
+    return memoryCache.value;
+  }
 
   try {
     const supabase = createAdminClient();
@@ -45,7 +57,7 @@ async function readCache(): Promise<ExternalFetchResult | null> {
     if (!row) return null;
 
     const at = new Date(row.fetched_at).getTime();
-    if (Date.now() - at >= TTL_MS) return null;
+    if (Date.now() - at >= ttlFor(row.payload)) return null;
 
     memoryCache = { at, value: row.payload };
     return row.payload;
@@ -65,6 +77,28 @@ async function writeCache(value: ExternalFetchResult) {
   } catch {
     // 저장에 실패해도 이번 요청은 이미 값을 갖고 있다
   }
+}
+
+/**
+ * 왜 실패했는지 한 줄로 남긴다.
+ *
+ * Node 의 fetch 는 연결이 안 되면 이유를 감추고 "fetch failed" 만 던진다.
+ * 진짜 이유(연결 거부·시간 초과·DNS·인증서)는 cause 에 들어 있어서, 그걸
+ * 같이 적어두지 않으면 로그만 보고는 원인을 좁힐 수가 없다.
+ */
+function describe(reason: unknown): string {
+  if (!(reason instanceof Error)) return String(reason);
+  if (reason.name === "AbortError" || reason.name === "TimeoutError") {
+    return "시간 초과";
+  }
+
+  const cause = (reason as Error & { cause?: unknown }).cause;
+  if (cause instanceof Error) {
+    const code = (cause as Error & { code?: string }).code;
+    return `${reason.message} (${code ?? cause.name}: ${cause.message})`;
+  }
+
+  return reason.message;
 }
 
 function withinDeadline<T>(ms: number, p: (signal: AbortSignal) => Promise<T>): Promise<T> {
@@ -158,9 +192,8 @@ export async function getExternalVolunteers(options?: {
       items.push(...r.value);
       return;
     }
-    // 어느 포털이 빠졌는지 알아야 화면에서 안내할 수 있다
-    const why = r.reason instanceof Error ? r.reason.message : String(r.reason);
-    errors.push(`${tasks[i].source}: ${why}`);
+    // 어느 포털이 왜 빠졌는지 알아야 화면에서 안내하고 원인도 좇을 수 있다
+    errors.push(`${tasks[i].source}: ${describe(r.reason)}`);
   });
 
   // 둘 다 실패하면 예시 데이터로 화면을 유지한다

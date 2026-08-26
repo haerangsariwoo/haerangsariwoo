@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { after } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getExternalVolunteers } from "@/lib/external";
 import { runtimeRegion } from "@/lib/runtime-region";
 
 export const dynamic = "force-dynamic";
@@ -106,6 +107,17 @@ export async function GET(request: Request) {
   if (params.get("after") === "1") {
     markAfterRan();
     return NextResponse.json({ ...base, afterScheduled: true });
+  }
+
+  if (params.get("swr") === "1") {
+    // 봉사 모집 화면과 똑같은 경로를 로그인 없이 태워 본다.
+    // 화면 쪽은 로그인이 필요해 밖에서 확인할 방법이 없었다.
+    const started = Date.now();
+    const v = await getExternalVolunteers();
+    return NextResponse.json({
+      ...base,
+      swr: { ms: Date.now() - started, items: v.items.length, error: v.error ?? null },
+    });
   }
 
   if (params.get("vms") !== "1") {

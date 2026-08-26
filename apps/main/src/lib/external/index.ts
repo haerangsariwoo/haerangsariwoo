@@ -4,6 +4,7 @@ import { fetch1365 } from "./portal-1365";
 import { fetchVms } from "./portal-vms";
 import { buildSampleExternal } from "./sample";
 import { normalizeServiceKey } from "./service-key";
+import { runtimeRegion } from "@/lib/runtime-region";
 import type { ExternalFetchResult, ExternalVolunteer } from "./types";
 
 export type { ExternalVolunteer, ExternalFetchResult } from "./types";
@@ -117,8 +118,7 @@ function describe(reason: unknown): string {
   }
 
   // 어느 리전에서 난 실패인지도 같이 남긴다
-  const region = process.env.VERCEL_REGION;
-  return parts.join(" ← ") + (region ? ` @${region}` : "");
+  return `${parts.join(" ← ")} @${runtimeRegion()}`;
 }
 
 function withinDeadline<T>(ms: number, p: (signal: AbortSignal) => Promise<T>): Promise<T> {

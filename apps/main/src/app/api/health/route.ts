@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { runtimeRegion } from "@/lib/runtime-region";
 
 export const dynamic = "force-dynamic";
 
@@ -79,7 +80,8 @@ export async function GET(request: Request) {
     commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "local",
     branch: process.env.VERCEL_GIT_COMMIT_REF ?? "local",
     env: process.env.VERCEL_ENV ?? "development",
-    region: process.env.VERCEL_REGION ?? "local",
+    region: runtimeRegion(),
+    buildRegion: process.env.VERCEL_REGION ?? "local",
     now: new Date().toISOString(),
   };
 

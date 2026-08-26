@@ -208,3 +208,10 @@
   font-size: 13px;
   color: var(--state-danger);
 }
+
+/* 받기가 끝나 한 번 더 누르면 되는 상태 */
+.saveReady {
+  border-color: transparent;
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
+}

@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { runtimeRegion } from "@/lib/runtime-region";
 
 export const dynamic = "force-dynamic";
@@ -75,6 +77,21 @@ async function probeVms() {
   }
 }
 
+/**
+ * after() 가 이 배포에서 실제로 도는지 확인한다.
+ * 응답을 보낸 뒤 표에 흔적을 남기므로, 그 행이 생겼는지 보면 알 수 있다.
+ */
+function markAfterRan() {
+  after(async () => {
+    const supabase = createAdminClient();
+    await supabase.from("external_cache").upsert({
+      id: "after-probe",
+      payload: { ranAt: new Date().toISOString(), region: runtimeRegion() },
+      fetched_at: new Date().toISOString(),
+    });
+  });
+}
+
 export async function GET(request: Request) {
   const base = {
     commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "local",
@@ -85,7 +102,13 @@ export async function GET(request: Request) {
     now: new Date().toISOString(),
   };
 
-  if (new URL(request.url).searchParams.get("vms") !== "1") {
+  const params = new URL(request.url).searchParams;
+  if (params.get("after") === "1") {
+    markAfterRan();
+    return NextResponse.json({ ...base, afterScheduled: true });
+  }
+
+  if (params.get("vms") !== "1") {
     return NextResponse.json(base);
   }
 

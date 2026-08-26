@@ -6,6 +6,7 @@ import {
   clearFailures,
   recordFailure,
 } from "@/lib/apply-throttle";
+import { expandAll, type SlotSource, type SlotTime } from "@/lib/interview-slots";
 
 /**
  * 1차 합격자가 면접 시간을 직접 고른다.
@@ -15,19 +16,6 @@ import {
  * 같은 방식). 남은 자리 계산과 저장은 반드시 서버에서 한다 — 화면에서
  * 막아 봐야 요청을 직접 보내면 그만이다.
  */
-
-interface SlotRow {
-  id: string;
-  slot_date: string;
-  time_range: string;
-  interval_label: string;
-  capacity: number;
-}
-
-/** "9.11 (목) 14:00–17:00" — 저장 형태. 운영진 화면은 날짜로 세므로 날짜가 앞에 온다 */
-function slotLabel(s: SlotRow) {
-  return `${s.slot_date} ${s.time_range}`;
-}
 
 async function verify(studentId: unknown, code: unknown) {
   if (typeof studentId !== "string" || typeof code !== "string") return null;
@@ -77,34 +65,34 @@ export async function POST(request: Request) {
     supabase.from("applicants").select("interview").not("interview", "is", null),
   ]);
 
-  const slots = (slotData ?? []) as SlotRow[];
+  // 운영진이 등록한 하루치를 지원자가 고를 수 있는 칸으로 쪼갠다
+  const times = expandAll((slotData ?? []) as SlotSource[]);
   const taken = (takenData ?? []) as { interview: string | null }[];
-  const countOf = (s: SlotRow) =>
-    taken.filter((t) => t.interview === slotLabel(s)).length;
+  const countOf = (t: SlotTime) => taken.filter((x) => x.interview === t.label).length;
 
   // ---- 목록만 달라는 요청 ----
   if (!slotId) {
     return NextResponse.json({
       current: applicant.interview,
-      slots: slots.map((s) => ({
-        id: s.id,
-        label: slotLabel(s),
-        date: s.slot_date,
-        time: s.time_range,
-        interval: s.interval_label,
-        left: Math.max(0, s.capacity - countOf(s)),
-        capacity: s.capacity,
+      slots: times.map((t) => ({
+        id: t.id,
+        label: t.label,
+        date: t.date,
+        time: t.time,
+        endTime: t.endTime,
+        left: Math.max(0, t.capacity - countOf(t)),
+        capacity: t.capacity,
       })),
     });
   }
 
-  // ---- 고른 시간대로 예약 ----
-  const chosen = slots.find((s) => s.id === slotId);
+  // ---- 고른 시간으로 예약 ----
+  const chosen = times.find((t) => t.id === slotId);
   if (!chosen) {
     return NextResponse.json({ error: "없는 시간대입니다." }, { status: 400 });
   }
 
-  const label = slotLabel(chosen);
+  const label = chosen.label;
   // 이미 그 시간을 골라 둔 상태면 자리를 다시 세지 않는다
   if (applicant.interview !== label && countOf(chosen) >= chosen.capacity) {
     return NextResponse.json(

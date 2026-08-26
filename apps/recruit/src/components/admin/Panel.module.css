@@ -365,3 +365,10 @@
   gap: 8px;
   flex: none;
 }
+
+/* 입력한 대로 저장하면 어떻게 되는지 알려주는 한 줄. 폼 아래 전체 폭을 쓴다 */
+.formNote {
+  flex-basis: 100%;
+  font-size: 12px;
+  line-height: 1.6;
+}

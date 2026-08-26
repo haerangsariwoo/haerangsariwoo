@@ -36,7 +36,13 @@
   color: var(--a-ink);
   /* 지원자가 넣은 줄바꿈을 그대로 살린다 */
   white-space: pre-wrap;
+  /* 한글은 어절 안에서 끊지 않는다 */
   word-break: keep-all;
+  /*
+   * 다만 띄어쓰기 없이 길게 이어 쓴 입력은 keep-all 만으로는 어디서도
+   * 못 끊어 표 전체를 옆으로 밀어낸다. 그럴 때만 글자 사이에서 끊는다.
+   */
+  overflow-wrap: anywhere;
   max-width: 70ch;
 }
 

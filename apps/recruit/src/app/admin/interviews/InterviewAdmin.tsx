@@ -5,8 +5,25 @@ import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
 import { createClient } from "@/lib/supabase/client";
 import type { Applicant, SlotRow } from "@/lib/admin-data";
+import {
+  expandAll,
+  hhmm,
+  INTERVAL_OPTIONS,
+  parseRange,
+  timeCount,
+} from "@/lib/interview-slots";
 
-const EMPTY_SLOT = { slot_date: "", time_range: "", interval_label: "30분", capacity: "6" };
+/**
+ * 정원은 "한 시간대에 받을 인원" 이다. 10:00~18:00 을 20분 간격으로 열고
+ * 정원을 1로 두면 하루 24명을 한 명씩 본다.
+ */
+const EMPTY_SLOT = {
+  slot_date: "",
+  start: "10:00",
+  end: "18:00",
+  interval_label: "20분",
+  capacity: "1",
+};
 
 export function InterviewAdmin() {
   const supabase = useMemo(() => createClient(), []);
@@ -47,12 +64,37 @@ export function InterviewAdmin() {
     return people.filter((a) => a.interview?.startsWith(slotDate)).length;
   }
 
+  /** 지금 입력한 대로면 어떤 시간들이 생기는지 — 저장하기 전에 보여준다 */
+  const previewTimes = useMemo(
+    () =>
+      expandAll([
+        {
+          id: "preview",
+          slot_date: form.slot_date || "날짜",
+          time_range: `${form.start}~${form.end}`,
+          interval_label: form.interval_label,
+          capacity: Number(form.capacity) || 0,
+        },
+      ]).filter((t) => t.endTime),
+    [form],
+  );
+
+  const preview =
+    previewTimes.length === 0
+      ? "종료 시각이 시작보다 늦어야 하고, 간격만큼은 들어가야 합니다."
+      : `${previewTimes[0].time}부터 ${form.interval_label} 간격으로 ` +
+        `${previewTimes.length}칸이 생깁니다 (마지막 ${previewTimes[previewTimes.length - 1].time}). ` +
+        `하루 정원 ${previewTimes.length * (Number(form.capacity) || 0)}명.`;
+
+  /** 운영진이 직접 배정할 때 고르는 목록 — 지원자가 보는 것과 같은 칸이다 */
+  const assignTimes = useMemo(() => expandAll(slots), [slots]);
+
   async function submitSlot(e: FormEvent) {
     e.preventDefault();
     const capacity = Number(form.capacity) || 0;
     const payload = {
       slot_date: form.slot_date.trim(),
-      time_range: form.time_range.trim(),
+      time_range: `${form.start}~${form.end}`,
       interval_label: form.interval_label,
       capacity,
     };
@@ -74,9 +116,12 @@ export function InterviewAdmin() {
   function startEdit(id: string) {
     const s = slots.find((x) => x.id === id);
     if (!s) return;
+    // 예전에 자유롭게 적어 둔 시간도 시각 두 개로 되돌려 고칠 수 있게 한다
+    const range = parseRange(s.time_range);
     setForm({
       slot_date: s.slot_date,
-      time_range: s.time_range,
+      start: range ? hhmm(range.start) : "10:00",
+      end: range ? hhmm(range.end) : "18:00",
       interval_label: s.interval_label,
       capacity: String(s.capacity),
     });
@@ -135,12 +180,22 @@ export function InterviewAdmin() {
               />
             </label>
             <label className={ui.inlineField}>
-              <span className={ui.inlineLabel}>운영 시간</span>
+              <span className={ui.inlineLabel}>시작</span>
               <input
                 className={ui.inlineInput}
-                value={form.time_range}
-                onChange={(e) => setForm({ ...form, time_range: e.target.value })}
-                placeholder="예: 13:00 – 17:00"
+                type="time"
+                value={form.start}
+                onChange={(e) => setForm({ ...form, start: e.target.value })}
+                required
+              />
+            </label>
+            <label className={ui.inlineField}>
+              <span className={ui.inlineLabel}>종료</span>
+              <input
+                className={ui.inlineInput}
+                type="time"
+                value={form.end}
+                onChange={(e) => setForm({ ...form, end: e.target.value })}
                 required
               />
             </label>
@@ -151,13 +206,15 @@ export function InterviewAdmin() {
                 value={form.interval_label}
                 onChange={(e) => setForm({ ...form, interval_label: e.target.value })}
               >
-                <option value="20분">20분</option>
-                <option value="30분">30분</option>
-                <option value="40분">40분</option>
+                {INTERVAL_OPTIONS.map((o) => (
+                  <option key={o} value={o}>
+                    {o}
+                  </option>
+                ))}
               </select>
             </label>
             <label className={ui.inlineField}>
-              <span className={ui.inlineLabel}>정원</span>
+              <span className={ui.inlineLabel}>시간대별 정원</span>
               <input
                 className={ui.inlineInput}
                 type="number"
@@ -166,8 +223,13 @@ export function InterviewAdmin() {
                 onChange={(e) => setForm({ ...form, capacity: e.target.value })}
               />
             </label>
+            <p className={cn(ui.muted, ui.formNote)}>{preview}</p>
             <div className={ui.inlineActions}>
-              <button type="submit" className={cn(ui.btn, ui.primary)} disabled={!form.slot_date.trim()}>
+              <button
+                type="submit"
+                className={cn(ui.btn, ui.primary)}
+                disabled={!form.slot_date.trim() || previewTimes.length === 0}
+              >
                 {editing ? "수정 저장" : "추가"}
               </button>
               <button
@@ -191,6 +253,7 @@ export function InterviewAdmin() {
                 <th>날짜</th>
                 <th>운영 시간</th>
                 <th>간격</th>
+                <th>시간 수</th>
                 <th>예약 / 정원</th>
                 <th>상태</th>
                 <th />
@@ -199,14 +262,18 @@ export function InterviewAdmin() {
             <tbody>
               {slots.map((s) => {
                 const count = bookedCount(s.slot_date);
-                const full = count >= s.capacity;
+                const times = timeCount(s);
+                // 정원은 시간대별이므로 하루 전체는 (시간 수 × 정원) 이다
+                const total = times * s.capacity;
+                const full = count >= total;
                 return (
                   <tr key={s.id}>
                     <td>{s.slot_date}</td>
                     <td className={cn(ui.muted, ui.numeric)}>{s.time_range}</td>
                     <td className={ui.muted}>{s.interval_label}</td>
+                    <td className={ui.numeric}>{times}칸</td>
                     <td className={ui.numeric}>
-                      {count} / {s.capacity}
+                      {count} / {total}
                     </td>
                     <td>
                       <Badge tone={full ? "danger" : "green"}>{full ? "마감" : "예약 가능"}</Badge>
@@ -224,7 +291,7 @@ export function InterviewAdmin() {
               })}
               {!loading && slots.length === 0 && (
                 <tr>
-                  <td colSpan={6} className={ui.muted}>
+                  <td colSpan={7} className={ui.muted}>
                     열어둔 면접 슬롯이 없습니다.
                   </td>
                 </tr>
@@ -266,9 +333,9 @@ export function InterviewAdmin() {
                         aria-label={`${a.name} 면접 시간 선택`}
                       >
                         <option value="">시간 선택</option>
-                        {slots.map((s) => (
-                          <option key={s.id} value={`${s.slot_date} ${s.time_range.split(" – ")[0]}`}>
-                            {s.slot_date} {s.time_range}
+                        {assignTimes.map((t) => (
+                          <option key={t.id} value={t.label}>
+                            {t.label}
                           </option>
                         ))}
                       </select>

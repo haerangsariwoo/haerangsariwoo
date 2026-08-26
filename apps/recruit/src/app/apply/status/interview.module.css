@@ -12,59 +12,99 @@
   color: var(--ink-900);
 }
 
-.slotList {
+/* ---------- 날짜 한 덩어리 ---------- */
+.day {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.slot {
+.dayHead {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  width: 100%;
-  padding: 16px 18px;
+}
+
+.dayDate {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.dayLeft {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-blue-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.dayFull {
+  color: var(--ink-600);
+}
+
+/*
+ * 하루에 스무 칸이 넘게 나온다. 한 줄에 하나씩 쌓으면 화면이 끝없이
+ * 길어져서, 폭에 맞춰 여러 개씩 채운다.
+ */
+.times {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 8px;
+}
+
+.time {
+  height: 44px;
   border: 1px solid var(--hairline);
   border-radius: var(--radius-md);
   background: var(--surface-white);
   font-family: inherit;
-  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-900);
   cursor: pointer;
 }
 
-.slot.on {
+.time.on {
   border-color: var(--brand-blue-500);
-  background: var(--brand-surface);
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
 }
 
-/* 찬 시간대도 남겨 둔다 — 없어지면 "원래 없던 날" 로 오해한다 */
-.slot.full {
-  opacity: 0.55;
+/* 찬 시간도 남겨 둔다 — 없어지면 "원래 없던 시간" 으로 오해한다 */
+.time.full {
+  opacity: 0.4;
+  text-decoration: line-through;
   cursor: not-allowed;
 }
 
-.slotDate {
-  font-size: 15px;
+.time:focus-visible {
+  outline: 2px solid var(--brand-blue-500);
+  outline-offset: 2px;
+}
+
+/* 고른 시간을 예약 버튼 바로 위에서 다시 확인시킨다 */
+.chosen {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-height: 22px;
+  font-size: 14px;
+}
+
+.chosenLabel {
   font-weight: 700;
   color: var(--ink-900);
-  flex: none;
 }
 
-.slotTime {
-  font-size: 14px;
-  color: var(--ink-600);
-  flex: 1;
-  min-width: 0;
-}
-
-.slotLeft {
+.chosenLeft {
   font-size: 12px;
   font-weight: 600;
   color: var(--brand-blue-500);
-  flex: none;
 }
 
-.slot.full .slotLeft {
+.chosenEmpty {
+  font-size: 13px;
   color: var(--ink-600);
 }
 

@@ -1,8 +1,12 @@
 import { defaultPhotoFocus, type PhotoFocus } from "./photo-focus";
 
 export interface AlbumPhoto {
-  /** 공개 버킷의 사진 주소 */
+  /** 격자에 까는 작은 그림. 원본을 깔면 앨범 한 번 여는 데 수십 MB 가 나간다 */
   url: string;
+  /** 눌러서 크게 볼 때 받는 원본 */
+  fullUrl: string;
+  /** 저장 버튼이 쓰는 주소 — 브라우저가 열지 않고 받도록 되어 있다 */
+  downloadUrl: string;
   /** 스토리지 경로 — 관리자 화면에서 지울 때 쓴다 */
   path?: string;
   focus: PhotoFocus;

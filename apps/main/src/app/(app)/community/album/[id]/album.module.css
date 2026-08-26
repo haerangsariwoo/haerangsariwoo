@@ -60,3 +60,151 @@
   padding: 12px 14px;
   line-height: 1.6;
 }
+
+.hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--ink-600);
+}
+
+/* 누를 수 있는 칸임을 알린다 */
+.photoButton {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: var(--brand-tint-05, rgba(0, 0, 0, 0.04));
+}
+
+.photoButton:focus-visible {
+  outline: 2px solid var(--brand-blue-500);
+  outline-offset: 2px;
+}
+
+/* ---------- 사진 크게 보기 ---------- */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.92);
+  display: grid;
+  place-items: center;
+  padding: 64px 12px 24px;
+}
+
+.viewerImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.viewerBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  /* 밝은 사진 위에서도 버튼이 보이도록 위쪽만 살짝 어둡게 */
+  background: linear-gradient(rgba(0, 0, 0, 0.55), transparent);
+}
+
+.viewerCount {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.viewerSave {
+  flex: none;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-white);
+  color: var(--ink-800);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.viewerClose {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.viewerNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.viewerNav.prev { left: 10px; }
+.viewerNav.next { right: 10px; }
+
+.viewerSave:focus-visible,
+.viewerClose:focus-visible,
+.viewerNav:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ---------- 전체 저장 ---------- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 var(--screen-pad) 12px;
+}
+
+.toolbar .hint {
+  flex: 1;
+  margin-top: 0;
+}
+
+.saveAll {
+  flex: none;
+  height: 34px;
+  padding: 0 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: var(--surface-white);
+  color: var(--ink-800);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.saveAll:disabled {
+  color: var(--ink-600);
+  cursor: progress;
+}
+
+.saveError {
+  padding: 0 var(--screen-pad) 12px;
+  font-size: 13px;
+  color: var(--state-danger);
+}

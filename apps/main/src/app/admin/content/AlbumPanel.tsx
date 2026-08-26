@@ -5,7 +5,12 @@ import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { createClient } from "@/lib/supabase/client";
 import { storagePath } from "@/lib/storage-name";
-import { ALBUM_PRESET, compressImage, FileTooLargeError } from "@/lib/image-compress";
+import {
+  ALBUM_PRESET,
+  compressImage,
+  FileTooLargeError,
+  THUMB_PRESET,
+} from "@/lib/image-compress";
 import { tonesFor, type Album, type AlbumPhoto } from "@/lib/community";
 import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 import { Panel } from "@/components/admin/Panel/Panel";
@@ -20,12 +25,18 @@ interface AlbumRow {
   id: string;
   title: string;
   date_label: string;
-  album_photos: { id: string; path: string; sort_order: number; focus: PhotoFocus | null }[];
+  album_photos: {
+    id: string;
+    path: string;
+    thumb_path: string | null;
+    sort_order: number;
+    focus: PhotoFocus | null;
+  }[];
 }
 
 /** 화면에서 다루는 앨범 — 사진마다 DB 행 id 를 들고 있어야 지우고 고칠 수 있다 */
 interface EditableAlbum extends Album {
-  photos: (AlbumPhoto & { rowId: string; path: string })[];
+  photos: (AlbumPhoto & { rowId: string; path: string; thumbPath: string | null })[];
 }
 
 function todayLabel() {
@@ -58,7 +69,7 @@ export function AlbumPanel() {
     async function load() {
       const { data, error: fetchError } = await supabase
         .from("albums")
-        .select("id, title, date_label, album_photos(id, path, sort_order, focus)")
+        .select("id, title, date_label, album_photos(id, path, thumb_path, sort_order, focus)")
         .order("created_at", { ascending: false });
       if (cancelled) return;
       if (fetchError) {
@@ -71,7 +82,11 @@ export function AlbumPanel() {
               .map((p) => ({
                 rowId: p.id,
                 path: p.path,
-                url: publicUrl(p.path),
+                thumbPath: p.thumb_path,
+                // 관리자 화면 미리보기도 작은 것으로 — 원본을 깔 이유가 없다
+                url: publicUrl(p.thumb_path ?? p.path),
+                fullUrl: publicUrl(p.path),
+                downloadUrl: `${publicUrl(p.path)}?download`,
                 focus: p.focus ?? defaultPhotoFocus,
               }));
             return {
@@ -127,7 +142,9 @@ export function AlbumPanel() {
     const prev = albums;
     setAlbums((cur) => cur.filter((a) => a.id !== id));
     if (album.photos.length > 0) {
-      await supabase.storage.from(BUCKET).remove(album.photos.map((p) => p.path));
+      await supabase.storage
+        .from(BUCKET)
+        .remove(album.photos.flatMap((p) => [p.path, p.thumbPath].filter(Boolean) as string[]));
     }
     const { error: deleteError } = await supabase.from("albums").delete().eq("id", id);
     if (deleteError) {
@@ -170,36 +187,51 @@ export function AlbumPanel() {
     const added: EditableAlbum["photos"] = [];
 
     for (const original of Array.from(files)) {
-      let file: File;
+      // 원본(내려받기용)과 썸네일(격자용)을 함께 만든다
+      let full: File;
+      let thumb: File;
       try {
-        file = await compressImage(original, ALBUM_PRESET);
+        full = await compressImage(original, ALBUM_PRESET);
+        thumb = await compressImage(original, THUMB_PRESET);
       } catch (e) {
         setBusy(false);
         setError(e instanceof FileTooLargeError ? e.message : "사진을 읽지 못했습니다.");
         return;
       }
-      const path = storagePath(user.id, file.name);
-      const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file);
-      if (uploadError) {
+
+      const path = storagePath(user.id, full.name);
+      const thumbPath = storagePath(user.id, `thumb-${thumb.name}`);
+
+      const [{ error: fullError }, { error: thumbError }] = await Promise.all([
+        supabase.storage.from(BUCKET).upload(path, full),
+        supabase.storage.from(BUCKET).upload(thumbPath, thumb),
+      ]);
+      if (fullError || thumbError) {
+        await supabase.storage.from(BUCKET).remove([path, thumbPath]);
         setBusy(false);
         setError("사진을 올리지 못했습니다.");
         return;
       }
+
       const { data, error: insertError } = await supabase
         .from("album_photos")
-        .insert({ album_id: albumId, path, sort_order: order })
+        .insert({ album_id: albumId, path, thumb_path: thumbPath, sort_order: order })
         .select("id")
         .single();
       if (insertError || !data) {
-        await supabase.storage.from(BUCKET).remove([path]);
+        await supabase.storage.from(BUCKET).remove([path, thumbPath]);
         setBusy(false);
         setError("사진 정보를 저장하지 못했습니다.");
         return;
       }
+
       added.push({
         rowId: (data as { id: string }).id,
         path,
-        url: publicUrl(path),
+        thumbPath,
+        url: publicUrl(thumbPath),
+        fullUrl: publicUrl(path),
+        downloadUrl: `${publicUrl(path)}?download`,
         focus: defaultPhotoFocus,
       });
       order += 1;
@@ -232,7 +264,7 @@ export function AlbumPanel() {
           : a,
       ),
     );
-    await supabase.storage.from(BUCKET).remove([photo.path]);
+    await supabase.storage.from(BUCKET).remove([photo.path, photo.thumbPath].filter(Boolean) as string[]);
     const { error: deleteError } = await supabase
       .from("album_photos")
       .delete()

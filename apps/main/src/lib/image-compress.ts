@@ -28,6 +28,13 @@ export const ALBUM_PRESET: CompressPreset = { maxEdge: 2560, quality: 0.92 };
 /** 프로필·게시판 첨부 — 화면에서 보는 용도 */
 export const SCREEN_PRESET: CompressPreset = { maxEdge: 1600, quality: 0.85 };
 
+/**
+ * 앨범 격자에 깔리는 작은 그림.
+ * 칸이 220px 이라 400px 이면 고해상도 화면에서도 또렷하다. 원본을 그대로
+ * 깔면 20장짜리 앨범 한 번 여는 데 17MB 가 나간다.
+ */
+export const THUMB_PRESET: CompressPreset = { maxEdge: 400, quality: 0.78 };
+
 /** 원본이 아무리 커도 이 이상은 받지 않는다 (사고 방지) */
 export const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 

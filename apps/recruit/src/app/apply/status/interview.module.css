@@ -31,6 +31,12 @@
   color: var(--ink-900);
 }
 
+.dayRule {
+  flex: 1;
+  font-size: 12px;
+  color: var(--ink-600);
+}
+
 .dayLeft {
   font-size: 12px;
   font-weight: 600;
@@ -53,7 +59,13 @@
 }
 
 .time {
-  height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-height: 44px;
+  padding: 4px 2px;
   border: 1px solid var(--hairline);
   border-radius: var(--radius-md);
   background: var(--surface-white);
@@ -63,6 +75,22 @@
   font-variant-numeric: tabular-nums;
   color: var(--ink-900);
   cursor: pointer;
+}
+
+.timeLabel {
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.timeLeft {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--state-danger);
+}
+
+.time.on .timeLeft {
+  color: var(--surface-white);
 }
 
 .time.on {

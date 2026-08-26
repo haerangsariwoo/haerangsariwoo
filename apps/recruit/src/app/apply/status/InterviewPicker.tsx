@@ -111,10 +111,16 @@ export function InterviewPicker({
         <>
           {days.map((day) => {
             const left = day.times.reduce((sum, t) => sum + t.left, 0);
+            // 정원은 타임마다 따로 걸린다. 날짜 합계만 보이면 하루치를 통으로
+            // 나눠 쓰는 것처럼 오해하므로 "타임당 몇 명" 을 같이 적는다.
+            const perTime = [...new Set(day.times.map((t) => t.capacity))];
             return (
               <section key={day.date} className={styles.day}>
                 <div className={styles.dayHead}>
                   <span className={styles.dayDate}>{day.date}</span>
+                  {perTime.length === 1 && (
+                    <span className={styles.dayRule}>타임당 {perTime[0]}명</span>
+                  )}
                   <span className={cn(styles.dayLeft, left === 0 && styles.dayFull)}>
                     {left === 0 ? "마감" : `${left}자리 남음`}
                   </span>
@@ -137,7 +143,14 @@ export function InterviewPicker({
                         )}
                         onClick={() => setPicked(t.id)}
                       >
-                        {t.time}
+                        <span className={styles.timeLabel}>{t.time}</span>
+                        {/*
+                          자리가 남아돌 때까지 숫자를 달면 마흔 칸이 넘게 시끄럽다.
+                          누가 잡아서 줄어든 칸에만 붙여 눈에 띄게 한다.
+                        */}
+                        {t.left < t.capacity && (
+                          <span className={styles.timeLeft}>{full ? "마감" : `${t.left}자리`}</span>
+                        )}
                       </button>
                     );
                   })}

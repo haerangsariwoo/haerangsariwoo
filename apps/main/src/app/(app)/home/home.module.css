@@ -63,53 +63,51 @@
   margin-top: var(--space-4);
 }
 
-/* ---------- 두 칸 블록 ----------
-   칸 사이도 선 하나로만 나눈다. 바깥 여백은 다른 블록과 맞춘다. */
-.duo {
+/* ---------- 네 칸 블록 ----------
+   두 줄로 나눠 두면 줄끼리 높이를 모른다. 한 격자에 네 칸을 담고
+   grid-auto-rows: 1fr 로 줄 높이를 서로 맞춘다 — 네 칸이 같은 크기가 된다. */
+.quad {
   /* 칸이 자기 여백을 갖는다 */
   --block-pad-x: 0;
   --block-pad-y: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: stretch;
+  grid-auto-rows: 1fr;
 }
 
-.duo > * {
+.quad > * {
+  min-width: 0;
   padding: var(--space-20) var(--space-14);
 }
 
-.duo > *:first-child {
+/* 바깥쪽 여백은 화면 여백에 맞추고, 칸 사이는 선 하나로만 나눈다 */
+.quad > *:nth-child(odd) {
   padding-left: var(--screen-pad);
+  border-right: 1px solid var(--hairline);
 }
 
-.duo > *:last-child {
+.quad > *:nth-child(even) {
   padding-right: var(--screen-pad);
 }
 
-.duo > * + * {
-  border-left: 1px solid var(--hairline);
+.quad > *:nth-child(-n + 2) {
+  border-bottom: 1px solid var(--hairline);
 }
 
-/* 좁은 화면에서는 세로로 쌓이니 경계선도 방향을 바꾼다 */
+/* 좁은 화면에서는 한 줄에 하나씩 쌓이니 경계선도 방향을 바꾼다 */
 @media (max-width: 359px) {
-  .duo {
+  .quad {
     grid-template-columns: 1fr;
+    grid-auto-rows: auto;
   }
-  .duo > * {
+  .quad > * {
     padding: var(--space-20) var(--screen-pad);
+    border-right: none;
+    border-bottom: none;
   }
-  .duo > * + * {
-    border-left: none;
+  .quad > * + * {
     border-top: 1px solid var(--hairline);
   }
-}
-
-.cardTitle {
-  align-self: flex-start;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink-800);
 }
 
 /* ---------- 다음 활동 ---------- */

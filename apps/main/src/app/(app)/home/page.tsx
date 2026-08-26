@@ -80,7 +80,7 @@ export default async function HomePage() {
 
       {/* ② 이번 학기에 할 일 */}
       <SheetGroup>
-        <section className={styles.duo}>
+        <section className={styles.quad}>
           <article>
             <div className={styles.panelHead}>
               <h2 className={styles.panelTitle}>모집 중인 봉사</h2>
@@ -123,9 +123,7 @@ export default async function HomePage() {
               </p>
             )}
           </article>
-        </section>
 
-        <section className={styles.duo}>
           <article>
             <div className={styles.panelHead}>
               <h2 className={styles.panelTitle}>공지사항</h2>

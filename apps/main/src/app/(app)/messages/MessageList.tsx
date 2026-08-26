@@ -16,6 +16,7 @@ export function MessageList({ initial }: { initial: InboxMessage[] }) {
   const supabase = useMemo(() => createClient(), []);
   const [messages, setMessages] = useState(initial);
   const [filter, setFilter] = useState<Filter>("전체");
+  const [askOpen, setAskOpen] = useState(false);
 
   const unread = messages.filter((m) => !m.read).length;
 
@@ -114,9 +115,15 @@ export function MessageList({ initial }: { initial: InboxMessage[] }) {
         <p className={styles.askDesc}>
           이름이 드러나지 않는 채널톡 대화로 연결됩니다. 개인 연락처 대신 이곳으로 남겨주세요.
         </p>
-        <button type="button" className={styles.askButton}>
+        <button type="button" className={styles.askButton} onClick={() => setAskOpen(true)}>
           익명 문의 열기
         </button>
+        {/* 채널톡을 붙이기 전까지는 눌러도 아무 일이 없어 고장난 것처럼 보인다 */}
+        {askOpen && (
+          <p className={styles.askNotice} role="status">
+            아직 준비 중이에요. 그때까지는 운영진에게 직접 말씀해 주세요.
+          </p>
+        )}
       </section>
     </div>
   );

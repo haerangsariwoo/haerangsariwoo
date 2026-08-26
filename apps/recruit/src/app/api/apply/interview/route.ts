@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  blockedMessage,
+  checkAttempts,
+  clearFailures,
+  recordFailure,
+} from "@/lib/apply-throttle";
 
 /**
  * 1차 합격자가 면접 시간을 직접 고른다.
@@ -42,13 +48,21 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { studentId, code, slotId } = body ?? {};
 
+  // 면접 시간 선택도 같은 번호로 들어오므로 여기서도 시도 횟수를 센다
+  const gate = await checkAttempts(request, String(studentId ?? ""));
+  if (gate.blocked) {
+    return NextResponse.json({ error: blockedMessage(gate) }, { status: 429 });
+  }
+
   const session = await verify(studentId, code);
   if (!session) {
+    await recordFailure(request, String(studentId ?? ""));
     return NextResponse.json(
       { error: "학번 또는 본인 지정번호가 올바르지 않습니다." },
       { status: 400 },
     );
   }
+  await clearFailures(request, String(studentId));
   const { supabase, applicant } = session;
 
   if (applicant.first_result !== "합격") {

@@ -253,6 +253,13 @@
   cursor: pointer;
 }
 
+.askNotice {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-600);
+}
+
 .note {
   font-size: 12px;
   color: var(--ink-600);

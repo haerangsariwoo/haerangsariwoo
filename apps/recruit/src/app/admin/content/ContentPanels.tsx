@@ -17,7 +17,7 @@ import { PhotoFocusEditor } from "./PhotoFocusEditor";
 import { SaveBar } from "./SaveBar";
 
 /**
- * 랜딩 콘텐츠 관리 일곱 패널. 각 패널은 landing_content 표의 자기 컬럼만
+ * 콘텐츠 관리 일곱 패널. 각 패널은 landing_content 표의 자기 컬럼만
  * 저장하고, 공개 랜딩은 서버에서 그 표를 읽어 그린다. 사진은 누르는 즉시
  * landing-photos 버킷으로 올라가고(그래야 미리보기가 진짜 주소를 가리킨다),
  * 글은 [저장] 을 눌러야 반영된다.

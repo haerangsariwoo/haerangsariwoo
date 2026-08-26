@@ -12,7 +12,7 @@ import {
   ApplyProcessPanel,
 } from "./ContentPanels";
 
-export const metadata = { title: "랜딩 콘텐츠 · 해랑사리우" };
+export const metadata = { title: "콘텐츠 관리 · 해랑사리우" };
 
 export default async function RecruitContentPage() {
   const content = await getLandingContent();

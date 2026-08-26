@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { LandingPhoto } from "@/lib/recruit-config";
 import styles from "./page.module.css";
 
-/** About 섹션 사진. 관리자 [랜딩 콘텐츠]에서 올린 사진·위치를 그대로 쓴다. */
+/** About 섹션 사진. 관리자 [콘텐츠 관리]에서 올린 사진·위치를 그대로 쓴다. */
 export function AboutPhoto({ photo }: { photo: LandingPhoto }) {
   return (
     <div className={styles.aboutPhoto}>

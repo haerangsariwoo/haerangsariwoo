@@ -49,7 +49,11 @@ export default async function MyPage() {
         </div>
 
         <section className={styles.profileCard}>
-          <ProfilePhoto initial={profile.name.charAt(0)} />
+          <ProfilePhoto
+            initial={profile.name.charAt(0)}
+            photoUrl={profile.photoUrl}
+            focus={profile.photoFocus}
+          />
           <div>
             <p className={styles.name}>{profile.name}</p>
             <p className={styles.profileMeta}>

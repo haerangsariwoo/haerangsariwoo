@@ -8,19 +8,31 @@ import styles from "./NoticeComposer.module.css";
 
 const CATEGORIES = ["필독", "일정", "후기", "MT"] as const;
 
+export interface NoticeDraft {
+  title: string;
+  body: string;
+  category: string;
+  pinned: boolean;
+}
+
 interface NoticeComposerProps {
   /** 공지를 등록하고, 등록된 공지의 id를 돌려준다 — 실패하면 null */
-  onCreate?: (n: {
-    title: string;
-    body: string;
-    category: string;
-    pinned: boolean;
-  }) => Promise<string | null>;
+  onCreate?: (n: NoticeDraft) => Promise<string | null>;
+  /** 수정 중인 공지. 주어지면 폼이 그 내용으로 열리고 저장은 수정이 된다 */
+  editing?: (NoticeDraft & { id: string }) | null;
+  onUpdate?: (id: string, n: NoticeDraft) => Promise<boolean>;
+  onCancelEdit?: () => void;
   /** 지난 학기를 보는 중이면 새 공지를 못 쓰게 막는다 — 실제로 푸시 알림까지 나가는 동작이라 열기 전에 막는다 */
   disabled?: boolean;
 }
 
-export function NoticeComposer({ onCreate, disabled }: NoticeComposerProps) {
+export function NoticeComposer({
+  onCreate,
+  editing,
+  onUpdate,
+  onCancelEdit,
+  disabled,
+}: NoticeComposerProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -36,12 +48,49 @@ export function NoticeComposer({ onCreate, disabled }: NoticeComposerProps) {
     setPinned(false);
   }
 
+  // 수정 버튼을 누르면 그 공지 내용으로 폼을 채워 연다.
+  // effect 대신 렌더 중에 맞추는 편이 낫다 — 폼이 빈 채로 한 번 그려졌다가
+  // 값이 채워지며 다시 그리는 깜빡임이 없다.
+  const [filledFor, setFilledFor] = useState<string | null>(null);
+  if (editing && editing.id !== filledFor) {
+    setFilledFor(editing.id);
+    setTitle(editing.title);
+    setBody(editing.body);
+    setCategory(editing.category);
+    setPinned(editing.pinned);
+    setPush(false);
+    setOpen(true);
+    setResult(null);
+  }
+  if (!editing && filledFor !== null) setFilledFor(null);
+
+  function close() {
+    setOpen(false);
+    setResult(null);
+    reset();
+    onCancelEdit?.();
+  }
+
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
     setResult(null);
 
-    const noticeId = await onCreate?.({ title: title.trim(), body: body.trim(), category, pinned });
+    const draft = { title: title.trim(), body: body.trim(), category, pinned };
+
+    if (editing) {
+      const ok = await onUpdate?.(editing.id, draft);
+      setBusy(false);
+      if (!ok) {
+        setResult({ ok: false, text: "수정하지 못했습니다." });
+        return;
+      }
+      setResult({ ok: true, text: "수정했습니다." });
+      close();
+      return;
+    }
+
+    const noticeId = await onCreate?.(draft);
     if (!noticeId) {
       setResult({ ok: false, text: "공지 등록에 실패했습니다." });
       setBusy(false);
@@ -155,7 +204,7 @@ export function NoticeComposer({ onCreate, disabled }: NoticeComposerProps) {
           </span>
         </label>
 
-        <label className={styles.checkRow}>
+        <label className={cn(styles.checkRow, editing && styles.hidden)}>
           <input
             type="checkbox"
             className={styles.checkbox}
@@ -172,15 +221,12 @@ export function NoticeComposer({ onCreate, disabled }: NoticeComposerProps) {
 
         <div className={styles.actions}>
           <button type="submit" className={cn(toolbar.button, toolbar.primary)} disabled={busy}>
-            {busy ? "등록 중…" : "공지 등록"}
+            {busy ? "저장 중…" : editing ? "수정 저장" : "공지 등록"}
           </button>
           <button
             type="button"
             className={toolbar.button}
-            onClick={() => {
-              setOpen(false);
-              setResult(null);
-            }}
+            onClick={close}
           >
             닫기
           </button>

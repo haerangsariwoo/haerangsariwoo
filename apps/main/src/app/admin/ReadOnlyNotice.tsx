@@ -1,6 +1,6 @@
 "use client";
 
-import { SEMESTERS, useSemester } from "./SemesterContext";
+import { useSemester } from "./SemesterContext";
 import styles from "./layout.module.css";
 
 /**
@@ -9,10 +9,10 @@ import styles from "./layout.module.css";
  * readOnly 값만 보고 자기 버튼들을 잠근다.
  */
 export function ReadOnlyNotice() {
-  const { readOnly, semester } = useSemester();
+  const { readOnly, semester, semesters } = useSemester();
   if (!readOnly) return null;
 
-  const label = SEMESTERS.find((s) => s.value === semester)?.label ?? semester;
+  const label = semesters.find((s) => s.value === semester)?.label ?? semester;
 
   return (
     <p className={styles.readOnlyNotice}>

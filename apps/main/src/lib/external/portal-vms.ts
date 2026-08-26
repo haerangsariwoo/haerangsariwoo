@@ -129,14 +129,24 @@ async function fetchDetail(seq: string, signal?: AbortSignal): Promise<Detail | 
   }
 }
 
-/** 동시 요청 수를 제한해 순차적으로 처리한다 */
+/**
+ * 동시 요청 수를 제한해 순차적으로 처리하되, 주어진 시각을 넘기면 멈춘다.
+ * 상세는 있으면 좋은 정보라, 시간이 모자라면 남은 건 비워 두고 목록 정보만
+ * 쓴다 — 예전에는 여기서 시간이 다 되면 VMS 결과가 통째로 버려졌다.
+ */
 async function mapLimited<T, R>(
   items: T[],
   limit: number,
-  fn: (item: T) => Promise<R>,
-): Promise<R[]> {
-  const out: R[] = [];
+  deadlineAt: number,
+  fn: (item: T) => Promise<R | null>,
+): Promise<(R | null)[]> {
+  const out: (R | null)[] = [];
   for (let i = 0; i < items.length; i += limit) {
+    if (Date.now() >= deadlineAt) {
+      // 남은 자리는 채우지 않고 목록 정보로 대신한다
+      out.push(...items.slice(i).map(() => null));
+      break;
+    }
     out.push(...(await Promise.all(items.slice(i, i + limit).map(fn))));
   }
   return out;
@@ -148,6 +158,8 @@ export async function fetchVms(params: {
   recruitTo?: string;
   pages?: number;
   signal?: AbortSignal;
+  /** 이 시각을 넘기면 상세 보충을 멈춘다 (목록 결과는 그대로 살린다) */
+  detailDeadlineAt?: number;
 }): Promise<ExternalVolunteer[]> {
   const pages = params.pages ?? 2;
   const to = params.recruitTo ?? `${new Date().getFullYear() + 1}-12-31`;
@@ -196,8 +208,11 @@ export async function fetchVms(params: {
   });
 
   // 상세에서 모집기간·구/군·활동분야를 보충한다
-  const details = await mapLimited(base, DETAIL_CONCURRENCY, (b) =>
-    b.seq ? fetchDetail(b.seq, params.signal) : Promise.resolve(null),
+  const details = await mapLimited(
+    base,
+    DETAIL_CONCURRENCY,
+    params.detailDeadlineAt ?? Number.POSITIVE_INFINITY,
+    (b) => (b.seq ? fetchDetail(b.seq, params.signal) : Promise.resolve(null)),
   );
 
   return base.map(({ item }, i) => {

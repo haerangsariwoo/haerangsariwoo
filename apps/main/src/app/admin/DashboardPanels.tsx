@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Badge, DataTable, tableStyles } from "@/components/admin/DataTable/DataTable";
-import { pendingHours as pendingHoursSeed, todayVolunteers } from "@/lib/admin-data";
+import { createClient } from "@/lib/supabase/client";
+import type { PendingHour, TodayVolunteer } from "@/lib/dashboard";
 import { useSemester } from "./SemesterContext";
 import styles from "./dashboard.module.css";
 
@@ -16,11 +17,11 @@ const STATUS_OPTIONS = [
 ];
 
 /** "오늘의 봉사·출석" — 검색·상태 필터가 실제로 목록을 걸러낸다 */
-export function TodayVolunteersPanel() {
+export function TodayVolunteersPanel({ items }: { items: TodayVolunteer[] }) {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
 
-  const visible = todayVolunteers.filter((v) => {
+  const visible = items.filter((v) => {
     const hitQ = !q.trim() || v.title.includes(q.trim());
     const hitStatus = status === "all" || v.status === status;
     return hitQ && hitStatus;
@@ -65,7 +66,7 @@ export function TodayVolunteersPanel() {
         {visible.length === 0 && (
           <tr>
             <td colSpan={5} className={tableStyles.muted}>
-              조건에 맞는 봉사가 없습니다.
+              {items.length === 0 ? "오늘 예정된 봉사가 없습니다." : "조건에 맞는 봉사가 없습니다."}
             </td>
           </tr>
         )}
@@ -79,10 +80,12 @@ export function TodayVolunteersPanel() {
  * 실제 승인 처리(증빙 확인 등)는 /admin/hours 에서 하므로 "검토"
  * 버튼은 거기로 보낸다 — 같은 화면을 두 곳에 만들지 않는다.
  */
-export function PendingHoursPanel() {
+export function PendingHoursPanel({ items }: { items: PendingHour[] }) {
   const { readOnly } = useSemester();
-  const [rows, setRows] = useState(pendingHoursSeed);
+  const supabase = useMemo(() => createClient(), []);
+  const [rows, setRows] = useState(items);
   const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [error, setError] = useState<string | null>(null);
 
   function toggle(id: string) {
     setChecked((prev) => {
@@ -93,13 +96,26 @@ export function PendingHoursPanel() {
     });
   }
 
-  function approveChecked() {
-    setRows((prev) => prev.filter((p) => !checked.has(p.id)));
+  async function approveChecked() {
+    const ids = [...checked];
+    if (ids.length === 0) return;
+    const prev = rows;
+    setRows((cur) => cur.filter((p) => !checked.has(p.id)));
     setChecked(new Set());
+
+    const { error: updateError } = await supabase
+      .from("proof_submissions")
+      .update({ status: "승인" })
+      .in("id", ids);
+    if (updateError) {
+      setRows(prev);
+      setError("승인 중 문제가 발생했습니다. 다시 시도해 주세요.");
+    }
   }
 
   return (
     <>
+      {error && <p className={tableStyles.muted}>{error}</p>}
       <div className={styles.approvalList}>
         {rows.map((p) => (
           <label key={p.id} className={styles.approvalRow}>

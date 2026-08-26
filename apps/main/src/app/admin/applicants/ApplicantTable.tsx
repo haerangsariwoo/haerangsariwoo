@@ -30,7 +30,7 @@ interface Row {
 }
 
 export function ApplicantTable() {
-  const { readOnly } = useSemester();
+  const { readOnly, matches } = useSemester();
   const supabase = useMemo(() => createClient(), []);
 
   const [rows, setRows] = useState<Row[]>([]);
@@ -69,7 +69,7 @@ export function ApplicantTable() {
     const hitQ = !q.trim() || name.includes(q.trim()) || studentId.includes(q.trim());
     const hitV = volunteer === "all" || title === volunteer;
     const hitS = state === "all" || a.state === state;
-    return hitQ && hitV && hitS;
+    return hitQ && hitV && hitS && matches(a.applied_at);
   });
 
   async function setRowState(id: string, next: string) {

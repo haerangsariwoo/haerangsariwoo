@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 import { createClient } from "@/lib/supabase/client";
 import { Panel } from "@/components/admin/Panel/Panel";
 import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/DataTable/DataTable";
-import { NoticeComposer } from "@/components/admin/NoticeComposer/NoticeComposer";
+import { NoticeComposer, type NoticeDraft } from "@/components/admin/NoticeComposer/NoticeComposer";
 import type { NoticeItem } from "@/lib/notices";
 import { useSemester } from "../SemesterContext";
 import styles from "../volunteers/volunteers.module.css";
@@ -40,12 +40,14 @@ function toItem(r: NoticeRow): NoticeItem {
 }
 
 export function NoticeTable() {
-  const { readOnly } = useSemester();
+  const { readOnly, matches } = useSemester();
   const supabase = useMemo(() => createClient(), []);
 
   const [rows, setRows] = useState<NoticeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  /** 수정 중인 공지 — 작성 폼을 그대로 재사용한다 */
+  const [editing, setEditing] = useState<(NoticeDraft & { id: string }) | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -125,8 +127,37 @@ export function NoticeTable() {
     return item.id;
   }
 
+  async function update(id: string, draft: NoticeDraft) {
+    const prev = rows;
+    setRows((cur) =>
+      cur.map((n) =>
+        n.id === id
+          ? { ...n, title: draft.title, category: draft.category as NoticeItem["category"], body: [draft.body], pinned: draft.pinned }
+          : n,
+      ),
+    );
+    const { error: updateError } = await supabase
+      .from("notices")
+      .update({
+        title: draft.title,
+        category: draft.category,
+        body: [draft.body],
+        pinned: draft.pinned,
+      })
+      .eq("id", id);
+    if (updateError) {
+      setRows(prev);
+      setError("수정하지 못했습니다. 다시 시도해 주세요.");
+      return false;
+    }
+    setEditing(null);
+    return true;
+  }
+
   // 고정된 공지를 위로
-  const sorted = [...rows].sort((a, b) => Number(b.pinned) - Number(a.pinned));
+  const sorted = [...rows]
+    .filter((n) => matches(n.date))
+    .sort((a, b) => Number(b.pinned) - Number(a.pinned));
 
   return (
     <Panel
@@ -136,7 +167,13 @@ export function NoticeTable() {
     >
       {error && <p className={tableStyles.muted}>{error}</p>}
 
-      <NoticeComposer onCreate={add} disabled={readOnly} />
+      <NoticeComposer
+        onCreate={add}
+        editing={editing}
+        onUpdate={update}
+        onCancelEdit={() => setEditing(null)}
+        disabled={readOnly}
+      />
 
       <DataTable
         columns={["카테고리", "제목", "작성자", "작성일", "상단 고정", ""]}
@@ -165,6 +202,20 @@ export function NoticeTable() {
                 disabled={readOnly}
               >
                 {n.pinned ? "고정 해제" : "고정"}
+              </RowAction>
+              <RowAction
+                onClick={() =>
+                  setEditing({
+                    id: n.id,
+                    title: n.title,
+                    category: n.category,
+                    body: n.body.join("\n"),
+                    pinned: n.pinned,
+                  })
+                }
+                disabled={readOnly}
+              >
+                수정
               </RowAction>
               <RowAction onClick={() => remove(n.id)} disabled={readOnly}>
                 삭제

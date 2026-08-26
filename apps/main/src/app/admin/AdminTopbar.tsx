@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ADMIN_NAV } from "./AdminNav";
 import { createClient } from "@/lib/supabase/client";
-import { SEMESTERS, useSemester } from "./SemesterContext";
+import { useSemester } from "./SemesterContext";
 import { cn } from "@/lib/cn";
 import styles from "./layout.module.css";
 
@@ -19,7 +19,7 @@ export function AdminTopbar() {
     n.href === "/admin" ? pathname === "/admin" : pathname.startsWith(n.href),
   );
   const title = TITLES[pathname] ?? match?.label ?? "운영진";
-  const { semester, setSemester, readOnly, canChangeSemester } = useSemester();
+  const { semester, setSemester, semesters, readOnly, canChangeSemester } = useSemester();
 
   // 상단 배지는 아직 검토하지 않은 증빙 건수다 — 실제 표를 세어 보여준다
   const supabase = useMemo(() => createClient(), []);
@@ -51,7 +51,7 @@ export function AdminTopbar() {
         disabled={!canChangeSemester}
         title={!canChangeSemester ? "학기 전환은 관리자만 할 수 있습니다." : undefined}
       >
-        {SEMESTERS.map((s) => (
+        {semesters.map((s) => (
           <option key={s.value} value={s.value}>
             {s.label}
           </option>

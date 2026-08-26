@@ -276,3 +276,13 @@
 .chev {
   color: var(--ink-600);
 }
+
+.avatarError {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--state-danger);
+  margin-top: 4px;
+}

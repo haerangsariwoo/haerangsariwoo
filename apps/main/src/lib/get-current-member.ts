@@ -1,5 +1,8 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
+
+export const PROFILE_BUCKET = "profile-photos";
 
 export interface CurrentMember {
   id: string;
@@ -8,6 +11,9 @@ export interface CurrentMember {
   cohort: string;
   track: string;
   role: "부원" | "운영진" | "관리자";
+  /** 비공개 버킷이라 그릴 때마다 만들어 주는 임시 주소 */
+  photoUrl: string | null;
+  photoFocus: PhotoFocus;
 }
 
 /**
@@ -25,11 +31,19 @@ export const getCurrentMember = cache(async (): Promise<CurrentMember | null> =>
 
   const { data: member } = await supabase
     .from("members")
-    .select("student_id, name, cohort, track, role, status")
+    .select("student_id, name, cohort, track, role, status, photo_path, photo_focus")
     .eq("id", user.id)
     .single();
 
   if (!member || member.status !== "approved") return null;
+
+  let photoUrl: string | null = null;
+  if (member.photo_path) {
+    const { data: signed } = await supabase.storage
+      .from(PROFILE_BUCKET)
+      .createSignedUrl(member.photo_path, 60 * 60);
+    photoUrl = signed?.signedUrl ?? null;
+  }
 
   return {
     id: user.id,
@@ -38,5 +52,7 @@ export const getCurrentMember = cache(async (): Promise<CurrentMember | null> =>
     cohort: member.cohort,
     track: member.track,
     role: member.role,
+    photoUrl,
+    photoFocus: (member.photo_focus as PhotoFocus | null) ?? defaultPhotoFocus,
   };
 });

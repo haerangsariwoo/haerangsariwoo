@@ -9,13 +9,22 @@ export type { ExternalVolunteer, ExternalFetchResult } from "./types";
 
 /** 외부 포털 호출 결과를 1시간 캐시한다 (포털 트래픽 보호) */
 const TTL_MS = 60 * 60 * 1000;
-const TIMEOUT_MS = 8000;
+
+/**
+ * 출처마다 걸리는 시간이 다르다. 1365 는 API 한 번이면 끝나지만 VMS 는
+ * 공개 페이지를 목록·상세로 나눠 읽어야 해서 훨씬 오래 걸린다.
+ * 예전에는 둘 다 8초로 묶어 두는 바람에 VMS 만 늘 잘려 나갔다.
+ */
+const TIMEOUT_1365_MS = 8000;
+const TIMEOUT_VMS_MS = 14000;
+/** VMS 상세 보충을 여기까지만 시도한다 — 넘기면 목록 정보로 만족한다 */
+const VMS_DETAIL_BUDGET_MS = 9000;
 
 let cache: { at: number; value: ExternalFetchResult } | null = null;
 
-function withinDeadline<T>(p: (signal: AbortSignal) => Promise<T>): Promise<T> {
+function withinDeadline<T>(ms: number, p: (signal: AbortSignal) => Promise<T>): Promise<T> {
   const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), TIMEOUT_MS);
+  const timer = setTimeout(() => ac.abort(), ms);
   return p(ac.signal).finally(() => clearTimeout(timer));
 }
 
@@ -69,24 +78,44 @@ export async function getExternalVolunteers(options?: {
   const vmsDisabled = process.env.DISABLE_VMS === "1";
   const today = new Date().toISOString().slice(0, 10);
 
-  const tasks: Promise<ExternalVolunteer[]>[] = [];
+  const tasks: { source: string; run: Promise<ExternalVolunteer[]> }[] = [];
   if (serviceKey) {
     const key = serviceKey;
-    tasks.push(withinDeadline((signal) => fetch1365({ serviceKey: key, pages: 5, signal })));
+    tasks.push({
+      source: "1365",
+      run: withinDeadline(TIMEOUT_1365_MS, (signal) =>
+        fetch1365({ serviceKey: key, pages: 5, signal }),
+      ),
+    });
   }
   if (!vmsDisabled) {
-    tasks.push(withinDeadline((signal) => fetchVms({ recruitFrom: today, pages: 3, signal })));
+    tasks.push({
+      source: "VMS",
+      run: withinDeadline(TIMEOUT_VMS_MS, (signal) =>
+        fetchVms({
+          recruitFrom: today,
+          pages: 3,
+          signal,
+          detailDeadlineAt: Date.now() + VMS_DETAIL_BUDGET_MS,
+        }),
+      ),
+    });
   }
 
-  const results = await Promise.allSettled(tasks);
+  const results = await Promise.allSettled(tasks.map((t) => t.run));
 
   const items: ExternalVolunteer[] = [];
   const errors: string[] = [];
 
-  for (const r of results) {
-    if (r.status === "fulfilled") items.push(...r.value);
-    else errors.push(r.reason instanceof Error ? r.reason.message : String(r.reason));
-  }
+  results.forEach((r, i) => {
+    if (r.status === "fulfilled") {
+      items.push(...r.value);
+      return;
+    }
+    // 어느 포털이 빠졌는지 알아야 화면에서 안내할 수 있다
+    const why = r.reason instanceof Error ? r.reason.message : String(r.reason);
+    errors.push(`${tasks[i].source}: ${why}`);
+  });
 
   // 둘 다 실패하면 예시 데이터로 화면을 유지한다
   if (items.length === 0) {

@@ -14,6 +14,7 @@ import {
   type ActivityType,
 } from "@/lib/activities";
 import type { ActivityRow } from "@/lib/activity-queries";
+import { isoFromLabel } from "@/lib/semester";
 import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "../volunteers/volunteers.module.css";
@@ -54,7 +55,7 @@ function toList(v: string) {
 }
 
 export function ActivityAdmin() {
-  const { readOnly } = useSemester();
+  const { readOnly, matches } = useSemester();
   const supabase = useMemo(() => createClient(), []);
 
   const [rows, setRows] = useState<ActivityRow[]>([]);
@@ -63,6 +64,8 @@ export function ActivityAdmin() {
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY);
+  /** 수정 중인 활동 id. null 이면 새로 만드는 중이다 */
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,7 +103,32 @@ export function ActivityAdmin() {
     setForm((f) => ({ ...f, date: iso, date_label: dateLabel }));
   }
 
-  async function create(e: FormEvent) {
+  /** 만들기 폼을 그대로 수정에도 쓴다 — 같은 화면을 두 벌 만들지 않는다 */
+  function startEdit(a: ActivityRow) {
+    setEditingId(a.id);
+    setForm({
+      type: a.type,
+      title: a.title,
+      // 저장된 표기에서 날짜 입력칸 값을 되짚는다
+      date: isoFromLabel(a.date_short),
+      date_label: a.date_label,
+      time_label: a.time_label,
+      place: a.place,
+      target: a.target,
+      tone: a.tone,
+      intro: a.intro,
+      notes: a.notes.join(", "),
+    });
+    setOpen(true);
+  }
+
+  function closeForm() {
+    setOpen(false);
+    setEditingId(null);
+    setForm(EMPTY);
+  }
+
+  async function submit(e: FormEvent) {
     e.preventDefault();
     const { dateShort, weekday } = labelsFromDate(form.date);
     const payload = {
@@ -116,6 +144,23 @@ export function ActivityAdmin() {
       intro: form.intro.trim(),
       notes: toList(form.notes),
     };
+    if (editingId) {
+      const prev = rows;
+      setRows((cur) =>
+        cur.map((a) => (a.id === editingId ? ({ ...a, ...payload } as ActivityRow) : a)),
+      );
+      closeForm();
+      const { error: updateError } = await supabase
+        .from("activities")
+        .update(payload)
+        .eq("id", editingId);
+      if (updateError) {
+        setRows(prev);
+        setError("수정하지 못했습니다. 다시 시도해 주세요.");
+      }
+      return;
+    }
+
     const { data, error: insertError } = await supabase
       .from("activities")
       .insert(payload)
@@ -127,8 +172,7 @@ export function ActivityAdmin() {
       return;
     }
     setRows((prev) => [data as ActivityRow, ...prev]);
-    setForm(EMPTY);
-    setOpen(false);
+    closeForm();
   }
 
   async function changeStatus(id: string, status: ActivityStatus) {
@@ -156,11 +200,12 @@ export function ActivityAdmin() {
   }
 
   const canSubmit = form.title.trim() && form.date && form.place.trim();
+  const visible = rows.filter((a) => matches(a.date_label));
 
   return (
     <Panel
       title="활동·행사"
-      count={`${rows.length}건`}
+      count={`${visible.length}건`}
       desc="총회·MT·개강파티처럼 부원이 참석 여부를 응답하는 동아리 행사입니다. 봉사활동은 [봉사활동 관리]에서 따로 등록합니다."
     >
       {error && <p className={tableStyles.muted}>{error}</p>}
@@ -170,7 +215,7 @@ export function ActivityAdmin() {
         <button
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => (open ? closeForm() : setOpen(true))}
           disabled={readOnly && !open}
         >
           {open ? "닫기" : "＋ 활동 만들기"}
@@ -178,7 +223,7 @@ export function ActivityAdmin() {
       </div>
 
       {open && (
-        <form className={styles.createForm} onSubmit={create}>
+        <form className={styles.createForm} onSubmit={submit}>
           <div className={styles.formRow}>
             <label className={cn(styles.field, styles.narrow)}>
               <span className={styles.label}>유형</span>
@@ -298,9 +343,9 @@ export function ActivityAdmin() {
               className={cn(toolbar.button, toolbar.primary)}
               disabled={!canSubmit}
             >
-              만들기
+              {editingId ? "수정 저장" : "만들기"}
             </button>
-            <button type="button" className={toolbar.button} onClick={() => setOpen(false)}>
+            <button type="button" className={toolbar.button} onClick={closeForm}>
               취소
             </button>
           </div>
@@ -309,10 +354,10 @@ export function ActivityAdmin() {
 
       <DataTable
         columns={["유형", "활동명", "날짜", "장소", "참석", "상태", ""]}
-        isEmpty={!loading && rows.length === 0}
+        isEmpty={!loading && visible.length === 0}
         empty={loading ? "불러오는 중..." : "등록된 활동이 없습니다."}
       >
-        {rows.map((a) => (
+        {visible.map((a) => (
           <tr key={a.id}>
             <td>
               <Badge tone="blue">{a.type}</Badge>
@@ -338,6 +383,9 @@ export function ActivityAdmin() {
                   </option>
                 ))}
               </select>
+              <RowAction onClick={() => startEdit(a)} disabled={readOnly}>
+                수정
+              </RowAction>
               <RowAction onClick={() => remove(a.id)} disabled={readOnly}>
                 삭제
               </RowAction>

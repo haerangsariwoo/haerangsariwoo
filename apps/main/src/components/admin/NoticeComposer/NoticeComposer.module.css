@@ -124,3 +124,7 @@
 .fail {
   color: var(--state-danger);
 }
+
+.hidden {
+  display: none;
+}

@@ -57,7 +57,7 @@ function toList(v: string) {
 }
 
 export function VolunteerAdmin() {
-  const { readOnly } = useSemester();
+  const { readOnly, matches } = useSemester();
   const supabase = useMemo(() => createClient(), []);
 
   const [rows, setRows] = useState<ActivityRow[]>([]);
@@ -98,7 +98,7 @@ export function VolunteerAdmin() {
   const visible = rows.filter((v) => {
     const hitQ = !q.trim() || v.title.includes(q.trim()) || v.place.includes(q.trim());
     const hitSt = status === "all" || (status === "open" ? v.status === "open" : v.status === "closed");
-    return hitQ && hitSt;
+    return hitQ && hitSt && matches(v.date_label);
   });
 
   async function create(e: FormEvent) {

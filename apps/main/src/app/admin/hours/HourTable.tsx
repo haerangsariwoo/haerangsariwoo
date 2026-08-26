@@ -43,7 +43,7 @@ const SELECT =
  * 승인·반려하면 DB 트리거가 그 부원 쪽지함으로 결과를 보낸다.
  */
 export function HourTable() {
-  const { readOnly } = useSemester();
+  const { readOnly, matches } = useSemester();
   const supabase = useMemo(() => createClient(), []);
 
   const [rows, setRows] = useState<ProofRow[]>([]);
@@ -78,7 +78,7 @@ export function HourTable() {
     const name = h.member?.name ?? "";
     const hitQ = !q.trim() || name.includes(q.trim()) || h.activity_title.includes(q.trim());
     const hitF = filter === "all" || h.status === filter;
-    return hitQ && hitF;
+    return hitQ && hitF && matches(h.activity_date);
   });
 
   const pending = rows.filter((h) => h.status === "대기");

@@ -3,9 +3,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
-import { member, myTeam, nextActivity, semesterStatus } from "@/lib/mock-data";
-import { notices } from "@/lib/community";
+import { getNotices } from "@/lib/notices";
 import { getMyProofSubmissions } from "@/lib/proof";
+import { getMyTeam } from "@/lib/teams";
+import { getMyStats } from "@/lib/my-stats";
 import { homeCopy } from "@/lib/app-content";
 import { getCurrentMember } from "@/lib/get-current-member";
 import { getInternalActivities } from "@/lib/volunteers";
@@ -23,9 +24,12 @@ export default async function HomePage() {
   const profile = await getCurrentMember();
   if (!profile) redirect("/");
 
-  const [internalActivities, proofSubmissions] = await Promise.all([
+  const [internalActivities, proofSubmissions, notices, myTeam, stats] = await Promise.all([
     getInternalActivities(),
     getMyProofSubmissions(),
+    getNotices(),
+    getMyTeam(),
+    getMyStats(),
   ]);
   const recruitingVolunteers = internalActivities.filter((v) => v.status !== "closed").slice(0, 2);
   const pendingVerifyCount = proofSubmissions.filter((r) => r.status === "대기").length;
@@ -64,11 +68,11 @@ export default async function HomePage() {
           <div className={styles.summaryRow}>
             <div className={styles.summaryCard}>
               <p className={styles.summaryLabel}>총 봉사</p>
-              <p className={styles.summaryValue}>{member.totalHours}시간</p>
+              <p className={styles.summaryValue}>{stats.totalHours}시간</p>
             </div>
             <div className={styles.summaryCard}>
               <p className={styles.summaryLabel}>참여 활동</p>
-              <p className={styles.summaryValue}>{member.totalActivities}회</p>
+              <p className={styles.summaryValue}>{stats.totalActivities}회</p>
             </div>
           </div>
         </section>
@@ -81,15 +85,15 @@ export default async function HomePage() {
             <h2 className={styles.cardTitle}>이번 학기 현황</h2>
             <div className={styles.donutWrap}>
               <Image src="/icons/donut-92.svg" alt="" width={82} height={82} unoptimized />
-              <span className={styles.donutValue}>{semesterStatus.attendanceRate}%</span>
+              <span className={styles.donutValue}>{stats.attendanceRate}%</span>
             </div>
             <div className={styles.statusLines}>
               <p className={styles.statusPrimary}>
-                봉사&nbsp;&nbsp;{semesterStatus.hoursDone} / {semesterStatus.hoursGoal}시간
+                봉사&nbsp;&nbsp;{stats.semesterHours} / {stats.semesterGoal}시간
               </p>
               <p className={styles.statusSecondary}>
-                참여&nbsp;&nbsp;{semesterStatus.joinCount}회&nbsp;&nbsp;·&nbsp;&nbsp;출석{" "}
-                {semesterStatus.attendanceRate}%
+                참여&nbsp;&nbsp;{stats.semesterJoinCount}회&nbsp;&nbsp;·&nbsp;&nbsp;출석{" "}
+                {stats.attendanceRate}%
               </p>
             </div>
           </article>
@@ -97,13 +101,26 @@ export default async function HomePage() {
           <article className={styles.nextCard}>
             <div className={styles.nextHead}>
               <h2 className={styles.cardTitle}>다음 활동</h2>
-              <span className={styles.ddayBadge}>D-{nextActivity.dday}</span>
+              {stats.nextThing && (
+                <span className={styles.ddayBadge}>
+                  {stats.nextThing.dday === 0 ? "오늘" : `D-${stats.nextThing.dday}`}
+                </span>
+              )}
             </div>
-            <p className={styles.nextOrg}>{nextActivity.org}</p>
-            <p className={styles.nextTitle}>{nextActivity.title}</p>
-            <p className={styles.nextWhen}>{nextActivity.dateLabel}</p>
-            <p className={styles.nextMeta}>{nextActivity.place}</p>
-            <p className={styles.nextMeta}>{nextActivity.capacityLabel}</p>
+            {stats.nextThing ? (
+              <>
+                <p className={styles.nextOrg}>{stats.nextThing.meta}</p>
+                <p className={styles.nextTitle}>{stats.nextThing.title}</p>
+                <p className={styles.nextWhen}>{stats.nextThing.dateLabel}</p>
+                <p className={styles.nextMeta}>{stats.nextThing.place}</p>
+              </>
+            ) : (
+              <p className={styles.nextMeta}>
+                예정된 활동이 없어요.
+                <br />
+                봉사모집에서 신청해 보세요.
+              </p>
+            )}
           </article>
         </section>
 
@@ -130,7 +147,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <ul className={styles.noticeList}>
-              {notices.map((n) => (
+              {notices.slice(0, 3).map((n) => (
                 <li key={n.id} className={styles.noticeItem}>
                   <Link href={`/community/notice/${n.id}`} className={styles.noticeLink}>
                     <span className={cn(styles.noticeTag, n.category === "필독" && styles.urgent)}>
@@ -157,13 +174,17 @@ export default async function HomePage() {
 
       {/* ③ 내 자리 */}
       <SheetGroup>
-        <Link href="/my/team" className={styles.teamCard}>
-          <div>
-            <p className={styles.teamLabel}>내 조</p>
-            <p className={styles.teamName}>{myTeam.eventLabel}</p>
-          </div>
-          <span className={styles.teamMore}>조원 {myTeam.memberCount}명 보기&nbsp;&nbsp;›</span>
-        </Link>
+        {myTeam && (
+          <Link href="/my/team" className={styles.teamCard}>
+            <div>
+              <p className={styles.teamLabel}>내 조</p>
+              <p className={styles.teamName}>{myTeam.teamName}</p>
+            </div>
+            <span className={styles.teamMore}>
+              조원 {myTeam.members.length}명 보기&nbsp;&nbsp;›
+            </span>
+          </Link>
+        )}
 
         <section>
           <div className={styles.sectionHead}>

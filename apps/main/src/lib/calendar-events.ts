@@ -1,11 +1,27 @@
-import { activities } from "./activities";
-import { records } from "./my";
-
 export interface CalendarVolunteer {
   id: string;
   title: string;
   dateLabel: string;
   timeLabel: string;
+  place: string;
+}
+
+/** 캘린더에 찍는 내 신청 내역 — lib/my-stats 의 ActivityRecord 중 필요한 것만 */
+export interface CalendarRecord {
+  id: string;
+  title: string;
+  /** "2026.08.22" */
+  date: string;
+  hours: number | null;
+  state: string;
+}
+
+/** 캘린더에 찍는 동아리 행사 — lib/activities 의 Activity 중 필요한 것만 */
+export interface CalendarActivity {
+  id: string;
+  title: string;
+  dateLabel: string;
+  type: string;
   place: string;
 }
 
@@ -43,7 +59,12 @@ function fromDotted(v: string) {
   return v.replace(/\./g, "-");
 }
 
-export function buildEvents(year: number, volunteers: CalendarVolunteer[]): CalendarEvent[] {
+export function buildEvents(
+  year: number,
+  volunteers: CalendarVolunteer[],
+  activities: CalendarActivity[] = [],
+  records: CalendarRecord[] = [],
+): CalendarEvent[] {
   const events: CalendarEvent[] = [];
 
   // 내가 신청한 봉사 (취소 제외)

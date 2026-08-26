@@ -1,6 +1,7 @@
 export type ActivityType = "개강파티" | "MT" | "친목" | "총회" | "회의";
 export type AttendState = "참석" | "미정" | "불참";
 export type ActivityStatus = "upcoming" | "today" | "closed" | "done";
+export type ActivityTone = "sky" | "mint" | "peach" | "lavender";
 
 export interface Activity {
   id: string;
@@ -20,7 +21,7 @@ export interface Activity {
   dday: number | null;
   status: ActivityStatus;
   attend: AttendState | null;
-  tone: "sky" | "mint" | "peach" | "lavender";
+  tone: ActivityTone;
   intro: string;
   notes: string[];
   teamPublished?: boolean;
@@ -28,78 +29,40 @@ export interface Activity {
 
 export const activityTypes = ["전체", "개강파티", "MT", "친목", "총회"] as const;
 
-export const activities: Activity[] = [
-  {
-    id: "a1",
-    type: "총회",
-    title: "2학기 정기총회",
-    dateLabel: "8.22 (금)",
-    dateShort: "8.22",
-    weekday: "금",
-    timeLabel: "18:30 – 20:30",
-    place: "한성대 미래관 401호",
-    target: "전 부원",
-    dday: 1,
-    status: "upcoming",
-    attend: "참석",
-    tone: "sky",
-    intro: "2학기 활동 계획과 예산을 공유하고, 하반기 봉사 일정을 함께 정합니다.",
-    notes: ["전 부원 필참입니다.", "불참 시 사전에 운영진에게 알려주세요."],
-  },
-  {
-    id: "a2",
-    type: "MT",
-    title: "제26회 해랑사리우 MT",
-    dateLabel: "9.19 (금) – 9.21 (일)",
-    dateShort: "9.19",
-    weekday: "금",
-    timeLabel: "1박 2일",
-    place: "가평 청평유원지",
-    target: "전 부원 (신청자)",
-    dday: 29,
-    status: "upcoming",
-    attend: "미정",
-    tone: "mint",
-    intro: "2학기 첫 MT입니다. 조별 레크리에이션과 바비큐가 준비되어 있어요.",
-    notes: ["회비 45,000원 (버스·숙소·식사 포함)", "조 편성은 운영진이 진행합니다."],
-    teamPublished: true,
-  },
-  {
-    id: "a3",
-    type: "개강파티",
-    title: "2학기 개강파티",
-    dateLabel: "9.05 (금)",
-    dateShort: "9.05",
-    weekday: "금",
-    timeLabel: "19:00 – 22:00",
-    place: "성북구 삼선교 일대",
-    target: "전 부원",
-    dday: 15,
-    status: "upcoming",
-    attend: null,
-    tone: "peach",
-    intro: "신입 부원과 기존 부원이 함께하는 개강 환영 자리입니다.",
-    notes: ["회비 20,000원", "참석 여부를 9.01까지 알려주세요."],
-  },
-  {
-    id: "a4",
-    type: "친목",
-    title: "친해지길 바라 3차",
-    dateLabel: "8.08 (금)",
-    dateShort: "8.08",
-    weekday: "금",
-    timeLabel: "18:00 – 21:00",
-    place: "성북구 보드게임 카페",
-    target: "희망 부원",
-    dday: null,
-    status: "done",
-    attend: "참석",
-    tone: "lavender",
-    intro: "기수 상관없이 친해지는 소규모 친목 모임입니다.",
-    notes: ["활동 사진은 앨범에서 확인할 수 있습니다."],
-  },
-];
+export const ACTIVITY_TYPES: ActivityType[] = ["개강파티", "MT", "친목", "총회", "회의"];
+export const ACTIVITY_TONES: ActivityTone[] = ["sky", "mint", "peach", "lavender"];
 
-export function findActivity(id: string) {
-  return activities.find((a) => a.id === id);
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+
+/**
+ * 관리자가 고른 날짜(YYYY-MM-DD)에서 화면에 쓰는 표기 세 가지를 만든다.
+ * 표기를 손으로 적게 두면 "8.22 (금)" 인데 실제로는 목요일인 사고가 난다.
+ */
+export function labelsFromDate(iso: string) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const date = new Date(y, (m ?? 1) - 1, d ?? 1);
+  const weekday = WEEKDAYS[date.getDay()];
+  const dateShort = `${m}.${String(d).padStart(2, "0")}`;
+  return { dateShort, weekday, dateLabel: `${dateShort} (${weekday})` };
+}
+
+/**
+ * "8.22" 같은 표기에서 남은 날짜를 센다. 연도가 없으므로 오늘에서 가장
+ * 가까운 해로 본다 — 12월 활동을 1월에 열어도 지난 활동으로 읽히게.
+ * 활동이 끝났는지는 status 가 정하므로 이 값은 배지 표시용이다.
+ */
+export function ddayFromShort(dateShort: string): number | null {
+  const [m, d] = dateShort.split(".").map(Number);
+  if (!m || !d) return null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let target = new Date(today.getFullYear(), m - 1, d);
+  const diffDays = Math.round((target.getTime() - today.getTime()) / 86_400_000);
+  // 석 달 넘게 지난 날짜면 내년 같은 날을 가리킨 것으로 본다
+  if (diffDays < -90) target = new Date(today.getFullYear() + 1, m - 1, d);
+  else if (diffDays > 275) target = new Date(today.getFullYear() - 1, m - 1, d);
+
+  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
 }

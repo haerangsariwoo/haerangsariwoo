@@ -424,3 +424,9 @@
   font-size: 18px;
   line-height: 1;
 }
+
+.albumEmpty {
+  font-size: 12px;
+  color: var(--ink-600);
+  padding: 8px 0;
+}

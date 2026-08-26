@@ -26,31 +26,4 @@ export interface VolunteerSummary {
   manager: string;
 }
 
-export const member = {
-  name: "재겸",
-  totalHours: 71,
-  totalActivities: 13,
-};
-
-export const semesterStatus = {
-  attendanceRate: 87,
-  hoursDone: 17,
-  hoursGoal: 20,
-  joinCount: 7,
-};
-
-export const nextActivity = {
-  org: "아동센터",
-  title: "교육 봉사",
-  dateLabel: "8.22 (토) · 13:00",
-  place: "성북꿈나무센터",
-  capacityLabel: "13 / 16명 참여 확정",
-  dday: 4,
-};
-
 export const volunteerCategories = ["전체", "환경", "교육", "복지"] as const;
-
-export const myTeam = {
-  eventLabel: "MT 3조",
-  memberCount: 7,
-};

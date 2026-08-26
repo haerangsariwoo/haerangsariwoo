@@ -136,3 +136,54 @@
   font-weight: 700;
   color: var(--a-ink);
 }
+
+/* ---------- 펼친 글 본문 ---------- */
+.postBody {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--a-ink-soft);
+  white-space: pre-wrap;
+}
+
+.fileRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.fileChip {
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-pill);
+  background: var(--a-bg);
+  color: var(--a-brand);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+.fileChip:hover {
+  border-color: var(--a-brand);
+}
+
+.titleLink {
+  color: var(--a-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.titleLink:hover {
+  color: var(--a-brand);
+  text-decoration: underline;
+}
+
+.bodyTools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}

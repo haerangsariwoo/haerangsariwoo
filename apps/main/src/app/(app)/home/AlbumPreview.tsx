@@ -1,42 +1,36 @@
-"use client";
-
 import Image from "next/image";
 import { cn } from "@/lib/cn";
-import { albumPreviewTiles, albums as albumsSeed, type Album } from "@/lib/community";
-import { useContentOverride } from "@/lib/content-store";
-import { defaultPhotoFocus } from "@/lib/photo-focus";
+import { albumPreviewTiles } from "@/lib/community";
+import { getAlbums } from "@/lib/albums";
 import styles from "./home.module.css";
 
-/** 가장 최근 앨범의 사진 몇 장을 미리 보여준다. 관리자 저장 값이 있으면 그걸 쓴다. */
-export function AlbumPreview() {
-  const albums = useContentOverride<Album[]>("albums", albumsSeed);
+/** 가장 최근 앨범의 사진 몇 장을 미리 보여준다 */
+export async function AlbumPreview() {
+  const albums = await getAlbums();
   const latest = albums[0];
-  if (!latest) return null;
+  if (!latest) return <p className={styles.albumEmpty}>아직 올라온 사진이 없어요.</p>;
 
   return (
     <div className={styles.albumGrid}>
-      {albumPreviewTiles(latest, 4).map((tile, i) => {
-        const focus = tile.photo?.focus ?? defaultPhotoFocus;
-        return (
-          <span key={i} className={cn(styles.photo, !tile.photo && styles[tile.tone])}>
-            {tile.photo && (
-              <Image
-                className={styles.photoImage}
-                src={tile.photo.url}
-                alt=""
-                fill
-                sizes="180px"
-                unoptimized
-                style={{
-                  objectPosition: `${focus.x}% ${focus.y}%`,
-                  transform: `scale(${focus.zoom})`,
-                  transformOrigin: `${focus.x}% ${focus.y}%`,
-                }}
-              />
-            )}
-          </span>
-        );
-      })}
+      {albumPreviewTiles(latest, 4).map((tile, i) => (
+        <span key={i} className={cn(styles.photo, !tile.photo && styles[tile.tone])}>
+          {tile.photo && (
+            <Image
+              className={styles.photoImage}
+              src={tile.photo.url}
+              alt=""
+              fill
+              sizes="180px"
+              unoptimized
+              style={{
+                objectPosition: `${tile.photo.focus.x}% ${tile.photo.focus.y}%`,
+                transform: `scale(${tile.photo.focus.zoom})`,
+                transformOrigin: `${tile.photo.focus.x}% ${tile.photo.focus.y}%`,
+              }}
+            />
+          )}
+        </span>
+      ))}
     </div>
   );
 }

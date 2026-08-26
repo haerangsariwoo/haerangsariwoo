@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/cn";
-import type { TeamMemberRow } from "@/lib/admin-data";
+import type { TeamLeaders, TeamMemberRow } from "@/lib/team-shared";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "./teams.module.css";
 
@@ -21,6 +21,9 @@ interface TeamBoardProps {
   /** 조 개수. 사람을 안 넣어도 빈 조를 미리 만들어 둘 수 있다 */
   teamCount: number;
   onTeamCountChange: (count: number) => void;
+  /** 조마다 한 명씩 정하는 조장 */
+  leaders: TeamLeaders;
+  onLeaderChange: (team: number, memberId: string) => void;
   /** 지난 학기 행사면 끌기·자동 편성·인원 수 조정을 모두 막는다 */
   readOnly?: boolean;
 }
@@ -33,6 +36,8 @@ export function TeamBoard({
   onTeamSizeChange,
   teamCount,
   onTeamCountChange,
+  leaders,
+  onLeaderChange,
   readOnly = false,
 }: TeamBoardProps) {
   const [dragging, setDragging] = useState<string | null>(null);
@@ -52,19 +57,16 @@ export function TeamBoard({
     onAssignmentsChange({ ...assignments, [id]: slot === POOL ? null : slot });
   }
 
-  /** 성비를 맞춰 자동 편성 — 남녀를 번갈아 채운다 */
+  /** 성비를 맞춰 자동 편성 — 성별 묶음마다 시작 조를 달리해 한쪽으로 몰리지 않게 한다 */
   function autoAssign() {
-    const men = participants.filter((m) => m.gender === "남");
-    const women = participants.filter((m) => m.gender === "여");
     const count = Math.max(1, teamCount);
+    const groups: TeamMemberRow["gender"][] = ["남", "여", "미정"];
     const buckets: TeamMemberRow[][] = Array.from({ length: count }, () => []);
 
-    [men, women].forEach((group) => {
-      group.forEach((m, i) => {
-        // 그룹마다 시작 위치를 달리해 한쪽 성이 몰리지 않게 한다
-        const start = group === women ? Math.floor(count / 2) : 0;
-        buckets[(start + i) % count].push(m);
-      });
+    groups.forEach((gender, gi) => {
+      const group = participants.filter((m) => m.gender === gender);
+      const start = Math.floor((count * gi) / groups.length);
+      group.forEach((m, i) => buckets[(start + i) % count].push(m));
     });
 
     const next: Record<string, number | null> = {};
@@ -224,7 +226,7 @@ export function TeamBoard({
             {teams.map((t) => {
               const members = participants.filter((m) => assignments[m.id] === t);
               const male = members.filter((m) => m.gender === "남").length;
-              const female = members.length - male;
+              const female = members.filter((m) => m.gender === "여").length;
               return (
                 <div
                   key={t}
@@ -237,6 +239,23 @@ export function TeamBoard({
                       남 {male} · 여 {female}
                     </span>
                   </div>
+                  {members.length > 0 && (
+                    <select
+                      className={styles.leaderSelect}
+                      value={leaders[t] ?? ""}
+                      disabled={readOnly}
+                      aria-label={`${t}조 조장 선택`}
+                      onChange={(e) => onLeaderChange(t, e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <option value="">조장 없음</option>
+                      {members.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          조장 · {m.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                   <div className={styles.chipRow}>
                     {members.length === 0 && (
                       <span className={styles.emptyHint}>여기로 끌어다 놓으세요</span>
@@ -253,6 +272,7 @@ export function TeamBoard({
                       >
                         <span className={cn(styles.dot, styles[m.gender])} />
                         {m.name}
+                        {leaders[t] === m.id && <span className={styles.leaderMark}>조장</span>}
                       </span>
                     ))}
                   </div>

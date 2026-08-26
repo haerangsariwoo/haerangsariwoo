@@ -5,8 +5,8 @@ import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 import { PushSettings } from "@/components/push/PushSettings/PushSettings";
 import { InstallPrompt } from "@/components/push/InstallPrompt/InstallPrompt";
-import { badges, hourStats, records } from "@/lib/my";
 import { getCurrentMember } from "@/lib/get-current-member";
+import { getMyStats } from "@/lib/my-stats";
 import { ProfilePhoto } from "./ProfilePhoto";
 import styles from "./my.module.css";
 
@@ -23,10 +23,22 @@ const MENU = [
  * MY 도 세 묶음이다. 나 → 내 활동 → 설정.
  */
 export default async function MyPage() {
-  const profile = await getCurrentMember();
+  const [profile, stats] = await Promise.all([getCurrentMember(), getMyStats()]);
   if (!profile) redirect("/");
 
-  const upcoming = records.filter((r) => r.state !== "활동완료" && r.state !== "취소").slice(0, 3);
+  const upcoming = stats.records
+    .filter((r) => r.state !== "활동완료" && r.state !== "취소")
+    .slice(0, 3);
+
+  const hourStats = [
+    { label: "누적 봉사시간", value: String(stats.totalHours), caption: "시간" },
+    {
+      label: "이번 학기",
+      value: String(stats.semesterHours),
+      caption: `/ ${stats.semesterGoal}시간`,
+    },
+    { label: "출석률", value: String(stats.attendanceRate), caption: "%" },
+  ];
 
   return (
     <Sheet>
@@ -72,6 +84,9 @@ export default async function MyPage() {
             </Link>
           </div>
           <div className={styles.recordList}>
+            {upcoming.length === 0 && (
+              <p className={styles.recordMeta}>아직 신청한 봉사가 없어요.</p>
+            )}
             {upcoming.map((r) => (
               <div key={r.id} className={styles.recordRow}>
                 <div className={styles.recordBody}>
@@ -88,11 +103,11 @@ export default async function MyPage() {
           <div className={styles.sectionHead}>
             <h2 className={styles.sectionTitle}>배지</h2>
             <span className={styles.moreLink}>
-              {badges.filter((b) => b.earned).length} / {badges.length}
+              {stats.badges.filter((b) => b.earned).length} / {stats.badges.length}
             </span>
           </div>
           <div className={styles.badgeGrid}>
-            {badges.map((b) => (
+            {stats.badges.map((b) => (
               <div key={b.id} className={cn(styles.badge, !b.earned && styles.locked)}>
                 <span className={styles.badgeDot} />
                 <p className={styles.badgeLabel}>{b.label}</p>

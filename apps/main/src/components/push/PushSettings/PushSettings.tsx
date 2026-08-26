@@ -65,7 +65,12 @@ export function PushSettings() {
         ),
       });
       const json = sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } };
-      await subscribeUser({ endpoint: json.endpoint, keys: json.keys });
+      const res = await subscribeUser({ endpoint: json.endpoint, keys: json.keys });
+      if (!res.ok) {
+        await sub.unsubscribe();
+        setMessage(res.error);
+        return;
+      }
       setSubscription(sub);
       setMessage("이제 공지가 올라오면 알림으로 알려드릴게요.");
     } catch {

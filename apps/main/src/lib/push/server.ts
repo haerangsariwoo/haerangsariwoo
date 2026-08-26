@@ -30,17 +30,18 @@ export interface SendResult {
 
 /** 구독 중인 모든 기기에 알림을 보낸다 */
 export async function sendToAll(payload: PushPayload): Promise<SendResult> {
-  return send(listSubscriptions(), payload);
+  return send(await listSubscriptions(), payload);
 }
 
 /** 특정 기기 하나에만 보낸다 (테스트 알림용) */
 export async function sendToOne(endpoint: string, payload: PushPayload): Promise<SendResult> {
-  const target = listSubscriptions().find((s) => s.endpoint === endpoint);
+  const subs = await listSubscriptions();
+  const target = subs.find((s) => s.endpoint === endpoint);
   return send(target ? [target] : [], payload);
 }
 
 async function send(
-  targets: ReturnType<typeof listSubscriptions>,
+  targets: Awaited<ReturnType<typeof listSubscriptions>>,
   payload: PushPayload,
 ): Promise<SendResult> {
   if (!pushConfigured) {
@@ -57,7 +58,7 @@ async function send(
 
   let sent = 0;
   let failed = 0;
-  let removed = 0;
+  const toRemove: string[] = [];
 
   results.forEach((r, i) => {
     if (r.status === "fulfilled") {
@@ -68,10 +69,11 @@ async function send(
     // 410 Gone / 404 는 기기에서 이미 구독을 해제한 경우라 정리한다
     const status = (r.reason as { statusCode?: number })?.statusCode;
     if (status === 404 || status === 410) {
-      removeSubscription(targets[i].endpoint);
-      removed += 1;
+      toRemove.push(targets[i].endpoint);
     }
   });
 
-  return { sent, failed, removed };
+  await Promise.allSettled(toRemove.map((endpoint) => removeSubscription(endpoint)));
+
+  return { sent, failed, removed: toRemove.length };
 }

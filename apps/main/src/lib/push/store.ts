@@ -1,35 +1,58 @@
 import "server-only";
-
-/**
- * 푸시 구독 저장소.
- * 지금은 서버 메모리라 재시작하면 사라진다.
- * Supabase 연동 시 push_subscriptions 테이블로 교체한다.
- */
+import { createClient } from "@/lib/supabase/server";
 
 export interface StoredSubscription {
   endpoint: string;
   keys: { p256dh: string; auth: string };
-  /** 어느 부원의 기기인지 — 로그인 붙이면 실제 학번이 들어간다 */
-  memberId?: string;
-  createdAt: string;
+  memberId: string;
 }
 
-const subscriptions = new Map<string, StoredSubscription>();
-
-export function saveSubscription(sub: Omit<StoredSubscription, "createdAt">) {
-  subscriptions.set(sub.endpoint, { ...sub, createdAt: new Date().toISOString() });
-  return subscriptions.size;
+interface SubscriptionRow {
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  member_id: string;
 }
 
-export function removeSubscription(endpoint: string) {
-  subscriptions.delete(endpoint);
-  return subscriptions.size;
+function toStored(r: SubscriptionRow): StoredSubscription {
+  return { endpoint: r.endpoint, keys: { p256dh: r.p256dh, auth: r.auth }, memberId: r.member_id };
 }
 
-export function listSubscriptions() {
-  return [...subscriptions.values()];
+/** 같은 기기가 다시 구독하면 기존 행을 지우고 새로 넣는다 (endpoint 는 unique) */
+export async function saveSubscription(sub: {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+  memberId: string;
+}) {
+  const supabase = await createClient();
+  await supabase.from("push_subscriptions").delete().eq("endpoint", sub.endpoint);
+  const { error } = await supabase.from("push_subscriptions").insert({
+    member_id: sub.memberId,
+    endpoint: sub.endpoint,
+    p256dh: sub.keys.p256dh,
+    auth: sub.keys.auth,
+  });
+  return !error;
 }
 
-export function subscriptionCount() {
-  return subscriptions.size;
+export async function removeSubscription(endpoint: string) {
+  const supabase = await createClient();
+  await supabase.from("push_subscriptions").delete().eq("endpoint", endpoint);
+}
+
+/** 공지 발송용 — 운영진 권한으로 호출되므로 전 부원 구독을 다 본다 */
+export async function listSubscriptions(): Promise<StoredSubscription[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("push_subscriptions")
+    .select("endpoint, p256dh, auth, member_id");
+  return ((data ?? []) as SubscriptionRow[]).map(toStored);
+}
+
+export async function subscriptionCount() {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("push_subscriptions")
+    .select("*", { count: "exact", head: true });
+  return count ?? 0;
 }

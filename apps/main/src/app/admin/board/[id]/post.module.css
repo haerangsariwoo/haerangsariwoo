@@ -1,0 +1,103 @@
+.page {
+  max-width: 760px;
+  background: var(--a-surface);
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-lg);
+  padding: 28px 32px 32px;
+}
+
+.back {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--a-ink-soft);
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+.back:hover {
+  color: var(--a-brand);
+}
+
+.head {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--a-line);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--a-ink);
+  margin: 12px 0 8px;
+  word-break: keep-all;
+}
+
+.meta {
+  font-size: 13px;
+  color: var(--a-ink-soft);
+}
+
+/* ---------- 본문 ---------- */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px 0;
+}
+
+.paragraph {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--a-ink);
+  /* 글쓴이가 넣은 줄바꿈을 그대로 살린다 */
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--a-radius-md);
+  border: 1px solid var(--a-line);
+}
+
+.missing {
+  color: var(--a-ink-soft);
+  font-size: 13px;
+}
+
+/* ---------- 첨부파일 ---------- */
+.files {
+  border-top: 1px solid var(--a-line);
+  padding-top: 20px;
+}
+
+.filesTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink);
+  margin-bottom: 12px;
+}
+
+.fileRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fileChip {
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-pill);
+  background: var(--a-bg);
+  color: var(--a-brand);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 7px 16px;
+}
+
+a.fileChip:hover {
+  border-color: var(--a-brand);
+}

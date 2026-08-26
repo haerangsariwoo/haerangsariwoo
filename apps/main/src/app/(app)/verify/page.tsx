@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { createClient } from "@/lib/supabase/client";
+import { storagePath } from "@/lib/storage-name";
 import type { ProofSubmission, VerifySource } from "@/lib/verify";
 import styles from "./verify.module.css";
 
@@ -86,8 +87,7 @@ export default function VerifyPage() {
 
     const photoPaths: string[] = [];
     for (const p of photos) {
-      const ext = p.file.name.split(".").pop() ?? "jpg";
-      const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+      const path = storagePath(user.id, p.file.name);
       const { error: uploadError } = await supabase.storage.from("proof-files").upload(path, p.file);
       if (uploadError) {
         setSubmitting(false);
@@ -116,6 +116,27 @@ export default function VerifyPage() {
 
     setSubmitted(true);
     loadHistory();
+  }
+
+  /** 아직 검토 전인 내 제출만 취소할 수 있다 — 운영진이 본 뒤에는 못 지운다 */
+  async function cancelSubmission(item: ProofSubmission) {
+    if (!window.confirm(`"${item.activity_title}" 제출을 취소할까요? 올린 사진도 함께 지워집니다.`))
+      return;
+
+    const prev = history;
+    setHistory((cur) => cur.filter((r) => r.id !== item.id));
+
+    if (item.photo_paths.length > 0) {
+      await supabase.storage.from("proof-files").remove(item.photo_paths);
+    }
+    const { error: deleteError } = await supabase
+      .from("proof_submissions")
+      .delete()
+      .eq("id", item.id);
+    if (deleteError) {
+      setHistory(prev);
+      setError("취소하지 못했습니다. 다시 시도해 주세요.");
+    }
   }
 
   function resetForm() {
@@ -317,6 +338,15 @@ export default function VerifyPage() {
                 <span className={cn(styles.state, styles[r.status])}>{r.status}</span>
               </div>
               {r.reject_reason && <p className={styles.reason}>반려 사유 · {r.reject_reason}</p>}
+              {r.status === "대기" && (
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={() => cancelSubmission(r)}
+                >
+                  제출 취소
+                </button>
+              )}
             </div>
           ))}
         </div>

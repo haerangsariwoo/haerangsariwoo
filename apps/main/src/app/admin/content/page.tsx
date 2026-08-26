@@ -1,7 +1,7 @@
 import { Panel } from "@/components/admin/Panel/Panel";
 import { memberFaqs, noticeCopies } from "@/lib/app-content";
-import { albums } from "@/lib/community";
-import { HomeCopyPanel, FaqPanel, NoticeCopyPanel, AlbumPanel } from "./ContentPanels";
+import { HomeCopyPanel, FaqPanel, NoticeCopyPanel } from "./ContentPanels";
+import { AlbumPanel } from "./AlbumPanel";
 
 export const metadata = { title: "콘텐츠 관리 · 해랑사리우" };
 
@@ -28,13 +28,7 @@ export default function AdminContentPage() {
         <NoticeCopyPanel />
       </Panel>
 
-      <Panel
-        title="활동 사진 (앨범)"
-        count={`${albums.length}개`}
-        desc="커뮤니티 앨범과 홈 화면에 노출되는 사진입니다."
-      >
-        <AlbumPanel />
-      </Panel>
+      <AlbumPanel />
     </>
   );
 }

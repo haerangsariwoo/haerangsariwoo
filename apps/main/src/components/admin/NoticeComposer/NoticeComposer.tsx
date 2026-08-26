@@ -9,8 +9,13 @@ import styles from "./NoticeComposer.module.css";
 const CATEGORIES = ["필독", "일정", "후기", "MT"] as const;
 
 interface NoticeComposerProps {
-  /** 공지를 만들면 목록에 추가하도록 부모에 알린다 */
-  onCreate?: (n: { title: string; body: string; category: string; pinned: boolean }) => void;
+  /** 공지를 등록하고, 등록된 공지의 id를 돌려준다 — 실패하면 null */
+  onCreate?: (n: {
+    title: string;
+    body: string;
+    category: string;
+    pinned: boolean;
+  }) => Promise<string | null>;
   /** 지난 학기를 보는 중이면 새 공지를 못 쓰게 막는다 — 실제로 푸시 알림까지 나가는 동작이라 열기 전에 막는다 */
   disabled?: boolean;
 }
@@ -36,7 +41,12 @@ export function NoticeComposer({ onCreate, disabled }: NoticeComposerProps) {
     setBusy(true);
     setResult(null);
 
-    onCreate?.({ title: title.trim(), body: body.trim(), category, pinned });
+    const noticeId = await onCreate?.({ title: title.trim(), body: body.trim(), category, pinned });
+    if (!noticeId) {
+      setResult({ ok: false, text: "공지 등록에 실패했습니다." });
+      setBusy(false);
+      return;
+    }
 
     if (!push) {
       setResult({ ok: true, text: "공지를 등록했습니다. (알림은 보내지 않음)" });
@@ -45,7 +55,7 @@ export function NoticeComposer({ onCreate, disabled }: NoticeComposerProps) {
       return;
     }
 
-    const res = await sendNoticePush({ title, body });
+    const res = await sendNoticePush({ title, body, noticeId });
     if (res.ok) {
       const failNote = res.failed ? ` (실패 ${res.failed}건)` : "";
       setResult({ ok: true, text: `공지를 등록하고 알림 ${res.sent}건을 보냈습니다.${failNote}` });

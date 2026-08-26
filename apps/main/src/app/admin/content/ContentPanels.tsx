@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import { cn } from "@/lib/cn";
 import {
   homeCopy as homeCopySeed,
@@ -10,20 +9,15 @@ import {
   type AppFaq,
   type NoticeCopy,
 } from "@/lib/app-content";
-import { albums as albumsSeed, type Album, type AlbumPhoto } from "@/lib/community";
-import { loadOverride, saveOverride } from "@/lib/content-store";
-import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "./content.module.css";
-import { PhotoFocusEditor } from "./PhotoFocusEditor";
 
 /**
- * 콘텐츠 관리 네 패널. Supabase 연동 전이라 저장은 이 관리자 화면
- * 안에서만 유지된다 — 새로고침하면 시드 값으로 돌아간다. 공지·게시판·
- * 회원 등 다른 관리자 화면도 전부 같은 방식이라 여기만 다르게 만들지
- * 않는다. Panel(제목·건수) 은 서버 컴포넌트인 page.tsx 가 감싸고,
- * 이 파일은 그 안의 상태를 가진 내용만 맡는다.
+ * 앱 문구 패널들. 이 세 가지(홈 문구·FAQ·화면 안내)는 아직 브라우저
+ * 저장소에만 남는다 — 앨범은 AlbumPanel.tsx 에서 Supabase 를 쓴다.
+ * Panel(제목·건수) 은 서버 컴포넌트인 page.tsx 가 감싸고, 이 파일은
+ * 그 안의 상태를 가진 내용만 맡는다.
  */
 
 /** 저장 버튼 옆에 잠깐 떴다 사라지는 확인 메시지 */
@@ -249,184 +243,6 @@ export function NoticeCopyPanel() {
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
           onClick={flash}
-          disabled={readOnly}
-        >
-          저장
-        </button>
-      </div>
-    </>
-  );
-}
-
-/* ---------- 활동 사진 (앨범) ---------- */
-export function AlbumPanel() {
-  const { readOnly } = useSemester();
-  const [albumsState, setAlbumsState] = useState<Album[]>(
-    () => loadOverride<Album[]>("albums") ?? albumsSeed,
-  );
-  const [saved, flash] = useSaved();
-  const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
-  const [editing, setEditing] = useState<{ albumId: string; index: number } | null>(null);
-
-  function rename(id: string, title: string) {
-    setAlbumsState((prev) => prev.map((a) => (a.id === id ? { ...a, title } : a)));
-  }
-
-  function pickFile(id: string) {
-    fileInputs.current[id]?.click();
-  }
-
-  function onFileChosen(albumId: string, files: FileList | null) {
-    if (!files || files.length === 0) return;
-    const added: AlbumPhoto[] = Array.from(files).map((f) => ({
-      url: URL.createObjectURL(f),
-      focus: defaultPhotoFocus,
-    }));
-    setAlbumsState((prev) =>
-      prev.map((a) =>
-        a.id === albumId
-          ? {
-              ...a,
-              photos: [...(a.photos ?? []), ...added],
-              photoCount: a.photoCount + added.length,
-            }
-          : a,
-      ),
-    );
-  }
-
-  function removePhoto(albumId: string, index: number) {
-    setAlbumsState((prev) =>
-      prev.map((a) =>
-        a.id === albumId
-          ? {
-              ...a,
-              photos: (a.photos ?? []).filter((_, i) => i !== index),
-              photoCount: Math.max(0, a.photoCount - 1),
-            }
-          : a,
-      ),
-    );
-  }
-
-  function updateFocus(albumId: string, index: number, focus: PhotoFocus) {
-    setAlbumsState((prev) =>
-      prev.map((a) =>
-        a.id === albumId
-          ? { ...a, photos: (a.photos ?? []).map((p, i) => (i === index ? { ...p, focus } : p)) }
-          : a,
-      ),
-    );
-  }
-
-  const editingPhoto =
-    editing && albumsState.find((a) => a.id === editing.albumId)?.photos?.[editing.index];
-
-  return (
-    <>
-      <div className={styles.itemList}>
-        {albumsState.map((a) => (
-          <div key={a.id} className={styles.albumBlock}>
-            <div className={styles.albumHead}>
-              <input
-                className={styles.albumTitle}
-                value={a.title}
-                onChange={(e) => rename(a.id, e.target.value)}
-                aria-label={`${a.title} 앨범 이름`}
-                disabled={readOnly}
-              />
-              <p className={styles.albumMeta}>
-                {a.date}
-                <span className={styles.dot}>·</span>
-                사진 {a.photoCount}장
-              </p>
-            </div>
-
-            <div className={styles.photoRow}>
-              {(a.photos ?? []).map((p, i) => {
-                const focus = p.focus ?? defaultPhotoFocus;
-                return (
-                  <div key={i} className={styles.photoThumb}>
-                    <Image
-                      className={styles.photoThumbImage}
-                      src={p.url}
-                      alt=""
-                      fill
-                      sizes="88px"
-                      unoptimized
-                      style={{
-                        objectPosition: `${focus.x}% ${focus.y}%`,
-                        transform: `scale(${focus.zoom})`,
-                        transformOrigin: `${focus.x}% ${focus.y}%`,
-                      }}
-                    />
-                    {!readOnly && (
-                      <>
-                        <button
-                          type="button"
-                          className={styles.photoRemove}
-                          onClick={() => removePhoto(a.id, i)}
-                          aria-label="사진 삭제"
-                        >
-                          ×
-                        </button>
-                        <button
-                          type="button"
-                          className={styles.photoAdjust}
-                          onClick={() => setEditing({ albumId: a.id, index: i })}
-                        >
-                          위치 조정
-                        </button>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-
-              <input
-                ref={(el) => {
-                  fileInputs.current[a.id] = el;
-                }}
-                type="file"
-                accept="image/*"
-                multiple
-                hidden
-                onChange={(e) => onFileChosen(a.id, e.target.files)}
-              />
-              <button
-                type="button"
-                className={styles.addPhotoTile}
-                onClick={() => pickFile(a.id)}
-                disabled={readOnly}
-              >
-                ＋ 사진 추가
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {editing && editingPhoto && (
-        <PhotoFocusEditor
-          src={editingPhoto.url}
-          alt=""
-          focus={editingPhoto.focus ?? defaultPhotoFocus}
-          onChange={(focus) => updateFocus(editing.albumId, editing.index, focus)}
-          onClose={() => setEditing(null)}
-        />
-      )}
-
-      <div className={styles.saveBar}>
-        <p className={styles.saveNote}>
-          {saved ? "저장했습니다." : "저장하면 커뮤니티 탭·홈 화면에 바로 반영됩니다."}
-        </p>
-        <button
-          type="button"
-          className={cn(toolbar.button, toolbar.primary)}
-          onClick={() => {
-            saveOverride("albums", albumsState);
-            flash();
-          }}
           disabled={readOnly}
         >
           저장

@@ -117,23 +117,6 @@ export const applicants: Applicant[] = [
 ];
 
 /* ---------- 봉사시간 승인 ---------- */
-export interface HourRequest {
-  id: string;
-  name: string;
-  studentId: string;
-  volunteer: string;
-  date: string;
-  hours: number;
-  proof: string;
-  state: "대기" | "승인" | "반려";
-}
-
-export const hourRequests: HourRequest[] = [
-  { id: "hr1", name: "이서연", studentId: "2591044", volunteer: "한강 플로깅", date: "08.14", hours: 2, proof: "사진 2장", state: "대기" },
-  { id: "hr2", name: "박민준", studentId: "2491120", volunteer: "아동센터 교육", date: "08.12", hours: 3, proof: "사진 1장", state: "대기" },
-  { id: "hr3", name: "최하늘", studentId: "2591137", volunteer: "급식소 배식", date: "08.10", hours: 4, proof: "확인서", state: "대기" },
-  { id: "hr4", name: "재겸", studentId: "2591001", volunteer: "여름 집중 봉사", date: "08.05", hours: 8, proof: "확인서", state: "승인" },
-];
 
 /* ---------- 회원 관리 ---------- */
 export interface AdminMember {
@@ -159,84 +142,7 @@ export const adminMembers: AdminMember[] = [
   { id: "m5", name: "최하늘", studentId: "2591137", birth: "061103", gender: "여", cohort: "26-1기", track: "인문대 · 국어국문", mbti: "ISFJ", role: "부원", hours: 41 },
 ];
 
-/* ---------- 팀짜기 ----------
-   "회원 명부"(누가 있는지)와 "행사별 조 편성"(이번 행사엔 누가 참여하고
-   어느 조인지)을 나눈다. 예전엔 이 둘이 한 행에 뒤섞여 있어서(팀짜기
-   화면 하나가 곧 한 행사였다), 행사를 여러 개 만들 수가 없었다. */
-export interface TeamMemberRow {
-  id: string;
-  name: string;
-  cohort: string;
-  gender: "남" | "여";
-}
 
-/** 팀짜기에 올릴 수 있는 회원 명부 */
-export const teamPool: TeamMemberRow[] = [
-  { id: "t1", name: "김해랑", cohort: "25-2기", gender: "남" },
-  { id: "t2", name: "재겸", cohort: "26-1기", gender: "남" },
-  { id: "t3", name: "서지우", cohort: "25-2기", gender: "여" },
-  { id: "t4", name: "이준호", cohort: "26-1기", gender: "남" },
-  { id: "t5", name: "박서연", cohort: "26-1기", gender: "여" },
-  { id: "t6", name: "최민재", cohort: "25-2기", gender: "여" },
-  { id: "t7", name: "정다은", cohort: "26-1기", gender: "여" },
-  { id: "t8", name: "강태현", cohort: "25-2기", gender: "남" },
-];
-
-/**
- * 행사 하나의 조 편성. activityId 로 lib/activities 의 실제 활동과
- * 이어진다 — 팀짜기 화면에 날짜·장소를 다시 적지 않고 거기서 가져온다.
- */
-export interface TeamEventDraft {
-  id: string;
-  activityId: string;
-  /** 자동 편성 계산에만 쓰는 참고값. 실제로 몇 조가 있는지는 teamCount 가 정한다 */
-  teamSize: number;
-  /** 조 개수. 빈 조도 미리 만들어 둘 수 있어 assignments 에서 그냥 셀 수 없다 */
-  teamCount: number;
-  /** 이 행사에 참여하는 사람 (teamPool 중 일부) */
-  participantIds: string[];
-  /** 참여자 id → 조 번호. 아직 안 나눴으면 null */
-  assignments: Record<string, number | null>;
-  /** 부원 홈·내 조에 노출할 행사인지. 한 번에 하나만 켜진다 */
-  published: boolean;
-}
-
-export const teamEvents: TeamEventDraft[] = [
-  {
-    id: "te1",
-    activityId: "a2",
-    teamSize: 6,
-    teamCount: 3,
-    participantIds: ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"],
-    assignments: { t1: 3, t2: 3, t3: 3, t4: 3, t5: 3, t6: 3, t7: null, t8: null },
-    published: true,
-  },
-];
-
-/* ---------- 운영진 게시판 ---------- */
-export interface BoardPost {
-  id: string;
-  category: "회의록" | "운영 공지" | "자료" | "자유";
-  title: string;
-  author: string;
-  date: string;
-  files: number;
-}
-
-export const boardPosts: BoardPost[] = [
-  { id: "bp1", category: "회의록", title: "8월 3주차 운영진 회의록", author: "김우영", date: "2026.08.19", files: 1 },
-  { id: "bp2", category: "운영 공지", title: "2학기 예산 집행 기준 안내", author: "이서연", date: "2026.08.17", files: 2 },
-  { id: "bp3", category: "자료", title: "MT 장소 후보 비교표", author: "박민준", date: "2026.08.15", files: 3 },
-  { id: "bp4", category: "회의록", title: "26-2기 모집 준비 회의록", author: "김우영", date: "2026.08.11", files: 0 },
-];
-
-/* ---------- 협력기관 ---------- */
-export const partners = [
-  { id: "p1", name: "성북종합사회복지관", contact: "02-921-4180", activities: 11, since: "2019" },
-  { id: "p2", name: "성북꿈나무센터", contact: "02-940-5327", activities: 26, since: "2016" },
-  { id: "p3", name: "성북구 자원봉사센터", contact: "02-2241-6068", activities: 8, since: "2021" },
-  { id: "p4", name: "성북 동물보호센터", contact: "02-914-7712", activities: 5, since: "2023" },
-];
 
 /* ---------- 통계 ---------- */
 export const monthlyStats = [

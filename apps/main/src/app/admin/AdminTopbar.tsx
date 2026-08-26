@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ADMIN_NAV } from "./AdminNav";
-import { hourRequests } from "@/lib/admin-data";
+import { createClient } from "@/lib/supabase/client";
 import { SEMESTERS, useSemester } from "./SemesterContext";
 import { cn } from "@/lib/cn";
 import styles from "./layout.module.css";
@@ -18,8 +19,25 @@ export function AdminTopbar() {
     n.href === "/admin" ? pathname === "/admin" : pathname.startsWith(n.href),
   );
   const title = TITLES[pathname] ?? match?.label ?? "운영진";
-  const pendingHours = hourRequests.filter((h) => h.state === "대기").length;
   const { semester, setSemester, readOnly, canChangeSemester } = useSemester();
+
+  // 상단 배지는 아직 검토하지 않은 증빙 건수다 — 실제 표를 세어 보여준다
+  const supabase = useMemo(() => createClient(), []);
+  const [pendingHours, setPendingHours] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("proof_submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "대기")
+      .then(({ count }) => {
+        if (!cancelled) setPendingHours(count ?? 0);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
 
   return (
     <header className={styles.topbar}>

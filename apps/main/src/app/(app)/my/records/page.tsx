@@ -1,15 +1,20 @@
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
-import { records } from "@/lib/my";
+import { getMyStats } from "@/lib/my-stats";
 import myStyles from "../my.module.css";
 import styles from "./records.module.css";
 
 export const metadata = { title: "활동 기록 · 해랑사리우" };
 
-export default function RecordsPage() {
-  const upcoming = records.filter((r) => r.state === "참여확정" || r.state === "신청완료" || r.state === "대기");
-  const past = records.filter((r) => r.state === "활동완료" || r.state === "취소" || r.state === "불참");
-  const totalHours = past.reduce((sum, r) => sum + (r.hours ?? 0), 0);
+export default async function RecordsPage() {
+  const { records, totalHours } = await getMyStats();
+
+  const upcoming = records.filter(
+    (r) => r.state === "참여확정" || r.state === "신청완료" || r.state === "대기",
+  );
+  const past = records.filter(
+    (r) => r.state === "활동완료" || r.state === "취소" || r.state === "불참",
+  );
 
   return (
     <div className={styles.page}>
@@ -18,7 +23,9 @@ export default function RecordsPage() {
       <section className={styles.summary}>
         <div>
           <p className={styles.summaryLabel}>완료한 활동</p>
-          <p className={styles.summaryValue}>{past.filter((r) => r.state === "활동완료").length}건</p>
+          <p className={styles.summaryValue}>
+            {past.filter((r) => r.state === "활동완료").length}건
+          </p>
         </div>
         <div className={styles.divider} />
         <div>
@@ -30,6 +37,7 @@ export default function RecordsPage() {
       <section>
         <h2 className={styles.groupTitle}>예정 · 대기</h2>
         <div className={myStyles.recordList}>
+          {upcoming.length === 0 && <p className={myStyles.recordMeta}>예정된 활동이 없어요.</p>}
           {upcoming.map((r) => (
             <div key={r.id} className={myStyles.recordCard}>
               <div className={myStyles.recordBody}>
@@ -45,6 +53,7 @@ export default function RecordsPage() {
       <section>
         <h2 className={styles.groupTitle}>지난 활동</h2>
         <div className={myStyles.recordList}>
+          {past.length === 0 && <p className={myStyles.recordMeta}>지난 활동이 없어요.</p>}
           {past.map((r) => (
             <div key={r.id} className={myStyles.recordCard}>
               <div className={myStyles.recordBody}>

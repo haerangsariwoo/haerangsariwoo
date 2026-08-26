@@ -1,16 +1,12 @@
 import { notFound } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
-import { findNotice, notices } from "@/lib/community";
+import { findNotice } from "@/lib/notices";
 import styles from "./notice.module.css";
-
-export function generateStaticParams() {
-  return notices.map((n) => ({ id: n.id }));
-}
 
 export default async function NoticeDetailPage({ params }: PageProps<"/community/notice/[id]">) {
   const { id } = await params;
-  const item = findNotice(id);
+  const item = await findNotice(id);
   if (!item) notFound();
 
   return (

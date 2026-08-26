@@ -1,5 +1,6 @@
 "use server";
 
+import { createClient } from "@/lib/supabase/server";
 import { pushConfigured, sendToAll, sendToOne } from "@/lib/push/server";
 import { removeSubscription, saveSubscription, subscriptionCount } from "@/lib/push/store";
 
@@ -9,14 +10,25 @@ export interface SerializedSubscription {
   keys: { p256dh: string; auth: string };
 }
 
-export async function subscribeUser(sub: SerializedSubscription, memberId?: string) {
-  saveSubscription({ endpoint: sub.endpoint, keys: sub.keys, memberId });
-  return { ok: true as const, count: subscriptionCount() };
+export async function subscribeUser(sub: SerializedSubscription) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false as const, error: "로그인이 필요합니다." };
+  }
+
+  const saved = await saveSubscription({ endpoint: sub.endpoint, keys: sub.keys, memberId: user.id });
+  if (!saved) {
+    return { ok: false as const, error: "구독 정보를 저장하지 못했습니다." };
+  }
+  return { ok: true as const, count: await subscriptionCount() };
 }
 
 export async function unsubscribeUser(endpoint: string) {
-  removeSubscription(endpoint);
-  return { ok: true as const, count: subscriptionCount() };
+  await removeSubscription(endpoint);
+  return { ok: true as const, count: await subscriptionCount() };
 }
 
 /** 설정 화면의 "테스트 알림 받기" — 요청한 본인 기기로만 보낸다 */
@@ -45,7 +57,7 @@ export async function sendNoticePush(input: {
   if (!pushConfigured) {
     return { ok: false as const, error: "서버에 VAPID 키가 설정되지 않았습니다." };
   }
-  if (subscriptionCount() === 0) {
+  if ((await subscriptionCount()) === 0) {
     return { ok: false as const, error: "알림을 켠 부원이 아직 없습니다." };
   }
 

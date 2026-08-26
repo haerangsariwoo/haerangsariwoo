@@ -144,6 +144,12 @@
   color: var(--state-danger);
 }
 
+.emptyNote {
+  font-size: 13px;
+  color: var(--a-ink-soft);
+  padding: 8px 0;
+}
+
 .exportRow {
   display: flex;
   gap: 12px;

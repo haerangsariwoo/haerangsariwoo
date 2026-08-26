@@ -45,6 +45,12 @@
   margin-bottom: 14px;
 }
 
+.emptyText {
+  font-size: 13px;
+  color: var(--ink-600);
+  line-height: 1.7;
+}
+
 .memberList {
   list-style: none;
   display: flex;

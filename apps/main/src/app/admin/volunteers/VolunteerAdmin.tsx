@@ -23,8 +23,14 @@ interface ActivityRow {
   supplies: string[];
   cautions: string[];
   manager: string;
+  partner_id: string | null;
   status: "open" | "closed";
   created_at: string;
+}
+
+interface PartnerOption {
+  id: string;
+  name: string;
 }
 
 const EMPTY = {
@@ -39,6 +45,7 @@ const EMPTY = {
   supplies: "",
   cautions: "",
   manager: "",
+  partner_id: "",
 };
 
 /** 쉼표로 구분해 입력한 걸 배열로 — 내부봉사는 이 리스트를 상세 페이지에 그대로 보여준다 */
@@ -55,6 +62,7 @@ export function VolunteerAdmin() {
 
   const [rows, setRows] = useState<ActivityRow[]>([]);
   const [applied, setApplied] = useState<Record<string, number>>({});
+  const [partners, setPartners] = useState<PartnerOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
@@ -64,12 +72,14 @@ export function VolunteerAdmin() {
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      const [{ data: activities }, { data: apps }] = await Promise.all([
+      const [{ data: activities }, { data: apps }, { data: partnerRows }] = await Promise.all([
         supabase.from("internal_activities").select("*").order("created_at", { ascending: false }),
         supabase.from("internal_activity_applications").select("activity_id, state"),
+        supabase.from("partners").select("id, name").order("name"),
       ]);
       if (cancelled) return;
       setRows((activities ?? []) as ActivityRow[]);
+      setPartners((partnerRows ?? []) as PartnerOption[]);
       const counts: Record<string, number> = {};
       for (const a of apps ?? []) {
         if (a.state !== "불참" && a.state !== "노쇼") {
@@ -105,6 +115,7 @@ export function VolunteerAdmin() {
       supplies: toList(form.supplies),
       cautions: toList(form.cautions),
       manager: form.manager.trim(),
+      partner_id: form.partner_id || null,
     };
     const { data, error } = await supabase.from("internal_activities").insert(payload).select().single();
     if (!error && data) {
@@ -245,6 +256,21 @@ export function VolunteerAdmin() {
                 placeholder="예: 김우영 운영진"
               />
             </label>
+            <label className={styles.field}>
+              <span className={styles.label}>협력기관 (선택)</span>
+              <select
+                className={styles.input}
+                value={form.partner_id}
+                onChange={(e) => setForm({ ...form, partner_id: e.target.value })}
+              >
+                <option value="">연결 안 함</option>
+                {partners.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
           <label className={styles.field}>
             <span className={styles.label}>활동 소개</span>
@@ -293,12 +319,15 @@ export function VolunteerAdmin() {
         </form>
       )}
 
-      <DataTable columns={["봉사활동", "날짜", "장소", "신청/정원", "분야", "상태", ""]}>
+      <DataTable columns={["봉사활동", "날짜", "장소", "협력기관", "신청/정원", "분야", "상태", ""]}>
         {visible.map((v) => (
           <tr key={v.id}>
             <td>{v.title}</td>
             <td className={cn(tableStyles.muted, tableStyles.numeric)}>{v.date_label}</td>
             <td className={tableStyles.muted}>{v.place}</td>
+            <td className={tableStyles.muted}>
+              {partners.find((p) => p.id === v.partner_id)?.name ?? "—"}
+            </td>
             <td className={tableStyles.numeric}>
               {applied[v.id] ?? 0} / {v.capacity}
             </td>
@@ -322,7 +351,7 @@ export function VolunteerAdmin() {
         ))}
         {!loading && visible.length === 0 && (
           <tr>
-            <td colSpan={7} className={tableStyles.muted}>
+            <td colSpan={8} className={tableStyles.muted}>
               조건에 맞는 봉사활동이 없습니다.
             </td>
           </tr>

@@ -68,6 +68,11 @@
   color: var(--state-danger);
 }
 
+.genderTag.미정 {
+  background: var(--a-line-soft, rgba(0, 0, 0, 0.06));
+  color: var(--a-ink-500, #6b7280);
+}
+
 .teamGrid {
   display: flex;
   flex-direction: column;
@@ -130,6 +135,9 @@
 }
 .dot.여 {
   background: var(--state-danger);
+}
+.dot.미정 {
+  background: var(--a-ink-500, #9ca3af);
 }
 
 .publishBar {
@@ -290,4 +298,28 @@
   background: var(--a-green-soft);
   padding: 3px 10px;
   border-radius: var(--a-radius-pill);
+}
+
+/* ---------- 조장 ---------- */
+.leaderSelect {
+  width: 100%;
+  margin-bottom: 8px;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-sm);
+  background: var(--a-surface);
+  color: var(--a-ink);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 5px 8px;
+}
+
+.leaderSelect:disabled {
+  color: var(--a-ink-soft);
+}
+
+.leaderMark {
+  margin-left: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--a-brand);
 }

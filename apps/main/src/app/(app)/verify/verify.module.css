@@ -366,3 +366,21 @@
   line-height: 1.7;
   text-align: center;
 }
+
+.cancelBtn {
+  margin-top: 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--surface-white);
+  color: var(--ink-600);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  border-color: var(--state-danger);
+  color: var(--state-danger);
+}

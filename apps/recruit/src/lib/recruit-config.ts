@@ -1,7 +1,8 @@
 /**
- * 모집 설정 — 브리핑 6-D 기준.
- * 기수·일정·지원서 문항·접수 on/off 는 모두 관리자 설정값이며 하드코딩하지 않는다.
- * Supabase 연동 시 recruits / landing_content 테이블에서 읽어온다.
+ * 모집 설정의 타입과 "아직 관리자가 채우지 않았을 때" 쓰는 기본값.
+ * 실제 값은 recruit_settings · landing_content · application_fields 에서
+ * 읽어온다 (lib/content-queries.ts). 여기 값들은 표가 비어 있어도 랜딩이
+ * 멀쩡히 보이도록 남겨 둔 바탕이다.
  */
 
 export type RecruitPhase = "before" | "open" | "closed" | "announced";
@@ -269,3 +270,76 @@ export const nextSteps = [
   "메인 회원 앱 계정 발급",
   "신입 부원 교육 참여",
 ];
+
+/* ---------- 랜딩 콘텐츠 (landing_content 표 한 줄) ---------- */
+
+export interface AboutFact {
+  value: string;
+  label: string;
+}
+
+export interface LandingPhoto {
+  photoUrl: string;
+  focus: PhotoFocus;
+}
+
+export interface Faq {
+  q: string;
+  a: string;
+}
+
+/**
+ * 관리자 [콘텐츠 관리]에서 고치는 랜딩 문구·사진 전부.
+ * landing_content 는 한 줄짜리 표라 컬럼 하나가 여기 필드 하나에 대응한다.
+ */
+export interface LandingContent {
+  heroSlides: HeroSlide[];
+  aboutBody: string;
+  aboutFacts: AboutFact[];
+  aboutPhoto: LandingPhoto;
+  activitiesLead: string;
+  activityCards: ActivityCard[];
+  recruitingLead: string;
+  checklistTitle: string;
+  checklist: string[];
+  quote: string;
+  faqs: Faq[];
+  footerAddress: string;
+  footerInstagram: string;
+  interviewPlace: string;
+  nextSteps: string[];
+}
+
+export const defaultAboutPhoto: LandingPhoto = {
+  photoUrl: "/landing/about-photo.avif",
+  focus: defaultPhotoFocus,
+};
+
+export const defaultAboutFacts: AboutFact[] = [
+  { value: "1996", label: "한성대학교 중앙 봉사동아리로 창설" },
+  { value: "30년", label: "지금까지 이어온 봉사의 전통" },
+];
+
+export const defaultLandingContent: LandingContent = {
+  heroSlides,
+  aboutBody: landing.about.body,
+  aboutFacts: defaultAboutFacts,
+  aboutPhoto: defaultAboutPhoto,
+  activitiesLead: landing.activities.lead,
+  activityCards,
+  recruitingLead: landing.recruiting.lead,
+  checklistTitle: landing.recruiting.checklistTitle,
+  checklist: [...landing.recruiting.checklist],
+  quote: landing.recruiting.quote,
+  faqs,
+  footerAddress: landing.footer.address,
+  footerInstagram: landing.footer.instagram,
+  interviewPlace,
+  nextSteps,
+};
+
+/** 인스타그램 주소에서 화면에 보여줄 @아이디를 뽑는다 */
+export function instagramLabel(url: string) {
+  const handle = url.replace(/\/+$/, "").split("/").pop();
+  return handle ? `@${handle}` : url;
+}

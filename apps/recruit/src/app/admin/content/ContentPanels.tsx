@@ -4,17 +4,12 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { ui } from "@/components/admin/Panel";
-import { loadOverride, saveOverride } from "@/lib/content-store";
+import { saveLanding, uploadLandingPhoto } from "@/lib/landing-admin";
 import {
-  activityCards as activityCardsSeed,
   defaultPhotoFocus,
-  faqs as faqsSeed,
-  heroSlides as heroSlidesSeed,
-  interviewPlace as interviewPlaceSeed,
-  landing,
-  nextSteps as nextStepsSeed,
   type ActivityCard,
   type HeroSlide,
+  type LandingContent,
   type PhotoFocus,
 } from "@/lib/recruit-config";
 import styles from "@/components/admin/ContentEditor.module.css";
@@ -22,14 +17,16 @@ import { PhotoFocusEditor } from "./PhotoFocusEditor";
 import { SaveBar } from "./SaveBar";
 
 /**
- * 랜딩 콘텐츠 관리 일곱 패널. Supabase 연동 전까지는 대부분 이 화면
- * 세션 안에서만 유지된다 — 새로고침하면 시드 값으로 돌아간다.
- * 다만 히어로 슬라이더·소개 사진·활동 카드는 사진이 실제로 홈에
- * 어떻게 보일지 확인할 수 있어야 해서, [[content-store]] 를 통해
- * localStorage 에 저장하고 공개 페이지에서 그 값을 읽는다.
- * SaveBar 는 그대로 두고(그 자체로 완성된 "저장했습니다" 확인 표시),
- * 그 위 필드·목록에 진짜 상태를 붙이는 게 이 파일이 하는 일이다.
+ * 랜딩 콘텐츠 관리 일곱 패널. 각 패널은 landing_content 표의 자기 컬럼만
+ * 저장하고, 공개 랜딩은 서버에서 그 표를 읽어 그린다. 사진은 누르는 즉시
+ * landing-photos 버킷으로 올라가고(그래야 미리보기가 진짜 주소를 가리킨다),
+ * 글은 [저장] 을 눌러야 반영된다.
  */
+
+/** 아직 값을 넣지 않은 칸은 기본값이 내려와 있으므로 그대로 초기값으로 쓴다 */
+export interface PanelProps {
+  content: LandingContent;
+}
 
 /**
  * 사진 자리 — 등록돼 있으면 미리보기, 없으면 안내 문구. 눌러서 실제로 고를 수 있다.
@@ -53,6 +50,7 @@ function Photo({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [editing, setEditing] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   return (
     <div className={cn(styles.photoPreview, styles[shape])}>
@@ -78,13 +76,17 @@ function Photo({
         type="file"
         accept="image/*"
         hidden
-        onChange={(e) => {
+        onChange={async (e) => {
           const file = e.target.files?.[0];
-          if (!file) return;
-          onChange(URL.createObjectURL(file));
-          onFocusChange(defaultPhotoFocus);
           // 같은 파일을 다시 골라도 change 가 다시 뜨도록 비운다
           e.target.value = "";
+          if (!file) return;
+          setUploading(true);
+          const url = await uploadLandingPhoto(file);
+          setUploading(false);
+          if (!url) return;
+          onChange(url);
+          onFocusChange(defaultPhotoFocus);
         }}
       />
       <div className={styles.photoActions}>
@@ -93,8 +95,13 @@ function Photo({
             위치 조정
           </button>
         )}
-        <button type="button" className={styles.photoBtn} onClick={() => inputRef.current?.click()}>
-          {src ? "교체" : "업로드"}
+        <button
+          type="button"
+          className={styles.photoBtn}
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? "올리는 중…" : src ? "교체" : "업로드"}
         </button>
       </div>
 
@@ -116,10 +123,8 @@ let idSeq = 0;
 const nextId = (prefix: string) => `${prefix}-new-${++idSeq}`;
 
 /* ---------- 히어로 슬라이더 ---------- */
-export function HeroSlidesPanel() {
-  const [slides, setSlides] = useState<HeroSlide[]>(
-    () => loadOverride<HeroSlide[]>("heroSlides") ?? heroSlidesSeed,
-  );
+export function HeroSlidesPanel({ content }: PanelProps) {
+  const [slides, setSlides] = useState<HeroSlide[]>(content.heroSlides);
 
   function update(id: string, patch: Partial<HeroSlide>) {
     setSlides((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
@@ -224,7 +229,7 @@ export function HeroSlidesPanel() {
 
       <SaveBar
         note="사진이 한 장이면 자동 전환과 좌우 화살표는 표시되지 않습니다."
-        onSave={() => saveOverride("heroSlides", slides)}
+        onSave={() => saveLanding({ hero_slides: slides })}
       />
     </>
   );
@@ -237,19 +242,12 @@ interface Fact {
   label: string;
 }
 
-const factsSeed: Fact[] = [
-  { id: "fact-1", value: "1996", label: "한성대학교 중앙 봉사동아리로 창설" },
-  { id: "fact-2", value: "30년", label: "지금까지 이어온 봉사의 전통" },
-];
-
-const aboutPhotoSeed = { photoUrl: "/landing/about-photo.avif", focus: defaultPhotoFocus };
-
-export function AboutPanel() {
-  const [body, setBody] = useState<string>(landing.about.body);
-  const [facts, setFacts] = useState<Fact[]>(factsSeed);
-  const [aboutPhoto, setAboutPhoto] = useState(
-    () => loadOverride<typeof aboutPhotoSeed>("aboutPhoto") ?? aboutPhotoSeed,
+export function AboutPanel({ content }: PanelProps) {
+  const [body, setBody] = useState(content.aboutBody);
+  const [facts, setFacts] = useState<Fact[]>(
+    content.aboutFacts.map((f, i) => ({ id: `fact-${i}`, ...f })),
   );
+  const [aboutPhoto, setAboutPhoto] = useState(content.aboutPhoto);
   const photoUrl = aboutPhoto.photoUrl;
   const photoFocus = aboutPhoto.focus;
   const setPhotoUrl = (url: string) => setAboutPhoto((prev) => ({ ...prev, photoUrl: url }));
@@ -338,18 +336,22 @@ export function AboutPanel() {
 
       <SaveBar
         note="저장하면 공개 랜딩에 즉시 반영됩니다."
-        onSave={() => saveOverride("aboutPhoto", aboutPhoto)}
+        onSave={() =>
+          saveLanding({
+            about_body: body,
+            about_facts: facts.map(({ value, label }) => ({ value, label })),
+            about_photo: aboutPhoto,
+          })
+        }
       />
     </>
   );
 }
 
 /* ---------- 활동 카드 ---------- */
-export function ActivityCardsPanel() {
-  const [lead, setLead] = useState<string>(landing.activities.lead);
-  const [cards, setCards] = useState<ActivityCard[]>(
-    () => loadOverride<ActivityCard[]>("activityCards") ?? activityCardsSeed,
-  );
+export function ActivityCardsPanel({ content }: PanelProps) {
+  const [lead, setLead] = useState(content.activitiesLead);
+  const [cards, setCards] = useState<ActivityCard[]>(content.activityCards);
 
   function update(id: string, patch: Partial<ActivityCard>) {
     setCards((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)));
@@ -424,7 +426,7 @@ export function ActivityCardsPanel() {
 
       <SaveBar
         note="사진은 4:3 비율로 잘려 보입니다."
-        onSave={() => saveOverride("activityCards", cards)}
+        onSave={() => saveLanding({ activities_lead: lead, activity_cards: cards })}
       />
     </>
   );
@@ -436,13 +438,13 @@ interface ChecklistItem {
   text: string;
 }
 
-export function RecruitingPanel() {
-  const [lead, setLead] = useState<string>(landing.recruiting.lead);
-  const [checklistTitle, setChecklistTitle] = useState<string>(landing.recruiting.checklistTitle);
+export function RecruitingPanel({ content }: PanelProps) {
+  const [lead, setLead] = useState(content.recruitingLead);
+  const [checklistTitle, setChecklistTitle] = useState(content.checklistTitle);
   const [checklist, setChecklist] = useState<ChecklistItem[]>(
-    landing.recruiting.checklist.map((text, i) => ({ id: `check-${i}`, text })),
+    content.checklist.map((text, i) => ({ id: `check-${i}`, text })),
   );
-  const [quote, setQuote] = useState<string>(landing.recruiting.quote);
+  const [quote, setQuote] = useState(content.quote);
 
   function updateItem(id: string, text: string) {
     setChecklist((prev) => prev.map((c) => (c.id === id ? { ...c, text } : c)));
@@ -529,7 +531,17 @@ export function RecruitingPanel() {
         </div>
       </div>
 
-      <SaveBar note="모집 일정과 접수 on/off 는 [모집 설정] 에서 바꿉니다." />
+      <SaveBar
+        note="모집 일정과 접수 on/off 는 [모집 설정] 에서 바꿉니다."
+        onSave={() =>
+          saveLanding({
+            recruiting_lead: lead,
+            checklist_title: checklistTitle,
+            checklist: checklist.map((c) => c.text).filter(Boolean),
+            quote,
+          })
+        }
+      />
     </>
   );
 }
@@ -541,9 +553,9 @@ interface FaqItem {
   a: string;
 }
 
-export function FaqPanel() {
+export function FaqPanel({ content }: PanelProps) {
   const [faqItems, setFaqItems] = useState<FaqItem[]>(
-    faqsSeed.map((f, i) => ({ id: `faq-${i}`, ...f })),
+    content.faqs.map((f, i) => ({ id: `faq-${i}`, ...f })),
   );
 
   function update(id: string, patch: Partial<FaqItem>) {
@@ -634,15 +646,20 @@ export function FaqPanel() {
         </button>
       </div>
 
-      <SaveBar note="순서를 바꾸면 랜딩에도 같은 순서로 표시됩니다." />
+      <SaveBar
+        note="순서를 바꾸면 랜딩에도 같은 순서로 표시됩니다."
+        onSave={() =>
+          saveLanding({ faqs: faqItems.map(({ q, a }) => ({ q, a })).filter((f) => f.q) })
+        }
+      />
     </>
   );
 }
 
 /* ---------- 푸터 ---------- */
-export function FooterPanel() {
-  const [address, setAddress] = useState<string>(landing.footer.address);
-  const [instagram, setInstagram] = useState<string>(landing.footer.instagram);
+export function FooterPanel({ content }: PanelProps) {
+  const [address, setAddress] = useState(content.footerAddress);
+  const [instagram, setInstagram] = useState(content.footerInstagram);
 
   return (
     <>
@@ -671,7 +688,10 @@ export function FooterPanel() {
         </div>
       </div>
 
-      <SaveBar note="개인 연락처 대신 공식 채널만 노출합니다." />
+      <SaveBar
+        note="개인 연락처 대신 공식 채널만 노출합니다."
+        onSave={() => saveLanding({ footer_address: address, footer_instagram: instagram })}
+      />
     </>
   );
 }
@@ -682,10 +702,10 @@ interface StepItem {
   text: string;
 }
 
-export function ApplyProcessPanel() {
-  const [place, setPlace] = useState(interviewPlaceSeed);
+export function ApplyProcessPanel({ content }: PanelProps) {
+  const [place, setPlace] = useState(content.interviewPlace);
   const [steps, setSteps] = useState<StepItem[]>(
-    nextStepsSeed.map((text, i) => ({ id: `step-${i}`, text })),
+    content.nextSteps.map((text, i) => ({ id: `step-${i}`, text })),
   );
 
   function updateStep(id: string, text: string) {
@@ -749,7 +769,15 @@ export function ApplyProcessPanel() {
         </div>
       </div>
 
-      <SaveBar note="불합격 안내에는 문의 채널을 노출하지 않는 정책이 적용됩니다." />
+      <SaveBar
+        note="불합격 안내에는 문의 채널을 노출하지 않는 정책이 적용됩니다."
+        onSave={() =>
+          saveLanding({
+            interview_place: place,
+            next_steps: steps.map((s) => s.text).filter(Boolean),
+          })
+        }
+      />
     </>
   );
 }

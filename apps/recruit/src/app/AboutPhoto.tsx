@@ -1,23 +1,9 @@
-"use client";
-
 import Image from "next/image";
-import { useContentOverride } from "@/lib/content-store";
-import { defaultPhotoFocus, type PhotoFocus } from "@/lib/recruit-config";
+import type { LandingPhoto } from "@/lib/recruit-config";
 import styles from "./page.module.css";
 
-const DEFAULT_SRC = "/landing/about-photo.avif";
-
-interface AboutPhotoData {
-  photoUrl: string;
-  focus: PhotoFocus;
-}
-
-const seed: AboutPhotoData = { photoUrl: DEFAULT_SRC, focus: defaultPhotoFocus };
-
-/** About 섹션 사진. 관리자 페이지에서 저장한 사진·위치가 있으면 그 값을 쓴다. */
-export function AboutPhoto() {
-  const photo = useContentOverride<AboutPhotoData>("aboutPhoto", seed);
-
+/** About 섹션 사진. 관리자 [랜딩 콘텐츠]에서 올린 사진·위치를 그대로 쓴다. */
+export function AboutPhoto({ photo }: { photo: LandingPhoto }) {
   return (
     <div className={styles.aboutPhoto}>
       <Image

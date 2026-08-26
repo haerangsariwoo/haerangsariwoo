@@ -1,29 +1,24 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/Logo/Logo";
-import {
-  activityCards,
-  brand,
-  cohortLabel,
-  landing,
-  navItems,
-  recruitConfig,
-} from "@/lib/recruit-config";
+import { brand, cohortLabel, instagramLabel, landing, navItems } from "@/lib/recruit-config";
+import { getLandingContent, getRecruitSettings } from "@/lib/content-queries";
 import { AboutPhoto } from "./AboutPhoto";
 import { ActivityGallery } from "./ActivityGallery";
 import { FaqList } from "./FaqList";
 import { HeroSlider } from "./HeroSlider";
 import styles from "./page.module.css";
 
-export default function LandingPage() {
-  const { applicationsOpen } = recruitConfig;
-  const cohort = cohortLabel(recruitConfig.year, recruitConfig.semesterNo);
+export default async function LandingPage() {
+  const [config, content] = await Promise.all([getRecruitSettings(), getLandingContent()]);
+  const { applicationsOpen } = config;
+  const cohort = cohortLabel(config.year, config.semesterNo);
 
   const schedule = [
-    { label: "지원서 접수", value: `${recruitConfig.applyStart} – ${recruitConfig.applyEnd}` },
-    { label: "1차 서류 발표", value: recruitConfig.firstResultDate },
-    { label: "대면 면접", value: recruitConfig.interviewRange },
-    { label: "최종 발표", value: recruitConfig.finalResultDate },
+    { label: "지원서 접수", value: `${config.applyStart} – ${config.applyEnd}` },
+    { label: "1차 서류 발표", value: config.firstResultDate },
+    { label: "대면 면접", value: config.interviewRange },
+    { label: "최종 발표", value: config.finalResultDate },
   ];
 
   return (
@@ -45,7 +40,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <HeroSlider applicationsOpen={applicationsOpen} />
+      <HeroSlider applicationsOpen={applicationsOpen} slides={content.heroSlides} />
 
       {/* ---------- About ----------
           Recruiting 과 같은 이유로 제목을 그리드 안, 글 칼럼 맨 위로
@@ -55,21 +50,19 @@ export default function LandingPage() {
           <div className={styles.aboutGrid}>
             <div className={styles.aboutTextWrap}>
               <h2 className={styles.sectionTitle}>{landing.about.title}</h2>
-              <p className={styles.aboutText}>{landing.about.body}</p>
+              <p className={styles.aboutText}>{content.aboutBody}</p>
               {/* §5 — 성과를 숫자로 자랑하지 않고 연도 사실만 적는다 */}
               <div className={styles.aboutFacts}>
-                <div className={styles.fact}>
-                  <span className={styles.factValue}>1996</span>
-                  <span className={styles.factLabel}>한성대학교 중앙 봉사동아리로 창설</span>
-                </div>
-                <div className={styles.fact}>
-                  <span className={styles.factValue}>30년</span>
-                  <span className={styles.factLabel}>지금까지 이어온 봉사의 전통</span>
-                </div>
+                {content.aboutFacts.map((f) => (
+                  <div key={f.label} className={styles.fact}>
+                    <span className={styles.factValue}>{f.value}</span>
+                    <span className={styles.factLabel}>{f.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <AboutPhoto />
+            <AboutPhoto photo={content.aboutPhoto} />
           </div>
         </div>
       </section>
@@ -78,14 +71,14 @@ export default function LandingPage() {
       <section id="activities" className={cn(styles.section, styles.sectionTinted)}>
         <div className={styles.inner}>
           <h2 className={styles.sectionTitle}>{landing.activities.title}</h2>
-          <p className={styles.sectionLead}>{landing.activities.lead}</p>
+          <p className={styles.sectionLead}>{content.activitiesLead}</p>
           <div className={styles.sectionBody}>
-            <ActivityGallery cards={activityCards} />
+            <ActivityGallery cards={content.activityCards} />
           </div>
           <div className={styles.moreRow}>
             <a
               className={styles.ctaSecondary}
-              href={landing.footer.instagram}
+              href={content.footerInstagram}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -108,11 +101,11 @@ export default function LandingPage() {
           <div className={styles.recruitGrid}>
             <div className={styles.recruitLeft}>
               <h2 className={styles.sectionTitle}>{landing.recruiting.title}</h2>
-              <p className={styles.sectionLead}>{landing.recruiting.lead}</p>
+              <p className={styles.sectionLead}>{content.recruitingLead}</p>
 
-              <h3 className={styles.checklistTitle}>{landing.recruiting.checklistTitle}</h3>
+              <h3 className={styles.checklistTitle}>{content.checklistTitle}</h3>
               <ul className={styles.checklist}>
-                {landing.recruiting.checklist.map((item) => (
+                {content.checklist.map((item) => (
                   <li key={item} className={styles.checkItem}>
                     <span className={styles.checkMark} aria-hidden="true">
                       ✓
@@ -121,7 +114,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <p className={styles.quote}>{landing.recruiting.quote}</p>
+              <p className={styles.quote}>{content.quote}</p>
             </div>
 
             <div className={styles.scheduleCard}>
@@ -165,7 +158,7 @@ export default function LandingPage() {
           <h2 className={styles.sectionTitle}>Q&amp;A</h2>
           <p className={styles.sectionLead}>지원 전 가장 많이 받는 질문입니다.</p>
           <div className={styles.sectionBody}>
-            <FaqList />
+            <FaqList faqs={content.faqs} />
           </div>
         </div>
       </section>
@@ -179,7 +172,7 @@ export default function LandingPage() {
               <p className={styles.footerText}>
                 한성대학교 중앙 봉사동아리
                 <br />
-                {landing.footer.address}
+                {content.footerAddress}
               </p>
             </div>
 
@@ -188,11 +181,11 @@ export default function LandingPage() {
               <div className={styles.footerLinks}>
                 <a
                   className={styles.footerLink}
-                  href={landing.footer.instagram}
+                  href={content.footerInstagram}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Instagram {landing.footer.instagramLabel}
+                  Instagram {instagramLabel(content.footerInstagram)}
                 </a>
                 <Link className={styles.footerLink} href="/apply">
                   신입 부원 지원하기
@@ -205,7 +198,7 @@ export default function LandingPage() {
           </div>
 
           <div className={styles.footerBottom}>
-            <span>© {recruitConfig.year} 해랑사리우. All rights reserved.</span>
+            <span>© {config.year} 해랑사리우. All rights reserved.</span>
             <Link href="/login" className={styles.adminLink}>
               관리자 페이지
             </Link>

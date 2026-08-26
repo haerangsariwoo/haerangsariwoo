@@ -4,28 +4,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { useContentOverride } from "@/lib/content-store";
-import {
-  defaultPhotoFocus,
-  heroInterval,
-  heroSlides as heroSlidesSeed,
-  landing,
-  type HeroSlide,
-} from "@/lib/recruit-config";
+import { defaultPhotoFocus, heroInterval, landing, type HeroSlide } from "@/lib/recruit-config";
 import styles from "./HeroSlider.module.css";
 
 interface HeroSliderProps {
   applicationsOpen: boolean;
+  slides: HeroSlide[];
 }
 
 /**
  * design.md §4.1 — 풀블리드 사진 슬라이더 (4장, 자동 전환).
  * 사진은 확대하지 않는다. 넘기기 전용.
  */
-export function HeroSlider({ applicationsOpen }: HeroSliderProps) {
+export function HeroSlider({ applicationsOpen, slides: heroSlides }: HeroSliderProps) {
   const [index, setIndex] = useState(0);
-  const heroSlidesOverride = useContentOverride<HeroSlide[]>("heroSlides", heroSlidesSeed);
-  const heroSlides = heroSlidesOverride.length > 0 ? heroSlidesOverride : heroSlidesSeed;
   const total = heroSlides.length;
   const heroRef = useRef<HTMLElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);

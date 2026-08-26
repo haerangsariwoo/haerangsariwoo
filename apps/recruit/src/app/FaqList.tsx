@@ -1,14 +1,14 @@
 "use client";
 
 import * as Accordion from "@radix-ui/react-accordion";
-import { faqs } from "@/lib/recruit-config";
+import type { Faq } from "@/lib/recruit-config";
 import styles from "./FaqList.module.css";
 
 /**
  * 랜딩 하단 Q&A.
  * Radix Accordion 이라 키보드 방향키 이동과 aria-expanded 를 알아서 처리한다.
  */
-export function FaqList() {
+export function FaqList({ faqs }: { faqs: Faq[] }) {
   return (
     <Accordion.Root type="single" collapsible className={styles.list} defaultValue={faqs[0]?.q}>
       {faqs.map((f) => (

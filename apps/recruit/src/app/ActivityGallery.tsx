@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/cn";
-import { useContentOverride } from "@/lib/content-store";
 import { defaultPhotoFocus, type ActivityCard } from "@/lib/recruit-config";
 import styles from "./ActivityGallery.module.css";
 
@@ -18,8 +17,7 @@ import styles from "./ActivityGallery.module.css";
  * 모달은 Radix Dialog 를 쓴다. 포커스 가둠·배경 스크롤 잠금·Esc 닫기를
  * 직접 구현하면 상태가 어긋나기 쉬워 예전에 실제로 버그가 났었다.
  */
-export function ActivityGallery({ cards: seedCards }: { cards: ActivityCard[] }) {
-  const cards = useContentOverride<ActivityCard[]>("activityCards", seedCards);
+export function ActivityGallery({ cards }: { cards: ActivityCard[] }) {
   const withPhoto = cards.filter((c) => c.photoUrl);
   const [index, setIndex] = useState<number | null>(null);
 

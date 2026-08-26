@@ -92,13 +92,33 @@ function describe(reason: unknown): string {
     return "시간 초과";
   }
 
-  const cause = (reason as Error & { cause?: unknown }).cause;
-  if (cause instanceof Error) {
-    const code = (cause as Error & { code?: string }).code;
-    return `${reason.message} (${code ?? cause.name}: ${cause.message})`;
+  // cause 가 Error 가 아닐 때도 있고 그 안에 또 cause 가 있기도 하다.
+  // 무엇이 들어 있든 한 줄로 펴서 남긴다 — 놓치면 다음에 또 못 좇는다.
+  const parts = [`${reason.name}: ${reason.message}`];
+  let cause: unknown = (reason as Error & { cause?: unknown }).cause;
+
+  for (let depth = 0; cause != null && depth < 4; depth++) {
+    if (cause instanceof Error) {
+      const e = cause as Error & { code?: string; errno?: number; syscall?: string; address?: string; port?: number };
+      const detail = [e.code, e.syscall, e.address && `${e.address}:${e.port ?? ""}`]
+        .filter(Boolean)
+        .join(" ");
+      parts.push(`${e.name}: ${e.message}${detail ? ` [${detail}]` : ""}`);
+      // AggregateError 는 실패한 주소마다 하나씩 담고 있다
+      const inner = (e as AggregateError).errors;
+      if (Array.isArray(inner)) {
+        parts.push(...inner.slice(0, 3).map((x) => (x instanceof Error ? `${x.name}: ${x.message}` : String(x))));
+      }
+      cause = (e as Error & { cause?: unknown }).cause;
+    } else {
+      parts.push(String(cause));
+      cause = null;
+    }
   }
 
-  return reason.message;
+  // 어느 리전에서 난 실패인지도 같이 남긴다
+  const region = process.env.VERCEL_REGION;
+  return parts.join(" ← ") + (region ? ` @${region}` : "");
 }
 
 function withinDeadline<T>(ms: number, p: (signal: AbortSignal) => Promise<T>): Promise<T> {

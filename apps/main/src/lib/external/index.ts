@@ -151,22 +151,27 @@ function describe(reason: unknown): string {
 /**
  * 응답을 보낸 뒤 캐시를 새로 채운다.
  *
- * 같은 서버에서 두 번 겹쳐 돌지 않게 잠가둔다. 여러 서버가 동시에 도는
- * 것까지는 막지 못하지만, 포털 입장에서는 한 시간에 몇 번이라 문제가 없다.
+ * 같은 서버에서 겹쳐 돌지 않게 막되, 잠금이 아니라 "마지막으로 시작한
+ * 시각" 으로 판단한다. 참·거짓으로 잠그면 갱신 도중에 서버가 잠들었을 때
+ * 푸는 코드가 영영 안 돌아 그 서버는 다시는 갱신하지 않는다.
+ *
+ * 여러 서버가 동시에 도는 것까지는 막지 못하지만, 포털 입장에서는 한
+ * 시간에 몇 번이라 문제가 없다.
  */
-let refreshing = false;
+const REFRESH_GAP_MS = 2 * 60 * 1000;
+let refreshStartedAt = 0;
 
 function scheduleRefresh() {
-  if (refreshing) return;
-  refreshing = true;
+  if (Date.now() - refreshStartedAt < REFRESH_GAP_MS) return;
+  refreshStartedAt = Date.now();
 
   after(async () => {
     try {
       await getExternalVolunteers({ force: true });
     } catch {
-      // 갱신에 실패해도 화면은 묵은 값으로 이미 그려졌다
-    } finally {
-      refreshing = false;
+      // 갱신에 실패해도 화면은 묵은 값으로 이미 그려졌다.
+      // 다음 사람이 다시 시도하도록 시각을 되돌린다.
+      refreshStartedAt = 0;
     }
   });
 }

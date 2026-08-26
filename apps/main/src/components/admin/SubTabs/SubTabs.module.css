@@ -1,0 +1,38 @@
+.bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--a-line);
+}
+
+.tab {
+  position: relative;
+  border: none;
+  background: none;
+  padding: 10px 16px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--a-ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--a-ink);
+}
+
+/* 선택된 탭은 아래 선을 덮어 쓴다 — 탭과 내용이 이어져 보이게 */
+.tab.on {
+  color: var(--a-brand);
+}
+
+.tab.on::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--a-brand);
+}

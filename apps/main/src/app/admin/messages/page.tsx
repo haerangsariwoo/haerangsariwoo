@@ -1,7 +1,7 @@
-import { MessageSender } from "./MessageSender";
+import { MessengerHub } from "./MessengerHub";
 
-export const metadata = { title: "쪽지 보내기 · 해랑사리우" };
+export const metadata = { title: "메신저 · 해랑사리우" };
 
-export default function AdminMessagesPage() {
-  return <MessageSender />;
+export default function AdminMessengerPage() {
+  return <MessengerHub />;
 }

@@ -42,7 +42,7 @@ function monthGrid(now: Date) {
 
 const QUICK_ACTIONS = [
   { id: "qa1", label: "봉사시간 승인", href: "/admin/hours" as const, tone: "orange" as const },
-  { id: "qa2", label: "신청자 관리", desc: "참여 여부 확인", href: "/admin/applicants" as const, tone: "blue" as const },
+  { id: "qa2", label: "신청자 관리", desc: "참여 여부 확인", href: "/admin/activities?tab=applicants" as const, tone: "blue" as const },
   { id: "qa3", label: "가입 승인", desc: "신규 가입 신청 검토", href: "/admin/members" as const, tone: "green" as const },
   { id: "qa4", label: "팀짜기", desc: "행사 조 편성", href: "/admin/teams" as const, tone: "purple" as const },
 ];
@@ -81,7 +81,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div className={styles.rowA}>
-        <Panel title="오늘의 봉사·출석" action={{ label: "전체 보기", href: "/admin/volunteers" }}>
+        <Panel title="오늘의 봉사·출석" action={{ label: "전체 보기", href: "/admin/activities" }}>
           <TodayVolunteersPanel items={todayVolunteers} />
         </Panel>
 
@@ -95,7 +95,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div className={styles.rowB}>
-        <Panel title="다가오는 일정" action={{ label: `${grid.month}월`, href: "/admin/activities" }}>
+        <Panel title="다가오는 일정" action={{ label: `${grid.month}월`, href: "/admin/activities?tab=events" }}>
           <div className={styles.calendar}>
             {["월", "화", "수", "목", "금", "토", "일"].map((d) => (
               <span key={d} className={styles.dayName}>

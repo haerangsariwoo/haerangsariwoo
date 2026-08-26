@@ -1,43 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/cn";
-import {
-  homeCopy as homeCopySeed,
-  memberFaqs as memberFaqsSeed,
-  noticeCopies as noticeCopiesSeed,
-  type AppFaq,
-  type NoticeCopy,
-} from "@/lib/app-content";
+import type { AppFaq, NoticeCopy } from "@/lib/app-content";
+import type { AppContent } from "@/lib/app-content-queries";
 import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "./content.module.css";
 
 /**
- * 앱 문구 패널들. 이 세 가지(홈 문구·FAQ·화면 안내)는 아직 브라우저
- * 저장소에만 남는다 — 앨범은 AlbumPanel.tsx 에서 Supabase 를 쓴다.
- * Panel(제목·건수) 은 서버 컴포넌트인 page.tsx 가 감싸고, 이 파일은
- * 그 안의 상태를 가진 내용만 맡는다.
+ * 앱 문구 패널들. 세 가지(홈 문구·FAQ·화면 안내)가 app_content 한 줄을
+ * 나눠 쓴다. Panel(제목·건수) 은 서버 컴포넌트인 page.tsx 가 감싸고,
+ * 이 파일은 그 안의 상태를 가진 내용만 맡는다.
  */
 
-/** 저장 버튼 옆에 잠깐 떴다 사라지는 확인 메시지 */
-function useSaved() {
-  const [saved, setSaved] = useState(false);
-  const flash = () => {
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2000);
-  };
-  return [saved, flash] as const;
+export interface ContentPanelProps {
+  content: AppContent;
+}
+
+/**
+ * 저장 버튼의 상태. 예전에는 "저장했습니다" 만 띄우고 실제로는 아무데도
+ * 남기지 않았다 — 됐다고 알려 놓고 새로고침하면 사라졌다.
+ * 이제 app_content 한 줄 표의 자기 컬럼만 갱신하고, 그 결과를 그대로 알린다.
+ */
+function useSave() {
+  const supabase = useMemo(() => createClient(), []);
+  const [state, setState] = useState<"idle" | "saving" | "saved" | "failed">("idle");
+
+  async function save(patch: Record<string, unknown>) {
+    setState("saving");
+    const { error } = await supabase.from("app_content").update(patch).eq("id", 1);
+    setState(error ? "failed" : "saved");
+    if (!error) window.setTimeout(() => setState("idle"), 2000);
+  }
+
+  return { state, save };
+}
+
+function saveNote(state: "idle" | "saving" | "saved" | "failed", idle: string) {
+  if (state === "saving") return "저장 중…";
+  if (state === "saved") return "저장했습니다.";
+  if (state === "failed") return "저장하지 못했습니다. 다시 시도해 주세요.";
+  return idle;
 }
 
 let faqSeq = 0;
 
 /* ---------- 홈 화면 문구 ---------- */
-export function HomeCopyPanel() {
+export function HomeCopyPanel({ content }: ContentPanelProps) {
   const { readOnly } = useSemester();
-  const [greetingSuffix, setGreetingSuffix] = useState(homeCopySeed.greetingSuffix);
-  const [subGreeting, setSubGreeting] = useState(homeCopySeed.subGreeting);
-  const [saved, flash] = useSaved();
+  const [greetingSuffix, setGreetingSuffix] = useState(content.homeCopy.greetingSuffix);
+  const [subGreeting, setSubGreeting] = useState(content.homeCopy.subGreeting);
+  const { state, save } = useSave();
 
   return (
     <>
@@ -73,13 +88,13 @@ export function HomeCopyPanel() {
 
       <div className={styles.saveBar}>
         <p className={styles.saveNote}>
-          {saved ? "저장했습니다." : "저장하면 부원 홈 화면에 즉시 반영됩니다."}
+          {saveNote(state, "저장하면 부원 홈 화면에 즉시 반영됩니다.")}
         </p>
         <button
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
-          onClick={flash}
-          disabled={readOnly}
+          onClick={() => save({ home_copy: { greetingSuffix, subGreeting } })}
+          disabled={readOnly || state === "saving"}
         >
           저장
         </button>
@@ -89,10 +104,10 @@ export function HomeCopyPanel() {
 }
 
 /* ---------- 자주 묻는 질문 ---------- */
-export function FaqPanel() {
+export function FaqPanel({ content }: ContentPanelProps) {
   const { readOnly } = useSemester();
-  const [faqs, setFaqs] = useState<AppFaq[]>(memberFaqsSeed);
-  const [saved, flash] = useSaved();
+  const [faqs, setFaqs] = useState<AppFaq[]>(content.faqs);
+  const { state, save } = useSave();
 
   function update(id: string, patch: Partial<AppFaq>) {
     setFaqs((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));
@@ -191,13 +206,13 @@ export function FaqPanel() {
 
       <div className={styles.saveBar}>
         <p className={styles.saveNote}>
-          {saved ? "저장했습니다." : "순서를 바꾸면 앱에도 같은 순서로 표시됩니다."}
+          {saveNote(state, "순서를 바꾸면 앱에도 같은 순서로 표시됩니다.")}
         </p>
         <button
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
-          onClick={flash}
-          disabled={readOnly}
+          onClick={() => save({ faqs: faqs.filter((f) => f.q.trim()) })}
+          disabled={readOnly || state === "saving"}
         >
           저장
         </button>
@@ -207,10 +222,10 @@ export function FaqPanel() {
 }
 
 /* ---------- 화면 안내 문구 ---------- */
-export function NoticeCopyPanel() {
+export function NoticeCopyPanel({ content }: ContentPanelProps) {
   const { readOnly } = useSemester();
-  const [notices, setNotices] = useState<NoticeCopy[]>(noticeCopiesSeed);
-  const [saved, flash] = useSaved();
+  const [notices, setNotices] = useState<NoticeCopy[]>(content.noticeCopies);
+  const { state, save } = useSave();
 
   function update(id: string, text: string) {
     setNotices((prev) => prev.map((n) => (n.id === id ? { ...n, text } : n)));
@@ -237,13 +252,13 @@ export function NoticeCopyPanel() {
 
       <div className={styles.saveBar}>
         <p className={styles.saveNote}>
-          {saved ? "저장했습니다." : "저장하면 해당 화면에 즉시 반영됩니다."}
+          {saveNote(state, "저장하면 해당 화면에 즉시 반영됩니다.")}
         </p>
         <button
           type="button"
           className={cn(toolbar.button, toolbar.primary)}
-          onClick={flash}
-          disabled={readOnly}
+          onClick={() => save({ notice_copies: notices })}
+          disabled={readOnly || state === "saving"}
         >
           저장
         </button>

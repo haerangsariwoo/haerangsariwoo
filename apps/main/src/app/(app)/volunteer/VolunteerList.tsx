@@ -31,7 +31,8 @@ export function VolunteerList({
 }) {
   const [tab, setTab] = useState<Tab>("전체");
   const [extFilter, setExtFilter] = useState<ExternalFilterValue>({
-    sido: external.items.some((v) => v.sido === "서울") ? "서울" : "전체",
+    // 1365 는 서울 건이 많지만 VMS 는 전국 단위라, 서울로 좁히면 절반이 가려진다
+    sido: "전체",
     gugun: "전체",
     category: "전체",
   });

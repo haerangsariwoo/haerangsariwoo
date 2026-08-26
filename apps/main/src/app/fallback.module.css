@@ -1,0 +1,89 @@
+/*
+ * 무언가 잘못됐을 때 보는 화면. 오류·없는 페이지가 같은 모양을 쓴다.
+ * 앱 안 어디서든 뜰 수 있으므로 레이아웃에 기대지 않고 스스로 가운데 선다.
+ */
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px var(--screen-pad, 20px);
+  text-align: center;
+  background: var(--surface-page, #f4f6fa);
+}
+
+.code {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--brand-blue-500, #2f6fed);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink-800, #1b1f27);
+  word-break: keep-all;
+}
+
+.desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-600, #5b6070);
+  word-break: keep-all;
+  max-width: 32ch;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--radius-sm, 8px);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.primary {
+  background: var(--brand-blue-500, #2f6fed);
+  color: #fff;
+}
+
+.secondary {
+  background: var(--surface-white, #fff);
+  border-color: var(--hairline, #e3e6ee);
+  color: var(--ink-600, #5b6070);
+}
+
+/* 개발 중에만 쓰는 원인 표시 — 운영에서는 렌더하지 않는다 */
+.detail {
+  margin-top: 12px;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--surface-white, #fff);
+  border: 1px solid var(--hairline, #e3e6ee);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-600, #5b6070);
+  text-align: left;
+  white-space: pre-wrap;
+}

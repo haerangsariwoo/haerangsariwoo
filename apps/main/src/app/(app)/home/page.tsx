@@ -7,7 +7,7 @@ import { getNotices } from "@/lib/notices";
 import { getMyProofSubmissions } from "@/lib/proof";
 import { getMyTeam } from "@/lib/teams";
 import { getMyStats } from "@/lib/my-stats";
-import { homeCopy } from "@/lib/app-content";
+import { getAppContent } from "@/lib/app-content-queries";
 import { getCurrentMember } from "@/lib/get-current-member";
 import { getInternalActivities } from "@/lib/volunteers";
 import styles from "./home.module.css";
@@ -24,13 +24,15 @@ export default async function HomePage() {
   const profile = await getCurrentMember();
   if (!profile) redirect("/");
 
-  const [internalActivities, proofSubmissions, notices, myTeam, stats] = await Promise.all([
-    getInternalActivities(),
-    getMyProofSubmissions(),
-    getNotices(),
-    getMyTeam(),
-    getMyStats(),
-  ]);
+  const [internalActivities, proofSubmissions, notices, myTeam, stats, content] =
+    await Promise.all([
+      getInternalActivities(),
+      getMyProofSubmissions(),
+      getNotices(),
+      getMyTeam(),
+      getMyStats(),
+      getAppContent(),
+    ]);
   const recruitingVolunteers = internalActivities.filter((v) => v.status !== "closed").slice(0, 2);
   const pendingVerifyCount = proofSubmissions.filter((r) => r.status === "대기").length;
 
@@ -61,9 +63,9 @@ export default async function HomePage() {
           <Mascot size={68} className={styles.heroMascot} priority />
           <h1 className={styles.greeting}>
             안녕하세요, {profile.name}
-            {homeCopy.greetingSuffix}
+            {content.homeCopy.greetingSuffix}
           </h1>
-          <p className={styles.subGreeting}>{homeCopy.subGreeting}</p>
+          <p className={styles.subGreeting}>{content.homeCopy.subGreeting}</p>
 
           <div className={styles.summaryRow}>
             <div className={styles.summaryCard}>

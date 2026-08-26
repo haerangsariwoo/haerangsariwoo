@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
 import { createClient } from "@/lib/supabase/client";
 import type { Applicant, FinalResult, FirstResult } from "@/lib/admin-data";
 import { downloadCsv, today } from "@/lib/csv";
+import styles from "./ApplicantTable.module.css";
 
 const FIRST_CYCLE: FirstResult[] = ["대기", "합격", "불합격"];
 const FINAL_CYCLE: FinalResult[] = ["대기", "합격", "불합격"];
@@ -196,7 +197,8 @@ export function ApplicantTable() {
           </thead>
           <tbody>
             {visible.map((a) => (
-              <tr key={a.id}>
+              <Fragment key={a.id}>
+              <tr>
                 <td>
                   <input
                     type="checkbox"
@@ -209,7 +211,7 @@ export function ApplicantTable() {
                 <td className={cn(ui.muted, ui.numeric)}>{a.student_id}</td>
                 <td className={ui.muted}>{a.track}</td>
                 <td className={cn(ui.muted, ui.numeric)}>{a.phone}</td>
-                <td className={cn(ui.muted, openId !== a.id && ui.clip)}>{a.motivation}</td>
+                <td className={cn(ui.muted, ui.clip)}>{a.motivation}</td>
                 <td>
                   <button
                     type="button"
@@ -251,6 +253,23 @@ export function ApplicantTable() {
                   </button>
                 </td>
               </tr>
+              {openId === a.id && (
+                <tr className={styles.detailRow}>
+                  <td colSpan={10}>
+                    <div className={styles.detail}>
+                      <p className={styles.detailLabel}>
+                        지원 동기
+                        <span className={styles.detailCount}>{a.motivation.length}자</span>
+                      </p>
+                      <p className={styles.detailBody}>{a.motivation}</p>
+                      <p className={styles.detailMeta}>
+                        {a.name} · {a.student_id} · {a.track} · {a.phone}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+              </Fragment>
             ))}
             {!loading && visible.length === 0 && (
               <tr>

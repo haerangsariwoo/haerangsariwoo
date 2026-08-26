@@ -240,7 +240,7 @@ export const motivationField: FormField = {
   placeholder: "해랑사리우와 함께하고 싶은 이유를 자유롭게 작성해 주세요.",
   type: "textarea",
   required: true,
-  maxLength: 300,
+  maxLength: 1000,
 };
 
 /** 면접 슬롯 — 관리자가 날짜·시간대를 열어둔다 */

@@ -20,6 +20,15 @@
   line-height: 1.35;
 }
 
+.centerLead {
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-600);
+  line-height: 1.6;
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
 /* ---------- 진행 상황 ---------- */
 .timeline {
   background: var(--surface-white);

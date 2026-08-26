@@ -1,0 +1,47 @@
+/*
+ * "보기" 를 누르면 그 지원자 아래로 펼쳐지는 줄.
+ * 지원 동기가 1000자까지 들어올 수 있어 표 칸 안에서 늘리면 열 너비가
+ * 무너진다. 표 전체 폭을 쓰는 줄을 따로 두고 거기서 읽게 한다.
+ */
+.detailRow > td {
+  padding: 0;
+  background: var(--a-bg);
+}
+
+.detail {
+  padding: 18px 20px 20px;
+  border-left: 3px solid var(--a-brand);
+}
+
+.detailLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--a-ink);
+  margin-bottom: 10px;
+}
+
+.detailCount {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--a-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.detailBody {
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--a-ink);
+  /* 지원자가 넣은 줄바꿈을 그대로 살린다 */
+  white-space: pre-wrap;
+  word-break: keep-all;
+  max-width: 70ch;
+}
+
+.detailMeta {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--a-ink-soft);
+}

@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/Field/Field";
 import { cohortLabel, type RecruitConfig } from "@/lib/recruit-config";
-import { useApplyCode, useStudentId } from "@/lib/apply-session";
+import { InterviewPicker, type InterviewSlotOption } from "./InterviewPicker";
 import styles from "./status.module.css";
 
 type Stage = "submitted" | "firstPass" | "firstFail" | "finalPass" | "finalFail";
@@ -37,18 +37,19 @@ function stageOf(r: StatusResult): Stage {
 interface StatusViewProps {
   config: RecruitConfig;
   nextSteps: string[];
+  interviewPlace: string;
 }
 
-export function StatusView({ config: recruitConfig, nextSteps }: StatusViewProps) {
-  const sessionStudentId = useStudentId();
-  const sessionCode = useApplyCode();
-
+export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }: StatusViewProps) {
   const [studentId, setStudentId] = useState("");
   const [code, setCode] = useState("");
   const [errors, setErrors] = useState<{ studentId?: string; code?: string }>({});
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState<StatusResult | null>(null);
-  const triedSession = useRef(false);
+  /** 1차 합격자에게만 필요한 값이라 결과를 받은 뒤에 따로 불러온다 */
+  const [slots, setSlots] = useState<InterviewSlotOption[]>([]);
+  /** 화면에서 시간을 바꿀 수 있어야 하므로 조회한 학번·번호를 들고 있는다 */
+  const [checked, setChecked] = useState<{ sid: string; code: string } | null>(null);
 
   async function check(sid: string, c: string) {
     setChecking(true);
@@ -66,16 +67,19 @@ export function StatusView({ config: recruitConfig, nextSteps }: StatusViewProps
       return false;
     }
     setResult(data);
+    setChecked({ sid, code: c });
+
+    // 1차 합격자면 고를 수 있는 면접 시간을 함께 받아 둔다
+    if (data.firstPublished && data.firstResult === "합격") {
+      const slotRes = await fetch("/api/apply/interview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId: sid, code: c }),
+      });
+      if (slotRes.ok) setSlots((await slotRes.json()).slots ?? []);
+    }
     return true;
   }
-
-  useEffect(() => {
-    if (triedSession.current) return;
-    if (sessionStudentId && sessionCode) {
-      triedSession.current = true;
-      queueMicrotask(() => check(sessionStudentId, sessionCode));
-    }
-  }, [sessionStudentId, sessionCode]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -91,6 +95,9 @@ export function StatusView({ config: recruitConfig, nextSteps }: StatusViewProps
     return (
       <Shell title="지원 현황" back="/">
         <h1 className={styles.centerTitle}>학번과 본인 지정번호로 확인해요</h1>
+        <p className={styles.centerLead}>
+          지원할 때 정한 번호가 필요해요. 결과는 매번 직접 확인합니다.
+        </p>
         <form onSubmit={handleSubmit} noValidate>
           <TextField
             label="학번"
@@ -169,11 +176,24 @@ export function StatusView({ config: recruitConfig, nextSteps }: StatusViewProps
             <span className={styles.resultLabel}>1차 합격</span>
             <h1 className={styles.resultTitle}>면접에서 만나요!</h1>
             <p className={styles.resultDesc}>
-              {result.interview
-                ? `면접 시간: ${result.interview}`
-                : "면접 시간은 운영진이 곧 안내드립니다."}
+              아래에서 편한 면접 시간을 골라주세요.
             </p>
           </div>
+
+          {checked && (
+            <InterviewPicker
+              studentId={checked.sid}
+              code={checked.code}
+              slots={slots}
+              current={result.interview}
+              place={interviewPlace}
+              onBooked={(label, next) => {
+                setResult((r) => (r ? { ...r, interview: label || null } : r));
+                setSlots(next);
+              }}
+            />
+          )}
+
           <p className={styles.infoNote}>
             최종 발표는 <b>{recruitConfig.finalResultDate}</b> 예정입니다.
           </p>

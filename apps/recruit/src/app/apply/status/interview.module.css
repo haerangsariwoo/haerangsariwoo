@@ -1,0 +1,125 @@
+.picker {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pickerTitle {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.slotList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slot {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-white);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.slot.on {
+  border-color: var(--brand-blue-500);
+  background: var(--brand-surface);
+}
+
+/* 찬 시간대도 남겨 둔다 — 없어지면 "원래 없던 날" 로 오해한다 */
+.slot.full {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.slotDate {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-900);
+  flex: none;
+}
+
+.slotTime {
+  font-size: 14px;
+  color: var(--ink-600);
+  flex: 1;
+  min-width: 0;
+}
+
+.slotLeft {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-blue-500);
+  flex: none;
+}
+
+.slot.full .slotLeft {
+  color: var(--ink-600);
+}
+
+.placeNote,
+.empty {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-600);
+  word-break: keep-all;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--state-danger);
+}
+
+/* ---------- 예약을 마친 뒤 ---------- */
+.booked {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: var(--radius-md);
+  background: var(--brand-surface);
+  text-align: center;
+}
+
+.bookedLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-blue-500);
+}
+
+.bookedValue {
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.bookedPlace {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-600);
+  word-break: keep-all;
+}
+
+.changeLink {
+  margin-top: 14px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--ink-600);
+  text-decoration: underline;
+  cursor: pointer;
+}

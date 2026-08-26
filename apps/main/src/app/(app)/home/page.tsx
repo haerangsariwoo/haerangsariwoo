@@ -81,21 +81,22 @@ export default async function HomePage() {
       {/* ② 이번 학기에 할 일 */}
       <SheetGroup>
         <section className={styles.duo}>
-          <article className={styles.statusCard}>
-            <h2 className={styles.cardTitle}>이번 학기 현황</h2>
-            <div className={styles.donutWrap}>
-              <Image src="/icons/donut-92.svg" alt="" width={82} height={82} unoptimized />
-              <span className={styles.donutValue}>{stats.attendanceRate}%</span>
+          <article>
+            <div className={styles.panelHead}>
+              <h2 className={styles.panelTitle}>모집 중인 봉사</h2>
+              <Link href="/volunteer" className={styles.panelMore}>
+                전체&nbsp;&nbsp;›
+              </Link>
             </div>
-            <div className={styles.statusLines}>
-              <p className={styles.statusPrimary}>
-                봉사&nbsp;&nbsp;{stats.semesterHours} / {stats.semesterGoal}시간
-              </p>
-              <p className={styles.statusSecondary}>
-                참여&nbsp;&nbsp;{stats.semesterJoinCount}회&nbsp;&nbsp;·&nbsp;&nbsp;출석{" "}
-                {stats.attendanceRate}%
-              </p>
-            </div>
+            {recruitingVolunteers.length > 0 ? (
+              <div className={styles.volunteerList}>
+                {recruitingVolunteers.map((v) => (
+                  <VolunteerCard key={v.id} item={v} compact />
+                ))}
+              </div>
+            ) : (
+              <p className={styles.nextMeta}>지금은 모집 중인 봉사가 없어요.</p>
+            )}
           </article>
 
           <article className={styles.nextCard}>
@@ -122,20 +123,6 @@ export default async function HomePage() {
               </p>
             )}
           </article>
-        </section>
-
-        <section>
-          <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>모집 중인 봉사</h2>
-            <Link href="/volunteer" className={styles.moreLink}>
-              전체 보기&nbsp;&nbsp;›
-            </Link>
-          </div>
-          <div className={styles.volunteerList}>
-            {recruitingVolunteers.map((v) => (
-              <VolunteerCard key={v.id} item={v} />
-            ))}
-          </div>
         </section>
 
         <section className={styles.duo}>

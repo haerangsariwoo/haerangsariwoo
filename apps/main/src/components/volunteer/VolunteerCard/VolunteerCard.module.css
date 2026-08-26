@@ -97,3 +97,33 @@
   color: var(--ink-600);
   font-weight: 700;
 }
+
+/* ---------- 좁은 칸용 ---------- */
+.card.compact {
+  gap: var(--space-10);
+  padding: var(--space-10) 0;
+}
+
+.compact .thumb {
+  width: 44px;
+  height: 44px;
+}
+
+.compact .title {
+  font-size: 13px;
+  /* 제목이 길어도 두 줄에서 끊어 카드 높이를 맞춘다 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+}
+
+.compact .meta {
+  font-size: 11px;
+}
+
+.compact .tag {
+  font-size: 10px;
+  padding: 2px 7px;
+}

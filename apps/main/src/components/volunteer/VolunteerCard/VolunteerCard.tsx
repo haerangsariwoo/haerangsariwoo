@@ -17,12 +17,27 @@ const SOURCE_LABEL: Record<VolunteerSummary["source"], string> = {
   vms: "VMS",
 };
 
-export function VolunteerCard({ item }: { item: VolunteerSummary }) {
+/**
+ * 홈의 반쪽 칸처럼 폭이 좁은 자리에서는 compact 로 쓴다.
+ * 사진은 남기되 작게 줄이고, 두 줄이던 태그는 분야 하나만 남긴다 —
+ * 좁은 칸에서 태그가 줄바꿈되면 카드 높이가 들쭉날쭉해진다.
+ */
+export function VolunteerCard({
+  item,
+  compact = false,
+}: {
+  item: VolunteerSummary;
+  compact?: boolean;
+}) {
   const isExternal = item.source !== "internal";
   const closed = item.status === "closed";
 
   return (
-    <Link href={`/volunteer/${item.id}`} className={styles.card} aria-label={item.title}>
+    <Link
+      href={`/volunteer/${item.id}`}
+      className={cn(styles.card, compact && styles.compact)}
+      aria-label={item.title}
+    >
       <span
         className={cn(
           styles.thumb,
@@ -44,7 +59,7 @@ export function VolunteerCard({ item }: { item: VolunteerSummary }) {
         <p className={styles.meta}>{item.dateLabel}</p>
         <div className={styles.tagRow}>
           <span className={styles.tag}>{item.category}</span>
-          <span className={styles.tag}>{SOURCE_LABEL[item.source]}</span>
+          {!compact && <span className={styles.tag}>{SOURCE_LABEL[item.source]}</span>}
           {item.status === "closing" && <span className={cn(styles.tag, styles.closing)}>마감임박</span>}
           {closed && <span className={cn(styles.tag, styles.closed)}>마감</span>}
         </div>

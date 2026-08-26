@@ -67,13 +67,28 @@ export function isoFromLabel(label: string, now: Date = new Date()): string {
   return `${year}-${String(month).padStart(2, "0")}-${m[2].padStart(2, "0")}`;
 }
 
-/** 날짜(ISO 또는 "8.22 (금)" 표기)가 그 학기에 드는지 */
-export function inSemester(dateish: string | null | undefined, value: string): boolean {
-  if (!dateish) return false;
-  const iso = /^\d{4}-\d{2}-\d{2}/.test(dateish) ? dateish : isoFromLabel(dateish);
-  if (!iso) return false;
+/**
+ * 날짜(ISO 또는 "8.22 (금)" 표기)가 그 학기 화면에 보여야 하는지.
+ *
+ * 지금 학기를 볼 때는 위쪽 끝을 두지 않는다. 8월 말에 9월 행사를 미리
+ * 등록하는 일이 흔한데, 학기 경계로 자르면 방금 만든 것이 목록에서
+ * 사라져 버린다. 지난 학기는 기록 보관용이라 그 기간만 딱 보여준다.
+ */
+export function inSemester(
+  dateish: string | null | undefined,
+  value: string,
+  now: Date = new Date(),
+): boolean {
+  const isCurrent = value === semesterOf(now);
+  // 날짜를 못 읽는 항목은 지금 학기 화면에서라도 보이게 둔다 — 안 보이면 고칠 수도 없다
+  if (!dateish) return isCurrent;
+
+  const iso = /^\d{4}-\d{2}-\d{2}/.test(dateish) ? dateish : isoFromLabel(dateish, now);
+  if (!iso) return isCurrent;
+
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return false;
+  if (Number.isNaN(d.getTime())) return isCurrent;
+
   const { from, to } = semesterRange(value);
-  return d >= from && d < to;
+  return isCurrent ? d >= from : d >= from && d < to;
 }

@@ -115,29 +115,29 @@ export async function POST(request: Request) {
   }
 
   /*
-   * 여기부터는 값을 바꾸는 요청이다.
+   * 여기부터는 값을 저장하는 요청이다.
    *
-   * 화면에서는 최종 발표 뒤와 면접이 끝난 뒤에 시간 고르기를 감추지만,
-   * 감추는 것과 막는 것은 다르다. 요청을 직접 보내면 그만이므로 서버에서
-   * 한 번 더 본다.
-   */
-  if (finalPublished) {
-    return NextResponse.json(
-      { error: "입력 기간이 지나 면접 시간 변경이 불가합니다." },
-      { status: 403 },
-    );
-  }
-
-  /*
-   * 잠금 시각이 지나면 이미 고른 시간은 못 바꾼다. 아직 안 고른 사람은
-   * 그 뒤에도 고를 수 있게 둔다 — 연락이 늦게 닿은 사람까지 막으면
+   * 막는 것은 "이미 고른 시간을 바꾸는 것" 뿐이다. 아직 한 번도 안 고른
+   * 사람은 언제든 고를 수 있어야 한다 — 연락이 늦게 닿은 사람까지 막으면
    * 면접 자체를 못 보게 된다.
+   *
+   * 화면에서도 같은 규칙으로 감추지만, 감추는 것과 막는 것은 다르다.
+   * 요청을 직접 보내면 그만이므로 여기서 한 번 더 본다.
    */
-  if (applicant.interview && isInterviewLocked(lockAt)) {
-    return NextResponse.json(
-      { error: "면접 시간 변경이 마감됐습니다. 운영진에게 문의해 주세요." },
-      { status: 403 },
-    );
+  if (applicant.interview) {
+    if (finalPublished) {
+      return NextResponse.json(
+        { error: "입력 기간이 지나 면접 시간 변경이 불가합니다." },
+        { status: 403 },
+      );
+    }
+
+    if (isInterviewLocked(lockAt)) {
+      return NextResponse.json(
+        { error: "면접 시간 변경이 마감됐습니다. 운영진에게 문의해 주세요." },
+        { status: 403 },
+      );
+    }
   }
 
   // ---- 고른 시간으로 예약 ----

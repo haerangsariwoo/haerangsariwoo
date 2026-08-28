@@ -208,7 +208,8 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
               code={checked.code}
               slots={slots}
               current={result.interview}
-              locked={result.interviewLocked}
+              // 최종 발표 뒤에도 바꿀 수 없다 — 서버가 막는 조건과 같게 둔다
+              locked={result.interviewLocked || result.finalPublished}
               place={interviewPlace}
               onBooked={(label, next) => {
                 setResult((r) => (r ? { ...r, interview: label || null } : r));

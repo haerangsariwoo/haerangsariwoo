@@ -123,7 +123,7 @@ export async function POST(request: Request) {
    */
   if (finalPublished) {
     return NextResponse.json(
-      { error: "최종 결과가 발표되어 면접 시간을 바꿀 수 없습니다." },
+      { error: "입력 기간이 지나 면접 시간 변경이 불가합니다." },
       { status: 403 },
     );
   }

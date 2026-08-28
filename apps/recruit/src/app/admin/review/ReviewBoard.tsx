@@ -3,6 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
+import { LengthFilter, SortSelect } from "@/components/admin/ListFilters";
+import {
+  emptyLength,
+  inLength,
+  sortRows,
+  type LengthRange,
+  type NameSort,
+} from "@/lib/list-filters";
 import { createClient } from "@/lib/supabase/client";
 import type { Applicant, FinalResult, FirstResult } from "@/lib/admin-data";
 
@@ -49,6 +57,8 @@ export function ReviewBoard() {
   const [rows, setRows] = useState<Applicant[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const [sort, setSort] = useState<NameSort>("default");
+  const [length, setLength] = useState<LengthRange>(emptyLength);
   const [picked, setPicked] = useState<Set<string>>(new Set());
   /** 발표 여부 — 발표해야 지원자 화면에 결과가 보인다 */
   const [published, setPublished] = useState({ first: false, final: false });
@@ -74,7 +84,10 @@ export function ReviewBoard() {
     };
   }, [supabase]);
 
-  const visible = rows.filter((a) => !q.trim() || a.name.includes(q.trim()));
+  const visible = sortRows(
+    rows.filter((a) => (!q.trim() || a.name.includes(q.trim())) && inLength(a.motivation, length)),
+    sort,
+  );
   const firstPending = rows.filter((a) => a.first_result === "대기");
   const finalPending = rows.filter((a) => a.first_result === "합격" && a.final_result === "대기");
 
@@ -144,6 +157,8 @@ export function ReviewBoard() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
+          <LengthFilter value={length} onChange={setLength} />
+          <SortSelect value={sort} onChange={setSort} defaultLabel="최근 지원순" />
           <span className={ui.spacer} />
           <button
             type="button"

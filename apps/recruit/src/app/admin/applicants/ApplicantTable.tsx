@@ -3,6 +3,14 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
+import { LengthFilter, SortSelect } from "@/components/admin/ListFilters";
+import {
+  emptyLength,
+  inLength,
+  sortRows,
+  type LengthRange,
+  type NameSort,
+} from "@/lib/list-filters";
 import { createClient } from "@/lib/supabase/client";
 import type { Applicant, FinalResult, FirstResult } from "@/lib/admin-data";
 import { downloadCsv, today } from "@/lib/csv";
@@ -18,6 +26,8 @@ export function ApplicantTable() {
   const [q, setQ] = useState("");
   const [first, setFirst] = useState("all");
   const [track, setTrack] = useState("all");
+  const [sort, setSort] = useState<NameSort>("default");
+  const [length, setLength] = useState<LengthRange>(emptyLength);
   /** 펼쳐서 지원 동기 전체를 보고 있는 사람 */
   const [openId, setOpenId] = useState<string | null>(null);
   const [picked, setPicked] = useState<Set<string>>(new Set());
@@ -42,12 +52,15 @@ export function ApplicantTable() {
 
   const tracks = useMemo(() => [...new Set(rows.map((a) => a.track.split(" · ")[0]))], [rows]);
 
-  const visible = rows.filter((a) => {
-    const hitQ = !q.trim() || a.name.includes(q.trim()) || a.student_id.includes(q.trim());
-    const hitF = first === "all" || a.first_result === first;
-    const hitT = track === "all" || a.track.startsWith(track);
-    return hitQ && hitF && hitT;
-  });
+  const visible = sortRows(
+    rows.filter((a) => {
+      const hitQ = !q.trim() || a.name.includes(q.trim()) || a.student_id.includes(q.trim());
+      const hitF = first === "all" || a.first_result === first;
+      const hitT = track === "all" || a.track.startsWith(track);
+      return hitQ && hitF && hitT && inLength(a.motivation, length);
+    }),
+    sort,
+  );
 
   /** 결과 배지를 눌러 대기 → 합격 → 불합격 순으로 바꾼다 */
   async function cycleFirst(id: string) {
@@ -151,6 +164,8 @@ export function ApplicantTable() {
             </option>
           ))}
         </select>
+        <LengthFilter value={length} onChange={setLength} />
+        <SortSelect value={sort} onChange={setSort} defaultLabel="최근 지원순" />
         <span className={ui.spacer} />
         <button
           type="button"

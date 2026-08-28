@@ -372,3 +372,46 @@
   font-size: 12px;
   line-height: 1.6;
 }
+
+/* ---------- 글자 수 범위 필터 ---------- */
+.rangeGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(23, 111, 242, 0.14);
+  background: var(--surface-white);
+}
+
+.rangeLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-600);
+  white-space: nowrap;
+}
+
+.rangeInput {
+  width: 56px;
+  height: 26px;
+  border: none;
+  background: none;
+  font-size: 12px;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-800);
+}
+
+.rangeInput:focus {
+  outline: none;
+}
+
+.rangeGroup:focus-within {
+  border-color: var(--brand-blue-500);
+}
+
+.rangeTilde {
+  font-size: 12px;
+  color: var(--ink-600);
+}

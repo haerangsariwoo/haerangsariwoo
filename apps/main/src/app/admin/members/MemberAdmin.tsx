@@ -120,15 +120,23 @@ export function MemberAdmin() {
   const [q, setQ] = useState("");
   const [cohort, setCohort] = useState("all");
   const [role, setRole] = useState("all");
+  /** 기본은 최근 가입순(불러온 순서), 필요하면 이름순으로 본다 */
+  const [sort, setSort] = useState<"default" | "name">("default");
 
   const cohorts = useMemo(() => [...new Set(members.map((m) => m.cohort))], [members]);
 
-  const visibleMembers = members.filter((m) => {
+  const filteredMembers = members.filter((m) => {
     const hitQ = !q.trim() || m.name.includes(q.trim()) || m.student_id.includes(q.trim());
     const hitC = cohort === "all" || m.cohort === cohort;
     const hitR = role === "all" || m.role === role;
     return hitQ && hitC && hitR;
   });
+
+  // 한글 이름은 localeCompare 에 "ko" 를 줘야 자모 순서가 맞는다
+  const visibleMembers =
+    sort === "name"
+      ? [...filteredMembers].sort((a, b) => a.name.localeCompare(b.name, "ko"))
+      : filteredMembers;
 
   async function deleteMember(id: string, name: string) {
     if (!window.confirm(`${name} 회원을 삭제할까요? 로그인 계정도 함께 삭제되며 되돌릴 수 없습니다.`)) return;
@@ -364,6 +372,15 @@ export function MemberAdmin() {
             <option value="부원">부원</option>
             <option value="운영진">운영진</option>
             <option value="관리자">관리자</option>
+          </select>
+          <select
+            className={toolbar.select}
+            value={sort}
+            onChange={(e) => setSort(e.target.value as "default" | "name")}
+            aria-label="정렬"
+          >
+            <option value="default">최근 가입순</option>
+            <option value="name">이름 가나다순</option>
           </select>
         </div>
 

@@ -131,12 +131,35 @@ export function ReviewBoard() {
     });
   }
 
-  async function publish(key: "first" | "final") {
-    setPublished((p) => ({ ...p, [key]: true }));
-    await supabase
+  const PUBLISH_LABEL = { first: "1차", final: "최종" } as const;
+
+  /**
+   * 발표를 켜고 끈다.
+   *
+   * 켜는 순간 지원자 화면에 결과가 그대로 뜨고, 끄면 다시 감춰진다.
+   * 어느 쪽이든 되돌리기 어려운 일이라 누르기 전에 한 번 묻는다 —
+   * 이미 본 지원자가 있으면 끄더라도 없던 일이 되지는 않는다.
+   */
+  async function setPublish(key: "first" | "final", next: boolean) {
+    const what = PUBLISH_LABEL[key];
+    const ask = next
+      ? `${what} 결과를 발표할까요?\n\n발표하면 지원자가 바로 자기 결과를 확인할 수 있습니다.`
+      : `${what} 결과 발표를 취소할까요?\n\n지원자 화면에서 결과가 다시 감춰집니다. 이미 확인한 지원자에게는 되돌릴 수 없습니다.`;
+    if (!window.confirm(ask)) return;
+
+    const prev = published;
+    setPublished((p) => ({ ...p, [key]: next }));
+
+    const { error: updateError } = await supabase
       .from("recruit_settings")
-      .update(key === "first" ? { first_published: true } : { final_published: true })
+      .update(key === "first" ? { first_published: next } : { final_published: next })
       .eq("id", 1);
+
+    // 실패했는데 화면만 바뀌어 있으면 발표된 줄 알고 손을 뗀다
+    if (updateError) {
+      setPublished(prev);
+      window.alert("발표 상태를 바꾸지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    }
   }
 
   const pendingVisible = visible.filter((a) => a.first_result === "대기");
@@ -240,23 +263,36 @@ export function ReviewBoard() {
       >
         <div className={ui.toolbar}>
           <span className={ui.spacer} />
+          {published.first ? (
+            <span className={ui.publishedTag}>1차 결과 발표됨</span>
+          ) : null}
           <button
             type="button"
-            className={ui.btn}
-            onClick={() => publish("first")}
-            disabled={published.first || firstPending.length > 0}
-            title={firstPending.length > 0 ? "심사가 끝나지 않았습니다" : undefined}
+            className={cn(ui.btn, published.first && ui.danger)}
+            onClick={() => setPublish("first", !published.first)}
+            disabled={!published.first && firstPending.length > 0}
+            title={
+              !published.first && firstPending.length > 0 ? "심사가 끝나지 않았습니다" : undefined
+            }
           >
-            {published.first ? "1차 결과 발표됨" : "1차 결과 발표"}
+            {published.first ? "1차 발표 취소" : "1차 결과 발표"}
           </button>
+
+          {published.final ? (
+            <span className={ui.publishedTag}>최종 결과 발표됨</span>
+          ) : null}
           <button
             type="button"
-            className={cn(ui.btn, ui.primary)}
-            onClick={() => publish("final")}
-            disabled={published.final || finalPending.length > 0}
-            title={finalPending.length > 0 ? "최종 심사가 끝나지 않았습니다" : undefined}
+            className={cn(ui.btn, published.final ? ui.danger : ui.primary)}
+            onClick={() => setPublish("final", !published.final)}
+            disabled={!published.final && finalPending.length > 0}
+            title={
+              !published.final && finalPending.length > 0
+                ? "최종 심사가 끝나지 않았습니다"
+                : undefined
+            }
           >
-            {published.final ? "최종 결과 발표됨" : "최종 결과 발표"}
+            {published.final ? "최종 발표 취소" : "최종 결과 발표"}
           </button>
         </div>
 

@@ -415,3 +415,17 @@
   font-size: 12px;
   color: var(--ink-600);
 }
+
+/* 발표된 상태를 버튼 옆에 남긴다 — 버튼이 "취소" 로 바뀌면 지금 상태가 안 보인다 */
+.publishedTag {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}

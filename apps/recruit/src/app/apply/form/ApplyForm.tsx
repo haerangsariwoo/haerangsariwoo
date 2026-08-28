@@ -70,7 +70,9 @@ export function ApplyForm({ fields }: { fields: FormField[] }) {
       return;
     }
 
-    router.push("/apply/status");
+    // 현황 화면은 학번·지정번호를 다시 받는다. 방금 낸 사람을 그리로 보내면
+    // 제출이 됐는지도 모른 채 다시 신원을 묻는 꼴이 된다.
+    router.push("/apply/done");
   }
 
   return (

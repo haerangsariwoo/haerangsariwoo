@@ -119,3 +119,40 @@ export function groupByDate<T extends { date: string }>(times: T[]) {
 
   return order.map((date) => ({ date, times: byDate.get(date)! }));
 }
+
+/**
+ * 저장된 면접 라벨("9.8 (월) 10:20")에서 실제 시각을 읽는다.
+ *
+ * 날짜는 운영진이 자유롭게 적는 값이라 못 읽을 수 있다. 그때는 null 을
+ * 돌려주고, 부르는 쪽은 "아직 안 지났다" 로 본다 — 면접이 남았는데 끝난
+ * 것처럼 보여주는 편이 그 반대보다 나쁘다.
+ */
+export function interviewMoment(label: string, now = new Date()): Date | null {
+  const day = label.match(/(\d{1,2})\.(\d{1,2})/);
+  if (!day) return null;
+
+  const time = label.match(/(\d{1,2}):(\d{2})/);
+  const at = new Date(
+    now.getFullYear(),
+    Number(day[1]) - 1,
+    Number(day[2]),
+    time ? Number(time[1]) : 23,
+    time ? Number(time[2]) : 59,
+  );
+  if (Number.isNaN(at.getTime())) return null;
+
+  // 라벨에는 연도가 없다. 12월 면접을 이듬해 1월에 조회하면 올해 12월로
+  // 읽혀 "아직 안 온 면접" 이 되므로, 너무 먼 미래면 작년 것으로 본다.
+  if (at.getTime() - now.getTime() > 180 * 24 * 60 * 60 * 1000) {
+    at.setFullYear(at.getFullYear() - 1);
+  }
+
+  return at;
+}
+
+/** 면접 시각이 지났는가 */
+export function interviewPassed(label: string | null, now = new Date()) {
+  if (!label) return false;
+  const at = interviewMoment(label, now);
+  return at !== null && at.getTime() < now.getTime();
+}

@@ -1,0 +1,108 @@
+/* 지원 현황 화면과 같은 결로 맞춘다 — 바로 이어지는 화면이라 톤이 튀면 안 된다 */
+
+.icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
+  display: grid;
+  place-items: center;
+  margin: var(--space-12) auto 0;
+}
+
+.title {
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink-900);
+  line-height: 1.35;
+}
+
+.lead {
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-600);
+  line-height: 1.6;
+  margin-top: 10px;
+  word-break: keep-all;
+}
+
+/* 지정번호를 잃으면 결과를 못 본다. 여기만 눈에 띄게 둔다 */
+.remind {
+  border: 1px solid var(--brand-blue-500);
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+}
+
+.remindTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.remindBody {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-600);
+  word-break: keep-all;
+}
+
+.remindBody b {
+  color: var(--ink-800);
+}
+
+.next {
+  background: var(--brand-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+}
+
+.nextTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-blue-500);
+  margin-bottom: 10px;
+}
+
+.nextRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.nextLabel {
+  font-size: 13px;
+  color: var(--ink-600);
+}
+
+.nextValue {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.actionLink {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+}
+
+.homeLink {
+  font-size: 13px;
+  color: var(--ink-600);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

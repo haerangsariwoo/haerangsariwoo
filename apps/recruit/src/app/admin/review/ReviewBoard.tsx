@@ -268,7 +268,7 @@ export function ReviewBoard() {
           ) : null}
           <button
             type="button"
-            className={cn(ui.btn, published.first && ui.danger)}
+            className={cn(ui.btn, published.first && cn(ui.danger, ui.subtle))}
             onClick={() => setPublish("first", !published.first)}
             disabled={!published.first && firstPending.length > 0}
             title={
@@ -283,7 +283,7 @@ export function ReviewBoard() {
           ) : null}
           <button
             type="button"
-            className={cn(ui.btn, published.final ? ui.danger : ui.primary)}
+            className={cn(ui.btn, published.final ? cn(ui.danger, ui.subtle) : ui.primary)}
             onClick={() => setPublish("final", !published.final)}
             disabled={!published.final && finalPending.length > 0}
             title={

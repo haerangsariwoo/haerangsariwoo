@@ -86,6 +86,17 @@
   border-color: var(--brand-blue-500);
 }
 
+/*
+ * 되돌리는 버튼. 발표 버튼과 나란히 서지만 주된 행동이 아니라 작게 둔다 —
+ * 같은 크기면 둘 중 뭘 눌러야 할지 매번 읽어야 한다.
+ */
+.btn.subtle {
+  height: 30px;
+  padding: 0 11px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
 .btn.primary {
   background: var(--brand-blue-500);
   border-color: var(--brand-blue-500);

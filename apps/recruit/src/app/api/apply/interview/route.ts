@@ -6,7 +6,7 @@ import {
   clearFailures,
   recordFailure,
 } from "@/lib/apply-throttle";
-import { expandAll, type SlotSource, type SlotTime } from "@/lib/interview-slots";
+import { expandAll, interviewPassed, type SlotSource, type SlotTime } from "@/lib/interview-slots";
 
 /**
  * 1차 합격자가 면접 시간을 직접 고른다.
@@ -21,14 +21,23 @@ async function verify(studentId: unknown, code: unknown) {
   if (typeof studentId !== "string" || typeof code !== "string") return null;
 
   const supabase = createAdminClient();
-  const { data } = await supabase
-    .from("applicants")
-    .select("id, code, first_result, interview")
-    .eq("student_id", studentId)
-    .maybeSingle();
+  const [{ data }, { data: settings }] = await Promise.all([
+    supabase
+      .from("applicants")
+      .select("id, code, first_result, interview")
+      .eq("student_id", studentId)
+      .maybeSingle(),
+    supabase.from("recruit_settings").select("first_published, final_published").eq("id", 1).single(),
+  ]);
 
   if (!data || data.code !== code) return null;
-  return { supabase, applicant: data as { id: string; first_result: string; interview: string | null } };
+
+  return {
+    supabase,
+    applicant: data as { id: string; first_result: string; interview: string | null },
+    firstPublished: (settings?.first_published as boolean | undefined) ?? false,
+    finalPublished: (settings?.final_published as boolean | undefined) ?? false,
+  };
 }
 
 /** 고를 수 있는 시간대와 남은 자리 */
@@ -51,7 +60,20 @@ export async function POST(request: Request) {
     );
   }
   await clearFailures(request, String(studentId));
-  const { supabase, applicant } = session;
+  const { supabase, applicant, firstPublished, finalPublished } = session;
+
+  /*
+   * 발표 전에는 합격 여부와 상관없이 똑같이 막는다.
+   *
+   * 예전에는 합격이면 시간 목록을, 아니면 403 을 줬다. 발표 전에 운영진이
+   * 합격으로 표시해 두면 지원자가 이 응답만 보고 결과를 미리 알 수 있었다.
+   */
+  if (!firstPublished) {
+    return NextResponse.json(
+      { error: "아직 1차 결과가 발표되지 않았습니다." },
+      { status: 403 },
+    );
+  }
 
   if (applicant.first_result !== "합격") {
     return NextResponse.json({ error: "면접 대상자가 아닙니다." }, { status: 403 });
@@ -84,6 +106,27 @@ export async function POST(request: Request) {
         capacity: t.capacity,
       })),
     });
+  }
+
+  /*
+   * 여기부터는 값을 바꾸는 요청이다.
+   *
+   * 화면에서는 최종 발표 뒤와 면접이 끝난 뒤에 시간 고르기를 감추지만,
+   * 감추는 것과 막는 것은 다르다. 요청을 직접 보내면 그만이므로 서버에서
+   * 한 번 더 본다.
+   */
+  if (finalPublished) {
+    return NextResponse.json(
+      { error: "최종 결과가 발표되어 면접 시간을 바꿀 수 없습니다." },
+      { status: 403 },
+    );
+  }
+
+  if (interviewPassed(applicant.interview)) {
+    return NextResponse.json(
+      { error: "이미 지난 면접 시간은 바꿀 수 없습니다. 운영진에게 문의해 주세요." },
+      { status: 403 },
+    );
   }
 
   // ---- 고른 시간으로 예약 ----

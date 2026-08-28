@@ -37,12 +37,24 @@ export async function POST(request: Request) {
 
   await clearFailures(request, studentId);
 
+  const firstPublished = settings?.first_published ?? false;
+  const finalPublished = settings?.final_published ?? false;
+
+  /*
+   * 발표 전에는 결과를 보내지 않는다.
+   *
+   * 예전에는 실제 결과를 그대로 담아 보내고 화면에서만 가렸다. 개발자도구나
+   * 주소 창으로 응답을 그냥 볼 수 있으니 가린 것이 아니었다.
+   *
+   * 면접 시간도 마찬가지다 — 1차 합격자에게만 생기는 값이라, 발표 전에
+   * 내려보내면 그 자체로 합격을 알려주는 셈이다.
+   */
   return NextResponse.json({
     name: applicant.name,
-    firstResult: applicant.first_result,
-    finalResult: applicant.final_result,
-    interview: applicant.interview,
-    firstPublished: settings?.first_published ?? false,
-    finalPublished: settings?.final_published ?? false,
+    firstResult: firstPublished ? applicant.first_result : "대기",
+    finalResult: finalPublished ? applicant.final_result : "대기",
+    interview: firstPublished ? applicant.interview : null,
+    firstPublished,
+    finalPublished,
   });
 }

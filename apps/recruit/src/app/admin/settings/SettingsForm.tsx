@@ -6,6 +6,7 @@ import { Panel, ui } from "@/components/admin/Panel";
 import { createClient } from "@/lib/supabase/client";
 import type { RecruitSettings } from "@/lib/content-queries";
 import type { FormField } from "@/lib/recruit-config";
+import { formatLock, fromLocalInput, toLocalInput } from "@/lib/interview-lock";
 import styles from "./settings.module.css";
 
 const SCHEDULE_KEYS = [
@@ -28,6 +29,7 @@ export function SettingsForm({ settings, initialFields }: Props) {
 
   const [open, setOpen] = useState(settings.applicationsOpen);
   const [cohort, setCohort] = useState(settings.cohortLabelText);
+  const [lockAt, setLockAt] = useState(toLocalInput(settings.interviewLockAt));
   const [schedule, setSchedule] = useState<Record<string, string>>(
     Object.fromEntries(SCHEDULE_KEYS.map(([key]) => [key, settings[key]])),
   );
@@ -56,10 +58,11 @@ export function SettingsForm({ settings, initialFields }: Props) {
 
   async function save() {
     setError(null);
-    const payload: Record<string, string> = { cohort_label: cohort.trim() };
+    const payload: Record<string, string | null> = { cohort_label: cohort.trim() };
     SCHEDULE_KEYS.forEach(([key, column]) => {
       payload[column] = schedule[key]?.trim() ?? "";
     });
+    payload.interview_lock_at = fromLocalInput(lockAt);
 
     const { error: updateError } = await supabase
       .from("recruit_settings")
@@ -211,7 +214,24 @@ export function SettingsForm({ settings, initialFields }: Props) {
                 />
               </div>
             ))}
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="interview-lock">
+                면접 시간 변경 마감
+              </label>
+              <input
+                id="interview-lock"
+                type="datetime-local"
+                className={styles.input}
+                value={lockAt}
+                onChange={(e) => setLockAt(e.target.value)}
+              />
+            </div>
           </div>
+          <p className={styles.lockNote}>
+            {lockAt
+              ? `${formatLock(fromLocalInput(lockAt))} 부터 이미 시간을 고른 지원자는 바꿀 수 없습니다. 아직 안 고른 지원자는 그 뒤에도 고를 수 있습니다.`
+              : "비워두면 잠그지 않습니다. 면접 시작 시각을 넣어두면 그때부터 변경이 막힙니다."}
+          </p>
           <div className={ui.toolbar} style={{ marginTop: 16, marginBottom: 0 }}>
             <span className={ui.spacer} />
             {saved && <span className={styles.savedNote}>저장했습니다</span>}

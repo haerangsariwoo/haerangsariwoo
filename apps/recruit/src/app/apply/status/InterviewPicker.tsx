@@ -33,6 +33,7 @@ export function InterviewPicker({
   code,
   slots,
   current,
+  locked,
   onBooked,
   place,
 }: {
@@ -40,6 +41,8 @@ export function InterviewPicker({
   code: string;
   slots: InterviewSlotOption[];
   current: string | null;
+  /** 변경 마감 시각이 지났는가 — 아직 안 고른 사람은 이 값과 무관하게 고를 수 있다 */
+  locked: boolean;
   onBooked: (label: string, slots: InterviewSlotOption[]) => void;
   place: string;
 }) {
@@ -86,9 +89,15 @@ export function InterviewPicker({
         <p className={styles.bookedLabel}>선택한 면접 시간</p>
         <p className={styles.bookedValue}>{current}</p>
         <p className={styles.bookedPlace}>{place}</p>
-        <button type="button" className={styles.changeLink} onClick={() => onBooked("", slots)}>
-          시간 바꾸기
-        </button>
+        {locked ? (
+          <p className={styles.lockedNote}>
+            면접 시간 변경이 마감됐어요. 사정이 생겼다면 운영진에게 알려주세요.
+          </p>
+        ) : (
+          <button type="button" className={styles.changeLink} onClick={() => onBooked("", slots)}>
+            시간 바꾸기
+          </button>
+        )}
       </div>
     );
   }

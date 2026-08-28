@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isInterviewLocked } from "@/lib/interview-lock";
 import {
   blockedMessage,
   checkAttempts,
@@ -27,7 +28,11 @@ export async function POST(request: Request) {
       .select("name, code, first_result, interview, final_result")
       .eq("student_id", studentId)
       .maybeSingle(),
-    supabase.from("recruit_settings").select("first_published, final_published").eq("id", 1).single(),
+    supabase
+      .from("recruit_settings")
+      .select("first_published, final_published, interview_lock_at")
+      .eq("id", 1)
+      .single(),
   ]);
 
   if (!applicant || applicant.code !== code) {
@@ -56,5 +61,7 @@ export async function POST(request: Request) {
     interview: firstPublished ? applicant.interview : null,
     firstPublished,
     finalPublished,
+    // 잠겼는지는 서버가 판단한다 — 기기 시계가 틀린 사람이 있다
+    interviewLocked: isInterviewLocked(settings?.interview_lock_at),
   });
 }

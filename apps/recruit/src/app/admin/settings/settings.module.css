@@ -188,3 +188,11 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* 변경 마감 시각이 무엇을 하는지 그 자리에서 알려준다 */
+.lockNote {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-600);
+}

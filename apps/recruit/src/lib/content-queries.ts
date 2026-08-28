@@ -20,6 +20,7 @@ interface SettingsRow {
   first_result_date: string;
   interview_range: string;
   final_result_date: string;
+  interview_lock_at: string | null;
 }
 
 /** 관리자가 아직 안 채운 칸은 기본값을 그대로 쓴다 — 빈 화면을 내보내지 않는다 */
@@ -51,7 +52,7 @@ export const getRecruitSettings = cache(async (): Promise<RecruitSettings> => {
   const { data } = await supabase
     .from("recruit_settings")
     .select(
-      "applications_open, cohort_label, apply_start, apply_end, first_result_date, interview_range, final_result_date",
+      "applications_open, cohort_label, apply_start, apply_end, first_result_date, interview_range, final_result_date, interview_lock_at",
     )
     .eq("id", 1)
     .maybeSingle();
@@ -74,6 +75,8 @@ export const getRecruitSettings = cache(async (): Promise<RecruitSettings> => {
     firstResultDate: or(row?.first_result_date, defaultConfig.firstResultDate),
     interviewRange: or(row?.interview_range, defaultConfig.interviewRange),
     finalResultDate: or(row?.final_result_date, defaultConfig.finalResultDate),
+    // 비어 있는 것이 "잠그지 않음" 이라는 뜻이므로 기본값으로 채우지 않는다
+    interviewLockAt: row?.interview_lock_at ?? null,
     cohortLabelText,
   };
 });

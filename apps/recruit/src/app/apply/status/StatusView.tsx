@@ -29,6 +29,8 @@ interface StatusResult {
   interview: string | null;
   firstPublished: boolean;
   finalPublished: boolean;
+  /** 면접 시간 변경이 마감됐는가 (서버가 판단해서 내려준다) */
+  interviewLocked: boolean;
 }
 
 const CheckIcon = ({ size = 26 }: { size?: number }) => (
@@ -206,6 +208,7 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
               code={checked.code}
               slots={slots}
               current={result.interview}
+              locked={result.interviewLocked}
               place={interviewPlace}
               onBooked={(label, next) => {
                 setResult((r) => (r ? { ...r, interview: label || null } : r));

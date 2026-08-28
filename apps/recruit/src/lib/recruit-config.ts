@@ -21,6 +21,12 @@ export interface RecruitConfig {
   firstResultDate: string;
   interviewRange: string;
   finalResultDate: string;
+  /**
+   * 면접 시간 변경을 막을 시각 (ISO). 비어 있으면 잠그지 않는다.
+   * 이 시각이 지나면 이미 고른 사람은 못 바꾸고, 아직 안 고른 사람은
+   * 그 뒤에도 고를 수 있다 — 연락이 닿지 않은 사람까지 막을 이유는 없다.
+   */
+  interviewLockAt: string | null;
 }
 
 export const recruitConfig: RecruitConfig = {
@@ -34,6 +40,7 @@ export const recruitConfig: RecruitConfig = {
   firstResultDate: "9.08 (월)",
   interviewRange: "9.11 (목) – 9.13 (토)",
   finalResultDate: "9.16 (화)",
+  interviewLockAt: null,
 };
 
 /** 가입 연도·학기를 "26-2기" 형태로 표기한다 (회원 앱과 동일 규칙) */

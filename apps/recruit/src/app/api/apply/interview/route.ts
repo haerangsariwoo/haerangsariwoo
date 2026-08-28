@@ -6,7 +6,8 @@ import {
   clearFailures,
   recordFailure,
 } from "@/lib/apply-throttle";
-import { expandAll, interviewPassed, type SlotSource, type SlotTime } from "@/lib/interview-slots";
+import { expandAll, type SlotSource, type SlotTime } from "@/lib/interview-slots";
+import { isInterviewLocked } from "@/lib/interview-lock";
 
 /**
  * 1차 합격자가 면접 시간을 직접 고른다.
@@ -27,7 +28,11 @@ async function verify(studentId: unknown, code: unknown) {
       .select("id, code, first_result, interview")
       .eq("student_id", studentId)
       .maybeSingle(),
-    supabase.from("recruit_settings").select("first_published, final_published").eq("id", 1).single(),
+    supabase
+      .from("recruit_settings")
+      .select("first_published, final_published, interview_lock_at")
+      .eq("id", 1)
+      .single(),
   ]);
 
   if (!data || data.code !== code) return null;
@@ -37,6 +42,7 @@ async function verify(studentId: unknown, code: unknown) {
     applicant: data as { id: string; first_result: string; interview: string | null },
     firstPublished: (settings?.first_published as boolean | undefined) ?? false,
     finalPublished: (settings?.final_published as boolean | undefined) ?? false,
+    lockAt: (settings?.interview_lock_at as string | null | undefined) ?? null,
   };
 }
 
@@ -60,7 +66,7 @@ export async function POST(request: Request) {
     );
   }
   await clearFailures(request, String(studentId));
-  const { supabase, applicant, firstPublished, finalPublished } = session;
+  const { supabase, applicant, firstPublished, finalPublished, lockAt } = session;
 
   /*
    * 발표 전에는 합격 여부와 상관없이 똑같이 막는다.
@@ -122,9 +128,14 @@ export async function POST(request: Request) {
     );
   }
 
-  if (interviewPassed(applicant.interview)) {
+  /*
+   * 잠금 시각이 지나면 이미 고른 시간은 못 바꾼다. 아직 안 고른 사람은
+   * 그 뒤에도 고를 수 있게 둔다 — 연락이 늦게 닿은 사람까지 막으면
+   * 면접 자체를 못 보게 된다.
+   */
+  if (applicant.interview && isInterviewLocked(lockAt)) {
     return NextResponse.json(
-      { error: "이미 지난 면접 시간은 바꿀 수 없습니다. 운영진에게 문의해 주세요." },
+      { error: "면접 시간 변경이 마감됐습니다. 운영진에게 문의해 주세요." },
       { status: 403 },
     );
   }

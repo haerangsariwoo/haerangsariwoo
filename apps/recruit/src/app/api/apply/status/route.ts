@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isInterviewLocked } from "@/lib/interview-lock";
+import { readPublishFlags, type PublishSettings } from "@/lib/publish-queries";
 import {
   blockedMessage,
   checkAttempts,
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
       .maybeSingle(),
     supabase
       .from("recruit_settings")
-      .select("first_published, final_published, interview_lock_at")
+      .select("*")
       .eq("id", 1)
       .single(),
   ]);
@@ -42,8 +43,10 @@ export async function POST(request: Request) {
 
   await clearFailures(request, studentId);
 
-  const firstPublished = settings?.first_published ?? false;
-  const finalPublished = settings?.final_published ?? false;
+  // 예약 시각이 왔고 심사가 끝났으면 손으로 안 눌러도 공개다
+  const flags = await readPublishFlags(supabase, (settings ?? null) as PublishSettings | null);
+  const firstPublished = flags.first.published;
+  const finalPublished = flags.final.published;
 
   /*
    * 발표 전에는 결과를 보내지 않는다.

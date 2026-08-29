@@ -12,6 +12,7 @@ import {
   type NameSort,
 } from "@/lib/list-filters";
 import { createClient } from "@/lib/supabase/client";
+import { formatDayTime, publishState } from "@/lib/schedule";
 import type { Applicant, FinalResult, FirstResult } from "@/lib/admin-data";
 
 const RESULT_OPTIONS = [
@@ -62,6 +63,11 @@ export function ReviewBoard() {
   const [picked, setPicked] = useState<Set<string>>(new Set());
   /** 발표 여부 — 발표해야 지원자 화면에 결과가 보인다 */
   const [published, setPublished] = useState({ first: false, final: false });
+  /** 예약해 둔 발표 시각 */
+  const [scheduled, setScheduled] = useState<{ first: string | null; final: string | null }>({
+    first: null,
+    final: null,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -71,11 +77,18 @@ export function ReviewBoard() {
           .from("applicants")
           .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result")
           .order("applied_at", { ascending: false }),
-        supabase.from("recruit_settings").select("first_published, final_published").eq("id", 1).single(),
+        supabase
+          .from("recruit_settings")
+          .select("*")
+          .eq("id", 1)
+          .single(),
       ]);
       if (cancelled) return;
       setRows((applicants ?? []) as Applicant[]);
-      if (settings) setPublished({ first: settings.first_published, final: settings.final_published });
+      if (settings) {
+        setPublished({ first: settings.first_published, final: settings.final_published });
+        setScheduled({ first: settings.first_result_at, final: settings.final_result_at });
+      }
       setLoading(false);
     }
     load();
@@ -161,6 +174,32 @@ export function ReviewBoard() {
       window.alert("발표 상태를 바꾸지 못했습니다. 잠시 후 다시 시도해 주세요.");
     }
   }
+
+  /*
+   * 예약이 걸려 있는데 심사가 안 끝나면 발표가 안 나간다. 그 사실이
+   * 화면에 안 보이면 운영진은 발표된 줄 알고 기다린다.
+   */
+  const firstState = publishState({
+    published: published.first,
+    at: scheduled.first,
+    pending: firstPending.length,
+  });
+  const finalState = publishState({
+    published: published.final,
+    at: scheduled.final,
+    pending: finalPending.length,
+  });
+
+  function scheduleNote(state: ReturnType<typeof publishState>, at: string | null, what: string) {
+    if (!at || state.published) return null;
+    if (state.reason === "blocked") {
+      return `${what} 발표가 ${formatDayTime(at)} 로 예약돼 있지만, 심사가 끝나지 않아 아직 공개되지 않았습니다.`;
+    }
+    return `${what} 발표 예약 ${formatDayTime(at)}`;
+  }
+
+  const firstNote = scheduleNote(firstState, scheduled.first, "1차");
+  const finalNote = scheduleNote(finalState, scheduled.final, "최종");
 
   const pendingVisible = visible.filter((a) => a.first_result === "대기");
   const allPicked = pendingVisible.length > 0 && pendingVisible.every((a) => picked.has(a.id));
@@ -263,8 +302,20 @@ export function ReviewBoard() {
       >
         <div className={ui.toolbar}>
           <span className={ui.spacer} />
-          {published.first ? (
-            <span className={ui.publishedTag}>1차 결과 발표됨</span>
+          {firstNote && (
+            <span className={cn(ui.scheduleNote, firstState.reason === "blocked" && ui.warn)}>
+              {firstNote}
+            </span>
+          )}
+          {finalNote && (
+            <span className={cn(ui.scheduleNote, finalState.reason === "blocked" && ui.warn)}>
+              {finalNote}
+            </span>
+          )}
+          {firstState.published ? (
+            <span className={ui.publishedTag}>
+              1차 결과 발표됨{firstState.reason === "scheduled" ? " (예약)" : ""}
+            </span>
           ) : null}
           <button
             type="button"
@@ -278,8 +329,10 @@ export function ReviewBoard() {
             {published.first ? "1차 발표 취소" : "1차 결과 발표"}
           </button>
 
-          {published.final ? (
-            <span className={ui.publishedTag}>최종 결과 발표됨</span>
+          {finalState.published ? (
+            <span className={ui.publishedTag}>
+              최종 결과 발표됨{finalState.reason === "scheduled" ? " (예약)" : ""}
+            </span>
           ) : null}
           <button
             type="button"

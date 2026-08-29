@@ -4,10 +4,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { defaultPhotoFocus, heroInterval, landing, type HeroSlide } from "@/lib/recruit-config";
+import type { ApplyPhase } from "@/lib/schedule";
 import styles from "./HeroSlider.module.css";
 
 interface HeroSliderProps {
-  applicationsOpen: boolean;
+  phase: ApplyPhase;
   slides: HeroSlide[];
 }
 
@@ -15,7 +16,7 @@ interface HeroSliderProps {
  * design.md §4.1 — 풀블리드 사진 슬라이더 (4장, 자동 전환).
  * 사진은 확대하지 않는다. 넘기기 전용.
  */
-export function HeroSlider({ applicationsOpen, slides: heroSlides }: HeroSliderProps) {
+export function HeroSlider({ phase, slides: heroSlides }: HeroSliderProps) {
   const [index, setIndex] = useState(0);
   const total = heroSlides.length;
   const heroRef = useRef<HTMLElement>(null);
@@ -156,7 +157,7 @@ export function HeroSlider({ applicationsOpen, slides: heroSlides }: HeroSliderP
         {/* 테두리 상자 + 아래쪽 강조선. 꽉 채운 버튼 두 개보다 사진을
             덜 가리면서도, 밑줄 텍스트보다는 눌러야 할 자리라는 게 분명하다. */}
         <div className={styles.actions}>
-          {applicationsOpen ? (
+          {phase === "open" ? (
             <>
               <Link href="/apply" className={styles.actionPrimary}>
                 지원하기 <span aria-hidden="true">→</span>
@@ -171,7 +172,9 @@ export function HeroSlider({ applicationsOpen, slides: heroSlides }: HeroSliderP
              * 링크처럼 생긴 것을 두면 눌러 보고서야 알게 되므로,
              * 같은 자리에 상태만 적어 둔다.
              */
-            <span className={cn(styles.actionSecondary, styles.actionIdle)}>모집 준비 중</span>
+            <span className={cn(styles.actionSecondary, styles.actionIdle)}>
+              {phase === "before" ? "모집 준비 중" : "모집 마감"}
+            </span>
           )}
         </div>
       </div>

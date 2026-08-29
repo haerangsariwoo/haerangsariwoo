@@ -7,11 +7,14 @@ import { AboutPhoto } from "./AboutPhoto";
 import { ActivityGallery } from "./ActivityGallery";
 import { FaqList } from "./FaqList";
 import { HeroSlider } from "./HeroSlider";
+import { applyPhase } from "@/lib/schedule";
 import styles from "./page.module.css";
 
 export default async function LandingPage() {
   const [config, content] = await Promise.all([getRecruitSettings(), getLandingContent()]);
-  const { applicationsOpen } = config;
+  // 접수 여부는 정해둔 시각이 결정한다 (시각이 없으면 운영진 토글)
+  const phase = applyPhase(config);
+  const applicationsOpen = phase === "open";
   const cohort = cohortLabel(config.year, config.semesterNo);
 
   const schedule = [
@@ -40,7 +43,7 @@ export default async function LandingPage() {
         </div>
       </header>
 
-      <HeroSlider applicationsOpen={applicationsOpen} slides={content.heroSlides} />
+      <HeroSlider phase={phase} slides={content.heroSlides} />
 
       {/* ---------- About ----------
           Recruiting 과 같은 이유로 제목을 그리드 안, 글 칼럼 맨 위로
@@ -143,8 +146,9 @@ export default async function LandingPage() {
                 </div>
               ) : (
                 <p className={styles.closedNote}>
-                  현재는 지원서를 받지 않습니다. 다음 모집 일정은 준비되는 대로 이곳과 공식
-                  Instagram 에 안내드립니다.
+                  {phase === "before"
+                    ? `${config.applyStart} 부터 지원서를 받습니다. 일정은 위 표를 확인해 주세요.`
+                    : "지원서 접수가 마감됐습니다. 다음 모집 일정은 준비되는 대로 이곳과 공식 Instagram 에 안내드립니다."}
                 </p>
               )}
             </div>

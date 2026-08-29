@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { applyPhase } from "@/lib/schedule";
 
 /** applicants 표에 자기 컬럼이 있는 문항들 — 나머지는 extra 로 간다 */
 const CORE_FIELDS = ["name", "track", "phone", "motivation"] as const;
@@ -33,6 +34,38 @@ export async function POST(request: Request) {
   }
 
   const supabase = createAdminClient();
+
+  /*
+   * 접수 기간인지 여기서도 본다.
+   *
+   * 지금까지는 랜딩에서 "지원하기" 버튼을 감추는 것이 전부였다. 주소를
+   * 직접 치면 폼이 열리고 제출도 그대로 통과해서, 접수를 닫아둔 동안에도
+   * 지원서가 들어왔다. 감추는 것과 막는 것은 다르다.
+   */
+  const { data: settings } = await supabase
+    .from("recruit_settings")
+    .select("*")
+    .eq("id", 1)
+    .single();
+
+  const phase = applyPhase({
+    applicationsOpen: settings?.applications_open ?? false,
+    applyStartAt: settings?.apply_start_at ?? null,
+    applyEndAt: settings?.apply_end_at ?? null,
+  });
+
+  if (phase !== "open") {
+    return NextResponse.json(
+      {
+        error:
+          phase === "before"
+            ? "아직 지원서 접수가 시작되지 않았습니다."
+            : "지원서 접수가 마감됐습니다.",
+      },
+      { status: 403 },
+    );
+  }
+
   const { error } = await supabase.from("applicants").insert({
     student_id: studentId,
     code,

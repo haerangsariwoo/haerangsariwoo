@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { formatDay, formatDayTime } from "@/lib/schedule";
 import { createClient } from "@/lib/supabase/server";
 import {
   applicationFields as defaultFields,
@@ -21,6 +22,10 @@ interface SettingsRow {
   interview_range: string;
   final_result_date: string;
   interview_lock_at: string | null;
+  apply_start_at: string | null;
+  apply_end_at: string | null;
+  first_result_at: string | null;
+  final_result_at: string | null;
 }
 
 /** 관리자가 아직 안 채운 칸은 기본값을 그대로 쓴다 — 빈 화면을 내보내지 않는다 */
@@ -52,7 +57,7 @@ export const getRecruitSettings = cache(async (): Promise<RecruitSettings> => {
   const { data } = await supabase
     .from("recruit_settings")
     .select(
-      "applications_open, cohort_label, apply_start, apply_end, first_result_date, interview_range, final_result_date, interview_lock_at",
+      "*"
     )
     .eq("id", 1)
     .maybeSingle();
@@ -70,13 +75,20 @@ export const getRecruitSettings = cache(async (): Promise<RecruitSettings> => {
     semesterNo,
     semester: cohortLabelText.split("·").pop()?.trim() || defaultConfig.semester,
     applicationsOpen: row?.applications_open ?? defaultConfig.applicationsOpen,
-    applyStart: or(row?.apply_start, defaultConfig.applyStart),
-    applyEnd: or(row?.apply_end, defaultConfig.applyEnd),
-    firstResultDate: or(row?.first_result_date, defaultConfig.firstResultDate),
+    // 시각을 정해뒀으면 문구도 거기서 만든다 (따로 적어둔 글자보다 우선)
+    applyStart: formatDay(row?.apply_start_at) || or(row?.apply_start, defaultConfig.applyStart),
+    applyEnd: formatDay(row?.apply_end_at) || or(row?.apply_end, defaultConfig.applyEnd),
+    firstResultDate:
+      formatDayTime(row?.first_result_at) || or(row?.first_result_date, defaultConfig.firstResultDate),
     interviewRange: or(row?.interview_range, defaultConfig.interviewRange),
-    finalResultDate: or(row?.final_result_date, defaultConfig.finalResultDate),
+    finalResultDate:
+      formatDayTime(row?.final_result_at) || or(row?.final_result_date, defaultConfig.finalResultDate),
     // 비어 있는 것이 "잠그지 않음" 이라는 뜻이므로 기본값으로 채우지 않는다
     interviewLockAt: row?.interview_lock_at ?? null,
+    applyStartAt: row?.apply_start_at ?? null,
+    applyEndAt: row?.apply_end_at ?? null,
+    firstResultAt: row?.first_result_at ?? null,
+    finalResultAt: row?.final_result_at ?? null,
     cohortLabelText,
   };
 });

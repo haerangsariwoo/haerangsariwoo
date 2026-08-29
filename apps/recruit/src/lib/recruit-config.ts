@@ -27,6 +27,15 @@ export interface RecruitConfig {
    * 그 뒤에도 고를 수 있다 — 연락이 닿지 않은 사람까지 막을 이유는 없다.
    */
   interviewLockAt: string | null;
+  /**
+   * 모집 일정의 실제 시각. 비워두면 그 항목은 자동으로 움직이지 않는다.
+   * 화면에 보이는 날짜 문구도 값이 있으면 여기서 만들어 쓴다 — 두 군데를
+   * 따로 고치면 반드시 어긋난다.
+   */
+  applyStartAt: string | null;
+  applyEndAt: string | null;
+  firstResultAt: string | null;
+  finalResultAt: string | null;
 }
 
 export const recruitConfig: RecruitConfig = {
@@ -41,6 +50,10 @@ export const recruitConfig: RecruitConfig = {
   interviewRange: "9.11 (목) – 9.13 (토)",
   finalResultDate: "9.16 (화)",
   interviewLockAt: null,
+  applyStartAt: null,
+  applyEndAt: null,
+  firstResultAt: null,
+  finalResultAt: null,
 };
 
 /** 가입 연도·학기를 "26-2기" 형태로 표기한다 (회원 앱과 동일 규칙) */

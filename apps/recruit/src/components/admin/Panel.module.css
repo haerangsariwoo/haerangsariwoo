@@ -440,3 +440,25 @@
   font-weight: 700;
   white-space: nowrap;
 }
+
+/* 발표 예약 안내 — 심사가 안 끝나 못 열린 상태면 눈에 띄게 */
+.scheduleNote {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-600);
+  white-space: nowrap;
+}
+
+.scheduleNote.warn {
+  border-radius: var(--radius-sm);
+  background: rgba(207, 68, 68, 0.1);
+  color: #cf4444;
+  white-space: normal;
+  height: auto;
+  padding: 8px 12px;
+  line-height: 1.5;
+}

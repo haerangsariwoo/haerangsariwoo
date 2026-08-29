@@ -8,6 +8,7 @@ import {
 } from "@/lib/apply-throttle";
 import { expandAll, type SlotSource, type SlotTime } from "@/lib/interview-slots";
 import { isInterviewLocked } from "@/lib/interview-lock";
+import { readPublishFlags, type PublishSettings } from "@/lib/publish-queries";
 
 /**
  * 1차 합격자가 면접 시간을 직접 고른다.
@@ -30,18 +31,20 @@ async function verify(studentId: unknown, code: unknown) {
       .maybeSingle(),
     supabase
       .from("recruit_settings")
-      .select("first_published, final_published, interview_lock_at")
+      .select("*")
       .eq("id", 1)
       .single(),
   ]);
 
   if (!data || data.code !== code) return null;
 
+  const flags = await readPublishFlags(supabase, (settings ?? null) as PublishSettings | null);
+
   return {
     supabase,
     applicant: data as { id: string; first_result: string; interview: string | null },
-    firstPublished: (settings?.first_published as boolean | undefined) ?? false,
-    finalPublished: (settings?.final_published as boolean | undefined) ?? false,
+    firstPublished: flags.first.published,
+    finalPublished: flags.final.published,
     lockAt: (settings?.interview_lock_at as string | null | undefined) ?? null,
   };
 }

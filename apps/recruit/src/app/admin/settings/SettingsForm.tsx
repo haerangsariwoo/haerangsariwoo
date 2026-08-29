@@ -6,7 +6,8 @@ import { Panel, ui } from "@/components/admin/Panel";
 import { createClient } from "@/lib/supabase/client";
 import type { RecruitSettings } from "@/lib/content-queries";
 import type { FormField } from "@/lib/recruit-config";
-import { formatLock, fromLocalInput, toLocalInput } from "@/lib/interview-lock";
+import { formatLock } from "@/lib/interview-lock";
+import { fromLocalInput, toLocalInput } from "@/lib/schedule";
 import styles from "./settings.module.css";
 
 const SCHEDULE_KEYS = [
@@ -15,6 +16,17 @@ const SCHEDULE_KEYS = [
   ["firstResultDate", "first_result_date", "1차 발표"],
   ["interviewRange", "interview_range", "면접 기간"],
   ["finalResultDate", "final_result_date", "최종 발표"],
+] as const;
+
+/**
+ * 실제로 동작하는 시각들. 위의 SCHEDULE_KEYS 는 화면에 보여줄 글자일 뿐이고,
+ * 여기 값을 넣으면 그 시각에 접수가 열리고 닫히고 결과가 발표된다.
+ */
+const TIME_KEYS = [
+  ["apply_start_at", "접수 시작"],
+  ["apply_end_at", "접수 마감"],
+  ["first_result_at", "1차 발표 예약"],
+  ["final_result_at", "최종 발표 예약"],
 ] as const;
 
 const FIELD_TYPES: FormField["type"][] = ["text", "tel", "number", "textarea"];
@@ -30,6 +42,13 @@ export function SettingsForm({ settings, initialFields }: Props) {
   const [open, setOpen] = useState(settings.applicationsOpen);
   const [cohort, setCohort] = useState(settings.cohortLabelText);
   const [lockAt, setLockAt] = useState(toLocalInput(settings.interviewLockAt));
+  /** 정해두면 그 시각에 스스로 열리고 닫히고 발표된다 */
+  const [times, setTimes] = useState({
+    apply_start_at: toLocalInput(settings.applyStartAt),
+    apply_end_at: toLocalInput(settings.applyEndAt),
+    first_result_at: toLocalInput(settings.firstResultAt),
+    final_result_at: toLocalInput(settings.finalResultAt),
+  });
   const [schedule, setSchedule] = useState<Record<string, string>>(
     Object.fromEntries(SCHEDULE_KEYS.map(([key]) => [key, settings[key]])),
   );
@@ -63,6 +82,9 @@ export function SettingsForm({ settings, initialFields }: Props) {
       payload[column] = schedule[key]?.trim() ?? "";
     });
     payload.interview_lock_at = fromLocalInput(lockAt);
+    for (const [column, value] of Object.entries(times)) {
+      payload[column] = fromLocalInput(value);
+    }
 
     const { error: updateError } = await supabase
       .from("recruit_settings")
@@ -214,6 +236,20 @@ export function SettingsForm({ settings, initialFields }: Props) {
                 />
               </div>
             ))}
+            {TIME_KEYS.map(([column, label]) => (
+              <div key={column} className={styles.field}>
+                <label className={styles.label} htmlFor={column}>
+                  {label}
+                </label>
+                <input
+                  id={column}
+                  type="datetime-local"
+                  className={styles.input}
+                  value={times[column]}
+                  onChange={(e) => setTimes({ ...times, [column]: e.target.value })}
+                />
+              </div>
+            ))}
             <div className={styles.field}>
               <label className={styles.label} htmlFor="interview-lock">
                 면접 시간 변경 마감
@@ -227,6 +263,11 @@ export function SettingsForm({ settings, initialFields }: Props) {
               />
             </div>
           </div>
+          <p className={styles.lockNote}>
+            접수 시작·마감을 넣으면 그 시각에 지원서 접수가 스스로 열리고 닫힙니다 (위쪽
+            접수 토글보다 우선합니다). 발표 예약은 그 시각이 되면 자동으로 공개하되,
+            심사가 끝나지 않았으면 열지 않습니다. 비워두면 지금처럼 손으로 조작합니다.
+          </p>
           <p className={styles.lockNote}>
             {lockAt
               ? `${formatLock(fromLocalInput(lockAt))} 부터 이미 시간을 고른 지원자는 바꿀 수 없습니다. 아직 안 고른 지원자는 그 뒤에도 고를 수 있습니다.`

@@ -48,8 +48,24 @@
 }
 
 .slideImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  object-position: center;
+  /* 자르는 위치는 슬라이드마다 다르므로 값만 받아서 쓴다 */
+  object-position: var(--focus-x, 50%) var(--focus-y, 50%);
+  transform: scale(var(--focus-zoom, 1));
+  transform-origin: var(--focus-x, 50%) var(--focus-y, 50%);
+}
+
+/* 폰에서는 폰용 사진에 맞춰 잡아둔 위치를 쓴다 */
+@media (max-width: 767px) {
+  .slideImage {
+    object-position: var(--m-focus-x, 50%) var(--m-focus-y, 50%);
+    transform: scale(var(--m-focus-zoom, 1));
+    transform-origin: var(--m-focus-x, 50%) var(--m-focus-y, 50%);
+  }
 }
 
 /* §1.6 — 사진 위 텍스트에는 scrim 필수 */

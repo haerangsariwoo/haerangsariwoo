@@ -191,6 +191,12 @@
   aspect-ratio: 16 / 9;
 }
 
+/* 폰 화면 비율에 맞춰 세로로 길게 — 올릴 때부터 실제로 어떻게 잘리는지 보인다 */
+.photoPreview.mobileHero {
+  aspect-ratio: 9 / 16;
+  max-width: 200px;
+}
+
 .photoPreview.card {
   aspect-ratio: 4 / 3;
 }
@@ -311,4 +317,27 @@
 .previewLink:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* 슬라이드 안에서 사진 두 장을 구분해 주는 이름표 */
+.photoLabel {
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-800);
+}
+
+.photoOptional {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-600);
+}
+
+.photoNote {
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--ink-600);
 }

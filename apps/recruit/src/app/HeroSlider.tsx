@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { defaultPhotoFocus, heroInterval, landing, type HeroSlide } from "@/lib/recruit-config";
@@ -97,26 +96,44 @@ export function HeroSlider({ applicationsOpen, slides: heroSlides }: HeroSliderP
       <div className={styles.slides}>
         {heroSlides.map((s, i) => {
           const focus = s.focus ?? defaultPhotoFocus;
+          // 휴대폰용 사진을 안 올렸으면 PC 사진을 그대로 쓴다
+          const mobileUrl = s.mobilePhotoUrl || s.photoUrl;
+          const mobileFocus = s.mobilePhotoUrl ? (s.mobileFocus ?? defaultPhotoFocus) : focus;
+
           return (
             <div
               key={s.id}
               className={cn(styles.slide, i === index && styles.active)}
               aria-hidden={i !== index}
             >
-              <Image
-                className={styles.slideImage}
-                src={s.photoUrl}
-                alt=""
-                fill
-                sizes="100vw"
-                priority={i === 0}
-                unoptimized
-                style={{
-                  objectPosition: `${focus.x}% ${focus.y}%`,
-                  transform: `scale(${focus.zoom})`,
-                  transformOrigin: `${focus.x}% ${focus.y}%`,
-                }}
-              />
+              {/*
+                picture 를 쓰면 브라우저가 화면에 맞는 한 장만 내려받는다.
+                두 장을 겹쳐 놓고 CSS 로 감추면 안 보이는 것까지 받아 간다.
+
+                자르는 위치는 기기마다 달라야 하는데 인라인 스타일로는 화면
+                크기에 따라 바꿀 수 없다. 그래서 값만 변수로 넘기고, 어느
+                값을 쓸지는 CSS 가 정한다.
+              */}
+              <picture>
+                <source media="(max-width: 767px)" srcSet={mobileUrl} />
+                <img
+                  className={styles.slideImage}
+                  src={s.photoUrl}
+                  alt=""
+                  loading={i === 0 ? "eager" : "lazy"}
+                  fetchPriority={i === 0 ? "high" : "auto"}
+                  style={
+                    {
+                      "--focus-x": `${focus.x}%`,
+                      "--focus-y": `${focus.y}%`,
+                      "--focus-zoom": focus.zoom,
+                      "--m-focus-x": `${mobileFocus.x}%`,
+                      "--m-focus-y": `${mobileFocus.y}%`,
+                      "--m-focus-zoom": mobileFocus.zoom,
+                    } as React.CSSProperties
+                  }
+                />
+              </picture>
             </div>
           );
         })}

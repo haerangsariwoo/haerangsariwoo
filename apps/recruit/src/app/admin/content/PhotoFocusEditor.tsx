@@ -28,7 +28,7 @@ export function PhotoFocusEditor({
 }: {
   src: string;
   alt: string;
-  shape: "hero" | "card" | "wide";
+  shape: "hero" | "mobileHero" | "card" | "wide";
   focus: PhotoFocus;
   onChange: (focus: PhotoFocus) => void;
   onClose: () => void;

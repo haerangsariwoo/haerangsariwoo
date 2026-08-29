@@ -112,6 +112,14 @@ export interface HeroSlide {
   subtitle: string;
   photoUrl: string;
   focus?: PhotoFocus;
+  /**
+   * 휴대폰에서만 쓸 사진. 비워두면 위 사진을 그대로 쓴다.
+   *
+   * PC 는 가로로 넓고 폰은 세로로 길어서, 한 장으로는 어느 한쪽이 잘린다.
+   * 가로 사진과 세로 사진을 따로 두면 둘 다 제대로 보인다.
+   */
+  mobilePhotoUrl?: string;
+  mobileFocus?: PhotoFocus;
 }
 
 export const heroSlides: HeroSlide[] = [

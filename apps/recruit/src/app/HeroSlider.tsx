@@ -96,7 +96,7 @@ export function HeroSlider({ applicationsOpen, slides: heroSlides }: HeroSliderP
       <div className={styles.slides}>
         {heroSlides.map((s, i) => {
           const focus = s.focus ?? defaultPhotoFocus;
-          // 휴대폰용 사진을 안 올렸으면 PC 사진을 그대로 쓴다
+          // 모바일용 사진을 안 올렸으면 PC 사진을 그대로 쓴다
           const mobileUrl = s.mobilePhotoUrl || s.photoUrl;
           const mobileFocus = s.mobilePhotoUrl ? (s.mobileFocus ?? defaultPhotoFocus) : focus;
 

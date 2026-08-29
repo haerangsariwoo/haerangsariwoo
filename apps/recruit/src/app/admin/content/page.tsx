@@ -22,7 +22,7 @@ export default async function RecruitContentPage() {
       <Panel
         title="히어로 슬라이더"
         count={`${content.heroSlides.length}장`}
-        desc="랜딩 최상단에서 자동으로 넘어가는 사진입니다. 사진마다 제목과 부제를 따로 관리합니다."
+        desc="랜딩 최상단에서 자동으로 넘어가는 사진입니다. 사진마다 제목과 부제를 따로 관리합니다. 모바일용 사진을 넣지 않으면 PC 사진의 비율을 조정해 들어갑니다."
       >
         <HeroSlidesPanel content={content} />
       </Panel>

@@ -197,20 +197,16 @@ export function HeroSlidesPanel({ content }: PanelProps) {
             />
 
             <p className={styles.photoLabel}>
-              휴대폰용 사진 (세로) <span className={styles.photoOptional}>선택</span>
+              모바일용 사진 (세로) <span className={styles.photoOptional}>선택</span>
             </p>
             <Photo
               src={s.mobilePhotoUrl || null}
-              alt={`${s.title} 슬라이드 휴대폰 사진`}
+              alt={`${s.title} 슬라이드 모바일 사진`}
               shape="mobileHero"
               focus={s.mobileFocus ?? defaultPhotoFocus}
               onChange={(url) => update(s.id, { mobilePhotoUrl: url })}
               onFocusChange={(mobileFocus) => update(s.id, { mobileFocus })}
             />
-            <p className={styles.photoNote}>
-              비워두면 PC 용 사진을 폰에서도 씁니다. PC 는 가로로 넓고 폰은 세로로 길어서,
-              한 장만 쓰면 어느 한쪽이 잘립니다.
-            </p>
 
             <div className={styles.field}>
               <label className={styles.label} htmlFor={`${s.id}-title`}>

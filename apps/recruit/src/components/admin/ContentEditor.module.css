@@ -334,10 +334,3 @@
   font-weight: 600;
   color: var(--ink-600);
 }
-
-.photoNote {
-  margin-top: 8px;
-  font-size: 11px;
-  line-height: 1.7;
-  color: var(--ink-600);
-}

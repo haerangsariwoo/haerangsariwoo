@@ -71,3 +71,23 @@
   padding-left: 2px;
   font-weight: 700;
 }
+
+/* 비밀번호 표시/숨기기 단추 */
+.reveal {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  margin-right: -8px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-600);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.reveal:hover {
+  color: var(--ink-800);
+  background: var(--brand-tint-05);
+}

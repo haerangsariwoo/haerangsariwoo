@@ -109,6 +109,7 @@ export default function LoginPage() {
             icon={<LockIcon />}
             placeholder="비밀번호"
             type="password"
+            revealable
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button/Button";
 import { TextField } from "@/components/ui/TextField/TextField";
 import { createClient } from "@/lib/supabase/client";
-import { isValidPassword } from "@/lib/signup";
+import { checkNewPassword, PASSWORD_HINT } from "@/lib/signup";
 import styles from "./account.module.css";
 
 export function AccountForm({ track: initialTrack }: { track: string }) {
@@ -49,7 +49,8 @@ export function AccountForm({ track: initialTrack }: { track: string }) {
     e.preventDefault();
     const next: Record<string, string> = {};
     if (!currentPassword) next.currentPassword = "현재 비밀번호를 입력해 주세요.";
-    if (!isValidPassword(newPassword)) next.newPassword = "새 비밀번호는 6자 이상이어야 합니다.";
+    const pwProblem = checkNewPassword(newPassword);
+    if (pwProblem) next.newPassword = pwProblem;
     else if (newPassword !== newPasswordConfirm) next.newPasswordConfirm = "비밀번호가 일치하지 않습니다.";
 
     setPwErrors(next);
@@ -120,6 +121,7 @@ export function AccountForm({ track: initialTrack }: { track: string }) {
             label="현재 비밀번호"
             name="currentPassword"
             type="password"
+            revealable
             autoComplete="current-password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
@@ -129,16 +131,19 @@ export function AccountForm({ track: initialTrack }: { track: string }) {
             label="새 비밀번호"
             name="newPassword"
             type="password"
+            revealable
             autoComplete="new-password"
             placeholder="6자 이상"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             errorText={pwErrors.newPassword}
+            helperText={!pwErrors.newPassword ? PASSWORD_HINT : undefined}
           />
           <TextField
             label="새 비밀번호 확인"
             name="newPasswordConfirm"
             type="password"
+            revealable
             autoComplete="new-password"
             value={newPasswordConfirm}
             onChange={(e) => setNewPasswordConfirm(e.target.value)}

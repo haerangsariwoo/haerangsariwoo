@@ -11,7 +11,8 @@ import {
   MBTI_TYPES,
   cohortLabel,
   isValidBirth,
-  isValidPassword,
+  checkNewPassword,
+  PASSWORD_HINT,
   isValidStudentId,
   studentIdToEmail,
   type Gender,
@@ -62,8 +63,9 @@ export default function SignupPage() {
     if (!v.track.trim()) next.track = "트랙(학과)을 입력해 주세요.";
     if (!isValidStudentId(v.studentId.trim())) next.studentId = "학번 7자리를 정확히 입력해 주세요.";
 
-    if (!isValidPassword(v.password.trim())) {
-      next.password = "비밀번호는 6자 이상으로 정해 주세요.";
+    const pwProblem = checkNewPassword(v.password.trim());
+    if (pwProblem) {
+      next.password = pwProblem;
     } else if (v.password !== v.passwordConfirm) {
       next.passwordConfirm = "비밀번호가 일치하지 않습니다.";
     }
@@ -249,17 +251,19 @@ export default function SignupPage() {
             label="비밀번호"
             name="password"
             type="password"
+            revealable
             placeholder="6자 이상"
             value={v.password}
             onChange={(e) => set("password", e.target.value)}
             errorText={errors.password}
-            helperText={!errors.password ? "로그인할 때 사용할 비밀번호를 정해 주세요 (6자 이상)." : undefined}
+            helperText={!errors.password ? PASSWORD_HINT : undefined}
           />
 
           <TextField
             label="비밀번호 확인"
             name="passwordConfirm"
             type="password"
+            revealable
             placeholder="비밀번호를 한 번 더 입력"
             value={v.passwordConfirm}
             onChange={(e) => set("passwordConfirm", e.target.value)}

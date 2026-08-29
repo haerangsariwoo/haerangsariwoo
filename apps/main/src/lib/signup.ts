@@ -102,9 +102,32 @@ export function isValidStudentId(v: string) {
   return /^\d{7}$/.test(v);
 }
 
-/** 비밀번호 — 6자 이상 */
+export const PASSWORD_MIN = 8;
+export const PASSWORD_MAX = 15;
+
+/** 입력칸 아래에 늘 보여주는 안내 — 규칙을 틀리고 나서 알게 하지 않는다 */
+export const PASSWORD_HINT = `영문과 숫자를 섞어 ${PASSWORD_MIN}~${PASSWORD_MAX}자로 정해 주세요.`;
+
+/**
+ * 새로 정하는 비밀번호가 규칙에 맞는지 본다. 맞으면 null, 아니면 사유.
+ *
+ * 로그인에는 쓰지 않는다 — 규칙이 생기기 전에 가입한 사람들이 있고,
+ * 그 사람들의 비밀번호는 여전히 맞는 비밀번호다. 로그인에서 막으면
+ * 멀쩡한 회원이 자기 계정에 못 들어간다.
+ */
+export function checkNewPassword(v: string): string | null {
+  if (v.length < PASSWORD_MIN || v.length > PASSWORD_MAX) {
+    return `비밀번호는 ${PASSWORD_MIN}자 이상 ${PASSWORD_MAX}자 이하로 정해 주세요.`;
+  }
+  if (/\s/.test(v)) return "비밀번호에 공백은 쓸 수 없어요.";
+  if (!/[A-Za-z]/.test(v)) return "영문을 하나 이상 넣어 주세요.";
+  if (!/[0-9]/.test(v)) return "숫자를 하나 이상 넣어 주세요.";
+  return null;
+}
+
+/** 로그인 — 규칙이 아니라 "입력했는가" 만 본다 (위 설명 참고) */
 export function isValidPassword(v: string) {
-  return v.length >= 6;
+  return v.length > 0;
 }
 
 /**

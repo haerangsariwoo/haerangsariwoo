@@ -7,10 +7,13 @@ import styles from "./FaqList.module.css";
 /**
  * 랜딩 하단 Q&A.
  * Radix Accordion 이라 키보드 방향키 이동과 aria-expanded 를 알아서 처리한다.
+ *
+ * 처음에는 전부 닫아 둔다. 하나만 열려 있으면 그 질문이 특별히 중요한
+ * 것처럼 보이고, 목록 전체를 훑기도 어렵다.
  */
 export function FaqList({ faqs }: { faqs: Faq[] }) {
   return (
-    <Accordion.Root type="single" collapsible className={styles.list} defaultValue={faqs[0]?.q}>
+    <Accordion.Root type="single" collapsible className={styles.list}>
       {faqs.map((f) => (
         <Accordion.Item key={f.q} value={f.q} className={styles.item}>
           <Accordion.Header>

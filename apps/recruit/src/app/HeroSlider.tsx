@@ -166,9 +166,12 @@ export function HeroSlider({ applicationsOpen, slides: heroSlides }: HeroSliderP
               </Link>
             </>
           ) : (
-            <a href="#about" className={styles.actionSecondary}>
-              동아리 알아보기 →
-            </a>
+            /*
+             * 접수 기간이 아닐 때는 누를 곳이 없다는 것 자체가 정보다.
+             * 링크처럼 생긴 것을 두면 눌러 보고서야 알게 되므로,
+             * 같은 자리에 상태만 적어 둔다.
+             */
+            <span className={cn(styles.actionSecondary, styles.actionIdle)}>모집 준비 중</span>
           )}
         </div>
       </div>

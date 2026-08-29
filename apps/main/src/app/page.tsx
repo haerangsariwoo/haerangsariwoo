@@ -114,7 +114,6 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             errorText={errors.password}
-            helperText={!errors.password ? "회원가입 때 정한 비밀번호입니다." : undefined}
           />
 
           <Button type="submit" variant="navy" size="lg" fullWidth disabled={submitting}>

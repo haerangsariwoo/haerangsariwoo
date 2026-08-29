@@ -213,3 +213,16 @@
   background: var(--brand-tint-10);
   color: var(--brand-blue-500);
 }
+
+/* 고르는 문항의 선택지 입력 — 문항 줄 아래로 한 칸 내려 전체 폭을 쓴다 */
+.qOptions {
+  flex-basis: 100%;
+  height: 34px;
+  padding: 0 11px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--surface-white);
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--ink-800);
+}

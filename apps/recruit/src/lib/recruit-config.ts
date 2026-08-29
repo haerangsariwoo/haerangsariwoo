@@ -249,10 +249,12 @@ export interface FormField {
   name: string;
   label: string;
   placeholder: string;
-  type: "text" | "tel" | "number" | "textarea";
+  type: "text" | "tel" | "number" | "textarea" | "select";
   required: boolean;
   help?: string;
   maxLength?: number;
+  /** type 이 select 일 때 고를 수 있는 값들 (예: 남 · 여) */
+  options?: string[];
 }
 
 export const applicationFields: FormField[] = [
@@ -264,6 +266,14 @@ export const applicationFields: FormField[] = [
     required: true,
   },
   { name: "name", label: "이름", placeholder: "이름을 입력해 주세요", type: "text", required: true },
+  {
+    name: "gender",
+    label: "성별",
+    placeholder: "",
+    type: "select",
+    required: true,
+    options: ["남", "여"],
+  },
   {
     name: "phone",
     label: "연락처",

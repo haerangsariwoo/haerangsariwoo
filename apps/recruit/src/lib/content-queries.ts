@@ -153,6 +153,7 @@ interface FieldRow {
   required: boolean;
   max_length: number | null;
   sort_order: number;
+  options: string[] | null;
 }
 
 export function rowToField(r: FieldRow): FormField {
@@ -163,6 +164,7 @@ export function rowToField(r: FieldRow): FormField {
     type: r.field_type,
     required: r.required,
     ...(r.max_length ? { maxLength: r.max_length } : {}),
+    ...(r.options?.length ? { options: r.options } : {}),
   };
 }
 
@@ -174,7 +176,8 @@ export const getApplicationFields = cache(async (): Promise<FormField[]> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("application_fields")
-    .select("name, label, placeholder, field_type, required, max_length, sort_order")
+    // 컬럼을 나열하면 아직 만들지 않은 컬럼 하나 때문에 문항 전체를 못 읽는다
+    .select("*")
     .order("sort_order");
 
   const rows = (data ?? []) as FieldRow[];

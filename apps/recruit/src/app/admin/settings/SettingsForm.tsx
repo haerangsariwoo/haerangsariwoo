@@ -31,7 +31,18 @@ const TIME_KEYS = [
 
 const PHASE_LABEL = { before: "접수 전", open: "접수 중", closed: "접수 마감" } as const;
 
-const FIELD_TYPES: FormField["type"][] = ["text", "tel", "number", "textarea"];
+const FIELD_TYPES: FormField["type"][] = ["text", "tel", "number", "textarea", "select"];
+
+const TYPE_LABEL: Record<FormField["type"], string> = {
+  text: "글자",
+  tel: "연락처",
+  number: "숫자",
+  textarea: "서술형",
+  select: "고르기",
+};
+
+/** 성별처럼 고르는 문항을 새로 만들 때 처음 들어가는 선택지 */
+const DEFAULT_OPTIONS = ["남", "여"];
 
 interface Props {
   settings: RecruitSettings;
@@ -140,10 +151,26 @@ export function SettingsForm({ settings, initialFields }: Props) {
     setFields((prev) =>
       prev.map((f) =>
         f.name === name
-          ? { ...f, type, maxLength: type === "textarea" ? (f.maxLength ?? 300) : undefined }
+          ? {
+              ...f,
+              type,
+              maxLength: type === "textarea" ? (f.maxLength ?? 300) : undefined,
+              // 고르기로 바꾸면 선택지가 있어야 화면에 아무것도 안 뜨는 일이 없다
+              options: type === "select" ? (f.options ?? DEFAULT_OPTIONS) : undefined,
+            }
           : f,
       ),
     );
+    setFieldsDirty(true);
+  }
+
+  /** 고르는 문항의 선택지 — 쉼표로 나눠 적는다 */
+  function changeOptions(name: string, raw: string) {
+    const options = raw
+      .split(",")
+      .map((o) => o.trim())
+      .filter(Boolean);
+    setFields((prev) => prev.map((f) => (f.name === name ? { ...f, options } : f)));
     setFieldsDirty(true);
   }
 
@@ -168,6 +195,7 @@ export function SettingsForm({ settings, initialFields }: Props) {
           field_type: f.type,
           required: f.required,
           max_length: f.maxLength ?? null,
+          options: f.type === "select" ? (f.options ?? DEFAULT_OPTIONS) : null,
           sort_order: i,
         })),
       );
@@ -339,7 +367,7 @@ export function SettingsForm({ settings, initialFields }: Props) {
                 >
                   {FIELD_TYPES.map((t) => (
                     <option key={t} value={t}>
-                      {t === "textarea" ? "서술형" : t}
+                      {TYPE_LABEL[t]}
                     </option>
                   ))}
                 </select>
@@ -357,6 +385,15 @@ export function SettingsForm({ settings, initialFields }: Props) {
                 <button type="button" className={ui.rowBtn} onClick={() => removeField(f.name)}>
                   삭제
                 </button>
+                {f.type === "select" && (
+                  <input
+                    className={styles.qOptions}
+                    value={(f.options ?? []).join(", ")}
+                    onChange={(e) => changeOptions(f.name, e.target.value)}
+                    placeholder="선택지 (쉼표로 구분) — 예: 남, 여"
+                    aria-label={`${f.label} 선택지`}
+                  />
+                )}
               </div>
             ))}
             {fields.length === 0 && <p className={styles.toggleDesc}>문항이 없습니다.</p>}

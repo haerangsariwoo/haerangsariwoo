@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/cn";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
 import { TextArea, TextField } from "@/components/ui/Field/Field";
@@ -29,14 +30,16 @@ export function ApplyForm({ fields }: { fields: FormField[] }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const set = (name: string) => (e: { target: { value: string } }) =>
-    setValues((v) => ({ ...v, [name]: e.target.value }));
+  const setValue = (name: string, value: string) => setValues((v) => ({ ...v, [name]: value }));
+  const set = (name: string) => (e: { target: { value: string } }) => setValue(name, e.target.value);
 
   function validate(group: FormField[]) {
     const next: Values = {};
     for (const f of group) {
       if (f.required && !(values[f.name] ?? "").trim()) {
-        next[f.name] = `${f.label}을(를) 입력해 주세요.`;
+        // 고르는 문항에 "입력해 주세요" 는 어색하다
+        const verb = f.type === "select" ? "선택" : "입력";
+        next[f.name] = `${f.label}을(를) ${verb}해 주세요.`;
       }
     }
     setErrors(next);
@@ -97,19 +100,47 @@ export function ApplyForm({ fields }: { fields: FormField[] }) {
               </div>
             </div>
 
-            {basics.map((f) => (
-              <TextField
-                key={f.name}
-                label={f.label}
-                name={f.name}
-                required={f.required}
-                placeholder={f.placeholder}
-                inputMode={f.type === "number" ? "numeric" : f.type === "tel" ? "tel" : undefined}
-                value={values[f.name] ?? ""}
-                onChange={set(f.name)}
-                error={errors[f.name]}
-              />
-            ))}
+            {basics.map((f) =>
+              f.type === "select" ? (
+                /*
+                 * 고르는 문항은 버튼으로 보여준다. 선택지가 두셋뿐이면
+                 * 목록을 펼쳐 고르는 것보다 바로 눌러 고르는 편이 빠르고,
+                 * 폰에서 잘못 눌릴 일도 적다.
+                 */
+                <div key={f.name} className={styles.choiceField}>
+                  <span className={styles.choiceLabel}>
+                    {f.label}
+                    {f.required && <span aria-hidden="true">*</span>}
+                  </span>
+                  <div className={styles.choiceRow} role="group" aria-label={f.label}>
+                    {(f.options ?? []).map((o) => (
+                      <button
+                        key={o}
+                        type="button"
+                        aria-pressed={values[f.name] === o}
+                        className={cn(styles.choice, values[f.name] === o && styles.choiceOn)}
+                        onClick={() => setValue(f.name, o)}
+                      >
+                        {o}
+                      </button>
+                    ))}
+                  </div>
+                  {errors[f.name] && <p className={styles.choiceError}>{errors[f.name]}</p>}
+                </div>
+              ) : (
+                <TextField
+                  key={f.name}
+                  label={f.label}
+                  name={f.name}
+                  required={f.required}
+                  placeholder={f.placeholder}
+                  inputMode={f.type === "number" ? "numeric" : f.type === "tel" ? "tel" : undefined}
+                  value={values[f.name] ?? ""}
+                  onChange={set(f.name)}
+                  error={errors[f.name]}
+                />
+              ),
+            )}
 
             <div className={styles.actions}>
               <Button type="button" variant="outline" size="lg" onClick={() => router.push("/apply")}>

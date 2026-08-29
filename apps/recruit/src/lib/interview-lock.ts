@@ -13,27 +13,9 @@ export function isInterviewLocked(lockAt: string | null | undefined, now = new D
   return !Number.isNaN(at.getTime()) && at.getTime() <= now.getTime();
 }
 
-/** <input type="datetime-local"> 이 읽는 "2026-09-11T09:00" 형태로 바꾼다 */
-export function toLocalInput(iso: string | null | undefined) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-/** 입력칸의 값을 저장할 형태로 바꾼다. 비우면 null — 잠그지 않는다는 뜻 */
-export function fromLocalInput(value: string): string | null {
-  if (!value.trim()) return null;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? null : d.toISOString();
-}
-
-/** 화면에 보여줄 표기 */
-export function formatLock(iso: string | null | undefined) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getMonth() + 1}.${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+/*
+ * 표기와 입력 변환은 schedule 에 있는 것을 그대로 쓴다.
+ * 같은 규칙을 두 곳에 두면 한쪽만 고쳐져 어긋난다 — 실제로 여기 있던
+ * 것들이 서버 시각(UTC)으로 찍혀 아홉 시간 밀린 날짜를 보여줬다.
+ */
+export { formatDayTime as formatLock, fromLocalInput, toLocalInput } from "./schedule";

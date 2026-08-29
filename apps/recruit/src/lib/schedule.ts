@@ -8,10 +8,47 @@
 
 const DAYS = ["일", "월", "화", "수", "목", "금", "토"] as const;
 
+/**
+ * 날짜·시각은 언제나 한국 시각으로 읽고 쓴다.
+ *
+ * 서버는 UTC 로 돌기 때문에 그냥 getDate() 를 쓰면 아홉 시간 밀린 날짜가
+ * 찍힌다 — 8월 31일 0시로 정해둔 접수 시작이 화면에는 8월 30일로 나왔다.
+ * 보는 사람도 정하는 사람도 전부 한국에 있으므로 여기서 못박는다.
+ */
+const TZ = "Asia/Seoul";
+const KST_OFFSET = "+09:00";
+
 function parse(iso: string | null | undefined) {
   if (!iso) return null;
   const d = new Date(iso);
   return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** 한 순간을 한국 시각의 연·월·일·시·분으로 쪼갠다 */
+function seoulParts(d: Date) {
+  const f = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "short",
+    hour12: false,
+  });
+  const got: Record<string, string> = {};
+  for (const p of f.formatToParts(d)) got[p.type] = p.value;
+
+  return {
+    year: got.year,
+    month: Number(got.month),
+    day: Number(got.day),
+    // en-CA 는 24시를 0시가 아니라 24로 주기도 한다
+    hour: Number(got.hour) % 24,
+    minute: Number(got.minute),
+    weekday: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(got.weekday),
+    pad: (n: number) => String(n).padStart(2, "0"),
+  };
 }
 
 /** 정해둔 시각이 지났는가. 시각이 없거나 깨졌으면 "아직" 으로 본다 */
@@ -96,7 +133,8 @@ export function isPublished(input: PublishInput, now = new Date()) {
 export function formatDay(iso: string | null | undefined) {
   const d = parse(iso);
   if (!d) return "";
-  return `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, "0")} (${DAYS[d.getDay()]})`;
+  const p = seoulParts(d);
+  return `${p.month}.${p.pad(p.day)} (${DAYS[p.weekday]})`;
 }
 
 /** "9.08 (월) 오전 10시" — 정시가 아니면 분까지 적는다 */
@@ -104,26 +142,33 @@ export function formatDayTime(iso: string | null | undefined) {
   const d = parse(iso);
   if (!d) return "";
 
-  const h = d.getHours();
-  const m = d.getMinutes();
-  const half = h < 12 ? "오전" : "오후";
-  const h12 = h % 12 === 0 ? 12 : h % 12;
-  const time = m === 0 ? `${half} ${h12}시` : `${half} ${h12}시 ${m}분`;
+  const { hour, minute } = seoulParts(d);
+  const half = hour < 12 ? "오전" : "오후";
+  const h12 = hour % 12 === 0 ? 12 : hour % 12;
+  const time = minute === 0 ? `${half} ${h12}시` : `${half} ${h12}시 ${minute}분`;
 
   return `${formatDay(iso)} ${time}`;
 }
 
-/** <input type="datetime-local"> 이 읽는 형태 */
+/**
+ * <input type="datetime-local"> 이 읽는 형태. 한국 시각으로 보여준다 —
+ * 기기 시간대가 무엇이든 운영진이 정하는 시각은 한국 시각이다.
+ */
 export function toLocalInput(iso: string | null | undefined) {
   const d = parse(iso);
   if (!d) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const p = seoulParts(d);
+  return `${p.year}-${p.pad(p.month)}-${p.pad(p.day)}T${p.pad(p.hour)}:${p.pad(p.minute)}`;
 }
 
 /** 입력칸의 값을 저장할 형태로. 비우면 null — 자동으로 움직이지 않는다는 뜻 */
 export function fromLocalInput(value: string): string | null {
-  if (!value.trim()) return null;
-  const d = new Date(value);
+  const v = value.trim();
+  if (!v) return null;
+  // 입력칸은 "2026-08-31T00:00" 처럼 시간대가 없다. 한국 시각으로 못박는다.
+  const m = v.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/);
+  if (!m) return null;
+
+  const d = new Date(`${m[1]}T${m[2]}:00${KST_OFFSET}`);
   return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }

@@ -196,3 +196,20 @@
   line-height: 1.7;
   color: var(--ink-600);
 }
+
+/* 토글 옆에 붙는 "지금 실제 상태" — 시각이 되면 여기가 바뀐다 */
+.phaseTag {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill, 99px);
+  background: var(--surface-muted);
+  color: var(--ink-600);
+  font-size: 11px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.phaseOpen {
+  background: var(--brand-tint-10);
+  color: var(--brand-blue-500);
+}

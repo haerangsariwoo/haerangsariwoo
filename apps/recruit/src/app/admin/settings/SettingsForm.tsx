@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { RecruitSettings } from "@/lib/content-queries";
 import type { FormField } from "@/lib/recruit-config";
 import { formatLock } from "@/lib/interview-lock";
-import { fromLocalInput, toLocalInput } from "@/lib/schedule";
+import { applyPhase, formatDayTime, fromLocalInput, toLocalInput } from "@/lib/schedule";
 import styles from "./settings.module.css";
 
 const SCHEDULE_KEYS = [
@@ -28,6 +28,8 @@ const TIME_KEYS = [
   ["first_result_at", "1차 발표 예약"],
   ["final_result_at", "최종 발표 예약"],
 ] as const;
+
+const PHASE_LABEL = { before: "접수 전", open: "접수 중", closed: "접수 마감" } as const;
 
 const FIELD_TYPES: FormField["type"][] = ["text", "tel", "number", "textarea"];
 
@@ -180,6 +182,29 @@ export function SettingsForm({ settings, initialFields }: Props) {
     window.setTimeout(() => setFieldsSaved(false), 2400);
   }
 
+  /*
+   * 지금 실제로 접수를 받는 상태인지 그 자리에서 보여준다.
+   *
+   * 토글은 "이번 모집을 진행하는가", 시각은 "언제부터 언제까지" 라서
+   * 토글만 보고는 지금 열려 있는지 알 수 없다. 시작 시각이 지나면 이
+   * 표시가 저절로 "접수 중" 으로 바뀐다.
+   */
+  const startAt = fromLocalInput(times.apply_start_at);
+  const endAt = fromLocalInput(times.apply_end_at);
+  const phase = applyPhase({ applicationsOpen: open, applyStartAt: startAt, applyEndAt: endAt });
+
+  const phaseDesc = !open
+    ? "접수를 꺼두면 시각을 정해두었더라도 열리지 않습니다. 사고가 났을 때 즉시 막는 수단입니다."
+    : phase === "before"
+      ? startAt
+        ? `${formatDayTime(startAt)} 부터 지원서를 받습니다.`
+        : "시작 시각을 정하지 않아 아직 열리지 않았습니다."
+      : phase === "closed"
+        ? `${formatDayTime(endAt)} 에 마감됐습니다.`
+        : endAt
+          ? `${formatDayTime(endAt)} 까지 지원서를 받습니다.`
+          : "마감 시각을 정하지 않아 계속 열려 있습니다.";
+
   return (
     <>
       {error && <p className={styles.savedNote}>{error}</p>}
@@ -190,10 +215,14 @@ export function SettingsForm({ settings, initialFields }: Props) {
       >
         <div className={styles.toggleRow}>
           <div className={styles.toggleText}>
-            <p className={styles.toggleTitle}>지원 접수 {open ? "받는 중" : "중지"}</p>
+            <p className={styles.toggleTitle}>
+              지원 접수 {open ? "받는 중" : "중지"}
+              <span className={cn(styles.phaseTag, phase === "open" && styles.phaseOpen)}>
+                지금 {PHASE_LABEL[phase]}
+              </span>
+            </p>
             <p className={styles.toggleDesc}>
-              오프시즌에도 랜딩은 상시 공개됩니다. 접수를 끄면 지원자에게 &ldquo;모집 준비
-              중&rdquo;으로 표시됩니다.
+              {phaseDesc}
             </p>
           </div>
           <button

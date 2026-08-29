@@ -23,7 +23,7 @@ export function isDue(at: string | null | undefined, now = new Date()) {
 export type ApplyPhase = "before" | "open" | "closed";
 
 export interface ApplyWindow {
-  /** 운영진 토글 — 시각을 안 정해뒀을 때만 쓴다 */
+  /** 운영진 토글 — 끄면 시각과 상관없이 막힌다 */
   applicationsOpen: boolean;
   applyStartAt: string | null;
   applyEndAt: string | null;
@@ -32,18 +32,24 @@ export interface ApplyWindow {
 /**
  * 지금 접수를 받는 때인가.
  *
- * 시각을 하나라도 정해두면 시각이 결정한다 — 그러라고 정해두는 것이다.
- * 둘 다 비어 있으면 예전처럼 운영진 토글을 따른다.
+ * 토글은 "이번 모집을 진행하는가", 시각은 "언제부터 언제까지" 다.
+ * 토글을 끄면 시각과 상관없이 막힌다 — 사고가 났을 때 즉시 닫을 수단이
+ * 하나는 있어야 한다. 켜져 있으면 정해둔 시각이 열고 닫는다.
  *
- * 토글만 꺼져 있을 때는 "마감" 이 아니라 "아직" 으로 본다. 마감은 이번
- * 모집이 끝났다는 뜻인데, 일정 없이 꺼둔 상태는 대개 다음 모집을 준비
- * 중인 때다. 진짜 마감은 마감 시각을 정해뒀을 때만 알 수 있다.
+ * 토글이 꺼져 있을 때를 "마감" 이 아니라 "아직" 으로 보는 이유는, 대개
+ * 다음 모집을 준비 중인 때이기 때문이다. 진짜 마감은 마감 시각을
+ * 정해뒀고 그 시각이 지났을 때만 알 수 있다.
  */
 export function applyPhase(w: ApplyWindow, now = new Date()): ApplyPhase {
   const start = parse(w.applyStartAt);
   const end = parse(w.applyEndAt);
 
-  if (!start && !end) return w.applicationsOpen ? "open" : "before";
+  // 끄기는 언제나 우선한다
+  if (!w.applicationsOpen) {
+    return end && now.getTime() > end.getTime() ? "closed" : "before";
+  }
+
+  if (!start && !end) return "open";
   if (start && now.getTime() < start.getTime()) return "before";
   if (end && now.getTime() > end.getTime()) return "closed";
   return "open";

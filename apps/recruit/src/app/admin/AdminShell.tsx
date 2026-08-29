@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { AdminNav } from "./AdminNav";
 import { AdminTitle } from "./AdminTitle";
-import { recruitConfig } from "@/lib/recruit-config";
+import type { ApplyPhase } from "@/lib/schedule";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/ui/Logo/Logo";
 import styles from "./layout.module.css";
@@ -14,7 +14,21 @@ interface StaffProfile {
   role: "운영진" | "관리자";
 }
 
-export function AdminShell({ children, profile }: { children: ReactNode; profile: StaffProfile }) {
+const PHASE_LABEL: Record<ApplyPhase, string> = {
+  before: "접수 전",
+  open: "접수 중",
+  closed: "접수 마감",
+};
+
+export function AdminShell({
+  children,
+  profile,
+  phase,
+}: {
+  children: ReactNode;
+  profile: StaffProfile;
+  phase: ApplyPhase;
+}) {
   async function logout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -52,7 +66,7 @@ export function AdminShell({ children, profile }: { children: ReactNode; profile
         <header className={styles.topbar}>
           <AdminTitle />
           <span className={styles.statusPill}>
-            {recruitConfig.applicationsOpen ? "접수 중" : "접수 중지"}
+            {PHASE_LABEL[phase]}
           </span>
         </header>
 

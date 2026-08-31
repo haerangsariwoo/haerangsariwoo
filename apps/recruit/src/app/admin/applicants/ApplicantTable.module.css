@@ -56,3 +56,20 @@
   font-size: 12px;
   color: var(--ink-600);
 }
+
+/* 지원 동기 미리보기와 펼침 단추를 한 칸에 나란히 둔다 */
+.motivationCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 단추가 밀려나지 않게 글자 쪽만 줄인다 */
+.motivationText {
+  flex: 1;
+  min-width: 0;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

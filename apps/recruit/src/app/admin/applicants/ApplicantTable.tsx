@@ -207,7 +207,6 @@ export function ApplicantTable() {
               <th>1차</th>
               <th>면접 시간</th>
               <th>최종</th>
-              <th />
             </tr>
           </thead>
           <tbody>
@@ -226,7 +225,23 @@ export function ApplicantTable() {
                 <td className={cn(ui.muted, ui.numeric)}>{a.student_id}</td>
                 <td className={ui.muted}>{a.track}</td>
                 <td className={cn(ui.muted, ui.numeric)}>{a.phone}</td>
-                <td className={cn(ui.muted, ui.clip)}>{a.motivation}</td>
+                {/*
+                  펼쳐 보는 단추는 지원 동기 옆에 둔다. 맨 끝 칸에 두면
+                  1차·최종 결과를 바꾸는 단추들과 나란히 서서, 심사하러
+                  누르는 것인지 읽으러 누르는 것인지 헷갈린다.
+                */}
+                <td>
+                  <div className={styles.motivationCell}>
+                    <span className={cn(ui.muted, styles.motivationText)}>{a.motivation}</span>
+                    <button
+                      type="button"
+                      className={ui.rowBtn}
+                      onClick={() => setOpenId((o) => (o === a.id ? null : a.id))}
+                    >
+                      {openId === a.id ? "접기" : "보기"}
+                    </button>
+                  </div>
+                </td>
                 <td>
                   <button
                     type="button"
@@ -258,19 +273,10 @@ export function ApplicantTable() {
                     </Badge>
                   </button>
                 </td>
-                <td>
-                  <button
-                    type="button"
-                    className={ui.rowBtn}
-                    onClick={() => setOpenId((o) => (o === a.id ? null : a.id))}
-                  >
-                    {openId === a.id ? "접기" : "보기"}
-                  </button>
-                </td>
               </tr>
               {openId === a.id && (
                 <tr className={styles.detailRow}>
-                  <td colSpan={10}>
+                  <td colSpan={9}>
                     <div className={styles.detail}>
                       <p className={styles.detailLabel}>
                         지원 동기
@@ -288,7 +294,7 @@ export function ApplicantTable() {
             ))}
             {!loading && visible.length === 0 && (
               <tr>
-                <td colSpan={10} className={ui.muted}>
+                <td colSpan={9} className={ui.muted}>
                   조건에 맞는 지원자가 없습니다.
                 </td>
               </tr>

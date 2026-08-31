@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
+import { MotivationCell, MotivationRow } from "@/components/admin/Motivation";
 import { LengthFilter, SortSelect } from "@/components/admin/ListFilters";
 import {
   emptyLength,
@@ -14,7 +15,6 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import type { Applicant, FinalResult, FirstResult } from "@/lib/admin-data";
 import { downloadCsv, today } from "@/lib/csv";
-import styles from "./ApplicantTable.module.css";
 
 const FIRST_CYCLE: FirstResult[] = ["대기", "합격", "불합격"];
 const FINAL_CYCLE: FinalResult[] = ["대기", "합격", "불합격"];
@@ -231,16 +231,11 @@ export function ApplicantTable() {
                   누르는 것인지 읽으러 누르는 것인지 헷갈린다.
                 */}
                 <td>
-                  <div className={styles.motivationCell}>
-                    <span className={cn(ui.muted, styles.motivationText)}>{a.motivation}</span>
-                    <button
-                      type="button"
-                      className={ui.rowBtn}
-                      onClick={() => setOpenId((o) => (o === a.id ? null : a.id))}
-                    >
-                      {openId === a.id ? "접기" : "보기"}
-                    </button>
-                  </div>
+                  <MotivationCell
+                    text={a.motivation}
+                    open={openId === a.id}
+                    onToggle={() => setOpenId((o) => (o === a.id ? null : a.id))}
+                  />
                 </td>
                 <td>
                   <button
@@ -275,20 +270,11 @@ export function ApplicantTable() {
                 </td>
               </tr>
               {openId === a.id && (
-                <tr className={styles.detailRow}>
-                  <td colSpan={9}>
-                    <div className={styles.detail}>
-                      <p className={styles.detailLabel}>
-                        지원 동기
-                        <span className={styles.detailCount}>{a.motivation.length}자</span>
-                      </p>
-                      <p className={styles.detailBody}>{a.motivation}</p>
-                      <p className={styles.detailMeta}>
-                        {a.name} · {a.student_id} · {a.track} · {a.phone}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
+                <MotivationRow
+                  colSpan={9}
+                  text={a.motivation}
+                  meta={`${a.name} · ${a.student_id} · ${a.track} · ${a.phone}`}
+                />
               )}
               </Fragment>
             ))}

@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
 import { LengthFilter, SortSelect } from "@/components/admin/ListFilters";
+import { MotivationCell, MotivationRow } from "@/components/admin/Motivation";
+import { byInterviewTime } from "@/lib/interview-slots";
 import {
   emptyLength,
   inLength,
@@ -61,6 +63,8 @@ export function ReviewBoard() {
   const [sort, setSort] = useState<NameSort>("default");
   const [length, setLength] = useState<LengthRange>(emptyLength);
   const [picked, setPicked] = useState<Set<string>>(new Set());
+  /** 펼쳐서 지원 동기를 보고 있는 사람 */
+  const [openId, setOpenId] = useState<string | null>(null);
   /** 발표 여부 — 발표해야 지원자 화면에 결과가 보인다 */
   const [published, setPublished] = useState({ first: false, final: false });
   /** 예약해 둔 발표 시각 */
@@ -353,20 +357,31 @@ export function ReviewBoard() {
           <table className={ui.table}>
             <thead>
               <tr>
-                <th>이름</th>
                 <th>면접 시간</th>
+                <th>이름</th>
+                <th>지원 동기</th>
                 <th>1차</th>
                 <th>최종</th>
               </tr>
             </thead>
             <tbody>
+              {/* 면접 순서대로 놓는다 — 그 순서로 보고 그 순서로 결과를 정한다 */}
               {rows
                 .filter((a) => a.first_result === "합격")
+                .sort(byInterviewTime)
                 .map((a) => (
-                  <tr key={a.id}>
-                    <td>{a.name}</td>
+                  <Fragment key={a.id}>
+                  <tr>
                     <td className={cn(ui.numeric, !a.interview && ui.muted)}>
                       {a.interview ?? "미선택"}
+                    </td>
+                    <td>{a.name}</td>
+                    <td>
+                      <MotivationCell
+                        text={a.motivation}
+                        open={openId === a.id}
+                        onToggle={() => setOpenId((o) => (o === a.id ? null : a.id))}
+                      />
                     </td>
                     <td>
                       <Badge tone="green">{a.first_result}</Badge>
@@ -375,10 +390,18 @@ export function ReviewBoard() {
                       <ResultSegmented value={a.final_result} onChange={(v) => setFinal(a.id, v)} />
                     </td>
                   </tr>
+                  {openId === a.id && (
+                    <MotivationRow
+                      colSpan={5}
+                      text={a.motivation}
+                      meta={`${a.name} · ${a.student_id} · ${a.track} · ${a.phone}`}
+                    />
+                  )}
+                  </Fragment>
                 ))}
               {rows.filter((a) => a.first_result === "합격").length === 0 && (
                 <tr>
-                  <td colSpan={4} className={ui.muted}>
+                  <td colSpan={5} className={ui.muted}>
                     1차 합격자가 아직 없습니다.
                   </td>
                 </tr>

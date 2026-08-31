@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useMemo, useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
+import { MotivationCell, MotivationRow } from "@/components/admin/Motivation";
 import { createClient } from "@/lib/supabase/client";
 import type { Applicant, SlotRow } from "@/lib/admin-data";
 import {
+  byInterviewTime,
   expandAll,
   hhmm,
   INTERVAL_OPTIONS,
@@ -35,6 +37,8 @@ export function InterviewAdmin() {
   const [editing, setEditing] = useState<string | null>(null);
   /** 시간을 고르는 중인 지원자 */
   const [assigning, setAssigning] = useState<string | null>(null);
+  /** 펼쳐서 지원 동기를 보고 있는 사람 */
+  const [openId, setOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -57,7 +61,8 @@ export function InterviewAdmin() {
     };
   }, [supabase]);
 
-  const booked = people.filter((a) => a.interview);
+  // 예약한 시간이 이른 사람부터 — 그 순서로 면접을 보게 된다
+  const booked = people.filter((a) => a.interview).sort(byInterviewTime);
   const unbooked = people.filter((a) => a.first_result === "합격" && !a.interview);
 
   function bookedCount(slotDate: string) {
@@ -310,19 +315,18 @@ export function InterviewAdmin() {
           <table className={ui.table}>
             <thead>
               <tr>
+                <th>면접 시간</th>
                 <th>이름</th>
                 <th>학번</th>
                 <th>연락처</th>
-                <th>면접 시간</th>
+                <th>지원 동기</th>
                 <th />
               </tr>
             </thead>
             <tbody>
               {[...booked, ...unbooked].map((a) => (
-                <tr key={a.id}>
-                  <td>{a.name}</td>
-                  <td className={cn(ui.muted, ui.numeric)}>{a.student_id}</td>
-                  <td className={cn(ui.muted, ui.numeric)}>{a.phone}</td>
+                <Fragment key={a.id}>
+                <tr>
                   <td className={ui.numeric}>
                     {assigning === a.id ? (
                       <select
@@ -343,6 +347,16 @@ export function InterviewAdmin() {
                       (a.interview ?? <Badge tone="warn">미선택</Badge>)
                     )}
                   </td>
+                  <td>{a.name}</td>
+                  <td className={cn(ui.muted, ui.numeric)}>{a.student_id}</td>
+                  <td className={cn(ui.muted, ui.numeric)}>{a.phone}</td>
+                  <td>
+                    <MotivationCell
+                      text={a.motivation}
+                      open={openId === a.id}
+                      onToggle={() => setOpenId((o) => (o === a.id ? null : a.id))}
+                    />
+                  </td>
                   <td className={ui.rowActions}>
                     <button
                       type="button"
@@ -358,10 +372,18 @@ export function InterviewAdmin() {
                     )}
                   </td>
                 </tr>
+                {openId === a.id && (
+                  <MotivationRow
+                    colSpan={6}
+                    text={a.motivation}
+                    meta={`${a.name} · ${a.student_id} · ${a.track} · ${a.phone}`}
+                  />
+                )}
+                </Fragment>
               ))}
               {!loading && booked.length === 0 && unbooked.length === 0 && (
                 <tr>
-                  <td colSpan={5} className={ui.muted}>
+                  <td colSpan={6} className={ui.muted}>
                     1차 합격자가 아직 없습니다.
                   </td>
                 </tr>

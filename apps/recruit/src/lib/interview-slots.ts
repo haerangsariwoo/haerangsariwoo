@@ -156,3 +156,31 @@ export function interviewPassed(label: string | null, now = new Date()) {
   const at = interviewMoment(label, now);
   return at !== null && at.getTime() < now.getTime();
 }
+
+/**
+ * 예약한 면접 시간의 정렬 기준.
+ *
+ * 시각으로 바꾸지 않고 월·일·시·분을 숫자 하나로 이어 붙인다 — 순서만
+ * 필요한데 굳이 Date 로 만들면 시간대에 휘둘리고, 라벨에 없는 연도까지
+ * 추측해야 한다. 면접은 며칠 안에 끝나므로 이걸로 충분하다.
+ *
+ * 아직 안 고른 사람은 맨 뒤로 보낸다.
+ */
+export function interviewSortKey(label: string | null | undefined) {
+  if (!label) return Number.MAX_SAFE_INTEGER;
+
+  const day = label.match(/(\d{1,2})\.(\d{1,2})/);
+  if (!day) return Number.MAX_SAFE_INTEGER - 1;
+
+  const time = label.match(/(\d{1,2}):(\d{2})/);
+  const month = Number(day[1]);
+  const date = Number(day[2]);
+  const minutes = time ? Number(time[1]) * 60 + Number(time[2]) : 0;
+
+  return ((month * 100 + date) * 24 + Math.floor(minutes / 60)) * 60 + (minutes % 60);
+}
+
+/** 예약한 시간이 이른 사람부터 — 안 고른 사람은 맨 뒤 */
+export function byInterviewTime<T extends { interview: string | null }>(a: T, b: T) {
+  return interviewSortKey(a.interview) - interviewSortKey(b.interview);
+}

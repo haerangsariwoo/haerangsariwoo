@@ -2,13 +2,24 @@
  * "보기" 를 누르면 그 지원자 아래로 펼쳐지는 줄.
  * 지원 동기가 1000자까지 들어올 수 있어 표 칸 안에서 늘리면 열 너비가
  * 무너진다. 표 전체 폭을 쓰는 줄을 따로 두고 거기서 읽게 한다.
- *
- * 색은 앱이 실제로 갖고 있는 토큰에서 가져온다. 예전에는 --a-bg,
- * --a-brand 처럼 어디에도 정의되지 않은 이름을 가리키고 있었다. 값이
- * 없으면 브라우저가 그 줄을 통째로 버려서, 배경과 왼쪽 줄이 아예
- * 그려지지 않았다 — 오류도 안 나서 한동안 몰랐다.
  */
-.detailRow > td {
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview {
+  flex: 1;
+  min-width: 0;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row > td {
   padding: 0;
   background: var(--brand-tint-05);
 }
@@ -18,7 +29,7 @@
   border-left: 3px solid var(--brand-blue-500);
 }
 
-.detailLabel {
+.label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -28,14 +39,14 @@
   margin-bottom: 10px;
 }
 
-.detailCount {
+.count {
   font-size: 11px;
   font-weight: 600;
   color: var(--ink-600);
   font-variant-numeric: tabular-nums;
 }
 
-.detailBody {
+.body {
   font-size: 14px;
   line-height: 1.85;
   color: var(--ink-800);
@@ -51,25 +62,8 @@
   max-width: 70ch;
 }
 
-.detailMeta {
+.meta {
   margin-top: 14px;
   font-size: 12px;
   color: var(--ink-600);
-}
-
-/* 지원 동기 미리보기와 펼침 단추를 한 칸에 나란히 둔다 */
-.motivationCell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* 단추가 밀려나지 않게 글자 쪽만 줄인다 */
-.motivationText {
-  flex: 1;
-  min-width: 0;
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }

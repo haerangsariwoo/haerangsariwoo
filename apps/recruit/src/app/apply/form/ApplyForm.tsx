@@ -20,7 +20,7 @@ export function ApplyForm({ fields }: { fields: FormField[] }) {
   const basics = fields.filter((f) => f.type !== "textarea");
   const longs = fields.filter((f) => f.type === "textarea");
   const router = useRouter();
-  // 1단계에서 확인한 학번·본인 지정번호. 다시 묻지 않고 확인만 시켜준다.
+  // 1단계에서 확인한 학번·비밀번호. 다시 묻지 않고 확인만 시켜준다.
   const studentId = useStudentId();
   const code = useApplyCode();
   const [step, setStep] = useState(2); // 1단계(지원자 확인)는 이전 화면에서 완료
@@ -73,7 +73,7 @@ export function ApplyForm({ fields }: { fields: FormField[] }) {
       return;
     }
 
-    // 현황 화면은 학번·지정번호를 다시 받는다. 방금 낸 사람을 그리로 보내면
+    // 현황 화면은 학번·비밀번호를 다시 받는다. 방금 낸 사람을 그리로 보내면
     // 제출이 됐는지도 모른 채 다시 신원을 묻는 꼴이 된다.
     router.push("/apply/done");
   }
@@ -216,7 +216,7 @@ export function ApplyForm({ fields }: { fields: FormField[] }) {
                 >
                   <Checkbox.Indicator className={styles.checkMark}>✓</Checkbox.Indicator>
                 </Checkbox.Root>
-                본인 지정번호를 기억하고 있어요 (결과 확인에 필요해요)
+                비밀번호를 기억하고 있어요 (결과 확인에 필요해요)
               </label>
 
               <label className={styles.checkRow}>

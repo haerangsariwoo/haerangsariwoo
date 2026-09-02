@@ -13,8 +13,7 @@ import { readPublishFlags, type PublishSettings } from "@/lib/publish-queries";
 /**
  * 1차 합격자가 면접 시간을 직접 고른다.
  *
- * 지원자는 로그인 계정이 없어 RLS 로 가릴 수가 없다. 그래서 학번 + 본인
- * 지정번호를 매번 같이 받아 확인한 뒤 service key 로 처리한다 (결과 조회와
+ * 지원자는 로그인 계정이 없어 RLS 로 가릴 수가 없다. 그래서 학번 + 비밀번호를 매번 같이 받아 확인한 뒤 service key 로 처리한다 (결과 조회와
  * 같은 방식). 남은 자리 계산과 저장은 반드시 서버에서 한다 — 화면에서
  * 막아 봐야 요청을 직접 보내면 그만이다.
  */
@@ -64,7 +63,7 @@ export async function POST(request: Request) {
   if (!session) {
     await recordFailure(request, String(studentId ?? ""));
     return NextResponse.json(
-      { error: "학번 또는 본인 지정번호가 올바르지 않습니다." },
+      { error: "학번 또는 비밀번호가 올바르지 않습니다." },
       { status: 400 },
     );
   }

@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   const { studentId, code } = await request.json();
 
   if (typeof studentId !== "string" || typeof code !== "string") {
-    return NextResponse.json({ error: "학번과 본인 지정번호를 입력해 주세요." }, { status: 400 });
+    return NextResponse.json({ error: "학번과 비밀번호를 입력해 주세요." }, { status: 400 });
   }
 
   const gate = await checkAttempts(request, studentId);
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 
   if (!applicant || applicant.code !== code) {
     await recordFailure(request, studentId);
-    return NextResponse.json({ error: "학번 또는 본인 지정번호가 올바르지 않습니다." }, { status: 400 });
+    return NextResponse.json({ error: "학번 또는 비밀번호가 올바르지 않습니다." }, { status: 400 });
   }
 
   await clearFailures(request, studentId);

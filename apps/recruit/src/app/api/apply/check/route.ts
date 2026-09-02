@@ -8,7 +8,7 @@ import {
 } from "@/lib/apply-throttle";
 
 /**
- * 1단계(지원자 확인)에서 학번+본인 지정번호를 받아 분기한다.
+ * 1단계(지원자 확인)에서 학번+비밀번호를 받아 분기한다.
  * - 기존 지원이 없으면: 새로 지원하는 사람 → 폼으로 진행
  * - 기존 지원이 있고 번호가 맞으면: 이미 지원한 사람 → 현황 페이지로
  * - 기존 지원이 있는데 번호가 틀리면: 에러
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   if (data.code !== code) {
     await recordFailure(request, studentId);
     return NextResponse.json(
-      { error: "이미 접수된 학번입니다. 본인 지정번호를 다시 확인해 주세요." },
+      { error: "이미 접수된 학번입니다. 비밀번호를 다시 확인해 주세요." },
       { status: 400 },
     );
   }

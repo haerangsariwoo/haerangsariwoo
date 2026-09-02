@@ -80,5 +80,5 @@ export function nextCounts(rows: AttemptRow[], gates: Gate[], now: number) {
 
 /** 막혔을 때 지원자에게 보여줄 문구 */
 export function blockedMessage(gate: ThrottleGate) {
-  return `본인 지정번호를 여러 번 잘못 입력했어요. ${gate.retryAfterMinutes}분 뒤에 다시 시도해 주세요.`;
+  return `비밀번호를 여러 번 잘못 입력했어요. ${gate.retryAfterMinutes}분 뒤에 다시 시도해 주세요.`;
 }

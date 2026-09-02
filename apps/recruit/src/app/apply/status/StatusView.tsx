@@ -114,7 +114,7 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
   if (!result) {
     return (
       <Shell title="지원 현황" back="/">
-        <h1 className={styles.centerTitle}>학번과 본인 지정번호로 확인해요</h1>
+        <h1 className={styles.centerTitle}>학번과 비밀번호로 확인해요</h1>
         <p className={styles.centerLead}>
           지원할 때 정한 번호가 필요해요. 결과는 매번 직접 확인합니다.
         </p>
@@ -130,11 +130,12 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
             error={errors.studentId}
           />
           <TextField
-            label="본인 지정번호"
+            label="비밀번호"
             name="code"
             required
             type="password"
             placeholder="숫자 6자리"
+            help="지원할 때 직접 정한 숫자 6자리예요."
             inputMode="numeric"
             value={code}
             onChange={(e) => setCode(e.target.value)}
@@ -184,7 +185,7 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
           </div>
 
           <p className={styles.infoNote}>
-            결과 발표 후 같은 <b>학번과 본인 지정번호</b>로 이 화면에서 결과를 확인할 수 있어요.
+            결과 발표 후 같은 <b>학번과 비밀번호</b>로 이 화면에서 결과를 확인할 수 있어요.
             1차 발표는 <b>{recruitConfig.firstResultDate}</b> 예정입니다.
           </p>
         </>

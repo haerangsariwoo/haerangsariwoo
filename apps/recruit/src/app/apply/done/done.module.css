@@ -29,7 +29,7 @@
   word-break: keep-all;
 }
 
-/* 지정번호를 잃으면 결과를 못 본다. 여기만 눈에 띄게 둔다 */
+/* 비밀번호를 잃으면 결과를 못 본다. 여기만 눈에 띄게 둔다 */
 .remind {
   border: 1px solid var(--brand-blue-500);
   border-radius: var(--radius-md);

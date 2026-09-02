@@ -11,7 +11,7 @@ export const metadata = { title: "지원 완료 · 해랑사리우" };
  * 지원서를 낸 직후 보는 화면.
  *
  * 예전에는 제출하자마자 지원 현황으로 보냈는데, 그 화면은 학번과 본인
- * 지정번호를 다시 받는다. 방금 제출한 사람에게 "누구세요" 를 묻는 셈이라
+ * 비밀번호를 다시 받는다. 방금 제출한 사람에게 "누구세요" 를 묻는 셈이라
  * 제출이 됐는지조차 알 수 없었다. 여기서 한 번 확실히 알려준다.
  */
 export default async function ApplyDonePage() {
@@ -41,9 +41,9 @@ export default async function ApplyDonePage() {
       </p>
 
       <div className={styles.remind}>
-        <p className={styles.remindTitle}>본인 지정번호를 꼭 기억해 주세요</p>
+        <p className={styles.remindTitle}>비밀번호를 꼭 기억해 주세요</p>
         <p className={styles.remindBody}>
-          결과 확인과 면접 시간 선택에 <b>학번과 본인 지정번호</b>가 계속 필요해요.
+          결과 확인과 면접 시간 선택에 <b>학번과 비밀번호</b>가 계속 필요해요.
           운영진도 번호를 대신 확인해 드릴 수 없습니다.
         </p>
       </div>

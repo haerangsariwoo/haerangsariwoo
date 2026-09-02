@@ -72,11 +72,12 @@ export default function IdentifyPage() {
         />
 
         <TextField
-          label="본인 지정번호"
+          label="비밀번호"
           name="code"
           required
           type="password"
-          placeholder="숫자 6자리 입력"
+          placeholder="숫자 6자리"
+          help="결과 확인에 쓸 숫자 6자리를 직접 정해 주세요."
           inputMode="numeric"
           value={code}
           onChange={(e) => setCode(e.target.value)}
@@ -88,7 +89,7 @@ export default function IdentifyPage() {
             !
           </span>
           <p className={styles.warnText}>
-            <span className={styles.warnTitle}>본인 지정번호를 꼭 기억해 주세요.</span>
+            <span className={styles.warnTitle}>이 비밀번호를 꼭 기억해 주세요.</span>
             앞으로 <b>결과 확인</b>과 <b>면접 시간 선택</b>에 계속 사용됩니다. 운영진도 번호를 대신
             확인해 드릴 수 없으니 분실하지 않도록 주의해 주세요.
           </p>

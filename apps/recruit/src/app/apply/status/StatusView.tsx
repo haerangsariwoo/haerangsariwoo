@@ -60,7 +60,12 @@ interface StatusViewProps {
   interviewPlace: string;
 }
 
-export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }: StatusViewProps) {
+/*
+ * 여기서 쓰는 config 는 DB 에서 읽어온 지금 설정이다. 예전에는 이것을
+ * recruitConfig 라는 이름으로 받았는데, 코드에 박힌 같은 이름의 기본값과
+ * 헷갈려 다른 화면에서 실제로 두 번이나 기본값을 그대로 보여줬다.
+ */
+export function StatusView({ config, nextSteps, interviewPlace }: StatusViewProps) {
   const [studentId, setStudentId] = useState("");
   const [code, setCode] = useState("");
   const [errors, setErrors] = useState<{ studentId?: string; code?: string }>({});
@@ -164,7 +169,7 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
 
           <div className={styles.timeline}>
             <p className={styles.timelineTitle}>
-              {recruitConfig.semester} {cohortLabel(recruitConfig.year, recruitConfig.semesterNo)} 신입부원 모집
+              {config.semester} {cohortLabel(config.year, config.semesterNo)} 신입부원 모집
             </p>
             {[
               { label: "지원서 제출", done: true },
@@ -186,7 +191,7 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
 
           <p className={styles.infoNote}>
             결과 발표 후 같은 <b>학번과 비밀번호</b>로 이 화면에서 결과를 확인할 수 있어요.
-            1차 발표는 <b>{recruitConfig.firstResultDate}</b> 예정입니다.
+            1차 발표는 <b>{config.firstResultDate}</b> 예정입니다.
           </p>
         </>
       )}
@@ -220,7 +225,7 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
           )}
 
           <p className={styles.infoNote}>
-            최종 발표는 <b>{recruitConfig.finalResultDate}</b> 예정입니다.
+            최종 발표는 <b>{config.finalResultDate}</b> 예정입니다.
           </p>
         </>
       )}
@@ -241,7 +246,7 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
 
           <div className={styles.timeline}>
             <p className={styles.timelineTitle}>
-              {recruitConfig.semester} {cohortLabel(recruitConfig.year, recruitConfig.semesterNo)} 신입부원 모집
+              {config.semester} {cohortLabel(config.year, config.semesterNo)} 신입부원 모집
             </p>
             {[
               { label: "지원서 제출", done: true },
@@ -267,7 +272,7 @@ export function StatusView({ config: recruitConfig, nextSteps, interviewPlace }:
             </p>
           )}
           <p className={styles.infoNote}>
-            최종 발표는 <b>{recruitConfig.finalResultDate}</b> 예정입니다.
+            최종 발표는 <b>{config.finalResultDate}</b> 예정입니다.
           </p>
         </>
       )}

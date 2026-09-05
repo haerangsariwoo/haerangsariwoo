@@ -1,14 +1,16 @@
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
 import { createClient } from "@/lib/supabase/server";
-import { recruitConfig } from "@/lib/recruit-config";
+import { getRecruitSettings } from "@/lib/content-queries";
 import type { Applicant, SlotRow } from "@/lib/admin-data";
 import styles from "./dashboard.module.css";
 
 export default async function RecruitDashboard() {
   const supabase = await createClient();
 
-  const [{ data: applicantData }, { data: slotData }] = await Promise.all([
+  const [config, { data: applicantData }, { data: slotData }] = await Promise.all([
+    // 코드에 박힌 기본값이 아니라 지금 설정을 보여줘야 한다
+    getRecruitSettings(),
     supabase
       .from("applicants")
       .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result, extra")
@@ -31,10 +33,10 @@ export default async function RecruitDashboard() {
   ];
 
   const stages = [
-    { no: 1, label: "지원서 접수", date: `${recruitConfig.applyStart} – ${recruitConfig.applyEnd}` },
-    { no: 2, label: "1차 서류 발표", date: recruitConfig.firstResultDate },
-    { no: 3, label: "대면 면접", date: recruitConfig.interviewRange },
-    { no: 4, label: "최종 발표", date: recruitConfig.finalResultDate },
+    { no: 1, label: "지원서 접수", date: `${config.applyStart} – ${config.applyEnd}` },
+    { no: 2, label: "1차 서류 발표", date: config.firstResultDate },
+    { no: 3, label: "대면 면접", date: config.interviewRange },
+    { no: 4, label: "최종 발표", date: config.finalResultDate },
   ];
 
   const recent = applicants.slice(0, 4);

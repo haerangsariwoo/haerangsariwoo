@@ -27,6 +27,7 @@ export function ApplicantTable() {
   const [q, setQ] = useState("");
   const [first, setFirst] = useState("all");
   const [track, setTrack] = useState("all");
+  const [gender, setGender] = useState("all");
   const [sort, setSort] = useState<NameSort>("default");
   const [length, setLength] = useState<LengthRange>(emptyLength);
   /** 펼쳐서 지원 동기 전체를 보고 있는 사람 */
@@ -53,12 +54,22 @@ export function ApplicantTable() {
 
   const tracks = useMemo(() => [...new Set(rows.map((a) => a.track.split(" · ")[0]))], [rows]);
 
+  /*
+   * 선택지는 실제 답에서 뽑는다. 문항 설정을 고쳐 다른 값을 받게 되어도
+   * 목록이 저절로 따라오고, 아무도 안 고른 값이 걸리지도 않는다.
+   */
+  const genders = useMemo(
+    () => [...new Set(rows.map((a) => a.extra?.[GENDER_KEY]).filter(Boolean) as string[])],
+    [rows],
+  );
+
   const visible = sortRows(
     rows.filter((a) => {
       const hitQ = !q.trim() || a.name.includes(q.trim()) || a.student_id.includes(q.trim());
       const hitF = first === "all" || a.first_result === first;
       const hitT = track === "all" || a.track.startsWith(track);
-      return hitQ && hitF && hitT && inLength(a.motivation, length);
+      const hitG = gender === "all" || a.extra?.[GENDER_KEY] === gender;
+      return hitQ && hitF && hitT && hitG && inLength(a.motivation, length);
     }),
     sort,
   );
@@ -166,6 +177,21 @@ export function ApplicantTable() {
             </option>
           ))}
         </select>
+        {genders.length > 0 && (
+          <select
+            className={ui.select}
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            aria-label={`${labelOf(GENDER_KEY)} 필터`}
+          >
+            <option value="all">{labelOf(GENDER_KEY)}: 전체</option>
+            {genders.map((g) => (
+              <option key={g} value={g}>
+                {g}
+              </option>
+            ))}
+          </select>
+        )}
         <LengthFilter value={length} onChange={setLength} />
         <SortSelect value={sort} onChange={setSort} defaultLabel="최근 지원순" />
         <span className={ui.spacer} />

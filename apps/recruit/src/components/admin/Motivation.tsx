@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/cn";
 import { ui } from "./Panel";
+import { extraAnswers } from "@/lib/extra-answers";
 import styles from "./Motivation.module.css";
 
 /**
@@ -43,13 +44,17 @@ export function MotivationRow({
   colSpan,
   text,
   meta,
+  extra,
 }: {
   colSpan: number;
   text: string | null | undefined;
   /** 누구의 지원서인지 — 펼쳐 읽다 보면 위 줄이 안 보인다 */
   meta: string;
+  /** 운영진이 따로 만든 문항의 답 (성별 등) */
+  extra?: Record<string, string> | null;
 }) {
   const body = text ?? "";
+  const answers = extraAnswers(extra);
 
   return (
     <tr className={styles.row}>
@@ -60,6 +65,19 @@ export function MotivationRow({
             <span className={styles.count}>{body.length}자</span>
           </p>
           <p className={styles.body}>{body}</p>
+
+          {/* 성별처럼 따로 만든 문항은 표에 칸이 없으니 여기서 보여준다 */}
+          {answers.length > 0 && (
+            <dl className={styles.answers}>
+              {answers.map((a) => (
+                <div key={a.name} className={styles.answer}>
+                  <dt className={styles.answerLabel}>{a.label}</dt>
+                  <dd className={styles.answerValue}>{a.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
           <p className={styles.meta}>{meta}</p>
         </div>
       </td>

@@ -18,6 +18,11 @@ export interface Applicant {
   /** 운영진이 배정한 면접 시간 라벨. 예: "9.11 (목) 14:00" */
   interview: string | null;
   final_result: FinalResult;
+  /**
+   * 이름·트랙·연락처·지원 동기 말고 운영진이 따로 만든 문항의 답.
+   * 성별처럼 나중에 추가한 문항이 여기 들어온다.
+   */
+  extra: Record<string, string> | null;
 }
 
 export interface SlotRow {

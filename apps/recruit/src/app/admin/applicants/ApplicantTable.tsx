@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Badge, Panel, ui } from "@/components/admin/Panel";
 import { MotivationCell, MotivationRow } from "@/components/admin/Motivation";
+import { GENDER_KEY, labelOf } from "@/lib/extra-answers";
 import { LengthFilter, SortSelect } from "@/components/admin/ListFilters";
 import {
   emptyLength,
@@ -37,7 +38,7 @@ export function ApplicantTable() {
     async function load() {
       const { data } = await supabase
         .from("applicants")
-        .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result")
+        .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result, extra")
         .order("applied_at", { ascending: false });
       if (!cancelled) {
         setRows((data ?? []) as Applicant[]);
@@ -111,9 +112,10 @@ export function ApplicantTable() {
   function exportCsv() {
     downloadCsv(
       `지원자명단_${today()}.csv`,
-      ["이름", "학번", "학부·트랙", "연락처", "지원일", "1차", "면접 시간", "최종", "지원 동기"],
+      ["이름", labelOf(GENDER_KEY), "학번", "학부·트랙", "연락처", "지원일", "1차", "면접 시간", "최종", "지원 동기"],
       visible.map((a) => [
         a.name,
+        a.extra?.[GENDER_KEY] ?? "",
         a.student_id,
         a.track,
         a.phone,
@@ -200,6 +202,7 @@ export function ApplicantTable() {
                 />
               </th>
               <th>이름</th>
+              <th>{labelOf(GENDER_KEY)}</th>
               <th>학번</th>
               <th>학부 · 트랙</th>
               <th>연락처</th>
@@ -222,6 +225,8 @@ export function ApplicantTable() {
                   />
                 </td>
                 <td>{a.name}</td>
+                {/* 성별은 표에 자기 칸이 없어 extra 에 들어온다 */}
+                <td className={ui.muted}>{a.extra?.[GENDER_KEY] ?? "—"}</td>
                 <td className={cn(ui.muted, ui.numeric)}>{a.student_id}</td>
                 <td className={ui.muted}>{a.track}</td>
                 <td className={cn(ui.muted, ui.numeric)}>{a.phone}</td>
@@ -271,16 +276,17 @@ export function ApplicantTable() {
               </tr>
               {openId === a.id && (
                 <MotivationRow
-                  colSpan={9}
+                  colSpan={10}
                   text={a.motivation}
                   meta={`${a.name} · ${a.student_id} · ${a.track} · ${a.phone}`}
+                    extra={a.extra}
                 />
               )}
               </Fragment>
             ))}
             {!loading && visible.length === 0 && (
               <tr>
-                <td colSpan={9} className={ui.muted}>
+                <td colSpan={10} className={ui.muted}>
                   조건에 맞는 지원자가 없습니다.
                 </td>
               </tr>

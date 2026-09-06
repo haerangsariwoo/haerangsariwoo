@@ -34,7 +34,7 @@
 .stage {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  /* 비율은 게시글마다 달라서 인라인 스타일로 받는다 */
   border-radius: var(--a-radius-md);
   overflow: hidden;
   background: var(--a-bg);

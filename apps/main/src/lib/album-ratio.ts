@@ -25,3 +25,9 @@ export function toAlbumRatio(value: string | null | undefined): AlbumRatio {
 export function albumRatioCss(value: AlbumRatio): string {
   return (ALBUM_RATIOS.find((r) => r.value === value) ?? ALBUM_RATIOS[0]).css;
 }
+
+/** "세로 (4:5)" 처럼 사람이 읽는 이름 */
+export function ratioLabel(value: AlbumRatio): string {
+  const found = ALBUM_RATIOS.find((r) => r.value === value) ?? ALBUM_RATIOS[0];
+  return `${found.label} (${found.value})`;
+}

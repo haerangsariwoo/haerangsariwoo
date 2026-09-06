@@ -12,7 +12,14 @@ import {
   THUMB_PRESET,
 } from "@/lib/image-compress";
 import { tonesFor, type Album, type AlbumPhoto } from "@/lib/community";
-import { ALBUM_RATIOS, DEFAULT_ALBUM_RATIO, toAlbumRatio, type AlbumRatio } from "@/lib/album-ratio";
+import {
+  ALBUM_RATIOS,
+  albumRatioCss,
+  DEFAULT_ALBUM_RATIO,
+  ratioLabel,
+  toAlbumRatio,
+  type AlbumRatio,
+} from "@/lib/album-ratio";
 import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 import { Panel } from "@/components/admin/Panel/Panel";
 import { useSemester } from "../SemesterContext";
@@ -329,7 +336,8 @@ export function AlbumPanel() {
     await supabase.from("album_photos").update({ focus }).eq("id", photo.rowId);
   }
 
-  const editingPhoto = editing && albums.find((a) => a.id === editing.albumId)?.photos[editing.index];
+  const editingAlbum = editing ? albums.find((a) => a.id === editing.albumId) : undefined;
+  const editingPhoto = editing && editingAlbum ? editingAlbum.photos[editing.index] : undefined;
 
   return (
     <Panel
@@ -429,7 +437,11 @@ export function AlbumPanel() {
 
               <div className={styles.photoRow}>
                 {a.photos.map((p, i) => (
-                  <div key={p.rowId} className={styles.photoThumb}>
+                  <div
+                    key={p.rowId}
+                    className={styles.photoThumb}
+                    style={{ aspectRatio: albumRatioCss(a.ratio) }}
+                  >
                     <Image
                       className={styles.photoThumbImage}
                       src={p.url}
@@ -489,11 +501,13 @@ export function AlbumPanel() {
         </div>
       )}
 
-      {editing && editingPhoto && (
+      {editing && editingAlbum && editingPhoto && (
         <PhotoFocusEditor
           src={editingPhoto.url}
           alt=""
           focus={editingPhoto.focus}
+          frame={albumRatioCss(editingAlbum.ratio)}
+          frameLabel={ratioLabel(editingAlbum.ratio)}
           onChange={(focus) => updateFocus(editing.albumId, editing.index, focus)}
           onClose={() => setEditing(null)}
         />

@@ -12,22 +12,31 @@ function clamp(n: number) {
 }
 
 /**
- * 정사각형 앨범 사진 박스에서 어느 부분이 잘릴지 정하는 편집기.
+ * 앨범 사진 틀에서 어느 부분이 잘릴지 정하는 편집기.
  * 드래그로 위치를, 슬라이더로 확대를 정한다. 모집 앱 관리자의 같은
  * 이름 컴포넌트와 동일한 방식 — object-position 은 zoom 1배에서
  * 잘리는 위치를, transform: scale 은 그 지점을 기준으로 한 추가
  * 확대를 맡는다.
+ *
+ * 틀은 게시글마다 다르다. 여기서 보는 모양이 실제로 나가는 모양과
+ * 같아야 하므로 비율을 받아서 그대로 쓴다.
  */
 export function PhotoFocusEditor({
   src,
   alt,
   focus,
+  frame = "1 / 1",
+  frameLabel,
   onChange,
   onClose,
 }: {
   src: string;
   alt: string;
   focus: PhotoFocus;
+  /** CSS aspect-ratio 값. 게시글에서 사진이 놓이는 틀과 같아야 한다 */
+  frame?: string;
+  /** "세로 (4:5)" 처럼 지금 틀이 무엇인지 알려주는 말 */
+  frameLabel?: string;
   onChange: (focus: PhotoFocus) => void;
   onClose: () => void;
 }) {
@@ -62,11 +71,15 @@ export function PhotoFocusEditor({
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Content className={styles.content} aria-describedby={undefined}>
           <Dialog.Title className={styles.title}>사진 위치 조정</Dialog.Title>
-          <p className={styles.hint}>사진을 드래그해 옮기고, 슬라이더로 확대해 보이는 부분을 정합니다.</p>
+          <p className={styles.hint}>
+            사진을 드래그해 옮기고, 슬라이더로 확대해 보이는 부분을 정합니다.
+            {frameLabel && ` 지금 틀은 ${frameLabel}입니다.`}
+          </p>
 
           <div
             ref={stageRef}
             className={styles.stage}
+            style={{ aspectRatio: frame }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}

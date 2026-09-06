@@ -10,10 +10,22 @@
   gap: 6px;
 }
 
+/* 제목과 저장 단추가 한 줄 — 단추는 제목이 길어져도 밀려나지 않는다 */
+.headTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
 .title {
+  flex: 1;
+  min-width: 0;
   font-size: 20px;
   font-weight: 600;
   color: var(--ink-800);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .meta {
@@ -21,56 +33,11 @@
   color: var(--ink-600);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.photo {
-  position: relative;
-  aspect-ratio: 1;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.photoImage {
-  object-fit: cover;
-}
-
-.photo.sky {
-  background: var(--brand-canvas);
-}
-.photo.mint {
-  background: var(--state-success-bg);
-}
-.photo.peach {
-  background: var(--state-warn-bg);
-}
-.photo.lavender {
-  background: var(--state-accent-bg);
-}
-
-.note {
-  background: var(--brand-surface);
-  color: var(--brand-blue-500);
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  line-height: 1.6;
-}
-
-.hint {
-  margin-top: 8px;
-  font-size: 13px;
-  color: var(--ink-600);
-}
-
-
 /* ---------- 넘겨 보는 사진 ---------- */
 .carousel {
   position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
   background: var(--ink-800);
 }
 
@@ -89,11 +56,10 @@
   display: none;
 }
 
+/* 비율(aspect-ratio)은 게시글마다 달라서 인라인 스타일로 준다 */
 .frame {
   position: relative;
   flex: 0 0 100%;
-  /* 인스타처럼 정사각형 — 세로 사진도 가로 사진도 같은 자리를 차지한다 */
-  aspect-ratio: 1 / 1;
   scroll-snap-align: center;
   scroll-snap-stop: always;
 }
@@ -143,7 +109,7 @@
   display: flex;
   justify-content: center;
   gap: 6px;
-  padding: 12px 0 4px;
+  margin-top: -8px;
 }
 
 .dot {
@@ -162,7 +128,6 @@
 
 /* ---------- 글 ---------- */
 .body {
-  padding: 4px var(--screen-pad) 0;
   font-size: 15px;
   line-height: 1.8;
   color: var(--ink-800);
@@ -173,23 +138,15 @@
 }
 
 /* ---------- 저장 ---------- */
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  padding: 16px var(--screen-pad) 0;
-}
-
 .saveAll {
   flex: none;
-  height: 34px;
-  padding: 0 16px;
+  height: 30px;
+  padding: 0 14px;
   border: 1px solid var(--hairline);
   border-radius: var(--radius-pill);
   background: var(--surface-white);
   color: var(--ink-800);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
@@ -208,18 +165,19 @@
 }
 
 .hint {
+  flex-basis: 100%;
   font-size: 12px;
   color: var(--ink-600);
 }
 
 .saveError {
-  padding: 8px var(--screen-pad) 0;
+  flex-basis: 100%;
   font-size: 13px;
   color: var(--state-danger);
 }
 
 .empty {
-  padding: 24px var(--screen-pad);
+  padding: 24px 0;
   font-size: 14px;
   color: var(--ink-600);
 }

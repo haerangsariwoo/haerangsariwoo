@@ -12,6 +12,7 @@ import {
   THUMB_PRESET,
 } from "@/lib/image-compress";
 import { tonesFor, type Album, type AlbumPhoto } from "@/lib/community";
+import { ALBUM_RATIOS, DEFAULT_ALBUM_RATIO, toAlbumRatio, type AlbumRatio } from "@/lib/album-ratio";
 import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 import { Panel } from "@/components/admin/Panel/Panel";
 import { useSemester } from "../SemesterContext";
@@ -25,6 +26,7 @@ interface AlbumRow {
   id: string;
   title: string;
   body: string | null;
+  ratio: string | null;
   date_label: string;
   album_photos: {
     id: string;
@@ -35,9 +37,22 @@ interface AlbumRow {
   }[];
 }
 
+/** 저장 버튼을 눌러야 반영되는 값들 */
+interface AlbumDraft {
+  title: string;
+  body: string;
+  ratio: AlbumRatio;
+}
+
 /** 화면에서 다루는 앨범 — 사진마다 DB 행 id 를 들고 있어야 지우고 고칠 수 있다 */
 interface EditableAlbum extends Album {
   photos: (AlbumPhoto & { rowId: string; path: string; thumbPath: string | null })[];
+  /** 마지막으로 저장된 값. 지금 값과 다르면 아직 안 올라간 수정이 있다는 뜻이다 */
+  saved: AlbumDraft;
+}
+
+function isDirty(a: EditableAlbum) {
+  return a.title !== a.saved.title || a.body !== a.saved.body || a.ratio !== a.saved.ratio;
 }
 
 function todayLabel() {
@@ -59,6 +74,8 @@ export function AlbumPanel() {
   const [busy, setBusy] = useState(false);
   const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
   const [editing, setEditing] = useState<{ albumId: string; index: number } | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [justSaved, setJustSaved] = useState<string | null>(null);
 
   const publicUrl = useMemo(
     () => (path: string) => supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl,
@@ -90,14 +107,17 @@ export function AlbumPanel() {
                 downloadUrl: `${publicUrl(p.path)}?download`,
                 focus: p.focus ?? defaultPhotoFocus,
               }));
+            const ratio = toAlbumRatio(a.ratio);
             return {
               id: a.id,
               title: a.title,
               body: a.body ?? "",
+              ratio,
               date: a.date_label,
               photoCount: photos.length,
               tones: tonesFor(a.id),
               photos,
+              saved: { title: a.title, body: a.body ?? "", ratio },
             };
           }),
         );
@@ -128,10 +148,12 @@ export function AlbumPanel() {
         id: row.id,
         title: row.title,
         body: "",
+        ratio: DEFAULT_ALBUM_RATIO,
         date: row.date_label,
         photoCount: 0,
         tones: tonesFor(row.id),
         photos: [],
+        saved: { title: row.title, body: "", ratio: DEFAULT_ALBUM_RATIO },
       },
       ...prev,
     ]);
@@ -156,21 +178,35 @@ export function AlbumPanel() {
     }
   }
 
-  /** 제목·글은 입력하는 동안 화면만 바꾸고, 포커스를 벗어날 때 저장한다 */
-  function edit(id: string, patch: Partial<EditableAlbum>) {
+  /** 제목·글·비율은 화면에서만 바뀐다. 저장 버튼을 눌러야 실제로 올라간다 */
+  function edit(id: string, patch: Partial<AlbumDraft>) {
     setAlbums((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
+    setJustSaved(null);
   }
 
-  async function saveField(id: string, field: "title" | "body") {
+  async function saveAlbum(id: string) {
     const album = albums.find((a) => a.id === id);
     if (!album) return;
+
+    setSaving(id);
+    setError(null);
     const { error: updateError } = await supabase
       .from("albums")
-      .update(field === "title" ? { title: album.title } : { body: album.body })
+      .update({ title: album.title, body: album.body, ratio: album.ratio })
       .eq("id", id);
+    setSaving(null);
+
     if (updateError) {
-      setError(field === "title" ? "제목을 저장하지 못했습니다." : "글을 저장하지 못했습니다.");
+      setError("저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      return;
     }
+    // 저장된 값을 기억해 둬야 "고친 것이 남았는지" 를 알 수 있다
+    setAlbums((prev) =>
+      prev.map((a) =>
+        a.id === id ? { ...a, saved: { title: a.title, body: a.body, ratio: a.ratio } } : a,
+      ),
+    );
+    setJustSaved(id);
   }
 
   async function onFileChosen(albumId: string, files: FileList | null) {
@@ -299,7 +335,7 @@ export function AlbumPanel() {
     <Panel
       title="활동 사진 (앨범)"
       count={`${albums.length}개`}
-      desc="커뮤니티 앨범과 홈 화면에 노출되는 사진입니다. 올리면 바로 반영됩니다."
+      desc="커뮤니티 앨범과 홈 화면에 노출되는 게시글입니다. 사진은 올리는 즉시 반영되고, 제목·글·사진 비율은 저장을 눌러야 반영됩니다."
     >
       {error && <p className={styles.saveNote}>{error}</p>}
 
@@ -328,7 +364,6 @@ export function AlbumPanel() {
                   className={styles.albumTitle}
                   value={a.title}
                   onChange={(e) => edit(a.id, { title: e.target.value })}
-                  onBlur={() => saveField(a.id, "title")}
                   aria-label={`${a.title} 앨범 이름`}
                   disabled={readOnly}
                 />
@@ -353,12 +388,44 @@ export function AlbumPanel() {
                 className={styles.albumBody}
                 value={a.body}
                 onChange={(e) => edit(a.id, { body: e.target.value })}
-                onBlur={() => saveField(a.id, "body")}
                 placeholder="그날 무엇을 했는지 적어주세요. 비워두면 사진만 올라갑니다."
                 rows={3}
                 aria-label={`${a.title} 글`}
                 disabled={readOnly}
               />
+
+              <div className={styles.albumOptions}>
+                {/* 사진마다 크기가 달라 틀을 정해두지 않으면 넘길 때 화면이 들썩인다 */}
+                <label className={styles.ratioLabel}>
+                  사진 비율
+                  <select
+                    className={styles.ratioSelect}
+                    value={a.ratio}
+                    onChange={(e) => edit(a.id, { ratio: toAlbumRatio(e.target.value) })}
+                    disabled={readOnly}
+                  >
+                    {ALBUM_RATIOS.map((r) => (
+                      <option key={r.value} value={r.value}>
+                        {r.label} ({r.value})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <span className={toolbar.spacer} />
+
+                {justSaved === a.id && !isDirty(a) && (
+                  <span className={styles.savedMark}>저장했습니다</span>
+                )}
+                <button
+                  type="button"
+                  className={cn(toolbar.button, isDirty(a) && toolbar.primary)}
+                  onClick={() => saveAlbum(a.id)}
+                  disabled={readOnly || saving === a.id || !isDirty(a)}
+                >
+                  {saving === a.id ? "저장 중…" : "저장"}
+                </button>
+              </div>
 
               <div className={styles.photoRow}>
                 {a.photos.map((p, i) => (

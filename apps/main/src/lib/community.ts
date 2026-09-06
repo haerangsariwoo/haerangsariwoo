@@ -1,3 +1,4 @@
+import type { AlbumRatio } from "./album-ratio";
 import { defaultPhotoFocus, type PhotoFocus } from "./photo-focus";
 
 export interface AlbumPhoto {
@@ -19,6 +20,8 @@ export interface Album {
   title: string;
   /** 사진과 함께 올리는 글. 비어 있으면 사진만 있는 게시글이다 */
   body: string;
+  /** 사진을 보여줄 틀의 비율 */
+  ratio: AlbumRatio;
   date: string;
   photoCount: number;
   tones: readonly AlbumTone[];

@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { tonesFor, type Album, type AlbumPhoto } from "@/lib/community";
+import { toAlbumRatio } from "./album-ratio";
 import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 
 export const ALBUM_BUCKET = "album-photos";
@@ -9,6 +10,7 @@ interface AlbumRow {
   id: string;
   title: string;
   body: string | null;
+  ratio: string | null;
   date_label: string;
   album_photos: {
     id: string;
@@ -49,6 +51,7 @@ export const getAlbums = cache(async (): Promise<Album[]> => {
       id: a.id,
       title: a.title,
       body: a.body ?? "",
+      ratio: toAlbumRatio(a.ratio),
       date: a.date_label,
       photoCount: photos.length,
       tones: tonesFor(a.id),

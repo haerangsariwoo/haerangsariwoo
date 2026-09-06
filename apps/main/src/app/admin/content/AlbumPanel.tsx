@@ -24,6 +24,7 @@ const BUCKET = "album-photos";
 interface AlbumRow {
   id: string;
   title: string;
+  body: string | null;
   date_label: string;
   album_photos: {
     id: string;
@@ -69,7 +70,7 @@ export function AlbumPanel() {
     async function load() {
       const { data, error: fetchError } = await supabase
         .from("albums")
-        .select("id, title, date_label, album_photos(id, path, thumb_path, sort_order, focus)")
+        .select("*, album_photos(id, path, thumb_path, sort_order, focus)")
         .order("created_at", { ascending: false });
       if (cancelled) return;
       if (fetchError) {
@@ -92,6 +93,7 @@ export function AlbumPanel() {
             return {
               id: a.id,
               title: a.title,
+              body: a.body ?? "",
               date: a.date_label,
               photoCount: photos.length,
               tones: tonesFor(a.id),
@@ -125,6 +127,7 @@ export function AlbumPanel() {
       {
         id: row.id,
         title: row.title,
+        body: "",
         date: row.date_label,
         photoCount: 0,
         tones: tonesFor(row.id),
@@ -153,19 +156,21 @@ export function AlbumPanel() {
     }
   }
 
-  /** 제목은 입력하는 동안 화면만 바꾸고, 포커스를 벗어날 때 저장한다 */
-  function rename(id: string, title: string) {
-    setAlbums((prev) => prev.map((a) => (a.id === id ? { ...a, title } : a)));
+  /** 제목·글은 입력하는 동안 화면만 바꾸고, 포커스를 벗어날 때 저장한다 */
+  function edit(id: string, patch: Partial<EditableAlbum>) {
+    setAlbums((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
   }
 
-  async function saveTitle(id: string) {
+  async function saveField(id: string, field: "title" | "body") {
     const album = albums.find((a) => a.id === id);
     if (!album) return;
     const { error: updateError } = await supabase
       .from("albums")
-      .update({ title: album.title })
+      .update(field === "title" ? { title: album.title } : { body: album.body })
       .eq("id", id);
-    if (updateError) setError("앨범 이름을 저장하지 못했습니다.");
+    if (updateError) {
+      setError(field === "title" ? "제목을 저장하지 못했습니다." : "글을 저장하지 못했습니다.");
+    }
   }
 
   async function onFileChosen(albumId: string, files: FileList | null) {
@@ -322,8 +327,8 @@ export function AlbumPanel() {
                 <input
                   className={styles.albumTitle}
                   value={a.title}
-                  onChange={(e) => rename(a.id, e.target.value)}
-                  onBlur={() => saveTitle(a.id)}
+                  onChange={(e) => edit(a.id, { title: e.target.value })}
+                  onBlur={() => saveField(a.id, "title")}
                   aria-label={`${a.title} 앨범 이름`}
                   disabled={readOnly}
                 />
@@ -342,6 +347,18 @@ export function AlbumPanel() {
                   </button>
                 )}
               </div>
+
+              {/* 사진과 함께 올리는 글. 비워두면 사진만 있는 게시글이 된다 */}
+              <textarea
+                className={styles.albumBody}
+                value={a.body}
+                onChange={(e) => edit(a.id, { body: e.target.value })}
+                onBlur={() => saveField(a.id, "body")}
+                placeholder="그날 무엇을 했는지 적어주세요. 비워두면 사진만 올라갑니다."
+                rows={3}
+                aria-label={`${a.title} 글`}
+                disabled={readOnly}
+              />
 
               <div className={styles.photoRow}>
                 {a.photos.map((p, i) => (

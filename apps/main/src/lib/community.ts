@@ -17,6 +17,8 @@ export type AlbumTone = "sky" | "mint" | "peach" | "lavender";
 export interface Album {
   id: string;
   title: string;
+  /** 사진과 함께 올리는 글. 비어 있으면 사진만 있는 게시글이다 */
+  body: string;
   date: string;
   photoCount: number;
   tones: readonly AlbumTone[];

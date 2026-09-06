@@ -16,11 +16,15 @@ export default async function AlbumDetailPage({ params }: PageProps<"/community/
       <div className={styles.head}>
         <h1 className={styles.title}>{item.title}</h1>
         <p className={styles.meta}>
-          {item.date} · 사진 {item.photoCount}장
+          {item.date}
+          {item.photoCount > 0 && ` · 사진 ${item.photoCount}장`}
         </p>
       </div>
 
       <AlbumGrid album={item} />
+
+      {/* 사진 아래에 글 — 사진을 먼저 보고 설명을 읽는 순서다 */}
+      {item.body && <p className={styles.body}>{item.body}</p>}
     </div>
   );
 }

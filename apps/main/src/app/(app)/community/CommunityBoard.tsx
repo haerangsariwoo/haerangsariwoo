@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
-import { albumPreviewTiles, type Album } from "@/lib/community";
+import { tonesFor, type Album } from "@/lib/community";
 import type { NoticeItem } from "@/lib/notices";
 import styles from "./community.module.css";
 
@@ -93,36 +93,36 @@ function CommunityView({ notices, albums, initialTab }: BoardProps & { initialTa
           <div className={styles.list}>
             {albums.map((a) => (
               <Link key={a.id} href={`/community/album/${a.id}`} className={styles.albumRow}>
-                <div className={styles.albumGrid}>
-                  {albumPreviewTiles(a, 4).map((tile, i) => (
-                    <span key={i} className={cn(styles.photo, !tile.photo && styles[tile.tone])}>
-                      {tile.photo && (
-                        <Image
-                          className={styles.photoImage}
-                          src={tile.photo.url}
-                          alt=""
-                          fill
-                          sizes="90px"
-                          unoptimized
-                          style={{
-                            objectPosition: `${tile.photo.focus.x}% ${tile.photo.focus.y}%`,
-                            transform: `scale(${tile.photo.focus.zoom})`,
-                            transformOrigin: `${tile.photo.focus.x}% ${tile.photo.focus.y}%`,
-                          }}
-                        />
-                      )}
-                    </span>
-                  ))}
-                </div>
+                {/* 대표 사진 한 장만 — 넉 장을 깔면 목록이 사진첩처럼 보인다 */}
+                <span className={cn(styles.cover, !a.photos[0] && styles[tonesFor(a.id)[0]])}>
+                  {a.photos[0] && (
+                    <Image
+                      className={styles.photoImage}
+                      src={a.photos[0].url}
+                      alt=""
+                      fill
+                      sizes="90px"
+                      unoptimized
+                      style={{
+                        objectPosition: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
+                        transform: `scale(${a.photos[0].focus.zoom})`,
+                        transformOrigin: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
+                      }}
+                    />
+                  )}
+                  {a.photoCount > 1 && <span className={styles.coverCount}>{a.photoCount}</span>}
+                </span>
                 <div className={styles.albumFoot}>
                   <h2 className={styles.albumTitle}>{a.title}</h2>
+                  {a.body && <p className={styles.albumBody}>{a.body}</p>}
                   <span className={styles.albumMeta}>
-                    사진 {a.photoCount}장 · {a.date}
+                    {a.date}
+                    {a.photoCount > 0 && ` · 사진 ${a.photoCount}장`}
                   </span>
                 </div>
               </Link>
             ))}
-            {albums.length === 0 && <p className={styles.noticeMeta}>아직 올라온 앨범이 없어요.</p>}
+            {albums.length === 0 && <p className={styles.noticeMeta}>아직 올라온 게시글이 없어요.</p>}
           </div>
         )}
       </SheetGroup>

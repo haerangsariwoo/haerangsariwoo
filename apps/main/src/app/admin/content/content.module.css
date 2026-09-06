@@ -308,3 +308,24 @@
   color: var(--a-ink-soft);
   line-height: 1.5;
 }
+
+/* 사진과 함께 올리는 글 */
+.albumBody {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-sm);
+  background: var(--a-bg);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--a-ink);
+  resize: vertical;
+}
+
+.albumBody:focus {
+  outline: none;
+  border-color: var(--a-brand, #176ff2);
+  background: #fff;
+}

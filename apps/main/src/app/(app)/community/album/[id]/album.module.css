@@ -67,121 +67,118 @@
   color: var(--ink-600);
 }
 
-/* 누를 수 있는 칸임을 알린다 */
-.photoButton {
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  background: var(--brand-tint-05, rgba(0, 0, 0, 0.04));
+
+/* ---------- 넘겨 보는 사진 ---------- */
+.carousel {
+  position: relative;
+  background: var(--ink-800);
 }
 
-.photoButton:focus-visible {
+/*
+ * 넘기기는 가로 스크롤에 맡긴다. 폰에서 손가락으로 미는 느낌이 앱과 같고,
+ * 직접 만든 것보다 부드럽다. scroll-snap 이 한 장씩 딱 멈춰 세운다.
+ */
+.track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.frame {
+  position: relative;
+  flex: 0 0 100%;
+  /* 인스타처럼 정사각형 — 세로 사진도 가로 사진도 같은 자리를 차지한다 */
+  aspect-ratio: 1 / 1;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.frameImage {
+  object-fit: cover;
+}
+
+.counter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink-800);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nav.prev { left: 10px; }
+.nav.next { right: 10px; }
+
+.nav:focus-visible {
   outline: 2px solid var(--brand-blue-500);
   outline-offset: 2px;
 }
 
-/* ---------- 사진 크게 보기 ---------- */
-.viewer {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.92);
-  display: grid;
-  place-items: center;
-  padding: 64px 12px 24px;
-}
-
-.viewerImage {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-.viewerBar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
+/* 몇 장인지, 지금 어디쯤인지 */
+.dots {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 12px;
-  /* 밝은 사진 위에서도 버튼이 보이도록 위쪽만 살짝 어둡게 */
-  background: linear-gradient(rgba(0, 0, 0, 0.55), transparent);
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 0 4px;
 }
 
-.viewerCount {
-  flex: 1;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
-
-.viewerSave {
-  flex: none;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 16px;
-  border-radius: var(--radius-pill);
-  background: var(--surface-white);
-  color: var(--ink-800);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.viewerClose {
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+.dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
   border: none;
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
+  border-radius: 50%;
+  background: var(--ink-300);
+  cursor: pointer;
+}
+
+.dotOn {
+  background: var(--brand-blue-500);
+}
+
+/* ---------- 글 ---------- */
+.body {
+  padding: 4px var(--screen-pad) 0;
   font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
+  line-height: 1.8;
+  color: var(--ink-800);
+  /* 올린 사람이 넣은 줄바꿈을 그대로 살린다 */
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
-.viewerNav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.viewerNav.prev { left: 10px; }
-.viewerNav.next { right: 10px; }
-
-.viewerSave:focus-visible,
-.viewerClose:focus-visible,
-.viewerNav:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
-}
-
-/* ---------- 전체 저장 ---------- */
-.toolbar {
+/* ---------- 저장 ---------- */
+.actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  padding: 0 var(--screen-pad) 12px;
-}
-
-.toolbar .hint {
-  flex: 1;
-  margin-top: 0;
+  gap: 10px;
+  padding: 16px var(--screen-pad) 0;
 }
 
 .saveAll {
@@ -203,15 +200,26 @@
   cursor: progress;
 }
 
-.saveError {
-  padding: 0 var(--screen-pad) 12px;
-  font-size: 13px;
-  color: var(--state-danger);
-}
-
 /* 받기가 끝나 한 번 더 누르면 되는 상태 */
 .saveReady {
   border-color: transparent;
   background: var(--brand-blue-500);
   color: var(--surface-white);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--ink-600);
+}
+
+.saveError {
+  padding: 8px var(--screen-pad) 0;
+  font-size: 13px;
+  color: var(--state-danger);
+}
+
+.empty {
+  padding: 24px var(--screen-pad);
+  font-size: 14px;
+  color: var(--ink-600);
 }

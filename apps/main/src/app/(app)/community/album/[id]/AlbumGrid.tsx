@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
-import { albumPreviewTiles, type Album } from "@/lib/community";
+import { type Album } from "@/lib/community";
 import { displayFileName } from "@/lib/storage-name";
 import { makeZip, uniqueNames } from "@/lib/zip";
 import styles from "./album.module.css";
@@ -62,28 +62,44 @@ type SaveState =
   | { phase: "ready"; files: File[] };
 
 /**
- * 앨범 격자와 사진 크게 보기.
+ * 게시글의 사진을 한 장씩 넘겨 본다.
  *
- * 격자에는 작은 그림만 깐다 — 칸이 220px 인데 2560px 원본을 깔면 20장짜리
- * 앨범 한 번 여는 데 17MB 가 나가고 부원들 데이터 요금도 그만큼 나간다.
- * 원본은 눌러서 크게 볼 때 그 한 장만 받는다.
+ * 넘기기는 가로 스크롤에 맡긴다 — 폰에서 손가락으로 미는 느낌이 앱과 같고,
+ * 직접 만든 것보다 훨씬 부드럽다. 지금 몇 번째인지는 스크롤 위치에서 읽는다.
  */
 export function AlbumGrid({ album }: { album: Album }) {
-  // 사진이 4장이 안 돼도 격자가 허전하지 않게 최소 4칸은 채운다
-  const tiles = albumPreviewTiles(album, Math.max(album.photoCount, 4));
-  const [openAt, setOpenAt] = useState<number | null>(null);
-  const photo = openAt === null ? null : album.photos[openAt];
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [at, setAt] = useState(0);
   const count = album.photos.length;
 
   const [save, setSave] = useState<SaveState>({ phase: "idle" });
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  // 어느 사진을 보고 있는지 스크롤 위치로 알아낸다
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const onScroll = () => {
+      const width = track.clientWidth;
+      if (width > 0) setAt(Math.round(track.scrollLeft / width));
+    };
+    track.addEventListener("scroll", onScroll, { passive: true });
+    return () => track.removeEventListener("scroll", onScroll);
+  }, []);
+
+  function go(index: number) {
+    const track = trackRef.current;
+    if (!track) return;
+    const next = Math.max(0, Math.min(count - 1, index));
+    track.scrollTo({ left: next * track.clientWidth, behavior: "smooth" });
+  }
+
   /**
-   * 앨범 전체 저장.
+   * 게시글의 사진을 한 번에 받는다.
    *
    * 폰은 "누른 직후" 에만 공유창을 열어준다. 사진을 다 받고 나서 열려고 하면
-   * 시간이 지났다며 막는다. 그래서 받기와 저장을 두 번의 누름으로 나눴다 —
-   * 첫 번째로 받아두고, 두 번째 누름에서 곧바로 공유창을 띄운다.
+   * 시간이 지났다며 막는다. 그래서 받기와 저장을 두 번의 누름으로 나눴다.
    */
   async function onSaveAll() {
     if (save.phase === "loading") return;
@@ -105,8 +121,7 @@ export function AlbumGrid({ album }: { album: Album }) {
     try {
       const names = uniqueNames(album.photos.map((p, i) => photoName(p.path, i)));
       const files: File[] = [];
-      // 한 장씩 차례로 받는다. 한꺼번에 받으면 폰에서 메모리가 튀고
-      // 몇 장까지 왔는지도 알려줄 수 없다.
+      // 한 장씩 차례로 받는다. 한꺼번에 받으면 폰에서 메모리가 튄다
       for (let i = 0; i < album.photos.length; i++) {
         files.push(await toFile(album.photos[i].fullUrl, names[i]));
         setSave({ phase: "loading", done: i + 1, total: count });
@@ -124,204 +139,104 @@ export function AlbumGrid({ album }: { album: Album }) {
     }
   }
 
-  const openUrl = photo?.fullUrl ?? null;
-  const openName = photo ? photoName(photo.path, openAt ?? 0) : null;
-  const [shareOne, setShareOne] = useState<{ url: string; file: File } | null>(null);
-
-  /**
-   * 크게 보기를 여는 순간 원본을 미리 받아둔다. 저장을 눌렀을 때 그 자리에서
-   * 기다리면 폰이 공유창을 막기 때문이다. 화면에 이미 같은 사진을 띄우고
-   * 있어서 대개 캐시에서 바로 온다.
-   */
-  useEffect(() => {
-    // 이전 사진의 것이 남아 있어도 아래에서 주소를 맞춰 보고 쓰므로 지우지 않는다
-    if (!openUrl || !openName) return;
-
-    let alive = true;
-    toFile(openUrl, openName)
-      .then((file) => {
-        if (alive && canShareFiles([file])) setShareOne({ url: openUrl, file });
-      })
-      .catch(() => {});
-
-    return () => {
-      alive = false;
-    };
-  }, [openUrl, openName]);
-
-  // 크게 보는 동안은 뒤 화면이 따라 움직이지 않게 하고, 키로도 넘긴다
-  useEffect(() => {
-    if (openAt === null) return;
-
-    const step = (by: number) =>
-      setOpenAt((at) => {
-        if (at === null) return at;
-        const next = at + by;
-        return next < 0 || next >= count ? at : next;
-      });
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpenAt(null);
-      if (e.key === "ArrowLeft") step(-1);
-      if (e.key === "ArrowRight") step(1);
-    };
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [openAt, count]);
-
-  function move(step: number) {
-    setOpenAt((at) => {
-      if (at === null) return at;
-      const next = at + step;
-      return next < 0 || next >= count ? at : next;
-    });
-  }
-
-  const saveAllLabel =
+  const saveLabel =
     save.phase === "loading"
       ? `받는 중 ${save.done}/${save.total}`
       : save.phase === "ready"
         ? "사진 앱에 저장"
-        : `${count}장 모두 저장`;
+        : count > 1
+          ? `${count}장 모두 저장`
+          : "사진 저장";
+
+  if (count === 0) {
+    return <p className={styles.empty}>아직 사진이 없어요.</p>;
+  }
 
   return (
     <>
-      {count > 0 && (
-        <div className={styles.toolbar}>
-          <p className={styles.hint}>
-            {save.phase === "ready"
-              ? "한 번 더 누르면 사진 앱에 저장할 수 있어요."
-              : "사진을 누르면 크게 볼 수 있어요."}
-          </p>
-          <button
-            type="button"
-            className={cn(styles.saveAll, save.phase === "ready" && styles.saveReady)}
-            onClick={onSaveAll}
-            disabled={save.phase === "loading"}
-          >
-            {saveAllLabel}
-          </button>
-        </div>
-      )}
-      {saveError && <p className={styles.saveError}>{saveError}</p>}
-
-      <div className={styles.grid}>
-        {tiles.map((tile, i) =>
-          tile.photo ? (
-            <button
-              key={i}
-              type="button"
-              className={cn(styles.photo, styles.photoButton)}
-              onClick={() => setOpenAt(i)}
-              aria-label={`${i + 1}번째 사진 크게 보기`}
-            >
+      <div className={styles.carousel}>
+        <div className={styles.track} ref={trackRef}>
+          {album.photos.map((photo, i) => (
+            <div key={i} className={styles.frame}>
               <Image
-                className={styles.photoImage}
-                src={tile.photo.url}
+                className={styles.frameImage}
+                src={photo.fullUrl}
                 alt=""
                 fill
-                sizes="(min-width: 480px) 220px, 45vw"
+                sizes="(min-width: 480px) 480px, 100vw"
+                priority={i === 0}
                 unoptimized
                 style={{
-                  objectPosition: `${tile.photo.focus.x}% ${tile.photo.focus.y}%`,
-                  transform: `scale(${tile.photo.focus.zoom})`,
-                  transformOrigin: `${tile.photo.focus.x}% ${tile.photo.focus.y}%`,
+                  objectPosition: `${photo.focus.x}% ${photo.focus.y}%`,
+                  transform: `scale(${photo.focus.zoom})`,
+                  transformOrigin: `${photo.focus.x}% ${photo.focus.y}%`,
                 }}
               />
-            </button>
-          ) : (
-            <span key={i} className={cn(styles.photo, styles[tile.tone])} />
-          ),
+            </div>
+          ))}
+        </div>
+
+        {count > 1 && (
+          <>
+            {/* 몇 장 중 몇 번째인지 — 넘길 게 남았는지 알려준다 */}
+            <span className={styles.counter} aria-hidden="true">
+              {at + 1} / {count}
+            </span>
+
+            {at > 0 && (
+              <button
+                type="button"
+                className={cn(styles.nav, styles.prev)}
+                onClick={() => go(at - 1)}
+                aria-label="이전 사진"
+              >
+                ‹
+              </button>
+            )}
+            {at < count - 1 && (
+              <button
+                type="button"
+                className={cn(styles.nav, styles.next)}
+                onClick={() => go(at + 1)}
+                aria-label="다음 사진"
+              >
+                ›
+              </button>
+            )}
+          </>
         )}
       </div>
 
-      {photo && (
-        <div
-          className={styles.viewer}
-          role="dialog"
-          aria-modal="true"
-          aria-label="사진 크게 보기"
-          onClick={() => setOpenAt(null)}
-        >
-          <div className={styles.viewerBar}>
-            <span className={styles.viewerCount}>
-              {(openAt ?? 0) + 1} / {count}
-            </span>
-
-            {shareOne && shareOne.url === photo.fullUrl ? (
-              <button
-                type="button"
-                className={styles.viewerSave}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigator.share({ files: [shareOne.file] }).catch(() => {});
-                }}
-              >
-                저장
-              </button>
-            ) : (
-              <a
-                className={styles.viewerSave}
-                href={photo.downloadUrl}
-                onClick={(e) => e.stopPropagation()}
-              >
-                저장
-              </a>
-            )}
-
+      {count > 1 && (
+        <div className={styles.dots} role="tablist" aria-label="사진 넘기기">
+          {album.photos.map((_, i) => (
             <button
+              key={i}
               type="button"
-              className={styles.viewerClose}
-              onClick={() => setOpenAt(null)}
-              aria-label="닫기"
-            >
-              ✕
-            </button>
-          </div>
-
-          {/* 사진 자체를 눌렀을 때는 닫히지 않게 한다 — 확대해 보는 중일 수 있다 */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className={styles.viewerImage}
-            src={photo.fullUrl}
-            alt=""
-            onClick={(e) => e.stopPropagation()}
-          />
-
-          {openAt !== null && openAt > 0 && (
-            <button
-              type="button"
-              className={cn(styles.viewerNav, styles.prev)}
-              onClick={(e) => {
-                e.stopPropagation();
-                move(-1);
-              }}
-              aria-label="이전 사진"
-            >
-              ‹
-            </button>
-          )}
-          {openAt !== null && openAt < count - 1 && (
-            <button
-              type="button"
-              className={cn(styles.viewerNav, styles.next)}
-              onClick={(e) => {
-                e.stopPropagation();
-                move(1);
-              }}
-              aria-label="다음 사진"
-            >
-              ›
-            </button>
-          )}
+              role="tab"
+              aria-selected={i === at}
+              aria-label={`${i + 1}번째 사진`}
+              className={cn(styles.dot, i === at && styles.dotOn)}
+              onClick={() => go(i)}
+            />
+          ))}
         </div>
       )}
+
+      <div className={styles.actions}>
+        <button
+          type="button"
+          className={cn(styles.saveAll, save.phase === "ready" && styles.saveReady)}
+          onClick={onSaveAll}
+          disabled={save.phase === "loading"}
+        >
+          {saveLabel}
+        </button>
+        {save.phase === "ready" && (
+          <span className={styles.hint}>한 번 더 누르면 사진 앱에 저장할 수 있어요.</span>
+        )}
+      </div>
+      {saveError && <p className={styles.saveError}>{saveError}</p>}
     </>
   );
 }

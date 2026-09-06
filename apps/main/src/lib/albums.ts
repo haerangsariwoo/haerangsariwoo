@@ -8,6 +8,7 @@ export const ALBUM_BUCKET = "album-photos";
 interface AlbumRow {
   id: string;
   title: string;
+  body: string | null;
   date_label: string;
   album_photos: {
     id: string;
@@ -22,7 +23,8 @@ export const getAlbums = cache(async (): Promise<Album[]> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("albums")
-    .select("id, title, date_label, album_photos(id, path, thumb_path, sort_order, focus)")
+    // 컬럼을 나열하면 아직 만들지 않은 컬럼 하나 때문에 앨범 전체를 못 읽는다
+    .select("*, album_photos(id, path, thumb_path, sort_order, focus)")
     .order("created_at", { ascending: false });
 
   return ((data ?? []) as unknown as AlbumRow[]).map((a) => {
@@ -46,6 +48,7 @@ export const getAlbums = cache(async (): Promise<Album[]> => {
     return {
       id: a.id,
       title: a.title,
+      body: a.body ?? "",
       date: a.date_label,
       photoCount: photos.length,
       tones: tonesFor(a.id),

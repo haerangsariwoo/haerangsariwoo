@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   const [{ data: applicant }, { data: settings }] = await Promise.all([
     supabase
       .from("applicants")
-      .select("name, code, first_result, interview, final_result")
+      .select("name, code, first_result, interview, final_result, preview")
       .eq("student_id", studentId)
       .maybeSingle(),
     supabase
@@ -45,8 +45,15 @@ export async function POST(request: Request) {
 
   // 예약 시각이 왔고 심사가 끝났으면 손으로 안 눌러도 공개다
   const flags = await readPublishFlags(supabase, (settings ?? null) as PublishSettings | null);
-  const firstPublished = flags.first.published;
-  const finalPublished = flags.final.published;
+
+  /*
+   * 미리보기 대상은 전체 발표 전에도 자기 결과를 본다. 카드뉴스를 만들거나
+   * 흐름을 확인하려고 열어주는 자리다 — 그러자고 전체를 발표할 수는 없다.
+   * 결과가 아직 "대기" 면 화면이 "심사 중" 으로 나가므로 없는 합격을 알리지 않는다.
+   */
+  const preview = applicant.preview === true;
+  const firstPublished = flags.first.published || preview;
+  const finalPublished = flags.final.published || preview;
 
   /*
    * 발표 전에는 결과를 보내지 않는다.

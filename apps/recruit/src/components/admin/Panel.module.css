@@ -462,3 +462,15 @@
   padding: 8px 12px;
   line-height: 1.5;
 }
+
+/* 미리보기를 켜 둔 지원자가 있다는 경고 — 잊으면 그 사람만 계속 먼저 본다 */
+.previewWarn {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(207, 68, 68, 0.1);
+  color: #cf4444;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+}

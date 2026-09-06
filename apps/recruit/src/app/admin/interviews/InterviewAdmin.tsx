@@ -47,7 +47,7 @@ export function InterviewAdmin() {
         supabase.from("interview_slots").select("*").order("slot_date", { ascending: true }),
         supabase
           .from("applicants")
-          .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result, extra")
+          .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result, extra, preview")
           .order("applied_at", { ascending: false }),
       ]);
       if (cancelled) return;

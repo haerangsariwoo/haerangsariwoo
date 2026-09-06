@@ -79,7 +79,7 @@ export function ReviewBoard() {
       const [{ data: applicants }, { data: settings }] = await Promise.all([
         supabase
           .from("applicants")
-          .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result, extra")
+          .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result, extra, preview")
           .order("applied_at", { ascending: false }),
         supabase
           .from("recruit_settings")

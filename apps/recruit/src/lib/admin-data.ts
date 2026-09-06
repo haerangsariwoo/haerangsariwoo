@@ -23,6 +23,8 @@ export interface Applicant {
    * 성별처럼 나중에 추가한 문항이 여기 들어온다.
    */
   extra: Record<string, string> | null;
+  /** 전체 발표 전에 자기 결과를 볼 수 있는 사람 */
+  preview: boolean;
 }
 
 export interface SlotRow {

@@ -18,6 +18,7 @@ import styles from "./status.module.css";
  */
 type Stage =
   | "submitted"
+  | "reviewing"
   | "interviewPick"
   | "interviewBooked"
   | "interviewDone"
@@ -49,6 +50,13 @@ function afterFirstPass(r: StatusResult): Stage {
 
 function stageOf(r: StatusResult): Stage {
   if (!r.firstPublished) return "submitted";
+  /*
+   * 발표가 열렸는데 결과가 아직 "대기" 인 사람이 있을 수 있다 — 미리보기로
+   * 먼저 열어준 사람, 또는 발표 뒤에 결과를 되돌린 사람. 예전에는 이 경우가
+   * 합격 갈래로 흘러가 "면접에서 만나요!" 를 보여줬다. 없는 합격을 알리는
+   * 것보다 나쁜 일은 없으므로 따로 세운다.
+   */
+  if (r.firstResult === "대기") return "reviewing";
   if (r.firstResult === "불합격") return "firstFail";
   if (!r.finalPublished) return afterFirstPass(r);
   if (r.finalResult === "합격") return "finalPass";
@@ -263,6 +271,25 @@ export function StatusView({ config, nextSteps, interviewPlace }: StatusViewProp
 
           <p className={styles.infoNote}>
             최종 발표는 <b>{config.finalResultDate}</b> 예정입니다.
+          </p>
+        </>
+      )}
+
+      {stage === "reviewing" && (
+        <>
+          <div className={styles.resultCard}>
+            <span className={styles.resultLabel}>심사 중</span>
+            <h1 className={styles.resultTitle}>
+              아직 결과를
+              <br />
+              정리하고 있어요
+            </h1>
+            <p className={styles.resultDesc}>
+              결과가 정해지면 이 화면에서 바로 확인하실 수 있어요.
+            </p>
+          </div>
+          <p className={styles.infoNote}>
+            1차 발표는 <b>{config.firstResultDate}</b> 예정입니다.
           </p>
         </>
       )}

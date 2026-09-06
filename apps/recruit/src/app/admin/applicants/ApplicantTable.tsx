@@ -39,7 +39,7 @@ export function ApplicantTable() {
     async function load() {
       const { data } = await supabase
         .from("applicants")
-        .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result, extra")
+        .select("id, student_id, name, track, phone, motivation, applied_at, first_result, interview, final_result, extra, preview")
         .order("applied_at", { ascending: false });
       if (!cancelled) {
         setRows((data ?? []) as Applicant[]);
@@ -53,6 +53,9 @@ export function ApplicantTable() {
   }, [supabase]);
 
   const tracks = useMemo(() => [...new Set(rows.map((a) => a.track.split(" · ")[0]))], [rows]);
+
+  /** 미리보기를 켜 둔 채 잊지 않도록 명단 위에 늘 띄운다 */
+  const previewing = rows.filter((a) => a.preview);
 
   /*
    * 선택지는 실제 답에서 뽑는다. 문항 설정을 고쳐 다른 값을 받게 되어도
@@ -85,6 +88,28 @@ export function ApplicantTable() {
     const prev = rows;
     setRows((r) => r.map((a) => (a.id === id ? { ...a, ...patch } : a)));
     const { error } = await supabase.from("applicants").update(patch).eq("id", id);
+    if (error) setRows(prev);
+  }
+
+  /**
+   * 이 사람만 전체 발표 전에 결과를 보게 한다.
+   *
+   * 켜 둔 채 잊으면 그 사람만 계속 먼저 보게 되므로 켜기 전에 한 번 묻고,
+   * 명단 위쪽에 몇 명이 켜져 있는지 늘 띄운다.
+   */
+  async function togglePreview(id: string, name: string, next: boolean) {
+    if (
+      next &&
+      !window.confirm(
+        `${name} 님에게만 결과를 먼저 열어줄까요?\n\n전체 발표 전에도 이 사람은 자기 결과와 면접 시간 선택 화면을 볼 수 있습니다. 다 쓰고 나면 꼭 꺼주세요.`,
+      )
+    ) {
+      return;
+    }
+
+    const prev = rows;
+    setRows((r) => r.map((a) => (a.id === id ? { ...a, preview: next } : a)));
+    const { error } = await supabase.from("applicants").update({ preview: next }).eq("id", id);
     if (error) setRows(prev);
   }
 
@@ -145,6 +170,13 @@ export function ApplicantTable() {
       count={`${rows.length}명`}
       desc="배지를 눌러 심사 결과를 바꿉니다. 명단은 CSV 로 내보낼 수 있습니다."
     >
+      {previewing.length > 0 && (
+        <p className={ui.previewWarn}>
+          지금 {previewing.map((a) => a.name).join(" · ")} 님은 전체 발표 전에도 결과를 볼 수
+          있습니다. 다 쓰셨으면 미리보기를 꺼주세요.
+        </p>
+      )}
+
       <div className={ui.toolbar}>
         <input
           className={ui.search}
@@ -236,6 +268,7 @@ export function ApplicantTable() {
               <th>1차</th>
               <th>면접 시간</th>
               <th>최종</th>
+              <th>미리보기</th>
             </tr>
           </thead>
           <tbody>
@@ -299,10 +332,20 @@ export function ApplicantTable() {
                     </Badge>
                   </button>
                 </td>
+                <td>
+                  <button
+                    type="button"
+                    className={cn(ui.rowBtn, a.preview && ui.rowBtnDanger)}
+                    onClick={() => togglePreview(a.id, a.name, !a.preview)}
+                    title="이 사람만 전체 발표 전에 결과를 볼 수 있게 합니다"
+                  >
+                    {a.preview ? "끄기" : "켜기"}
+                  </button>
+                </td>
               </tr>
               {openId === a.id && (
                 <MotivationRow
-                  colSpan={10}
+                  colSpan={11}
                   text={a.motivation}
                   meta={`${a.name} · ${a.student_id} · ${a.track} · ${a.phone}`}
                     extra={a.extra}
@@ -312,7 +355,7 @@ export function ApplicantTable() {
             ))}
             {!loading && visible.length === 0 && (
               <tr>
-                <td colSpan={10} className={ui.muted}>
+                <td colSpan={11} className={ui.muted}>
                   조건에 맞는 지원자가 없습니다.
                 </td>
               </tr>

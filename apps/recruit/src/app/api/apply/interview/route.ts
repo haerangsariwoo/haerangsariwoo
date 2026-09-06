@@ -25,7 +25,7 @@ async function verify(studentId: unknown, code: unknown) {
   const [{ data }, { data: settings }] = await Promise.all([
     supabase
       .from("applicants")
-      .select("id, code, first_result, interview")
+      .select("id, code, first_result, interview, preview")
       .eq("student_id", studentId)
       .maybeSingle(),
     supabase
@@ -38,12 +38,14 @@ async function verify(studentId: unknown, code: unknown) {
   if (!data || data.code !== code) return null;
 
   const flags = await readPublishFlags(supabase, (settings ?? null) as PublishSettings | null);
+  // 미리보기 대상은 전체 발표 전에도 자기 면접 시간을 고를 수 있다
+  const preview = (data as { preview?: boolean }).preview === true;
 
   return {
     supabase,
     applicant: data as { id: string; first_result: string; interview: string | null },
-    firstPublished: flags.first.published,
-    finalPublished: flags.final.published,
+    firstPublished: flags.first.published || preview,
+    finalPublished: flags.final.published || preview,
     lockAt: (settings?.interview_lock_at as string | null | undefined) ?? null,
   };
 }

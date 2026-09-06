@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Shell } from "@/components/layout/Shell/Shell";
 import { Button } from "@/components/ui/Button/Button";
@@ -8,6 +9,7 @@ import { TextField } from "@/components/ui/Field/Field";
 import { cohortLabel, type RecruitConfig } from "@/lib/recruit-config";
 import { interviewPassed } from "@/lib/interview-slots";
 import { InterviewPicker, type InterviewSlotOption } from "./InterviewPicker";
+import { PREVIEW_LABEL, PREVIEW_STAGES, previewResult, previewSlots } from "./preview";
 import styles from "./status.module.css";
 
 /**
@@ -54,6 +56,24 @@ function stageOf(r: StatusResult): Stage {
   return afterFirstPass(r);
 }
 
+/** 개발 서버에서만 나오는 화면 고르는 줄 — 카드뉴스 만들 때 여기서 갈아 끼운다 */
+function PreviewBar({ current }: { current: string | null }) {
+  return (
+    <div className={styles.previewBar}>
+      <span className={styles.previewTag}>미리보기</span>
+      {PREVIEW_STAGES.map((s) => (
+        <a
+          key={s}
+          href={`?preview=${s}`}
+          className={cn(styles.previewLink, current === s && styles.previewOn)}
+        >
+          {PREVIEW_LABEL[s]}
+        </a>
+      ))}
+    </div>
+  );
+}
+
 interface StatusViewProps {
   config: RecruitConfig;
   nextSteps: string[];
@@ -75,6 +95,16 @@ export function StatusView({ config, nextSteps, interviewPlace }: StatusViewProp
   const [slots, setSlots] = useState<InterviewSlotOption[]>([]);
   /** 화면에서 시간을 바꿀 수 있어야 하므로 조회한 학번·번호를 들고 있는다 */
   const [checked, setChecked] = useState<{ sid: string; code: string } | null>(null);
+
+  /*
+   * 개발 서버에서 ?preview=... 로 화면만 띄워 본다. 안내 카드뉴스를 만들려면
+   * 합격 화면 같은 것이 필요한데, 그러자고 실제 결과를 발표할 수는 없다.
+   *
+   * NODE_ENV 는 빌드할 때 값이 박히므로 배포본에서는 이 갈래가 통째로 사라진다.
+   */
+  const params = useSearchParams();
+  const isDev = process.env.NODE_ENV === "development";
+  const preview = isDev ? previewResult(params.get("preview")) : null;
 
   async function check(sid: string, c: string) {
     setChecking(true);
@@ -116,7 +146,13 @@ export function StatusView({ config, nextSteps, interviewPlace }: StatusViewProp
     check(studentId.trim(), code.trim());
   }
 
-  if (!result) {
+  // 미리보기일 때는 지어낸 결과를 실제 결과 대신 쓴다
+  const shown = preview ?? result;
+  const shownSlots = preview ? previewSlots() : slots;
+  // 미리보기에는 조회한 학번이 없다. 화면을 그리는 데만 쓰이므로 지어낸다
+  const who = preview ? { sid: "2026000", code: "000000" } : checked;
+
+  if (!shown) {
     return (
       <Shell title="지원 현황" back="/">
         <h1 className={styles.centerTitle}>학번과 비밀번호로 확인해요</h1>
@@ -156,10 +192,11 @@ export function StatusView({ config, nextSteps, interviewPlace }: StatusViewProp
     );
   }
 
-  const stage = stageOf(result);
+  const stage = stageOf(shown);
 
   return (
     <Shell title="지원 현황" back="/">
+      {preview && <PreviewBar current={params.get("preview")} />}
       {stage === "submitted" && (
         <>
           <div className={styles.successIcon}>
@@ -208,14 +245,14 @@ export function StatusView({ config, nextSteps, interviewPlace }: StatusViewProp
             </p>
           </div>
 
-          {checked && (
+          {who && (
             <InterviewPicker
-              studentId={checked.sid}
-              code={checked.code}
-              slots={slots}
-              current={result.interview}
+              studentId={who.sid}
+              code={who.code}
+              slots={shownSlots}
+              current={shown.interview}
               // 최종 발표 뒤에도 바꿀 수 없다 — 서버가 막는 조건과 같게 둔다
-              locked={result.interviewLocked || result.finalPublished}
+              locked={shown.interviewLocked || shown.finalPublished}
               place={interviewPlace}
               onBooked={(label, next) => {
                 setResult((r) => (r ? { ...r, interview: label || null } : r));
@@ -266,9 +303,9 @@ export function StatusView({ config, nextSteps, interviewPlace }: StatusViewProp
             ))}
           </div>
 
-          {result.interview && (
+          {shown.interview && (
             <p className={styles.infoNote}>
-              면접 시간 <b>{result.interview}</b>
+              면접 시간 <b>{shown.interview}</b>
             </p>
           )}
           <p className={styles.infoNote}>

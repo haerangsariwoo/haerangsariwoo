@@ -144,11 +144,21 @@ export default async function LandingPage() {
                     결과 확인
                   </Link>
                 </div>
+              ) : phase === "closed" ? (
+                /* 접수만 닫힌다 — 낸 사람이 결과를 보러 갈 길은 남겨 둔다 */
+                <>
+                  <p className={styles.closedNote}>
+                    지원서 접수가 마감됐습니다. 서류 결과와 면접 일정은 아래에서 확인해 주세요.
+                  </p>
+                  <div className={styles.scheduleActions}>
+                    <Link href="/apply/status" className={styles.ctaPrimary}>
+                      결과 확인 →
+                    </Link>
+                  </div>
+                </>
               ) : (
                 <p className={styles.closedNote}>
-                  {phase === "before"
-                    ? `${config.applyStart} 부터 지원서를 받습니다. 일정은 위 표를 확인해 주세요.`
-                    : "지원서 접수가 마감됐습니다. 다음 모집 일정은 준비되는 대로 이곳과 공식 Instagram 에 안내드립니다."}
+                  {`${config.applyStart} 부터 지원서를 받습니다. 일정은 위 표를 확인해 주세요.`}
                 </p>
               )}
             </div>

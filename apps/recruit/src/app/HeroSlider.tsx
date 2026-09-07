@@ -166,15 +166,25 @@ export function HeroSlider({ phase, slides: heroSlides }: HeroSliderProps) {
                 결과 확인
               </Link>
             </>
+          ) : phase === "closed" ? (
+            /*
+             * 마감됐다고 입구까지 닫으면, 낸 사람은 자기 결과를 볼 길이
+             * 없어진다. 닫히는 것은 접수뿐이다 — 결과와 면접 일정을 보는
+             * 길은 그대로 열어 둔다.
+             */
+            <>
+              <Link href="/apply/status" className={styles.actionPrimary}>
+                결과 확인 <span aria-hidden="true">→</span>
+              </Link>
+              <span className={cn(styles.actionSecondary, styles.actionIdle)}>모집 마감</span>
+            </>
           ) : (
             /*
-             * 접수 기간이 아닐 때는 누를 곳이 없다는 것 자체가 정보다.
+             * 아직 시작 전일 때는 누를 곳이 없다는 것 자체가 정보다.
              * 링크처럼 생긴 것을 두면 눌러 보고서야 알게 되므로,
              * 같은 자리에 상태만 적어 둔다.
              */
-            <span className={cn(styles.actionSecondary, styles.actionIdle)}>
-              {phase === "before" ? "모집 준비 중" : "모집 마감"}
-            </span>
+            <span className={cn(styles.actionSecondary, styles.actionIdle)}>모집 준비 중</span>
           )}
         </div>
       </div>

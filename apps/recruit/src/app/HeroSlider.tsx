@@ -173,10 +173,11 @@ export function HeroSlider({ phase, slides: heroSlides }: HeroSliderProps) {
              * 길은 그대로 열어 둔다.
              */
             <>
+              {/* 접수 중일 때의 [지원하기][결과 확인] 과 자리를 맞춘다 */}
+              <span className={cn(styles.actionSecondary, styles.actionIdle)}>지원 마감</span>
               <Link href="/apply/status" className={styles.actionPrimary}>
                 결과 확인 <span aria-hidden="true">→</span>
               </Link>
-              <span className={cn(styles.actionSecondary, styles.actionIdle)}>모집 마감</span>
             </>
           ) : (
             /*

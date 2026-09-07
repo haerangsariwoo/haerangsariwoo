@@ -3,6 +3,7 @@ import { Badge, Panel, ui } from "@/components/admin/Panel";
 import { createClient } from "@/lib/supabase/server";
 import { getRecruitSettings } from "@/lib/content-queries";
 import type { Applicant, SlotRow } from "@/lib/admin-data";
+import { expandSlot } from "@/lib/interview-slots";
 import styles from "./dashboard.module.css";
 
 export default async function RecruitDashboard() {
@@ -39,6 +40,25 @@ export default async function RecruitDashboard() {
     { no: 4, label: "최종 발표", date: config.finalResultDate },
   ];
 
+  /*
+   * 정원은 "한 타임에 몇 명" 이다. 하루 전체 정원은 (칸 수 × 타임당 정원) 이고,
+   * 예약 수는 그 슬롯이 실제로 만들어 낸 시각과 맞춰 센다 — 날짜 앞글자만 보면
+   * 같은 날에 슬롯을 둘로 나눠 열었을 때 양쪽이 같은 예약을 겹쳐 센다.
+   */
+  const slotStats = slots.map((s) => {
+    const times = expandSlot(s);
+    const labels = new Set(times.map((t) => t.label));
+    return {
+      slot: s,
+      total: times.length * s.capacity,
+      count: applicants.filter((a) => a.interview && labels.has(a.interview)).length,
+    };
+  });
+
+  const seatTotal = slotStats.reduce((sum, x) => sum + x.total, 0);
+  // 슬롯을 고친 뒤 남은, 지금은 없는 시각에 잡힌 예약
+  const strayCount = bookedCount - slotStats.reduce((sum, x) => sum + x.count, 0);
+
   const recent = applicants.slice(0, 4);
 
   return (
@@ -68,22 +88,24 @@ export default async function RecruitDashboard() {
           </div>
         </Panel>
 
-        <Panel title="면접 슬롯 현황" count={`예약 ${bookedCount} / ${slots.reduce((sum, s) => sum + s.capacity, 0)}`}>
+        <Panel title="면접 슬롯 현황" count={`예약 ${bookedCount} / ${seatTotal}`}>
           <div className={styles.progressWrap}>
-            {slots.map((s) => {
-              const count = applicants.filter((a) => a.interview?.startsWith(s.slot_date)).length;
-              const pct = s.capacity > 0 ? Math.round((count / s.capacity) * 100) : 0;
+            {slotStats.map(({ slot, total, count }) => {
+              const pct = total > 0 ? Math.min(100, Math.round((count / total) * 100)) : 0;
               return (
-                <div key={s.id} className={styles.progressRow}>
+                <div key={slot.id} className={styles.progressRow}>
                   <div className={styles.progressHead}>
-                    <span className={styles.progressLabel}>{s.slot_date}</span>
+                    <span className={styles.progressLabel}>
+                      {slot.slot_date}
+                      <span className={styles.progressSub}>{slot.time_range}</span>
+                    </span>
                     <span className={styles.progressValue}>
-                      {count}/{s.capacity}
+                      {count}/{total}
                     </span>
                   </div>
                   <div className={styles.track}>
                     <div
-                      className={cn(styles.fill, pct >= 100 && styles.full)}
+                      className={cn(styles.fill, count >= total && styles.full)}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -91,6 +113,12 @@ export default async function RecruitDashboard() {
               );
             })}
             {slots.length === 0 && <p className={ui.muted}>열어둔 면접 슬롯이 없습니다.</p>}
+            {strayCount > 0 && (
+              <p className={ui.muted}>
+                지금 열어둔 시간에 없는 예약 {strayCount}건이 있습니다. 슬롯을 고친 뒤 남은
+                예약이니 면접 일정에서 확인해 주세요.
+              </p>
+            )}
           </div>
         </Panel>
       </div>

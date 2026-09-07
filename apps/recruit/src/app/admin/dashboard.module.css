@@ -112,12 +112,22 @@
 
 .progressHead {
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
+  gap: 10px;
   font-size: 12px;
 }
 
 .progressLabel {
   font-weight: 700;
+}
+
+/* 몇 시부터 몇 시까지를 몇 분 간격으로 열었는지 — 정원 숫자를 읽는 근거다 */
+.progressSub {
+  margin-left: 8px;
+  font-weight: 500;
+  color: var(--ink-600);
+  font-variant-numeric: tabular-nums;
 }
 
 .progressValue {

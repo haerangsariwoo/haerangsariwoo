@@ -138,21 +138,6 @@
 }
 
 /* ---------- 저장 ---------- */
-/* 운영진만 보는 자리 — 저장 단추와 나란히 두되 눈에 덜 띄게 */
-.edit {
-  flex: none;
-  height: 30px;
-  padding: 0 12px;
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-pill);
-  background: var(--surface-white);
-  color: var(--ink-600);
-  font-size: 12px;
-  font-weight: 600;
-}
-
 .saveAll {
   flex: none;
   height: 30px;
@@ -195,4 +180,35 @@
   padding: 24px 0;
   font-size: 14px;
   color: var(--ink-600);
+}
+
+/* ---------- 운영진 자리 ---------- */
+/* 단추가 아니라 글씨로 둔다 — 보러 온 사람에게는 없는 것처럼 보여야 한다 */
+.postActions {
+  display: flex;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.postEdit,
+.postRemove {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.postEdit {
+  color: var(--ink-600);
+}
+
+.postRemove {
+  color: var(--state-danger);
+}
+
+.postRemove:disabled {
+  color: var(--ink-600);
+  cursor: default;
 }

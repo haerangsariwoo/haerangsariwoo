@@ -19,12 +19,11 @@ import {
   ratioLabel,
   type AlbumRatio,
 } from "@/lib/album-ratio";
+import { ALBUM_BUCKET } from "@/lib/community";
 import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { FocusEditor } from "./FocusEditor";
 import styles from "./composer.module.css";
-
-const BUCKET = "album-photos";
 
 /**
  * 화면에 놓인 사진 한 장.
@@ -139,8 +138,8 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
       const thumbPath = storagePath(userId, `thumb-${thumb.name}`);
 
       const [{ error: fullError }, { error: thumbError }] = await Promise.all([
-        supabase.storage.from(BUCKET).upload(path, full),
-        supabase.storage.from(BUCKET).upload(thumbPath, thumb),
+        supabase.storage.from(ALBUM_BUCKET).upload(path, full),
+        supabase.storage.from(ALBUM_BUCKET).upload(thumbPath, thumb),
       ]);
       if (fullError || thumbError) throw new Error("upload failed");
 
@@ -192,7 +191,7 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
             .delete()
             .in("id", dropped.map((p) => p.rowId));
           await supabase.storage
-            .from(BUCKET)
+            .from(ALBUM_BUCKET)
             .remove(dropped.flatMap((p) => [p.path, p.thumbPath].filter(Boolean) as string[]));
         }
 
@@ -248,7 +247,7 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
       router.refresh();
       return;
     } catch (e) {
-      if (uploaded.length > 0) await supabase.storage.from(BUCKET).remove(uploaded);
+      if (uploaded.length > 0) await supabase.storage.from(ALBUM_BUCKET).remove(uploaded);
       setBusy(null);
       setError(
         e instanceof FileTooLargeError
@@ -256,28 +255,6 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
           : "저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
       );
     }
-  }
-
-  /** 게시글을 통째로 지운다. 사진 파일까지 함께 — 남겨두면 용량만 먹는다 */
-  async function removeAlbum() {
-    if (!album || busy) return;
-    if (!window.confirm(`"${album.title}" 게시글을 지울까요? 사진도 함께 지워집니다.`)) return;
-
-    setBusy("지우는 중…");
-    setError(null);
-
-    const files = album.photos.flatMap((p) => [p.path, p.thumbPath].filter(Boolean) as string[]);
-    if (files.length > 0) await supabase.storage.from(BUCKET).remove(files);
-
-    const { error: deleteError } = await supabase.from("albums").delete().eq("id", album.id);
-    if (deleteError) {
-      setBusy(null);
-      setError("지우지 못했어요. 잠시 후 다시 시도해 주세요.");
-      return;
-    }
-
-    router.replace("/community?tab=앨범");
-    router.refresh();
   }
 
   const frame = albumRatioCss(ratio);
@@ -431,16 +408,6 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
         >
           {busy ?? (isEdit ? "저장" : "올리기")}
         </button>
-        {isEdit && (
-          <button
-            type="button"
-            className={styles.remove}
-            onClick={removeAlbum}
-            disabled={busy !== null}
-          >
-            게시글 지우기
-          </button>
-        )}
       </div>
     </div>
   );

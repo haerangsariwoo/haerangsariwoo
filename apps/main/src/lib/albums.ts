@@ -1,10 +1,9 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import { tonesFor, type Album, type AlbumPhoto } from "@/lib/community";
+import { ALBUM_BUCKET, tonesFor, type Album, type AlbumPhoto } from "@/lib/community";
 import { toAlbumRatio } from "./album-ratio";
 import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 
-export const ALBUM_BUCKET = "album-photos";
 
 interface AlbumRow {
   id: string;

@@ -17,6 +17,9 @@ export interface AlbumPhoto {
   focus: PhotoFocus;
 }
 
+/** 앨범 사진이 담기는 스토리지 버킷. 서버도 브라우저도 같은 이름을 쓴다 */
+export const ALBUM_BUCKET = "album-photos";
+
 export type AlbumTone = "sky" | "mint" | "peach" | "lavender";
 
 export interface Album {

@@ -16,30 +16,37 @@ type Tab = "공지" | "앨범";
 interface BoardProps {
   notices: NoticeItem[];
   albums: Album[];
+  /** 운영진·관리자에게만 글쓰기 단추를 보여준다 */
+  canPost: boolean;
 }
 
-export function CommunityBoard({ notices, albums }: BoardProps) {
+export function CommunityBoard({ notices, albums, canPost }: BoardProps) {
   // useSearchParams 는 직접 접속 시 서버 렌더에서 suspend 하므로 경계로 감싼다
   return (
-    <Suspense fallback={<CommunityView notices={notices} albums={albums} initialTab="공지" />}>
-      <CommunityFromQuery notices={notices} albums={albums} />
+    <Suspense
+      fallback={
+        <CommunityView notices={notices} albums={albums} canPost={canPost} initialTab="공지" />
+      }
+    >
+      <CommunityFromQuery notices={notices} albums={albums} canPost={canPost} />
     </Suspense>
   );
 }
 
 /** 홈의 "앨범 전체보기"처럼 ?tab=앨범 으로 들어오면 앨범 탭을 연다 */
-function CommunityFromQuery({ notices, albums }: BoardProps) {
+function CommunityFromQuery({ notices, albums, canPost }: BoardProps) {
   const params = useSearchParams();
   return (
     <CommunityView
       notices={notices}
       albums={albums}
+      canPost={canPost}
       initialTab={params.get("tab") === "앨범" ? "앨범" : "공지"}
     />
   );
 }
 
-function CommunityView({ notices, albums, initialTab }: BoardProps & { initialTab: Tab }) {
+function CommunityView({ notices, albums, canPost, initialTab }: BoardProps & { initialTab: Tab }) {
   const [tab, setTab] = useState<Tab>(initialTab);
   const sorted = [...notices].sort((a, b) => Number(b.pinned) - Number(a.pinned));
 
@@ -91,6 +98,15 @@ function CommunityView({ notices, albums, initialTab }: BoardProps & { initialTa
           </div>
         ) : (
           <div className={styles.list}>
+            {canPost && (
+              /* 활동을 마치고 폰으로 바로 올리는 자리 — 관리자 화면까지 갈 일이 없다 */
+              <Link href="/community/album/new" className={styles.writeRow}>
+                <span className={styles.writePlus} aria-hidden="true">
+                  ＋
+                </span>
+                사진과 글 올리기
+              </Link>
+            )}
             {albums.map((a) => (
               <Link key={a.id} href={`/community/album/${a.id}`} className={styles.albumRow}>
                 {/* 대표 사진 한 장만 — 넉 장을 깔면 목록이 사진첩처럼 보인다 */}

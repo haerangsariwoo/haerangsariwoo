@@ -185,3 +185,26 @@
   color: var(--ink-600);
   white-space: nowrap;
 }
+
+/* 운영진에게만 보이는 글쓰기 자리. 목록 맨 위에 둔다 —
+   올릴 것이 있어서 들어온 사람은 아래로 내려갈 이유가 없다. */
+.writeRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  color: var(--brand-blue-500);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.writePlus {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--brand-surface);
+  font-size: 15px;
+  line-height: 1;
+}

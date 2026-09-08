@@ -1,0 +1,199 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.heading {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+.count {
+  font-weight: 500;
+  color: var(--ink-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-white);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-800);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--brand-blue-500);
+}
+
+/* ---------- 고른 사진 ---------- */
+.picked {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+}
+
+.thumb {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--brand-tint-05);
+}
+
+.thumbImage {
+  object-fit: cover;
+}
+
+.thumbRemove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* 순서가 곧 넘겨 보는 차례라 여기서 바꿀 수 있어야 한다 */
+.thumbMove {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+}
+
+.thumbMove button {
+  flex: 1;
+  height: 22px;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.thumbMove button:disabled {
+  color: rgba(255, 255, 255, 0.35);
+  cursor: default;
+}
+
+.addTile {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-white);
+  color: var(--ink-600);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addTile:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---------- 비율 ---------- */
+.ratioRow {
+  display: flex;
+  gap: 8px;
+}
+
+.ratioBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 9px 6px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-white);
+  color: var(--ink-800);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ratioValue {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.ratioOn {
+  border-color: var(--brand-blue-500);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
+}
+
+.ratioOn .ratioValue {
+  color: var(--brand-blue-500);
+}
+
+/* ---------- 올리기 ---------- */
+.actions {
+  padding-top: 4px;
+}
+
+.publish {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.publish:disabled {
+  background: var(--ink-300);
+  cursor: default;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--state-danger);
+}

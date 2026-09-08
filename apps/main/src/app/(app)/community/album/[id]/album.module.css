@@ -183,25 +183,41 @@
 }
 
 /* ---------- 운영진 자리 ---------- */
-/* 단추가 아니라 글씨로 둔다 — 보러 온 사람에게는 없는 것처럼 보여야 한다 */
+/*
+ * 단추가 아니라 글씨다. 둘 다 색으로만 구분한다 — 파란 글씨는 옮겨 가는
+ * 곳, 붉은 글씨는 되돌릴 수 없는 일. 테두리를 두르면 보러 온 부원 눈에도
+ * 무게가 실린다.
+ */
 .postActions {
   display: flex;
-  gap: 16px;
-  padding-top: 4px;
+  gap: 18px;
+  padding-top: 8px;
 }
 
 .postEdit,
 .postRemove {
+  appearance: none;
   padding: 0;
   border: none;
   background: none;
   font-size: 13px;
   font-weight: 600;
+  line-height: 1.4;
   cursor: pointer;
+  /* 눌렀을 때 폰이 씌우는 회색 네모를 걷는다 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 전역 초점 테두리는 네모를 그려 단추처럼 보인다. 밑줄로 바꾼다 */
+.postEdit:focus-visible,
+.postRemove:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .postEdit {
-  color: var(--ink-600);
+  color: var(--brand-blue-500);
 }
 
 .postRemove {

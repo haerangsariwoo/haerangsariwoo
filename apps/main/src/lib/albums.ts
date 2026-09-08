@@ -42,7 +42,9 @@ export const getAlbums = cache(async (): Promise<Album[]> => {
           fullUrl: full,
           // ?download 를 붙이면 브라우저가 열지 않고 파일로 받는다
           downloadUrl: `${full}?download`,
+          rowId: p.id,
           path: p.path,
+          thumbPath: p.thumb_path,
           focus: p.focus ?? defaultPhotoFocus,
         };
       });

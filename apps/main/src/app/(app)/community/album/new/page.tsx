@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentMember } from "@/lib/get-current-member";
-import { AlbumComposer } from "./AlbumComposer";
+import { AlbumComposer } from "../AlbumComposer";
 
 /**
  * 게시글 쓰기.

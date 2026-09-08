@@ -8,8 +8,12 @@ export interface AlbumPhoto {
   fullUrl: string;
   /** 저장 버튼이 쓰는 주소 — 브라우저가 열지 않고 받도록 되어 있다 */
   downloadUrl: string;
-  /** 스토리지 경로 — 관리자 화면에서 지울 때 쓴다 */
+  /** DB 행 id — 고칠 때 이 사진을 가리킨다 */
+  rowId?: string;
+  /** 스토리지 경로 — 지울 때 쓴다 */
   path?: string;
+  /** 썸네일 경로. 예전 사진은 없다 */
+  thumbPath?: string | null;
   focus: PhotoFocus;
 }
 

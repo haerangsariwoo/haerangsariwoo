@@ -189,6 +189,9 @@
 
 /* ---------- 올리기 ---------- */
 .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding-top: 4px;
 }
 
@@ -213,6 +216,23 @@
 .error {
   font-size: 13px;
   color: var(--state-danger);
+}
+
+/* 지우기는 되돌릴 수 없다 — 눈에 띄되 먼저 눌리지는 않는 자리에 둔다 */
+.remove {
+  align-self: center;
+  padding: 6px 10px;
+  border: none;
+  background: none;
+  color: var(--state-danger);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.remove:disabled {
+  color: var(--ink-600);
+  cursor: default;
 }
 
 /* ---------- 보이는 부분 정하기 ---------- */

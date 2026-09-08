@@ -26,14 +26,31 @@ import styles from "./composer.module.css";
 
 const BUCKET = "album-photos";
 
-/** 고른 사진 한 장 — 올리기 전까지는 브라우저 안에만 있다 */
-interface Picked {
-  key: string;
-  file: File;
-  /** 미리보기용 임시 주소 */
-  url: string;
-  /** 틀 안에서 어느 부분을 보여줄지 */
-  focus: PhotoFocus;
+/**
+ * 화면에 놓인 사진 한 장.
+ *
+ * 이미 올라가 있는 사진(kept)과 방금 고른 사진(new)을 한 줄에 섞어 다뤄야
+ * 순서를 자유롭게 바꿀 수 있다. 저장할 때만 둘을 갈라 처리한다.
+ */
+type Slot =
+  | {
+      kind: "kept";
+      key: string;
+      rowId: string;
+      path: string;
+      thumbPath: string | null;
+      url: string;
+      focus: PhotoFocus;
+    }
+  | { kind: "new"; key: string; file: File; url: string; focus: PhotoFocus };
+
+/** 고치려고 불러온 게시글 */
+export interface ComposerAlbum {
+  id: string;
+  title: string;
+  body: string;
+  ratio: AlbumRatio;
+  photos: { rowId: string; path: string; thumbPath: string | null; url: string; focus: PhotoFocus }[];
 }
 
 function todayLabel() {
@@ -42,23 +59,26 @@ function todayLabel() {
 }
 
 /**
- * 앨범 게시글 작성.
+ * 앨범 게시글 쓰기·고치기.
  *
  * 예전에는 관리자 화면까지 들어가야 사진을 올릴 수 있었다. 활동을 마치고
  * 폰으로 바로 올리는 자리가 필요해 커뮤니티 안으로 옮겼다.
  *
- * 올리기를 누르기 전까지는 아무것도 저장하지 않는다 — 쓰다 만 게시글이
- * 부원들 화면에 먼저 뜨는 일이 없어야 한다.
+ * 새로 쓸 때는, 올리기를 누르기 전까지 아무것도 저장하지 않는다 — 쓰다 만
+ * 게시글이 부원들 화면에 먼저 뜨는 일이 없어야 한다.
  */
-export function AlbumComposer() {
+export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const fileInput = useRef<HTMLInputElement>(null);
+  const isEdit = album !== undefined;
 
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [ratio, setRatio] = useState<AlbumRatio>(DEFAULT_ALBUM_RATIO);
-  const [photos, setPhotos] = useState<Picked[]>([]);
+  const [title, setTitle] = useState(album?.title ?? "");
+  const [body, setBody] = useState(album?.body ?? "");
+  const [ratio, setRatio] = useState<AlbumRatio>(album?.ratio ?? DEFAULT_ALBUM_RATIO);
+  const [photos, setPhotos] = useState<Slot[]>(
+    album?.photos.map((p) => ({ kind: "kept" as const, key: p.rowId, ...p })) ?? [],
+  );
 
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +90,7 @@ export function AlbumComposer() {
     setPhotos((prev) => [
       ...prev,
       ...Array.from(files).map((file) => ({
+        kind: "new" as const,
         key: crypto.randomUUID(),
         file,
         url: URL.createObjectURL(file),
@@ -81,7 +102,8 @@ export function AlbumComposer() {
   function removePhoto(key: string) {
     setPhotos((prev) => {
       const gone = prev.find((p) => p.key === key);
-      if (gone) URL.revokeObjectURL(gone.url);
+      // 아직 안 올린 사진만 임시 주소를 되돌린다. 올라간 사진은 진짜 주소다
+      if (gone?.kind === "new") URL.revokeObjectURL(gone.url);
       return prev.filter((p) => p.key !== key);
     });
   }
@@ -100,7 +122,35 @@ export function AlbumComposer() {
     });
   }
 
-  async function publish() {
+  /** 방금 고른 사진을 줄여 올리고, 저장할 행 모양으로 돌려준다 */
+  async function uploadNew(userId: string, uploaded: string[]) {
+    const paths = new Map<string, { path: string; thumb_path: string }>();
+    const fresh = photos.filter((p) => p.kind === "new");
+
+    for (let i = 0; i < fresh.length; i++) {
+      setBusy(`사진 올리는 중 ${i + 1}/${fresh.length}`);
+      const p = fresh[i] as Extract<Slot, { kind: "new" }>;
+
+      // 원본(내려받기용)과 썸네일(목록용)을 함께 만든다
+      const full = await compressImage(p.file, ALBUM_PRESET);
+      const thumb = await compressImage(p.file, THUMB_PRESET);
+
+      const path = storagePath(userId, full.name);
+      const thumbPath = storagePath(userId, `thumb-${thumb.name}`);
+
+      const [{ error: fullError }, { error: thumbError }] = await Promise.all([
+        supabase.storage.from(BUCKET).upload(path, full),
+        supabase.storage.from(BUCKET).upload(thumbPath, thumb),
+      ]);
+      if (fullError || thumbError) throw new Error("upload failed");
+
+      uploaded.push(path, thumbPath);
+      paths.set(p.key, { path, thumb_path: thumbPath });
+    }
+    return paths;
+  }
+
+  async function save() {
     if (busy) return;
     if (!title.trim()) {
       setError("제목을 적어주세요.");
@@ -116,50 +166,77 @@ export function AlbumComposer() {
       return;
     }
 
-    // 올리다 실패하면 지워야 하므로 올린 경로를 들고 간다
+    // 실패하면 도로 지워야 하므로 이번에 올린 경로를 들고 간다
     const uploaded: string[] = [];
-    const rows: {
-      path: string;
-      thumb_path: string;
-      sort_order: number;
-      focus: PhotoFocus;
-    }[] = [];
+    const fields = { title: title.trim(), body: body.trim() || null, ratio };
 
     try {
-      for (let i = 0; i < photos.length; i++) {
-        setBusy(`사진 올리는 중 ${i + 1}/${photos.length}`);
+      const fresh = await uploadNew(user.id, uploaded);
+      setBusy("저장하는 중…");
 
-        // 원본(내려받기용)과 썸네일(목록용)을 함께 만든다
-        const full = await compressImage(photos[i].file, ALBUM_PRESET);
-        const thumb = await compressImage(photos[i].file, THUMB_PRESET);
+      if (album) {
+        const { error: updateError } = await supabase
+          .from("albums")
+          .update(fields)
+          .eq("id", album.id);
+        if (updateError) throw new Error("album update failed");
 
-        const path = storagePath(user.id, full.name);
-        const thumbPath = storagePath(user.id, `thumb-${thumb.name}`);
+        // 뺀 사진은 행과 파일을 함께 지운다
+        const keptIds = new Set(
+          photos.filter((p) => p.kind === "kept").map((p) => (p as { rowId: string }).rowId),
+        );
+        const dropped = album.photos.filter((p) => !keptIds.has(p.rowId));
+        if (dropped.length > 0) {
+          await supabase
+            .from("album_photos")
+            .delete()
+            .in("id", dropped.map((p) => p.rowId));
+          await supabase.storage
+            .from(BUCKET)
+            .remove(dropped.flatMap((p) => [p.path, p.thumbPath].filter(Boolean) as string[]));
+        }
 
-        const [{ error: fullError }, { error: thumbError }] = await Promise.all([
-          supabase.storage.from(BUCKET).upload(path, full),
-          supabase.storage.from(BUCKET).upload(thumbPath, thumb),
-        ]);
-        if (fullError || thumbError) throw new Error("upload failed");
+        // 남긴 사진은 순서와 보이는 자리가 바뀌었을 수 있다
+        for (let i = 0; i < photos.length; i++) {
+          const p = photos[i];
+          if (p.kind !== "kept") continue;
+          await supabase
+            .from("album_photos")
+            .update({ sort_order: i, focus: p.focus })
+            .eq("id", p.rowId);
+        }
 
-        uploaded.push(path, thumbPath);
-        rows.push({ path, thumb_path: thumbPath, sort_order: i, focus: photos[i].focus });
+        const added = photos
+          .map((p, i) => ({ p, i }))
+          .filter(({ p }) => p.kind === "new")
+          .map(({ p, i }) => ({ ...fresh.get(p.key)!, sort_order: i, focus: p.focus, album_id: album.id }));
+        if (added.length > 0) {
+          const { error: photoError } = await supabase.from("album_photos").insert(added);
+          if (photoError) throw new Error("photo insert failed");
+        }
+
+        router.replace(`/community/album/${album.id}`);
+        router.refresh();
+        return;
       }
 
-      setBusy("올리는 중…");
       const { data, error: insertError } = await supabase
         .from("albums")
-        .insert({ title: title.trim(), body: body.trim() || null, ratio, date_label: todayLabel() })
+        .insert({ ...fields, date_label: todayLabel() })
         .select("id")
         .single();
       if (insertError || !data) throw new Error("album insert failed");
 
       const albumId = (data as { id: string }).id;
+      const rows = photos.map((p, i) => ({
+        ...fresh.get(p.key)!,
+        sort_order: i,
+        focus: p.focus,
+        album_id: albumId,
+      }));
 
       if (rows.length > 0) {
-        const { error: photoError } = await supabase
-          .from("album_photos")
-          .insert(rows.map((r) => ({ ...r, album_id: albumId })));
+        const { error: photoError } = await supabase.from("album_photos").insert(rows);
         if (photoError) {
           // 사진 없는 껍데기 게시글을 남기지 않는다
           await supabase.from("albums").delete().eq("id", albumId);
@@ -176,9 +253,31 @@ export function AlbumComposer() {
       setError(
         e instanceof FileTooLargeError
           ? e.message
-          : "올리지 못했어요. 잠시 후 다시 시도해 주세요.",
+          : "저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
       );
     }
+  }
+
+  /** 게시글을 통째로 지운다. 사진 파일까지 함께 — 남겨두면 용량만 먹는다 */
+  async function removeAlbum() {
+    if (!album || busy) return;
+    if (!window.confirm(`"${album.title}" 게시글을 지울까요? 사진도 함께 지워집니다.`)) return;
+
+    setBusy("지우는 중…");
+    setError(null);
+
+    const files = album.photos.flatMap((p) => [p.path, p.thumbPath].filter(Boolean) as string[]);
+    if (files.length > 0) await supabase.storage.from(BUCKET).remove(files);
+
+    const { error: deleteError } = await supabase.from("albums").delete().eq("id", album.id);
+    if (deleteError) {
+      setBusy(null);
+      setError("지우지 못했어요. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+
+    router.replace("/community?tab=앨범");
+    router.refresh();
   }
 
   const frame = albumRatioCss(ratio);
@@ -187,7 +286,7 @@ export function AlbumComposer() {
   return (
     <div className={styles.page}>
       <PageHeader title="" back={{ href: "/community", label: "커뮤니티" }} />
-      <h1 className={styles.heading}>게시글 쓰기</h1>
+      <h1 className={styles.heading}>{isEdit ? "게시글 수정" : "게시글 작성"}</h1>
 
       <label className={styles.field}>
         <span className={styles.label}>제목</span>
@@ -327,11 +426,21 @@ export function AlbumComposer() {
         <button
           type="button"
           className={styles.publish}
-          onClick={publish}
+          onClick={save}
           disabled={busy !== null || !title.trim()}
         >
-          {busy ?? "올리기"}
+          {busy ?? (isEdit ? "저장" : "올리기")}
         </button>
+        {isEdit && (
+          <button
+            type="button"
+            className={styles.remove}
+            onClick={removeAlbum}
+            disabled={busy !== null}
+          >
+            게시글 지우기
+          </button>
+        )}
       </div>
     </div>
   );

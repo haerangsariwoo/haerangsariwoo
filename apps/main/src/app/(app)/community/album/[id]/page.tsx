@@ -1,13 +1,15 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { findAlbum } from "@/lib/albums";
+import { getCurrentMember } from "@/lib/get-current-member";
 import { AlbumGrid } from "./AlbumGrid";
 import { SavePhotos } from "./SavePhotos";
 import styles from "./album.module.css";
 
 export default async function AlbumDetailPage({ params }: PageProps<"/community/album/[id]">) {
   const { id } = await params;
-  const item = await findAlbum(id);
+  const [item, me] = await Promise.all([findAlbum(id), getCurrentMember()]);
   if (!item) notFound();
 
   return (
@@ -18,6 +20,11 @@ export default async function AlbumDetailPage({ params }: PageProps<"/community/
         {/* 저장 단추는 제목 옆에 — 사진을 다 내려 보기 전에 눈에 들어와야 한다 */}
         <div className={styles.headTop}>
           <h1 className={styles.title}>{item.title}</h1>
+          {me && me.role !== "부원" && (
+            <Link href={`/community/album/${item.id}/edit`} className={styles.edit}>
+              수정
+            </Link>
+          )}
           <SavePhotos album={item} />
         </div>
         <p className={styles.meta}>

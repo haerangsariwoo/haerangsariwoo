@@ -1,7 +1,6 @@
 import { Panel } from "@/components/admin/Panel/Panel";
 import { getAppContent } from "@/lib/app-content-queries";
 import { HomeCopyPanel, FaqPanel, NoticeCopyPanel } from "./ContentPanels";
-import { AlbumPanel } from "./AlbumPanel";
 
 export const metadata = { title: "콘텐츠 관리 · 해랑사리우" };
 
@@ -29,8 +28,6 @@ export default async function AdminContentPage() {
       >
         <NoticeCopyPanel content={content} />
       </Panel>
-
-      <AlbumPanel />
     </>
   );
 }

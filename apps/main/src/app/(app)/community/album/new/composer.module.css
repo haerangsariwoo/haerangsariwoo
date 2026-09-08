@@ -92,17 +92,19 @@
 /* 순서가 곧 넘겨 보는 차례라 여기서 바꿀 수 있어야 한다 */
 .thumbMove {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 4px;
+  left: 4px;
   display: flex;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
 }
 
 .thumbMove button {
-  flex: 1;
+  width: 22px;
   height: 22px;
+  padding: 0;
   border: none;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
   font-size: 14px;
   line-height: 1;
@@ -112,6 +114,21 @@
 .thumbMove button:disabled {
   color: rgba(255, 255, 255, 0.35);
   cursor: default;
+}
+
+/* 어느 부분이 보일지는 조각만 봐서는 못 정한다 — 크게 열어 맞춘다 */
+.thumbFocus {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24px;
+  border: none;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .addTile {
@@ -196,4 +213,106 @@
 .error {
   font-size: 13px;
   color: var(--state-danger);
+}
+
+/* ---------- 보이는 부분 정하기 ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 22, 31, 0.55);
+  z-index: 50;
+}
+
+.sheet {
+  position: fixed;
+  z-index: 51;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-white);
+}
+
+.sheetTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-800);
+}
+
+.sheetHint {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-600);
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--brand-tint-05);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.stage:active {
+  cursor: grabbing;
+}
+
+.stageImage {
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.zoomRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.zoomLabel {
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+.zoomSlider {
+  flex: 1;
+  accent-color: var(--brand-blue-500);
+}
+
+.sheetActions {
+  display: flex;
+  gap: 8px;
+}
+
+.sheetReset,
+.sheetDone {
+  flex: 1;
+  height: 40px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sheetReset {
+  border: 1px solid var(--hairline);
+  background: var(--surface-white);
+  color: var(--ink-800);
+}
+
+.sheetDone {
+  border: none;
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
 }

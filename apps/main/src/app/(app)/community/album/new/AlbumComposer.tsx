@@ -12,8 +12,16 @@ import {
   FileTooLargeError,
   THUMB_PRESET,
 } from "@/lib/image-compress";
-import { ALBUM_RATIOS, albumRatioCss, DEFAULT_ALBUM_RATIO, type AlbumRatio } from "@/lib/album-ratio";
+import {
+  ALBUM_RATIOS,
+  albumRatioCss,
+  DEFAULT_ALBUM_RATIO,
+  ratioLabel,
+  type AlbumRatio,
+} from "@/lib/album-ratio";
+import { defaultPhotoFocus, type PhotoFocus } from "@/lib/photo-focus";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
+import { FocusEditor } from "./FocusEditor";
 import styles from "./composer.module.css";
 
 const BUCKET = "album-photos";
@@ -24,6 +32,8 @@ interface Picked {
   file: File;
   /** 미리보기용 임시 주소 */
   url: string;
+  /** 틀 안에서 어느 부분을 보여줄지 */
+  focus: PhotoFocus;
 }
 
 function todayLabel() {
@@ -32,7 +42,7 @@ function todayLabel() {
 }
 
 /**
- * 앨범 게시글 쓰기.
+ * 앨범 게시글 작성.
  *
  * 예전에는 관리자 화면까지 들어가야 사진을 올릴 수 있었다. 활동을 마치고
  * 폰으로 바로 올리는 자리가 필요해 커뮤니티 안으로 옮겼다.
@@ -52,6 +62,7 @@ export function AlbumComposer() {
 
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
 
   function addFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -62,6 +73,7 @@ export function AlbumComposer() {
         key: crypto.randomUUID(),
         file,
         url: URL.createObjectURL(file),
+        focus: defaultPhotoFocus,
       })),
     ]);
   }
@@ -72,6 +84,10 @@ export function AlbumComposer() {
       if (gone) URL.revokeObjectURL(gone.url);
       return prev.filter((p) => p.key !== key);
     });
+  }
+
+  function setFocus(key: string, focus: PhotoFocus) {
+    setPhotos((prev) => prev.map((p) => (p.key === key ? { ...p, focus } : p)));
   }
 
   function move(index: number, step: number) {
@@ -102,7 +118,12 @@ export function AlbumComposer() {
 
     // 올리다 실패하면 지워야 하므로 올린 경로를 들고 간다
     const uploaded: string[] = [];
-    const rows: { path: string; thumb_path: string; sort_order: number }[] = [];
+    const rows: {
+      path: string;
+      thumb_path: string;
+      sort_order: number;
+      focus: PhotoFocus;
+    }[] = [];
 
     try {
       for (let i = 0; i < photos.length; i++) {
@@ -122,7 +143,7 @@ export function AlbumComposer() {
         if (fullError || thumbError) throw new Error("upload failed");
 
         uploaded.push(path, thumbPath);
-        rows.push({ path, thumb_path: thumbPath, sort_order: i });
+        rows.push({ path, thumb_path: thumbPath, sort_order: i, focus: photos[i].focus });
       }
 
       setBusy("올리는 중…");
@@ -161,6 +182,7 @@ export function AlbumComposer() {
   }
 
   const frame = albumRatioCss(ratio);
+  const editingPhoto = photos.find((p) => p.key === editing);
 
   return (
     <div className={styles.page}>
@@ -188,7 +210,19 @@ export function AlbumComposer() {
           {photos.map((p, i) => (
             <div key={p.key} className={styles.thumb} style={{ aspectRatio: frame }}>
               {/* 아직 안 올린 사진이라 next/image 최적화를 태울 수 없다 */}
-              <Image className={styles.thumbImage} src={p.url} alt="" fill sizes="120px" unoptimized />
+              <Image
+                className={styles.thumbImage}
+                src={p.url}
+                alt=""
+                fill
+                sizes="120px"
+                unoptimized
+                style={{
+                  objectPosition: `${p.focus.x}% ${p.focus.y}%`,
+                  transform: `scale(${p.focus.zoom})`,
+                  transformOrigin: `${p.focus.x}% ${p.focus.y}%`,
+                }}
+              />
               <button
                 type="button"
                 className={styles.thumbRemove}
@@ -196,6 +230,13 @@ export function AlbumComposer() {
                 aria-label={`${i + 1}번째 사진 빼기`}
               >
                 ×
+              </button>
+              <button
+                type="button"
+                className={styles.thumbFocus}
+                onClick={() => setEditing(p.key)}
+              >
+                위치 조정
               </button>
               {photos.length > 1 && (
                 <div className={styles.thumbMove}>
@@ -270,6 +311,17 @@ export function AlbumComposer() {
       </label>
 
       {error && <p className={styles.error}>{error}</p>}
+
+      {editingPhoto && (
+        <FocusEditor
+          src={editingPhoto.url}
+          frame={frame}
+          frameLabel={ratioLabel(ratio)}
+          focus={editingPhoto.focus}
+          onChange={(focus) => setFocus(editingPhoto.key, focus)}
+          onClose={() => setEditing(null)}
+        />
+      )}
 
       <div className={styles.actions}>
         <button

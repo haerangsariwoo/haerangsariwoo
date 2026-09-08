@@ -104,7 +104,7 @@ function CommunityView({ notices, albums, canPost, initialTab }: BoardProps & { 
                 <span className={styles.writePlus} aria-hidden="true">
                   ＋
                 </span>
-                사진과 글 올리기
+                게시글 작성
               </Link>
             )}
             {albums.map((a) => (

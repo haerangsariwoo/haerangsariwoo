@@ -208,3 +208,99 @@
   font-size: 15px;
   line-height: 1;
 }
+
+/* 글쓰기 줄 오른쪽에 차례 바꾸기 — 둘 다 운영진만 본다 */
+.writeBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.orderStart {
+  flex: none;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink-600);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.orderBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.orderHint {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ink-600);
+}
+
+.orderCancel,
+.orderSave {
+  flex: none;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.orderCancel {
+  color: var(--ink-600);
+}
+
+.orderSave {
+  color: var(--brand-blue-500);
+}
+
+.orderCancel:disabled,
+.orderSave:disabled {
+  color: var(--ink-300);
+  cursor: default;
+}
+
+.orderError {
+  padding: 4px 0;
+  font-size: 13px;
+  color: var(--state-danger);
+}
+
+/* 차례를 바꾸는 동안은 눌러도 글이 열리지 않는다 */
+.albumRowStatic {
+  cursor: default;
+}
+
+.moveCol {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 4px;
+  align-self: center;
+}
+
+.moveCol button {
+  width: 30px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--surface-white);
+  color: var(--ink-800);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.moveCol button:disabled {
+  color: var(--ink-300);
+  cursor: default;
+}

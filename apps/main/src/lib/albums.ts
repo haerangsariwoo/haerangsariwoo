@@ -13,6 +13,7 @@ interface AlbumRow {
   title: string;
   body: string | null;
   ratio: string | null;
+  sort_order: number | null;
   date_label: string;
   album_photos: {
     id: string;
@@ -29,6 +30,8 @@ export const getAlbums = cache(async (): Promise<Album[]> => {
     .from("albums")
     // 컬럼을 나열하면 아직 만들지 않은 컬럼 하나 때문에 앨범 전체를 못 읽는다
     .select("*, album_photos(id, path, thumb_path, sort_order, focus)")
+    // 큰 값이 위로. 운영진이 정한 차례가 없으면 올린 시각 순으로 떨어진다
+    .order("sort_order", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
 
   const rows = (data ?? []) as unknown as AlbumRow[];

@@ -233,9 +233,18 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
         return;
       }
 
+      // 새 글은 지금 제일 큰 값보다 하나 크게 — 목록 맨 위에 놓인다
+      const { data: top } = await supabase
+        .from("albums")
+        .select("sort_order")
+        .order("sort_order", { ascending: false, nullsFirst: false })
+        .limit(1)
+        .maybeSingle();
+      const nextOrder = ((top as { sort_order: number | null } | null)?.sort_order ?? 0) + 1;
+
       const { data, error: insertError } = await supabase
         .from("albums")
-        .insert({ ...fields, date_label: todayLabel() })
+        .insert({ ...fields, sort_order: nextOrder, date_label: todayLabel() })
         .select("id")
         .single();
       if (insertError || !data) throw new Error("album insert failed");

@@ -19,6 +19,14 @@ export function PostActions({ album }: { album: Album }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /** 지운 파일 수만큼 실제로 지워졌는지 본다. 막히면 false */
+  async function removeFiles(paths: string[]) {
+    const { data, error: removeError } = await supabase.storage
+      .from(ALBUM_BUCKET)
+      .remove(paths);
+    return !removeError && (data?.length ?? 0) === paths.length;
+  }
+
   async function remove() {
     if (busy) return;
     if (!window.confirm(`"${album.title}" 게시글을 지울까요? 사진도 함께 지워집니다.`)) return;
@@ -30,12 +38,23 @@ export function PostActions({ album }: { album: Album }) {
     const files = album.photos.flatMap((p) =>
       [p.path, p.thumbPath].filter(Boolean) as string[],
     );
-    if (files.length > 0) await supabase.storage.from(ALBUM_BUCKET).remove(files);
+    /*
+     * 파일 지우기가 막혀도 게시글은 지운다 — 지우려던 일은 끝내는 게 맞다.
+     * 다만 조용히 넘기지는 않는다. 예전에는 결과를 안 봐서, 파일이 남는 줄
+     * 모른 채 버킷에 쌓였다.
+     */
+    const filesLeft = files.length > 0 && !(await removeFiles(files));
 
     const { error: deleteError } = await supabase.from("albums").delete().eq("id", album.id);
     if (deleteError) {
       setBusy(false);
       setError("지우지 못했어요. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+
+    if (filesLeft) {
+      setBusy(false);
+      setError("게시글은 지웠지만 사진 파일이 남았어요. 운영진에게 알려주세요.");
       return;
     }
 

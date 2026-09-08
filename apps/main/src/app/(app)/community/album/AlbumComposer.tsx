@@ -168,6 +168,8 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
     // 실패하면 도로 지워야 하므로 이번에 올린 경로를 들고 간다
     const uploaded: string[] = [];
     const fields = { title: title.trim(), body: body.trim() || null, ratio };
+    // 뺀 사진의 파일이 안 지워졌는가
+    let leftovers = false;
 
     try {
       const fresh = await uploadNew(user.id, uploaded);
@@ -190,9 +192,15 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
             .from("album_photos")
             .delete()
             .in("id", dropped.map((p) => p.rowId));
-          await supabase.storage
+
+          // 파일 지우기가 막혀도 저장은 끝낸다. 대신 남았다는 것을 알린다
+          const files = dropped.flatMap(
+            (p) => [p.path, p.thumbPath].filter(Boolean) as string[],
+          );
+          const { data: gone, error: removeError } = await supabase.storage
             .from(ALBUM_BUCKET)
-            .remove(dropped.flatMap((p) => [p.path, p.thumbPath].filter(Boolean) as string[]));
+            .remove(files);
+          if (removeError || (gone?.length ?? 0) !== files.length) leftovers = true;
         }
 
         // 남긴 사진은 순서와 보이는 자리가 바뀌었을 수 있다
@@ -212,6 +220,12 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
         if (added.length > 0) {
           const { error: photoError } = await supabase.from("album_photos").insert(added);
           if (photoError) throw new Error("photo insert failed");
+        }
+
+        if (leftovers) {
+          setBusy(null);
+          setError("저장했지만 뺀 사진의 파일이 남았어요. 운영진에게 알려주세요.");
+          return;
         }
 
         router.replace(`/community/album/${album.id}`);

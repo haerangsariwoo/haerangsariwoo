@@ -10,6 +10,7 @@ import {
   useNotificationDenied,
   useSupportsPush,
 } from "@/lib/push/client-env";
+import { registerServiceWorker } from "@/lib/push/register-sw";
 import styles from "./PushSettings.module.css";
 
 /** VAPID 공개키(base64url)를 subscribe 가 요구하는 Uint8Array 로 바꾼다 */
@@ -36,11 +37,7 @@ export function PushSettings() {
   // 이미 이 기기에서 알림을 켰는지 확인한다
   useEffect(() => {
     if (!supported) return;
-    navigator.serviceWorker
-      .register(new URL("../../../lib/service-worker.js", import.meta.url), {
-        scope: "/",
-        updateViaCache: "none",
-      })
+    registerServiceWorker()
       .then((reg) => reg.pushManager.getSubscription())
       .then(setSubscription)
       .catch(() => setMessage("알림 기능을 준비하지 못했어요."));

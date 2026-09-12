@@ -1,14 +1,10 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useIsIOS, useIsStandalone } from "@/lib/push/client-env";
+import { useIsStandalone } from "@/lib/push/client-env";
+import { useInstallHelp } from "@/lib/push/install-help";
 import styles from "./HomeInstallPopup.module.css";
-
-/** 크롬 계열이 띄워주는 설치 프롬프트 이벤트 */
-interface InstallEvent extends Event {
-  prompt: () => Promise<void>;
-}
 
 const DISMISS_KEY = "haerang-install-popup-dismissed";
 
@@ -35,20 +31,11 @@ function useWasDismissed() {
  * MY 페이지의 같은 안내 카드는 그대로 남겨 언제든 다시 찾아볼 수 있다.
  */
 export function HomeInstallPopup() {
-  const isIOS = useIsIOS();
   const installed = useIsStandalone();
   const wasDismissed = useWasDismissed();
   const [dismissedNow, setDismissedNow] = useState(false);
-  const [deferred, setDeferred] = useState<InstallEvent | null>(null);
-
-  useEffect(() => {
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferred(e as InstallEvent);
-    };
-    window.addEventListener("beforeinstallprompt", onPrompt);
-    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
-  }, []);
+  // 설치를 누르면 팝업도 닫는다
+  const how = useInstallHelp(() => dismiss());
 
   const open = !installed && !wasDismissed && !dismissedNow;
 
@@ -71,28 +58,34 @@ export function HomeInstallPopup() {
           <Dialog.Title className={styles.title}>홈 화면에 추가하기</Dialog.Title>
           <p className={styles.desc}>앱처럼 바로 열 수 있고, 공지 알림도 받을 수 있어요.</p>
 
-          {isIOS ? (
+          {how.kind === "inapp" && (
+            <>
+              <p className={styles.desc}>
+                지금은 {how.app} 안의 브라우저로 보고 있어요. 여기서는 홈 화면에 추가할 수 없어요.
+              </p>
+              <ol className={styles.steps}>
+                {how.steps.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ol>
+            </>
+          )}
+
+          {how.kind === "ios" && (
             <ol className={styles.steps}>
-              <li>사파리 아래쪽 공유 버튼을 누르세요.</li>
-              <li>&ldquo;홈 화면에 추가&rdquo;를 선택하세요.</li>
-              <li>홈 화면의 해랑사리우 아이콘으로 들어와 주세요.</li>
+              {how.steps.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
             </ol>
-          ) : deferred ? (
-            <button
-              type="button"
-              className={styles.installBtn}
-              onClick={() => {
-                void deferred.prompt();
-                dismiss();
-              }}
-            >
+          )}
+
+          {how.kind === "prompt" && (
+            <button type="button" className={styles.installBtn} onClick={how.install}>
               홈 화면에 추가
             </button>
-          ) : (
-            <p className={styles.desc}>
-              브라우저 메뉴에서 &ldquo;앱 설치&rdquo; 또는 &ldquo;홈 화면에 추가&rdquo;를 선택해 주세요.
-            </p>
           )}
+
+          {how.kind === "manual" && <p className={styles.desc}>{how.text}</p>}
 
           <button type="button" className={styles.laterBtn} onClick={dismiss}>
             나중에 할게요

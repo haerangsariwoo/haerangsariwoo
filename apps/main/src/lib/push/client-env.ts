@@ -26,8 +26,48 @@ export function useIsStandalone() {
   );
 }
 
+/**
+ * 아이패드인가.
+ *
+ * iPadOS 13 부터 사파리는 기본으로 맥 이름표를 달고 다닌다. iPad 라는
+ * 글자로 찾으면 못 잡아서, 아이패드 사용자가 안드로이드 안내를 봤다.
+ * 맥인데 손가락이 닿는 화면이면 아이패드로 본다.
+ */
+function iPadLike() {
+  return (
+    /iPad/.test(navigator.userAgent) ||
+    (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
+  );
+}
+
+export function useIsIPad() {
+  return useClientValue(iPadLike, false);
+}
+
 export function useIsIOS() {
-  return useClientValue(() => /iPad|iPhone|iPod/.test(navigator.userAgent), false);
+  return useClientValue(
+    () => /iPhone|iPod/.test(navigator.userAgent) || iPadLike(),
+    false,
+  );
+}
+
+/**
+ * 앱 안에 들어 있는 브라우저인가. 맞으면 그 앱 이름을 준다.
+ *
+ * 카카오톡으로 링크를 나눠 주면 카톡 안의 브라우저로 열린다. 거기에는
+ * 공유 버튼도 브라우저 메뉴도 없어서 홈 화면 추가가 아예 불가능하다.
+ * 안내를 바꿔주지 않으면 없는 단추를 찾게 된다.
+ */
+export function useInAppBrowser(): string | null {
+  return useClientValue(() => {
+    const ua = navigator.userAgent;
+    if (/KAKAOTALK/i.test(ua)) return "카카오톡";
+    if (/NAVER\(inapp/i.test(ua)) return "네이버 앱";
+    if (/Instagram/i.test(ua)) return "인스타그램";
+    if (/FBAN|FBAV/i.test(ua)) return "페이스북";
+    if (/Line\//i.test(ua)) return "라인";
+    return null;
+  }, null);
 }
 
 /** 이 브라우저에 푸시 API 가 있는지 (iOS 는 홈 화면 추가 전까지 없다) */

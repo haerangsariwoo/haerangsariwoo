@@ -90,5 +90,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icons/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|woff2?)$).*)"],
+  // manifest 는 로그인 전에도 읽혀야 한다 — 막으면 브라우저가 이름도 아이콘도
+  // 모르는 채 북마크만 만든다
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icons/|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|woff2?)$).*)"],
 };

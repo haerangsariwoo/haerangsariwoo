@@ -59,7 +59,7 @@ export const noticeCopies: NoticeCopy[] = [
   {
     id: "nc3",
     screen: "커뮤니티",
-    text: "공지와 활동 앨범만 제공합니다. 운영진 문의는 쪽지함의 익명 문의를 이용해 주세요.",
+    text: "공지와 활동 앨범만 제공합니다. 문의는 운영진에게 직접 말씀해 주세요.",
   },
   {
     id: "nc4",

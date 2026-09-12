@@ -123,3 +123,12 @@
   font-size: 13px;
   color: var(--state-danger);
 }
+
+/* 알림만 실패했을 때 — 올라간 공지로 가는 길 */
+.errorLink {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--brand-blue-500);
+  font-weight: 700;
+  text-decoration: underline;
+}

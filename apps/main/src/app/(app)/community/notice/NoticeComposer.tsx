@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { createClient } from "@/lib/supabase/client";
 import { NOTICE_CATEGORIES, toParagraphs, type NoticeCategory } from "@/lib/notices-shared";
+import { sendNoticePush } from "@/app/actions/push";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import styles from "./composer.module.css";
 
@@ -33,9 +35,13 @@ export function NoticeComposer({ notice }: { notice?: ComposerNotice }) {
   const [title, setTitle] = useState(notice?.title ?? "");
   const [body, setBody] = useState(notice?.body.join("\n\n") ?? "");
   const [pinned, setPinned] = useState(notice?.pinned ?? false);
+  // 새로 올릴 때만 묻는다. 고칠 때 다시 울리면 같은 공지로 두 번 깨우는 셈이다
+  const [push, setPush] = useState(true);
 
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /** 공지는 올라갔는데 알림만 실패한 경우 — 여기 갇히지 않게 길을 열어둔다 */
+  const [postedId, setPostedId] = useState<string | null>(null);
 
   async function save() {
     if (busy) return;
@@ -48,7 +54,7 @@ export function NoticeComposer({ notice }: { notice?: ComposerNotice }) {
       return;
     }
 
-    setBusy(true);
+    setBusy("저장하는 중…");
     setError(null);
 
     const fields = { category, title: title.trim(), body: toParagraphs(body), pinned };
@@ -57,7 +63,7 @@ export function NoticeComposer({ notice }: { notice?: ComposerNotice }) {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      setBusy(false);
+      setBusy(null);
       setError("로그인이 필요합니다. 다시 로그인해 주세요.");
       return;
     }
@@ -69,7 +75,7 @@ export function NoticeComposer({ notice }: { notice?: ComposerNotice }) {
         .update({ ...fields, updated_at: new Date().toISOString(), updated_by: user.id })
         .eq("id", notice.id);
       if (updateError) {
-        setBusy(false);
+        setBusy(null);
         setError("저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
         return;
       }
@@ -84,12 +90,31 @@ export function NoticeComposer({ notice }: { notice?: ComposerNotice }) {
       .select("id")
       .single();
     if (insertError || !data) {
-      setBusy(false);
+      setBusy(null);
       setError("올리지 못했어요. 잠시 후 다시 시도해 주세요.");
       return;
     }
 
-    router.replace(`/community/notice/${(data as { id: string }).id}`);
+    const noticeId = (data as { id: string }).id;
+
+    /*
+     * 알림까지 보내야 공지가 공지 노릇을 한다.
+     *
+     * 공지는 이미 올라갔으므로 알림이 실패해도 되돌리지 않는다. 대신 조용히
+     * 넘기지 않는다 — 보낸 줄 알고 있으면 아무도 못 본 공지가 된다.
+     */
+    if (push) {
+      setBusy("알림 보내는 중…");
+      const sent = await sendNoticePush({ title: fields.title, body: fields.body.join(" "), noticeId });
+      if (!sent.ok) {
+        setBusy(null);
+        setPostedId(noticeId);
+        setError(`공지는 올라갔지만 알림을 보내지 못했어요 — ${sent.error}`);
+        return;
+      }
+    }
+
+    router.replace(`/community/notice/${noticeId}`);
     router.refresh();
   }
 
@@ -146,16 +171,38 @@ export function NoticeComposer({ notice }: { notice?: ComposerNotice }) {
         </span>
       </label>
 
-      {error && <p className={styles.error}>{error}</p>}
+      {/* 고칠 때는 묻지 않는다 — 같은 공지로 두 번 깨우지 않는다 */}
+      {!isEdit && (
+        <label className={styles.pinRow}>
+          <input type="checkbox" checked={push} onChange={(e) => setPush(e.target.checked)} />
+          <span>
+            알림 보내기
+            <span className={styles.pinHint}>
+              알림을 켠 부원의 휴대폰으로 바로 갑니다. 누르면 이 공지로 옵니다.
+            </span>
+          </span>
+        </label>
+      )}
+
+      {error && (
+        <p className={styles.error}>
+          {error}
+          {postedId && (
+            <Link href={`/community/notice/${postedId}`} className={styles.errorLink}>
+              올라간 공지 보기
+            </Link>
+          )}
+        </p>
+      )}
 
       <div className={styles.actions}>
         <button
           type="button"
           className={styles.publish}
           onClick={save}
-          disabled={busy || !title.trim() || !body.trim()}
+          disabled={busy !== null || !title.trim() || !body.trim()}
         >
-          {busy ? "저장하는 중…" : isEdit ? "저장" : "올리기"}
+          {busy ?? (isEdit ? "저장" : "올리기")}
         </button>
       </div>
     </div>

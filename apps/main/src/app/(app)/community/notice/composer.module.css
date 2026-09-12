@@ -1,0 +1,125 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.heading {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-white);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-800);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 220px;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--brand-blue-500);
+}
+
+/* ---------- 분류 ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 7px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: var(--surface-white);
+  color: var(--ink-600);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chipOn {
+  border-color: transparent;
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
+}
+
+/* ---------- 상단 고정 ---------- */
+.pinRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-800);
+  cursor: pointer;
+}
+
+.pinRow input {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--brand-blue-500);
+}
+
+.pinHint {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-600);
+}
+
+/* ---------- 올리기 ---------- */
+.actions {
+  padding-top: 4px;
+}
+
+.publish {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.publish:disabled {
+  background: var(--ink-300);
+  cursor: default;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--state-danger);
+}

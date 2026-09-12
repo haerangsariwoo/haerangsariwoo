@@ -2,11 +2,13 @@ import { notFound } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { findNotice } from "@/lib/notices";
+import { getCurrentMember } from "@/lib/get-current-member";
+import { NoticeActions } from "./NoticeActions";
 import styles from "./notice.module.css";
 
 export default async function NoticeDetailPage({ params }: PageProps<"/community/notice/[id]">) {
   const { id } = await params;
-  const item = await findNotice(id);
+  const [item, me] = await Promise.all([findNotice(id), getCurrentMember()]);
   if (!item) notFound();
 
   return (
@@ -30,6 +32,8 @@ export default async function NoticeDetailPage({ params }: PageProps<"/community
           </p>
         ))}
       </article>
+
+      {me && me.role !== "부원" && <NoticeActions id={item.id} title={item.title} />}
     </div>
   );
 }

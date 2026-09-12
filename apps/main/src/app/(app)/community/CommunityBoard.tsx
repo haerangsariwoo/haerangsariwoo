@@ -124,6 +124,15 @@ function CommunityView({ notices, albums, canPost, initialTab }: BoardProps & { 
       <SheetGroup>
         {tab === "공지" ? (
           <div className={styles.list}>
+            {canPost && (
+              /* 공지는 자리에서 바로 알려야 할 때가 많다 — 관리자 화면까지 갈 일이 없다 */
+              <Link href="/community/notice/new" className={styles.writeRow}>
+                <span className={styles.writePlus} aria-hidden="true">
+                  ＋
+                </span>
+                공지 작성
+              </Link>
+            )}
             {sorted.map((n) => (
               <Link
                 key={n.id}

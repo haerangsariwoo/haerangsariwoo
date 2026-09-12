@@ -51,4 +51,53 @@
   font-size: 14px;
   line-height: 1.75;
   color: var(--ink-600);
+  /* 문단 안에서 쓴 사람이 넣은 줄바꿈을 그대로 살린다 */
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- 운영진 자리 ---------- */
+/* 앨범 게시글과 같은 모양 — 단추가 아니라 색 있는 글씨다 */
+.postActions {
+  display: flex;
+  gap: 18px;
+}
+
+.postEdit,
+.postRemove {
+  appearance: none;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.postEdit:focus-visible,
+.postRemove:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.postEdit {
+  color: var(--brand-blue-500);
+}
+
+.postRemove {
+  color: var(--state-danger);
+}
+
+.postRemove:disabled {
+  color: var(--ink-600);
+  cursor: default;
+}
+
+.actionError {
+  font-size: 13px;
+  color: var(--state-danger);
 }

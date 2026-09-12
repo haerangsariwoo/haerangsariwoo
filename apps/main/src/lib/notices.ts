@@ -1,7 +1,8 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import type { NoticeCategory } from "./notices-shared";
 
-export type NoticeCategory = "필독" | "일정" | "후기" | "MT";
+export type { NoticeCategory } from "./notices-shared";
 
 export interface NoticeItem {
   id: string;

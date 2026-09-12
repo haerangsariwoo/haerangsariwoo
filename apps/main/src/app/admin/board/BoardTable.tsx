@@ -304,7 +304,15 @@ export function BoardTable() {
         setError("글을 수정하지 못했습니다.");
         return;
       }
-      if (dropped.length > 0) await supabase.storage.from(BUCKET).remove(dropped);
+      // 뺀 첨부는 파일까지 지운다. 결과를 안 보면 지워진 줄 알고 쌓인다
+      if (dropped.length > 0) {
+        const { data: gone, error: removeError } = await supabase.storage
+          .from(BUCKET)
+          .remove(dropped);
+        if (removeError || (gone?.length ?? 0) !== dropped.length) {
+          setError("글은 수정했지만 뺀 첨부 파일이 남았습니다.");
+        }
+      }
 
       const updated = toPost(data as unknown as PostRow);
       setRows((prev) => prev.map((p) => (p.id === editingId ? updated : p)));
@@ -340,14 +348,22 @@ export function BoardTable() {
     const prev = rows;
     setRows((cur) => cur.filter((p) => p.id !== id));
 
+    let filesLeft = false;
     if (post && post.filePaths.length > 0) {
-      await supabase.storage.from(BUCKET).remove(post.filePaths);
+      const { data: gone, error: removeError } = await supabase.storage
+        .from(BUCKET)
+        .remove(post.filePaths);
+      filesLeft = Boolean(removeError) || (gone?.length ?? 0) !== post.filePaths.length;
     }
+
     const { error: deleteError } = await supabase.from("board_posts").delete().eq("id", id);
     if (deleteError) {
       setRows(prev);
       setError("삭제하지 못했습니다.");
+      return;
     }
+    // 글은 지웠으니 되돌리지 않는다. 파일이 남았다는 것만 알린다
+    if (filesLeft) setError("글은 지웠지만 첨부 파일이 남았습니다.");
   }
 
   if (loading) return <p className={tableStyles.muted}>불러오는 중...</p>;

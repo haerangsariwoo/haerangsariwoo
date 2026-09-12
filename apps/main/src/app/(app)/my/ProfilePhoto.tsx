@@ -83,14 +83,26 @@ export function ProfilePhoto({ initial, photoUrl, focus: initialFocus }: Props) 
       return;
     }
 
-    // 예전 사진은 이제 아무도 안 쓰므로 정리한다
+    /*
+     * 예전 사진은 이제 아무도 안 쓰므로 정리한다.
+     *
+     * 결과를 안 보면 지워진 줄 알고 넘어가고, 바꿀 때마다 파일이 쌓인다.
+     * 새 사진은 이미 저장됐으니 되돌리지는 않고 알리기만 한다.
+     */
     const oldPath = (prev as { photo_path: string | null } | null)?.photo_path;
-    if (oldPath) await supabase.storage.from(BUCKET).remove([oldPath]);
+    let oldLeft = false;
+    if (oldPath) {
+      const { data: gone, error: removeError } = await supabase.storage
+        .from(BUCKET)
+        .remove([oldPath]);
+      oldLeft = Boolean(removeError) || (gone?.length ?? 0) === 0;
+    }
 
     const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, 60 * 60);
     setUrl(signed?.signedUrl ?? null);
     setFocus(defaultPhotoFocus);
     setBusy(false);
+    if (oldLeft) setError("새 사진은 저장했지만 예전 사진이 남았어요. 운영진에게 알려주세요.");
   }
 
   async function saveFocus(next: PhotoFocus) {
@@ -99,7 +111,11 @@ export function ProfilePhoto({ initial, photoUrl, focus: initialFocus }: Props) 
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase.from("members").update({ photo_focus: next }).eq("id", user.id);
+    const { error: saveError } = await supabase
+      .from("members")
+      .update({ photo_focus: next })
+      .eq("id", user.id);
+    if (saveError) setError("사진 위치를 저장하지 못했어요.");
   }
 
   return (

@@ -135,9 +135,14 @@ export default function VerifyPage() {
     const prev = history;
     setHistory((cur) => cur.filter((r) => r.id !== item.id));
 
+    let filesLeft = false;
     if (item.photo_paths.length > 0) {
-      await supabase.storage.from("proof-files").remove(item.photo_paths);
+      const { data: gone, error: removeError } = await supabase.storage
+        .from("proof-files")
+        .remove(item.photo_paths);
+      filesLeft = Boolean(removeError) || (gone?.length ?? 0) !== item.photo_paths.length;
     }
+
     const { error: deleteError } = await supabase
       .from("proof_submissions")
       .delete()
@@ -145,7 +150,10 @@ export default function VerifyPage() {
     if (deleteError) {
       setHistory(prev);
       setError("취소하지 못했습니다. 다시 시도해 주세요.");
+      return;
     }
+    // 제출은 취소됐으니 되돌리지 않는다. 사진이 남았다는 것만 알린다
+    if (filesLeft) setError("제출은 취소했지만 올린 사진이 남았어요.");
   }
 
   function resetForm() {

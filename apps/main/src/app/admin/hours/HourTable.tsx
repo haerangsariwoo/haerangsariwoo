@@ -128,9 +128,14 @@ export function HourTable() {
     const prev = rows;
     setRows((cur) => cur.filter((h) => h.id !== row.id));
 
+    let filesLeft = false;
     if (row.photo_paths.length > 0) {
-      await supabase.storage.from(BUCKET).remove(row.photo_paths);
+      const { data: gone, error: removeError } = await supabase.storage
+        .from(BUCKET)
+        .remove(row.photo_paths);
+      filesLeft = Boolean(removeError) || (gone?.length ?? 0) !== row.photo_paths.length;
     }
+
     const { error: deleteError } = await supabase
       .from("proof_submissions")
       .delete()
@@ -138,6 +143,11 @@ export function HourTable() {
     if (deleteError) {
       setRows(prev);
       setError("삭제하지 못했습니다. 다시 시도해 주세요.");
+      return;
+    }
+    // 기록은 지웠으니 되돌리지 않는다. 증빙 사진이 남았다는 것만 알린다
+    if (filesLeft) {
+      setError("기록은 지웠지만 증빙 사진이 남았습니다.");
     }
   }
 

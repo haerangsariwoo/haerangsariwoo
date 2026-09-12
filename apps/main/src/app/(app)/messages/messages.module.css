@@ -218,3 +218,7 @@
   line-height: 1.7;
 }
 
+.saveError {
+  font-size: 13px;
+  color: var(--state-danger);
+}

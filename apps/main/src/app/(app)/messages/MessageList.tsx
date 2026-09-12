@@ -18,6 +18,7 @@ export function MessageList({ initial }: { initial: InboxMessage[] }) {
   const [filter, setFilter] = useState<Filter>("전체");
 
   const unread = messages.filter((m) => !m.read).length;
+  const [error, setError] = useState<string | null>(null);
 
   const visible = useMemo(() => {
     if (filter === "전체") return messages;
@@ -25,22 +26,39 @@ export function MessageList({ initial }: { initial: InboxMessage[] }) {
     return messages.filter((m) => m.kind === (filter as MessageKind));
   }, [messages, filter]);
 
+  /*
+   * 읽음 표시는 화면부터 바꾸고 저장한다 — 기다리게 할 일이 아니다.
+   * 다만 저장이 실패하면 되돌린다. 안 그러면 다시 들어왔을 때 안 읽음으로
+   * 돌아와 있어, 눌렀는데 왜 그대로인지 알 수가 없다.
+   */
   async function markRead(id: string) {
     if (messages.find((m) => m.id === id)?.read) return;
     setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, read: true } : m)));
-    await supabase.from("inbox_messages").update({ is_read: true }).eq("id", id);
+
+    const { error } = await supabase.from("inbox_messages").update({ is_read: true }).eq("id", id);
+    if (error) {
+      setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, read: false } : m)));
+      setError("읽음 표시를 저장하지 못했어요.");
+    }
   }
 
   async function markAllRead() {
     const ids = messages.filter((m) => !m.read).map((m) => m.id);
     if (ids.length === 0) return;
     setMessages((prev) => prev.map((m) => ({ ...m, read: true })));
-    await supabase.from("inbox_messages").update({ is_read: true }).in("id", ids);
+
+    const { error } = await supabase.from("inbox_messages").update({ is_read: true }).in("id", ids);
+    if (error) {
+      const back = new Set(ids);
+      setMessages((prev) => prev.map((m) => (back.has(m.id) ? { ...m, read: false } : m)));
+      setError("읽음 표시를 저장하지 못했어요.");
+    }
   }
 
   return (
     <div className={styles.page}>
       <PageHeader title="쪽지함" back={{ href: "/home", label: "홈" }} />
+      {error && <p className={styles.saveError}>{error}</p>}
 
       <div className={styles.summary}>
         <div className={styles.summaryBody}>

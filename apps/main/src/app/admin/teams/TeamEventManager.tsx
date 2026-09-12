@@ -245,7 +245,12 @@ export function TeamEventManager() {
     const payload: Record<string, number> = {};
     if (patch.teamSize !== undefined) payload.team_size = patch.teamSize;
     if (patch.teamCount !== undefined) payload.team_count = patch.teamCount;
-    await supabase.from("team_events").update(payload).eq("id", selectedId);
+
+    const { error: updateError } = await supabase
+      .from("team_events")
+      .update(payload)
+      .eq("id", selectedId);
+    if (updateError) setError("조 설정을 저장하지 못했습니다. 다시 시도해 주세요.");
   }
 
   /** 바뀐 사람만 골라 저장한다 — 끌어다 놓을 때마다 전체를 다시 쓰지 않는다 */
@@ -286,11 +291,13 @@ export function TeamEventManager() {
     // 조를 벗어난 사람의 조장 표시를 실제로도 내린다
     const dropped = Object.values(selected.leaders).filter((id) => !Object.values(leaders).includes(id));
     if (dropped.length > 0) {
-      await supabase
+      const { error: leaderError } = await supabase
         .from("team_assignments")
         .update({ is_leader: false })
         .eq("team_event_id", selected.id)
         .in("member_id", dropped);
+      // 편성은 이미 저장됐다. 조장 표시만 어긋났다는 것을 알린다
+      if (leaderError) setError("조장 표시를 내리지 못했습니다. 새로고침 후 확인해 주세요.");
     }
   }
 

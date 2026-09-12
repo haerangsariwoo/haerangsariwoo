@@ -188,10 +188,11 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
         );
         const dropped = album.photos.filter((p) => !keptIds.has(p.rowId));
         if (dropped.length > 0) {
-          await supabase
+          const { error: dropError } = await supabase
             .from("album_photos")
             .delete()
             .in("id", dropped.map((p) => p.rowId));
+          if (dropError) throw new Error("photo delete failed");
 
           // 파일 지우기가 막혀도 저장은 끝낸다. 대신 남았다는 것을 알린다
           const files = dropped.flatMap(
@@ -207,10 +208,11 @@ export function AlbumComposer({ album }: { album?: ComposerAlbum }) {
         for (let i = 0; i < photos.length; i++) {
           const p = photos[i];
           if (p.kind !== "kept") continue;
-          await supabase
+          const { error: orderError } = await supabase
             .from("album_photos")
             .update({ sort_order: i, focus: p.focus })
             .eq("id", p.rowId);
+          if (orderError) throw new Error("photo order failed");
         }
 
         const added = photos

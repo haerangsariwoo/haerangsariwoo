@@ -53,10 +53,20 @@ export function NoticeComposer({ notice }: { notice?: ComposerNotice }) {
 
     const fields = { category, title: title.trim(), body: toParagraphs(body), pinned };
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setBusy(false);
+      setError("로그인이 필요합니다. 다시 로그인해 주세요.");
+      return;
+    }
+
     if (notice) {
+      // 고친 사람과 시각을 남긴다 — 화면은 이쪽을 보여준다
       const { error: updateError } = await supabase
         .from("notices")
-        .update(fields)
+        .update({ ...fields, updated_at: new Date().toISOString(), updated_by: user.id })
         .eq("id", notice.id);
       if (updateError) {
         setBusy(false);
@@ -65,15 +75,6 @@ export function NoticeComposer({ notice }: { notice?: ComposerNotice }) {
       }
       router.replace(`/community/notice/${notice.id}`);
       router.refresh();
-      return;
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      setBusy(false);
-      setError("로그인이 필요합니다. 다시 로그인해 주세요.");
       return;
     }
 

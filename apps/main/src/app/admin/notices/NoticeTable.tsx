@@ -22,20 +22,26 @@ interface NoticeRow {
   body: string[];
   pinned: boolean;
   created_at: string;
+  updated_at: string | null;
   author: { name: string } | null;
+  editor: { name: string } | null;
 }
 
-const SELECT = "id, category, title, body, pinned, created_at, author:members(name)";
+// members 로 가는 길이 둘(작성자·수정자)이라 어느 쪽인지 짚어줘야 한다
+const SELECT =
+  "id, category, title, body, pinned, created_at, updated_at, author:members!notices_author_id_fkey(name), editor:members!notices_updated_by_fkey(name)";
 
 function toItem(r: NoticeRow): NoticeItem {
+  // 고친 적이 있으면 고친 사람·고친 날을 보여준다 — 부원 화면과 같은 기준
+  const who = (r.updated_at ? r.editor?.name : r.author?.name) ?? "운영진";
   return {
     id: r.id,
     category: r.category,
     title: r.title,
     body: r.body,
     pinned: r.pinned,
-    date: formatDate(r.created_at),
-    author: `${r.author?.name ?? "운영진"} 운영진`,
+    date: formatDate(r.updated_at ?? r.created_at),
+    author: `${who} 운영진`,
   };
 }
 
@@ -136,6 +142,10 @@ export function NoticeTable() {
           : n,
       ),
     );
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     const { error: updateError } = await supabase
       .from("notices")
       .update({
@@ -143,6 +153,9 @@ export function NoticeTable() {
         category: draft.category,
         body: [draft.body],
         pinned: draft.pinned,
+        // 고친 사람과 시각을 남긴다 — 앱 쪽 공지 수정과 같은 기준
+        updated_at: new Date().toISOString(),
+        updated_by: user?.id ?? null,
       })
       .eq("id", id);
     if (updateError) {

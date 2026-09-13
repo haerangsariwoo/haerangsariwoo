@@ -46,7 +46,7 @@ export function AnonComposer() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title="" back={{ href: "/community?tab=익명", label: "익명게시판" }} />
+      <PageHeader title="" back={{ href: "/community?tab=익명", label: "익명 게시판" }} />
       <h1 className={styles.heading}>익명 글쓰기</h1>
 
       {/* 누가 볼 수 있는지 먼저 말해 둔다 — 쓰고 나서 알면 늦다 */}

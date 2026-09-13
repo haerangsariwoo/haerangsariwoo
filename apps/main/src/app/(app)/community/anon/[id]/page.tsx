@@ -16,7 +16,7 @@ export default async function AnonPostPage({ params }: PageProps<"/community/ano
 
   return (
     <div className={styles.page}>
-      <PageHeader title="" back={{ href: "/community?tab=익명", label: "익명게시판" }} />
+      <PageHeader title="" back={{ href: "/community?tab=익명", label: "익명 게시판" }} />
 
       <div className={styles.head}>
         <h1 className={styles.title}>{post.title}</h1>

@@ -12,7 +12,7 @@ export default async function CommunityPage() {
     getCurrentMember(),
   ]);
   // 공지·앨범은 운영진만 쓴다 — 부원에게는 단추 자체를 보이지 않는다.
-  // 익명게시판은 누구나 쓴다.
+  // 익명 게시판은 누구나 쓴다.
   return (
     <CommunityBoard
       notices={notices}

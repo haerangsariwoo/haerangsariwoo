@@ -15,6 +15,8 @@ import styles from "./community.module.css";
 
 type Tab = "공지" | "앨범" | "익명";
 const TABS: Tab[] = ["공지", "앨범", "익명"];
+/** 탭에 적는 이름. 주소(?tab=익명)는 짧게 두고 화면에만 길게 적는다 */
+const TAB_LABEL: Record<Tab, string> = { 공지: "공지", 앨범: "앨범", 익명: "익명 게시판" };
 
 interface BoardProps {
   notices: NoticeItem[];
@@ -124,7 +126,7 @@ function CommunityView({
                 className={cn(styles.segmentBtn, tab === t && styles.active)}
                 onClick={() => setTab(t)}
               >
-                {t}
+                {TAB_LABEL[t]}
               </button>
             ))}
           </div>
@@ -304,7 +306,7 @@ function CommunityView({
           </div>
         ) : (
           <div className={styles.list}>
-            {/* 익명게시판은 부원 누구나 쓴다 */}
+            {/* 익명 게시판은 부원 누구나 쓴다 */}
             <Link href="/community/anon/new" className={styles.writeRow}>
               <span className={styles.writePlus} aria-hidden="true">
                 ＋

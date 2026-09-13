@@ -11,17 +11,6 @@
   color: var(--ink-800);
 }
 
-/* 누가 볼 수 있는지 — 쓰기 전에 읽혀야 한다 */
-.notice {
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  background: var(--brand-surface);
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--ink-600);
-  word-break: keep-all;
-}
-
 .field {
   display: flex;
   flex-direction: column;

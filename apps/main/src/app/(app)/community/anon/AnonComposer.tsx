@@ -49,12 +49,6 @@ export function AnonComposer() {
       <PageHeader title="" back={{ href: "/community?tab=익명", label: "익명 게시판" }} />
       <h1 className={styles.heading}>익명 글쓰기</h1>
 
-      {/* 누가 볼 수 있는지 먼저 말해 둔다 — 쓰고 나서 알면 늦다 */}
-      <p className={styles.notice}>
-        부원들에게는 누가 썼는지 보이지 않아요. 다만 욕설·비방 같은 문제가 생기면
-        관리자가 작성자를 확인할 수 있어요.
-      </p>
-
       <label className={styles.field}>
         <span className={styles.label}>제목</span>
         <input

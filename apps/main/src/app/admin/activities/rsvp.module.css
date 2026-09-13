@@ -1,0 +1,69 @@
+/* ---------- 참석 인원 — 눌러서 응답자를 펼친다 ---------- */
+.countButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  margin: -2px -6px;
+  border: none;
+  border-radius: var(--a-radius-sm);
+  background: none;
+  color: var(--a-brand);
+  font: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.countButton:hover {
+  background: var(--a-bg);
+}
+
+.chevron {
+  font-size: 10px;
+}
+
+/* 펼친 줄은 표 안에 들어가지만 표의 한 행처럼 보이면 안 된다 — 바탕을 깐다 */
+.detailRow td {
+  padding: 14px 16px 16px;
+  background: var(--a-bg);
+}
+
+.groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px 20px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.groupCount {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--a-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.names {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--a-ink);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.none {
+  font-size: 13px;
+  color: var(--a-ink-soft);
+}

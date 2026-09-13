@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useMemo, useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { createClient } from "@/lib/supabase/client";
 import { Panel } from "@/components/admin/Panel/Panel";
@@ -10,6 +10,7 @@ import {
   ACTIVITY_TYPES,
   labelsFromDate,
   type ActivityStatus,
+  type AttendState,
   type ActivityTone,
   type ActivityType,
 } from "@/lib/activities";
@@ -18,6 +19,7 @@ import { isoFromLabel } from "@/lib/semester";
 import { useSemester } from "../SemesterContext";
 import toolbar from "@/components/admin/Toolbar/Toolbar.module.css";
 import styles from "../volunteers/volunteers.module.css";
+import rsvpStyles from "./rsvp.module.css";
 
 const STATUS_LABEL: Record<ActivityStatus, string> = {
   upcoming: "예정",
@@ -46,6 +48,26 @@ const EMPTY = {
   notes: "",
 };
 
+interface Rsvp {
+  activity_id: string;
+  member_id: string;
+  state: AttendState;
+}
+
+interface MemberName {
+  id: string;
+  name: string;
+  cohort: string | null;
+}
+
+/** 응답을 펼쳐 볼 때의 묶음. 미응답은 따로 물어봐야 할 사람이라 끝에 둔다 */
+const GROUPS: { key: AttendState | "미응답"; tone: "green" | "orange" | "grey" | "danger" }[] = [
+  { key: "참석", tone: "green" },
+  { key: "미정", tone: "orange" },
+  { key: "불참", tone: "grey" },
+  { key: "미응답", tone: "danger" },
+];
+
 /** 쉼표로 구분해 입력한 걸 배열로 — 상세 페이지의 안내 사항 목록이 된다 */
 function toList(v: string) {
   return v
@@ -59,8 +81,33 @@ export function ActivityAdmin() {
   const supabase = useMemo(() => createClient(), []);
 
   const [rows, setRows] = useState<ActivityRow[]>([]);
-  const [attending, setAttending] = useState<Record<string, number>>({});
+  const [rsvps, setRsvps] = useState<Rsvp[]>([]);
+  const [members, setMembers] = useState<MemberName[]>([]);
+  /** 응답자를 펼쳐 둔 활동 */
+  const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  /** 활동마다 참석·미정·불참·미응답 명단 */
+  const responses = useMemo(() => {
+    const byActivity = new Map<string, Map<string, AttendState>>();
+    for (const r of rsvps) {
+      if (!byActivity.has(r.activity_id)) byActivity.set(r.activity_id, new Map());
+      byActivity.get(r.activity_id)!.set(r.member_id, r.state);
+    }
+    const sorted = [...members].sort((a, b) => a.name.localeCompare(b.name, "ko"));
+
+    return (activityId: string) => {
+      const answered = byActivity.get(activityId) ?? new Map<string, AttendState>();
+      const out: Record<AttendState | "미응답", MemberName[]> = {
+        참석: [],
+        미정: [],
+        불참: [],
+        미응답: [],
+      };
+      for (const m of sorted) out[answered.get(m.id) ?? "미응답"].push(m);
+      return out;
+    };
+  }, [rsvps, members]);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY);
@@ -70,21 +117,21 @@ export function ActivityAdmin() {
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      const [{ data, error: fetchError }, { data: rsvps }] = await Promise.all([
-        supabase.from("activities").select("*").order("created_at", { ascending: false }),
-        supabase.from("activity_rsvps").select("activity_id, state"),
-      ]);
+      const [{ data, error: fetchError }, { data: rsvpData }, { data: memberData }] =
+        await Promise.all([
+          supabase.from("activities").select("*").order("created_at", { ascending: false }),
+          supabase.from("activity_rsvps").select("activity_id, member_id, state"),
+          // 미응답을 가리려면 응답해야 할 사람 전체가 필요하다 — 승인된 부원만
+          supabase.from("members").select("id, name, cohort").eq("status", "approved"),
+        ]);
       if (cancelled) return;
       if (fetchError) {
         setError("활동을 불러오지 못했습니다.");
       } else {
         setRows((data ?? []) as ActivityRow[]);
       }
-      const counts: Record<string, number> = {};
-      for (const r of (rsvps ?? []) as { activity_id: string; state: string }[]) {
-        if (r.state === "참석") counts[r.activity_id] = (counts[r.activity_id] ?? 0) + 1;
-      }
-      setAttending(counts);
+      setRsvps((rsvpData ?? []) as Rsvp[]);
+      setMembers((memberData ?? []) as MemberName[]);
       setLoading(false);
     }
     load();
@@ -358,14 +405,28 @@ export function ActivityAdmin() {
         empty={loading ? "불러오는 중..." : "등록된 활동이 없습니다."}
       >
         {visible.map((a) => (
-          <tr key={a.id}>
+          <Fragment key={a.id}>
+          <tr>
             <td>
               <Badge tone="blue">{a.type}</Badge>
             </td>
             <td>{a.title}</td>
             <td className={cn(tableStyles.muted, tableStyles.numeric)}>{a.date_label}</td>
             <td className={tableStyles.muted}>{a.place}</td>
-            <td className={tableStyles.numeric}>{attending[a.id] ?? 0}명</td>
+            <td className={tableStyles.numeric}>
+              <button
+                type="button"
+                className={rsvpStyles.countButton}
+                onClick={() => setExpanded((cur) => (cur === a.id ? null : a.id))}
+                aria-expanded={expanded === a.id}
+                aria-label={`${a.title} 응답자 ${expanded === a.id ? "접기" : "펼치기"}`}
+              >
+                {responses(a.id).참석.length}명
+                <span className={rsvpStyles.chevron} aria-hidden="true">
+                  {expanded === a.id ? "▴" : "▾"}
+                </span>
+              </button>
+            </td>
             <td>
               <Badge tone={STATUS_TONE[a.status]}>{STATUS_LABEL[a.status]}</Badge>
             </td>
@@ -391,6 +452,34 @@ export function ActivityAdmin() {
               </RowAction>
             </td>
           </tr>
+          {expanded === a.id && (
+            <tr className={rsvpStyles.detailRow}>
+              {/* 표의 칸 수와 같아야 한 줄을 다 쓴다 */}
+              <td colSpan={7}>
+                <div className={rsvpStyles.groups}>
+                  {GROUPS.map((g) => {
+                    const people = responses(a.id)[g.key];
+                    return (
+                      <div key={g.key} className={rsvpStyles.group}>
+                        <div className={rsvpStyles.groupHead}>
+                          <Badge tone={g.tone}>{g.key}</Badge>
+                          <span className={rsvpStyles.groupCount}>{people.length}명</span>
+                        </div>
+                        {people.length > 0 ? (
+                          <p className={rsvpStyles.names}>
+                            {people.map((m) => m.name).join(" · ")}
+                          </p>
+                        ) : (
+                          <p className={rsvpStyles.none}>없음</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </td>
+            </tr>
+          )}
+          </Fragment>
         ))}
       </DataTable>
     </Panel>

@@ -1,4 +1,5 @@
-export type ActivityType = "개강파티" | "MT" | "친목" | "총회" | "회의";
+/** 개강파티·친해지길바라·MT·종강파티 — 부원들이 부르는 줄임말 그대로 쓴다 */
+export type ActivityType = "개파" | "친바" | "MT" | "종파";
 export type AttendState = "참석" | "미정" | "불참";
 export type ActivityStatus = "upcoming" | "today" | "closed" | "done";
 export type ActivityTone = "sky" | "mint" | "peach" | "lavender";
@@ -27,9 +28,9 @@ export interface Activity {
   teamPublished?: boolean;
 }
 
-export const activityTypes = ["전체", "개강파티", "MT", "친목", "총회"] as const;
+export const activityTypes = ["전체", "개파", "친바", "MT", "종파"] as const;
 
-export const ACTIVITY_TYPES: ActivityType[] = ["개강파티", "MT", "친목", "총회", "회의"];
+export const ACTIVITY_TYPES: ActivityType[] = ["개파", "친바", "MT", "종파"];
 export const ACTIVITY_TONES: ActivityTone[] = ["sky", "mint", "peach", "lavender"];
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];

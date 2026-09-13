@@ -7,11 +7,10 @@ import styles from "./stats.module.css";
 export const metadata = { title: "통계·내보내기 · 해랑사리우" };
 
 const TYPE_TONE = {
-  개강파티: "orange",
+  개파: "orange",
+  친바: "purple",
   MT: "blue",
-  친목: "purple",
-  총회: "green",
-  회의: "blue",
+  종파: "green",
 } as const;
 
 export default async function AdminStatsPage() {

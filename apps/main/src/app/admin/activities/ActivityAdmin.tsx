@@ -36,7 +36,7 @@ const STATUS_TONE: Record<ActivityStatus, "blue" | "green" | "orange" | "grey"> 
 };
 
 const EMPTY = {
-  type: "총회" as ActivityType,
+  type: "개파" as ActivityType,
   title: "",
   date: "",
   date_label: "",
@@ -68,12 +68,17 @@ const GROUPS: { key: AttendState | "미응답"; tone: "green" | "orange" | "grey
   { key: "미응답", tone: "danger" },
 ];
 
-/** 쉼표로 구분해 입력한 걸 배열로 — 상세 페이지의 안내 사항 목록이 된다 */
-function toList(v: string) {
-  return v
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+/**
+ * 안내 사항은 쓴 그대로 줄 단위로 담는다.
+ *
+ * 예전에는 쉼표로 나눠 받았는데, "회비 20,000원" 처럼 글 안에 쉼표가 들어가면
+ * 거기서 끊겼다. 줄바꿈은 쓰는 사람이 정한다. 앞뒤의 빈 줄만 걷는다.
+ */
+function toLines(v: string) {
+  const lines = v.replace(/\r\n/g, "\n").split("\n").map((s) => s.trimEnd());
+  while (lines.length && !lines[0].trim()) lines.shift();
+  while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+  return lines;
 }
 
 export function ActivityAdmin() {
@@ -164,7 +169,7 @@ export function ActivityAdmin() {
       target: a.target,
       tone: a.tone,
       intro: a.intro,
-      notes: a.notes.join(", "),
+      notes: a.notes.join("\n"),
     });
     setOpen(true);
   }
@@ -189,7 +194,7 @@ export function ActivityAdmin() {
       target: form.target.trim(),
       tone: form.tone,
       intro: form.intro.trim(),
-      notes: toList(form.notes),
+      notes: toLines(form.notes),
     };
     if (editingId) {
       const prev = rows;
@@ -253,7 +258,7 @@ export function ActivityAdmin() {
     <Panel
       title="활동·행사"
       count={`${visible.length}건`}
-      desc="총회·MT·개강파티처럼 부원이 참석 여부를 응답하는 동아리 행사입니다. 봉사활동은 [봉사활동 관리]에서 따로 등록합니다."
+      desc="개파·친바·MT·종파처럼 부원이 참석 여부를 응답하는 동아리 행사입니다. 봉사활동은 [봉사활동 관리]에서 따로 등록합니다."
     >
       {error && <p className={tableStyles.muted}>{error}</p>}
 
@@ -292,7 +297,7 @@ export function ActivityAdmin() {
                 className={styles.input}
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="예: 2학기 정기총회"
+                placeholder="예: 2학기 개강파티"
                 required
               />
             </label>
@@ -375,12 +380,13 @@ export function ActivityAdmin() {
             />
           </label>
           <label className={styles.field}>
-            <span className={styles.label}>안내 사항 (쉼표로 구분)</span>
-            <input
+            <span className={styles.label}>안내 사항</span>
+            <textarea
               className={styles.input}
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              placeholder="예: 전 부원 필참입니다., 회비 20,000원"
+              rows={4}
+              placeholder={"예:\n참가비 10,000원\n늦는 사람은 운영진에게 미리 말해 주세요"}
             />
           </label>
 

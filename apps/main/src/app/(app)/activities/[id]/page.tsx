@@ -53,17 +53,11 @@ export default async function ActivityDetailPage({ params }: PageProps<"/activit
         </section>
       )}
 
-      {item.notes.length > 0 && (
+      {item.notes.some((n) => n.trim()) && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>안내 사항</h2>
-          <ul className={styles.list}>
-            {item.notes.map((n) => (
-              <li key={n} className={styles.listItem}>
-                <span className={styles.bullet}>·</span>
-                {n}
-              </li>
-            ))}
-          </ul>
+          {/* 운영진이 줄을 바꾼 그대로 보여준다 — 점을 붙일지도 쓰는 사람이 정한다 */}
+          <p className={styles.notes}>{item.notes.join("\n")}</p>
         </section>
       )}
 

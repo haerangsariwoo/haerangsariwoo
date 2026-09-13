@@ -171,7 +171,7 @@ export function NoticeComposer({
               className={styles.input}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="예: 2학기 정기총회 참석 안내"
+              placeholder="예: 2학기 개강파티 참석 안내"
               required
             />
           </div>

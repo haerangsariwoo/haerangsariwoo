@@ -22,7 +22,8 @@ export type InstallHow =
   | { kind: "prompt"; install: () => void }
   | { kind: "manual"; text: string };
 
-const IOS_STEPS = (bottom: boolean) => [
+/** 아이폰·아이패드 사파리에서 홈 화면에 추가하는 차례. 아이패드는 공유 버튼이 위에 있다 */
+export const IOS_STEPS = (bottom: boolean) => [
   `사파리 ${bottom ? "아래쪽" : "위쪽"} 공유 버튼을 누르세요.`,
   "“홈 화면에 추가”를 선택하세요.",
   "홈 화면의 해랑사리우 아이콘으로 들어와 주세요.",

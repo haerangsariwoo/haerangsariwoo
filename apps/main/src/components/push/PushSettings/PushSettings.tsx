@@ -6,10 +6,12 @@ import { cn } from "@/lib/cn";
 import { subscribeUser, unsubscribeUser } from "@/app/actions/push";
 import {
   useIsIOS,
+  useIsIPad,
   useIsStandalone,
   useNotificationDenied,
   useSupportsPush,
 } from "@/lib/push/client-env";
+import { IOS_STEPS } from "@/lib/push/install-help";
 import { registerServiceWorker } from "@/lib/push/register-sw";
 import styles from "./PushSettings.module.css";
 
@@ -26,6 +28,7 @@ function urlBase64ToUint8Array(base64String: string) {
 export function PushSettings() {
   const supported = useSupportsPush();
   const isIOS = useIsIOS();
+  const isIPad = useIsIPad();
   const standalone = useIsStandalone();
   const permissionDenied = useNotificationDenied();
 
@@ -122,10 +125,11 @@ export function PushSettings() {
       {needsInstall && (
         <div className={cn(styles.info, styles.warn)}>
           <b>아이폰은 홈 화면에 추가해야 알림을 받을 수 있어요.</b>
+          {/* 홈 팝업·설치 카드와 같은 문구를 쓴다 — 세 곳이 따로 적혀 있어 아이패드만 틀렸었다 */}
           <ol className={styles.steps}>
-            <li>사파리 아래쪽 공유 버튼을 누르세요.</li>
-            <li>&ldquo;홈 화면에 추가&rdquo;를 선택하세요.</li>
-            <li>홈 화면의 해랑사리우 아이콘으로 다시 들어와 주세요.</li>
+            {IOS_STEPS(!isIPad).map((s) => (
+              <li key={s}>{s}</li>
+            ))}
           </ol>
         </div>
       )}

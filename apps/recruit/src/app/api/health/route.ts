@@ -18,6 +18,9 @@ export async function GET() {
   return NextResponse.json({
     app: "recruit",
     commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "local",
+    // 어느 저장소·어느 Vercel 계정에서 빌드됐는지 — 같은 코드를 여러 곳이 빌드하고 있어 운영 도메인이 어디서 오는지 가린다
+    repo: `${process.env.VERCEL_GIT_REPO_OWNER ?? "local"}/${process.env.VERCEL_GIT_REPO_SLUG ?? "local"}`,
+    deploymentUrl: process.env.VERCEL_URL ?? "local",
     branch: process.env.VERCEL_GIT_COMMIT_REF ?? "local",
     env: process.env.VERCEL_ENV ?? "development",
     region: runtimeRegion(),

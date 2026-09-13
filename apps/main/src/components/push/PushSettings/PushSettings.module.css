@@ -93,25 +93,3 @@
   gap: 4px;
 }
 
-.testButton {
-  height: 40px;
-  border: 1px solid var(--hairline);
-  border-radius: 0;
-  background: var(--surface-white);
-  color: var(--brand-blue-500);
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.testButton:hover {
-  border-color: var(--brand-blue-500);
-  background: var(--brand-surface);
-}
-
-.testButton:disabled {
-  color: var(--ink-600);
-  background: var(--brand-surface);
-  cursor: not-allowed;
-}

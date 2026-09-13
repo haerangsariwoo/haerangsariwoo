@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import * as Switch from "@radix-ui/react-switch";
 import { cn } from "@/lib/cn";
-import { sendTestNotification, subscribeUser, unsubscribeUser } from "@/app/actions/push";
+import { subscribeUser, unsubscribeUser } from "@/app/actions/push";
 import {
   useIsIOS,
   useIsStandalone,
@@ -94,15 +94,6 @@ export function PushSettings() {
     }
   }
 
-  async function test() {
-    if (!subscription) return;
-    setBusy(true);
-    setMessage(null);
-    const res = await sendTestNotification(subscription.endpoint);
-    setMessage(res.ok ? "테스트 알림을 보냈어요." : res.error);
-    setBusy(false);
-  }
-
   const on = Boolean(subscription);
   const denied = permissionDenied || justDenied;
   // 아이폰은 홈 화면에 추가하기 전까지 푸시 API 자체가 없다
@@ -147,12 +138,6 @@ export function PushSettings() {
         <div className={cn(styles.info, styles.warn)}>
           알림이 차단되어 있어요. 브라우저 설정에서 이 사이트의 알림을 허용해 주세요.
         </div>
-      )}
-
-      {on && (
-        <button type="button" className={styles.testButton} onClick={test} disabled={busy}>
-          테스트 알림 받아보기
-        </button>
       )}
 
       {message && <p className={cn(styles.info, on && styles.ok)}>{message}</p>}

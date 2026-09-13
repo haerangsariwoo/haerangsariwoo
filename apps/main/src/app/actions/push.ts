@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { pushConfigured, sendToAll, sendToOne } from "@/lib/push/server";
+import { pushConfigured, sendToAll } from "@/lib/push/server";
 import { removeSubscription, saveSubscription, subscriptionCount } from "@/lib/push/store";
 
 /** 브라우저가 만든 PushSubscription 을 JSON 으로 직렬화한 형태 */
@@ -29,23 +29,6 @@ export async function subscribeUser(sub: SerializedSubscription) {
 export async function unsubscribeUser(endpoint: string) {
   await removeSubscription(endpoint);
   return { ok: true as const, count: await subscriptionCount() };
-}
-
-/** 설정 화면의 "테스트 알림 받기" — 요청한 본인 기기로만 보낸다 */
-export async function sendTestNotification(endpoint: string) {
-  if (!pushConfigured) {
-    return { ok: false as const, error: "서버에 VAPID 키가 설정되지 않았습니다." };
-  }
-  const result = await sendToOne(endpoint, {
-    title: "해랑사리우",
-    body: "알림이 잘 도착했어요. 이제 공지가 올라오면 바로 알려드릴게요.",
-    url: "/messages",
-    tag: "haerang-test",
-  });
-  if (result.sent === 0) {
-    return { ok: false as const, error: "이 기기의 구독 정보를 찾지 못했어요. 알림을 껐다 켜주세요." };
-  }
-  return { ok: true as const, ...result };
 }
 
 /** 관리자 공지 등록 시 전 부원에게 알림 발송 */

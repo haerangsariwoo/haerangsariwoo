@@ -33,13 +33,6 @@ export async function sendToAll(payload: PushPayload): Promise<SendResult> {
   return send(await listSubscriptions(), payload);
 }
 
-/** 특정 기기 하나에만 보낸다 (테스트 알림용) */
-export async function sendToOne(endpoint: string, payload: PushPayload): Promise<SendResult> {
-  const subs = await listSubscriptions();
-  const target = subs.find((s) => s.endpoint === endpoint);
-  return send(target ? [target] : [], payload);
-}
-
 async function send(
   targets: Awaited<ReturnType<typeof listSubscriptions>>,
   payload: PushPayload,

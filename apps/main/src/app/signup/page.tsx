@@ -252,7 +252,7 @@ export default function SignupPage() {
             name="password"
             type="password"
             revealable
-            placeholder="6자 이상"
+            placeholder="영문+숫자 8~15자"
             value={v.password}
             onChange={(e) => set("password", e.target.value)}
             errorText={errors.password}

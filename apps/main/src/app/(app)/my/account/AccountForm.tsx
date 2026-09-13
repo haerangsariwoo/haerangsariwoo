@@ -133,7 +133,7 @@ export function AccountForm({ track: initialTrack }: { track: string }) {
             type="password"
             revealable
             autoComplete="new-password"
-            placeholder="6자 이상"
+            placeholder="영문+숫자 8~15자"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             errorText={pwErrors.newPassword}

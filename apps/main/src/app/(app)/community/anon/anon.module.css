@@ -173,3 +173,146 @@
   color: var(--ink-600);
   cursor: default;
 }
+
+/* ---------- 댓글 ---------- */
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+}
+
+.commentsTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+.commentsCount {
+  color: var(--brand-blue-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.comment {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 0;
+}
+
+.comment + .comment {
+  border-top: 1px solid var(--hairline);
+}
+
+.commentHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.commentLabel {
+  font-weight: 700;
+  color: var(--ink-800);
+}
+
+/* 글쓴이 댓글은 한눈에 가려지게 */
+.commentWriter {
+  color: var(--brand-blue-500);
+}
+
+/* 관리자에게만 채워지는 이름 */
+.commentAuthor {
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--state-warn-bg);
+  color: var(--state-warn);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.commentDate {
+  color: var(--ink-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.commentRemove {
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--state-danger);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.commentRemove:disabled {
+  color: var(--ink-600);
+  cursor: default;
+}
+
+.commentBody {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-800);
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.commentEmpty {
+  font-size: 13px;
+  color: var(--ink-600);
+}
+
+.commentForm {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.commentInput {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-white);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-800);
+  resize: none;
+}
+
+.commentInput:focus {
+  outline: none;
+  border-color: var(--brand-blue-500);
+}
+
+.commentSubmit {
+  flex: none;
+  height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.commentSubmit:disabled {
+  background: var(--ink-300);
+  cursor: default;
+}

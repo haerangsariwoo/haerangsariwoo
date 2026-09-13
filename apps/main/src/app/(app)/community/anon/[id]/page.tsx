@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
-import { findAnonAuthor, findAnonPost } from "@/lib/anon-posts";
+import { findAnonAuthor, findAnonPost, getAnonComments } from "@/lib/anon-posts";
 import { getCurrentMember } from "@/lib/get-current-member";
 import { AnonActions } from "./AnonActions";
+import { AnonComments } from "./AnonComments";
 import styles from "../anon.module.css";
 
 export default async function AnonPostPage({ params }: PageProps<"/community/anon/[id]">) {
@@ -11,8 +12,13 @@ export default async function AnonPostPage({ params }: PageProps<"/community/ano
   if (!post) notFound();
 
   // 관리자에게만 작성자를 묻는다. 관리자가 아니면 데이터베이스가 어차피 비워서 돌려준다
-  const author = me?.role === "관리자" ? await findAnonAuthor(id) : null;
-  const canDelete = post.isMine || (me !== null && me.role !== "부원");
+  const isAdmin = me?.role === "관리자";
+  const [author, comments] = await Promise.all([
+    isAdmin ? findAnonAuthor(id) : Promise.resolve(null),
+    getAnonComments(id, isAdmin),
+  ]);
+  const isStaff = me !== null && me.role !== "부원";
+  const canDelete = post.isMine || isStaff;
 
   return (
     <div className={styles.page}>
@@ -35,6 +41,8 @@ export default async function AnonPostPage({ params }: PageProps<"/community/ano
       )}
 
       {canDelete && <AnonActions id={post.id} />}
+
+      <AnonComments postId={post.id} comments={comments} canModerate={isStaff} />
     </div>
   );
 }

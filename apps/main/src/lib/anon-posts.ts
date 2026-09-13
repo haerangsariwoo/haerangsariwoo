@@ -1,9 +1,9 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateKST } from "./date-kst";
-import type { AnonPostItem } from "./anon-posts-shared";
+import type { AnonCommentItem, AnonPostItem } from "./anon-posts-shared";
 
-export type { AnonPostItem } from "./anon-posts-shared";
+export type { AnonCommentItem, AnonPostItem } from "./anon-posts-shared";
 
 interface AnonRow {
   id: string;
@@ -11,6 +11,8 @@ interface AnonRow {
   body: string;
   created_at: string;
   is_mine: boolean;
+  /** 목록 함수만 준다. 댓글 기능 설치 전이면 없다 */
+  comment_count?: number;
 }
 
 function toItem(r: AnonRow): AnonPostItem {
@@ -20,6 +22,7 @@ function toItem(r: AnonRow): AnonPostItem {
     body: r.body,
     date: formatDateKST(r.created_at),
     isMine: r.is_mine,
+    commentCount: r.comment_count ?? 0,
   };
 }
 
@@ -59,4 +62,42 @@ export async function findAnonAuthor(id: string): Promise<{ name: string; studen
   const row = (data as { name: string; student_id: string }[] | null)?.[0];
   if (error || !row) return null;
   return { name: row.name, studentId: row.student_id };
+}
+
+interface CommentRow {
+  id: string;
+  label: string;
+  body: string;
+  created_at: string;
+  is_mine: boolean;
+}
+
+/**
+ * 한 글의 댓글. 이름표(익명1 …)는 데이터베이스가 붙여 준다.
+ *
+ * 관리자면 댓글마다 작성자 이름을 함께 채운다. 관리자가 아니면 이름을 묻는
+ * 함수가 빈 결과를 주므로 전부 비어 있다.
+ */
+export async function getAnonComments(postId: string, asAdmin: boolean): Promise<AnonCommentItem[]> {
+  const supabase = await createClient();
+  const [{ data, error }, authors] = await Promise.all([
+    supabase.rpc("anon_list_comments", { p_post_id: postId }),
+    asAdmin
+      ? supabase.rpc("anon_comment_authors", { p_post_id: postId })
+      : Promise.resolve({ data: null }),
+  ]);
+  if (error || !data) return [];
+
+  const names = new Map(
+    ((authors.data ?? []) as { comment_id: string; name: string }[]).map((a) => [a.comment_id, a.name]),
+  );
+
+  return (data as CommentRow[]).map((c) => ({
+    id: c.id,
+    label: c.label,
+    body: c.body,
+    date: formatDateKST(c.created_at),
+    isMine: c.is_mine,
+    authorName: names.get(c.id) ?? null,
+  }));
 }

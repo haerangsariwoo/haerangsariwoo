@@ -319,6 +319,7 @@ function CommunityView({
                 <p className={styles.anonBody}>{p.body}</p>
                 <p className={styles.noticeMeta}>
                   익명 · {p.date}
+                  {p.commentCount > 0 && ` · 댓글 ${p.commentCount}`}
                   {p.isMine && <span className={styles.anonMine}>내 글</span>}
                 </p>
               </Link>

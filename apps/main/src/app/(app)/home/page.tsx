@@ -133,11 +133,7 @@ export default async function HomePage() {
                 <p className={styles.nextMeta}>{stats.nextThing.place}</p>
               </>
             ) : (
-              <p className={styles.nextMeta}>
-                예정된 활동이 없어요.
-                <br />
-                봉사모집에서 신청해 보세요.
-              </p>
+              <p className={styles.nextMeta}>예정된 활동이 없어요.</p>
             )}
           </article>
 

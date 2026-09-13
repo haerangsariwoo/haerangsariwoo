@@ -14,7 +14,7 @@ const MENU: { label: string; href: Route }[] = [
   { label: "봉사 인증", href: "/verify" },
   { label: "활동 기록", href: "/my/records" },
   { label: "내 조", href: "/my/team" },
-  { label: "쪽지함 · 문의", href: "/messages" },
+  { label: "쪽지함", href: "/messages" },
 ];
 
 export function AppHeader({ profile }: { profile: CurrentMember }) {

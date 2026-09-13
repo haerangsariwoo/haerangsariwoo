@@ -15,7 +15,7 @@ export const metadata = { title: "MY · 해랑사리우" };
 const MENU = [
   { label: "봉사 인증하기", href: "/verify" as const },
   { label: "활동 확인서 · 증명자료", href: "/my/records" as const },
-  { label: "쪽지함 · 문의", href: "/messages" as const },
+  { label: "쪽지함", href: "/messages" as const },
   { label: "계정 설정", href: "/my/account" as const },
 ];
 

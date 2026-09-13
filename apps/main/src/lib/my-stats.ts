@@ -26,6 +26,10 @@ export interface NextThing {
   dateLabel: string;
   meta: string;
   dday: number;
+  /** 눌러서 들어갈 곳 — 동아리 활동은 참석 여부를 고르는 화면이다 */
+  href: string;
+  /** 아직 참석 여부를 안 정한 동아리 활동 */
+  needsResponse: boolean;
 }
 
 export interface MyStats {
@@ -41,6 +45,8 @@ export interface MyStats {
   records: ActivityRecord[];
   badges: BadgeItem[];
   nextThing: NextThing | null;
+  /** 다가오는 동아리 활동 중 참석 여부를 아직 안 정한 수 */
+  unansweredCount: number;
 }
 
 /** 학기 목표 시간 — 아직 설정 화면이 없어 한 곳에 모아 둔다 */
@@ -86,6 +92,7 @@ function isoFromLabel(label: string) {
 
 interface AppRow {
   id: string;
+  activity_id: string;
   state: "신청완료" | "참여확정" | "대기" | "불참" | "노쇼";
   applied_at: string;
   internal_activities: {
@@ -107,15 +114,19 @@ interface ProofRow {
 }
 
 interface RsvpRow {
-  activities: {
-    title: string;
-    date_label: string;
-    date_short: string;
-    time_label: string;
-    place: string;
-    type: string;
-    status: string;
-  } | null;
+  activity_id: string;
+  state: "참석" | "미정" | "불참";
+}
+
+interface UpcomingActivityRow {
+  id: string;
+  title: string;
+  date_label: string;
+  date_short: string;
+  time_label: string;
+  place: string;
+  type: string;
+  status: string;
 }
 
 /**
@@ -138,30 +149,39 @@ export const getMyStats = cache(async (): Promise<MyStats> => {
     records: [],
     badges: [],
     nextThing: null,
+    unansweredCount: 0,
   };
   if (!user) return empty;
 
-  const [{ data: appData }, { data: proofData }, { data: rsvpData }] = await Promise.all([
+  const [
+    { data: appData },
+    { data: proofData },
+    { data: rsvpData },
+    { data: activityData },
+  ] = await Promise.all([
     supabase
       .from("internal_activity_applications")
       .select(
-        "id, state, applied_at, internal_activities(title, date_label, time_label, place, category, capacity)",
+        "id, activity_id, state, applied_at, internal_activities(title, date_label, time_label, place, category, capacity)",
       )
       .eq("member_id", user.id),
     supabase
       .from("proof_submissions")
       .select("id, activity_title, activity_date, hours, status")
       .eq("member_id", user.id),
+    // 답한 것만이 아니라 내 응답 전체를 본다 — 안 답한 활동을 가려내야 한다
+    supabase.from("activity_rsvps").select("activity_id, state").eq("member_id", user.id),
+    // 끝나지 않은 동아리 활동 전부. 응답 여부와 상관없이 다가오는 일정이다
     supabase
-      .from("activity_rsvps")
-      .select("activities(title, date_label, date_short, time_label, place, type, status)")
-      .eq("member_id", user.id)
-      .eq("state", "참석"),
+      .from("activities")
+      .select("id, title, date_label, date_short, time_label, place, type, status")
+      .neq("status", "done"),
   ]);
 
   const apps = (appData ?? []) as unknown as AppRow[];
   const proofs = (proofData ?? []) as ProofRow[];
-  const rsvps = (rsvpData ?? []) as unknown as RsvpRow[];
+  const rsvps = (rsvpData ?? []) as RsvpRow[];
+  const activities = (activityData ?? []) as UpcomingActivityRow[];
 
   const approved = proofs.filter((p) => p.status === "승인");
   const confirmed = apps.filter((a) => a.state === "참여확정");
@@ -243,19 +263,33 @@ export const getMyStats = cache(async (): Promise<MyStats> => {
       dateLabel: `${info.date_label}${info.time_label ? ` · ${info.time_label}` : ""}`,
       meta: a.state === "참여확정" ? "참여 확정" : a.state,
       dday,
+      href: `/volunteer/${a.activity_id}`,
+      needsResponse: false,
     });
   }
-  for (const r of rsvps) {
-    const info = r.activities;
-    if (!info || info.status === "done") continue;
+
+  /*
+   * 동아리 활동은 답하지 않은 것도 넣는다.
+   *
+   * 예전에는 "참석" 이라고 답한 활동만 올라와서, 아직 모르는 행사는 홈에서 보이지
+   * 않았다. 보여야 들어가서 참석 여부를 정한다. 불참이라고 한 활동만 뺀다.
+   */
+  const myAnswer = new Map(rsvps.map((r) => [r.activity_id, r.state]));
+  let unansweredCount = 0;
+  for (const info of activities) {
+    const answer = myAnswer.get(info.id);
+    if (answer === "불참") continue;
     const dday = ddayFromShort(info.date_short);
     if (dday === null || dday < 0) continue;
+    if (!answer) unansweredCount += 1;
     upcoming.push({
       title: info.title,
       place: info.place,
       dateLabel: `${info.date_label}${info.time_label ? ` · ${info.time_label}` : ""}`,
-      meta: `${info.type} · 참석`,
+      meta: `${info.type} · ${answer ?? "응답 전"}`,
       dday,
+      href: `/activities/${info.id}`,
+      needsResponse: !answer,
     });
   }
   upcoming.sort((a, b) => a.dday - b.dday);
@@ -270,6 +304,7 @@ export const getMyStats = cache(async (): Promise<MyStats> => {
     records,
     badges,
     nextThing: upcoming[0] ?? null,
+    unansweredCount,
   };
 });
 

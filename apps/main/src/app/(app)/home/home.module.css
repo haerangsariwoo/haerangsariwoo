@@ -160,6 +160,34 @@
   margin-top: 6px;
 }
 
+/* 카드 전체가 눌린다 — 글씨 색은 그대로 둔다 */
+.nextLink {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 아직 답하지 않은 활동은 분류 줄을 주황으로 — 할 일이 남았다는 표시 */
+.nextAsk {
+  color: var(--state-warn);
+}
+
+.nextCta {
+  align-self: flex-start;
+  margin-top: var(--space-12);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-blue-500);
+}
+
+.nextMore {
+  margin-top: var(--space-12);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-600);
+}
+
 /* ---------- section head ---------- */
 .sectionHead {
   display: flex;

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Route } from "next";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { cn } from "@/lib/cn";
@@ -118,7 +119,7 @@ export default async function HomePage() {
 
           <article className={styles.nextCard}>
             <div className={styles.nextHead}>
-              <h2 className={styles.cardTitle}>다음 활동</h2>
+              <h2 className={styles.panelTitle}>다음 활동</h2>
               {stats.nextThing && (
                 <span className={styles.ddayBadge}>
                   {stats.nextThing.dday === 0 ? "오늘" : `D-${stats.nextThing.dday}`}
@@ -126,14 +127,28 @@ export default async function HomePage() {
               )}
             </div>
             {stats.nextThing ? (
-              <>
-                <p className={styles.nextOrg}>{stats.nextThing.meta}</p>
+              /* 눌러서 들어가면 동아리 활동은 바로 참석 여부를 고른다 */
+              <Link href={stats.nextThing.href as Route} className={styles.nextLink}>
+                <p className={cn(styles.nextOrg, stats.nextThing.needsResponse && styles.nextAsk)}>
+                  {stats.nextThing.meta}
+                </p>
                 <p className={styles.nextTitle}>{stats.nextThing.title}</p>
                 <p className={styles.nextWhen}>{stats.nextThing.dateLabel}</p>
                 <p className={styles.nextMeta}>{stats.nextThing.place}</p>
-              </>
+                {stats.nextThing.needsResponse && (
+                  <span className={styles.nextCta}>참석 여부 정하기 ›</span>
+                )}
+              </Link>
             ) : (
               <p className={styles.nextMeta}>예정된 활동이 없어요.</p>
+            )}
+
+            {/* 맨 앞에 보이는 것 말고도 답하지 않은 활동이 남아 있으면 알린다 */}
+            {stats.unansweredCount > (stats.nextThing?.needsResponse ? 1 : 0) && (
+              <Link href="/activities" className={styles.nextMore}>
+                참석 여부를 정하지 않은 활동{" "}
+                {stats.unansweredCount - (stats.nextThing?.needsResponse ? 1 : 0)}개 더 ›
+              </Link>
             )}
           </article>
 

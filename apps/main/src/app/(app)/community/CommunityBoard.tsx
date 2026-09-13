@@ -10,44 +10,54 @@ import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 import { createClient } from "@/lib/supabase/client";
 import { tonesFor, type Album } from "@/lib/community";
 import type { NoticeItem } from "@/lib/notices";
+import type { AnonPostItem } from "@/lib/anon-posts-shared";
 import styles from "./community.module.css";
 
-type Tab = "공지" | "앨범";
+type Tab = "공지" | "앨범" | "익명";
+const TABS: Tab[] = ["공지", "앨범", "익명"];
 
 interface BoardProps {
   notices: NoticeItem[];
   albums: Album[];
+  anonPosts: AnonPostItem[];
   /** 운영진·관리자에게만 글쓰기 단추를 보여준다 */
   canPost: boolean;
 }
 
-export function CommunityBoard({ notices, albums, canPost }: BoardProps) {
+export function CommunityBoard({ notices, albums, anonPosts, canPost }: BoardProps) {
   // useSearchParams 는 직접 접속 시 서버 렌더에서 suspend 하므로 경계로 감싼다
   return (
     <Suspense
       fallback={
-        <CommunityView notices={notices} albums={albums} canPost={canPost} initialTab="공지" />
+        <CommunityView notices={notices} albums={albums} anonPosts={anonPosts} canPost={canPost} initialTab="공지" />
       }
     >
-      <CommunityFromQuery notices={notices} albums={albums} canPost={canPost} />
+      <CommunityFromQuery notices={notices} albums={albums} anonPosts={anonPosts} canPost={canPost} />
     </Suspense>
   );
 }
 
 /** 홈의 "앨범 전체보기"처럼 ?tab=앨범 으로 들어오면 앨범 탭을 연다 */
-function CommunityFromQuery({ notices, albums, canPost }: BoardProps) {
+function CommunityFromQuery({ notices, albums, anonPosts, canPost }: BoardProps) {
   const params = useSearchParams();
   return (
     <CommunityView
       notices={notices}
       albums={albums}
+      anonPosts={anonPosts}
       canPost={canPost}
-      initialTab={params.get("tab") === "앨범" ? "앨범" : "공지"}
+      initialTab={TABS.includes(params.get("tab") as Tab) ? (params.get("tab") as Tab) : "공지"}
     />
   );
 }
 
-function CommunityView({ notices, albums, canPost, initialTab }: BoardProps & { initialTab: Tab }) {
+function CommunityView({
+  notices,
+  albums,
+  anonPosts,
+  canPost,
+  initialTab,
+}: BoardProps & { initialTab: Tab }) {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [tab, setTab] = useState<Tab>(initialTab);
@@ -105,7 +115,7 @@ function CommunityView({ notices, albums, canPost, initialTab }: BoardProps & { 
         <div className={styles.head}>
           <PageHeader title="커뮤니티" />
           <div className={styles.segment} role="tablist" aria-label="커뮤니티 구분">
-            {(["공지", "앨범"] as Tab[]).map((t) => (
+            {TABS.map((t) => (
               <button
                 key={t}
                 type="button"
@@ -170,7 +180,7 @@ function CommunityView({ notices, albums, canPost, initialTab }: BoardProps & { 
             ))}
             {sorted.length === 0 && <p className={styles.noticeMeta}>아직 등록된 공지가 없어요.</p>}
           </div>
-        ) : (
+        ) : tab === "앨범" ? (
           <div className={styles.list}>
             {canPost &&
               (order ? (
@@ -291,6 +301,29 @@ function CommunityView({ notices, albums, canPost, initialTab }: BoardProps & { 
               </Link>
             ))}
             {albums.length === 0 && <p className={styles.noticeMeta}>아직 올라온 게시글이 없어요.</p>}
+          </div>
+        ) : (
+          <div className={styles.list}>
+            {/* 익명게시판은 부원 누구나 쓴다 */}
+            <Link href="/community/anon/new" className={styles.writeRow}>
+              <span className={styles.writePlus} aria-hidden="true">
+                ＋
+              </span>
+              익명 글쓰기
+            </Link>
+            {anonPosts.map((p) => (
+              <Link key={p.id} href={`/community/anon/${p.id}`} className={styles.noticeRow}>
+                <h2 className={styles.anonTitle}>{p.title}</h2>
+                <p className={styles.anonBody}>{p.body}</p>
+                <p className={styles.noticeMeta}>
+                  익명 · {p.date}
+                  {p.isMine && <span className={styles.anonMine}>내 글</span>}
+                </p>
+              </Link>
+            ))}
+            {anonPosts.length === 0 && (
+              <p className={styles.noticeMeta}>아직 올라온 글이 없어요. 첫 글을 남겨 보세요.</p>
+            )}
           </div>
         )}
       </SheetGroup>

@@ -1,0 +1,175 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- 글쓰기 ---------- */
+.heading {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+/* 누가 볼 수 있는지 — 쓰기 전에 읽혀야 한다 */
+.notice {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--brand-surface);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-600);
+  word-break: keep-all;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+.count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-white);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-800);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 220px;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--brand-blue-500);
+}
+
+.publish {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--brand-blue-500);
+  color: var(--surface-white);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.publish:disabled {
+  background: var(--ink-300);
+  cursor: default;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--state-danger);
+}
+
+/* ---------- 글 보기 ---------- */
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink-800);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-600);
+}
+
+.mine {
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.article {
+  padding: 20px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-white);
+  box-shadow: var(--shadow-card);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ink-800);
+  /* 쓴 사람이 넣은 줄바꿈을 그대로 살린다 */
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 관리자만 보는 줄 — 부원 화면에는 아예 그려지지 않는다 */
+.adminNote {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--state-warn-bg);
+  font-size: 12px;
+  color: var(--state-warn);
+}
+
+/* 지우기는 글씨로 — 공지·앨범과 같은 모양 */
+.actions {
+  display: flex;
+}
+
+.remove {
+  appearance: none;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--state-danger);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.remove:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.remove:disabled {
+  color: var(--ink-600);
+  cursor: default;
+}

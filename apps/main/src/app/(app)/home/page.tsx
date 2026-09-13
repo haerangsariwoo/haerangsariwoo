@@ -101,59 +101,6 @@ export default async function HomePage() {
       {/* ② 이번 학기에 할 일 */}
       <SheetGroup>
         <section className={styles.quad}>
-          <article>
-            <div className={styles.panelHead}>
-              <h2 className={styles.panelTitle}>모집 중인 봉사</h2>
-              <Link href="/volunteer" className={styles.panelMore}>
-                전체&nbsp;&nbsp;›
-              </Link>
-            </div>
-            {recruitingVolunteers.length > 0 ? (
-              <div className={styles.volunteerList}>
-                {recruitingVolunteers.map((v) => (
-                  <VolunteerCard key={v.id} item={v} compact />
-                ))}
-              </div>
-            ) : (
-              <p className={styles.nextMeta}>지금은 모집 중인 봉사가 없어요.</p>
-            )}
-          </article>
-
-          <article className={styles.nextCard}>
-            <div className={styles.nextHead}>
-              <h2 className={styles.panelTitle}>다음 활동</h2>
-              {stats.nextThing && (
-                <span className={styles.ddayBadge}>
-                  {stats.nextThing.dday === 0 ? "오늘" : `D-${stats.nextThing.dday}`}
-                </span>
-              )}
-            </div>
-            {stats.nextThing ? (
-              /* 눌러서 들어가면 동아리 활동은 바로 참석 여부를 고른다 */
-              <Link href={stats.nextThing.href as Route} className={styles.nextLink}>
-                <p className={cn(styles.nextOrg, stats.nextThing.needsResponse && styles.nextAsk)}>
-                  {stats.nextThing.meta}
-                </p>
-                <p className={styles.nextTitle}>{stats.nextThing.title}</p>
-                <p className={styles.nextWhen}>{stats.nextThing.dateLabel}</p>
-                <p className={styles.nextMeta}>{stats.nextThing.place}</p>
-                {stats.nextThing.needsResponse && (
-                  <span className={styles.nextCta}>참석 여부 정하기 ›</span>
-                )}
-              </Link>
-            ) : (
-              <p className={styles.nextMeta}>예정된 활동이 없어요.</p>
-            )}
-
-            {/* 맨 앞에 보이는 것 말고도 답하지 않은 활동이 남아 있으면 알린다 */}
-            {stats.unansweredCount > (stats.nextThing?.needsResponse ? 1 : 0) && (
-              <Link href="/activities" className={styles.nextMore}>
-                참석 여부를 정하지 않은 활동{" "}
-                {stats.unansweredCount - (stats.nextThing?.needsResponse ? 1 : 0)}개 더 ›
-              </Link>
-            )}
-          </article>
-
           {/* 공지와 익명 게시판을 한 칸에 위아래로 — 둘 다 "새 글이 올라왔나" 를 보는 자리다 */}
           <article className={styles.splitCell}>
             <div>
@@ -209,6 +156,59 @@ export default async function HomePage() {
               </Link>
             </div>
             <AlbumPreview />
+          </article>
+
+          <article>
+            <div className={styles.panelHead}>
+              <h2 className={styles.panelTitle}>모집 중인 봉사</h2>
+              <Link href="/volunteer" className={styles.panelMore}>
+                전체&nbsp;&nbsp;›
+              </Link>
+            </div>
+            {recruitingVolunteers.length > 0 ? (
+              <div className={styles.volunteerList}>
+                {recruitingVolunteers.map((v) => (
+                  <VolunteerCard key={v.id} item={v} compact />
+                ))}
+              </div>
+            ) : (
+              <p className={styles.nextMeta}>지금은 모집 중인 봉사가 없어요.</p>
+            )}
+          </article>
+
+          <article className={styles.nextCard}>
+            <div className={styles.nextHead}>
+              <h2 className={styles.panelTitle}>다음 활동</h2>
+              {stats.nextThing && (
+                <span className={styles.ddayBadge}>
+                  {stats.nextThing.dday === 0 ? "오늘" : `D-${stats.nextThing.dday}`}
+                </span>
+              )}
+            </div>
+            {stats.nextThing ? (
+              /* 눌러서 들어가면 동아리 활동은 바로 참석 여부를 고른다 */
+              <Link href={stats.nextThing.href as Route} className={styles.nextLink}>
+                <p className={cn(styles.nextOrg, stats.nextThing.needsResponse && styles.nextAsk)}>
+                  {stats.nextThing.meta}
+                </p>
+                <p className={styles.nextTitle}>{stats.nextThing.title}</p>
+                <p className={styles.nextWhen}>{stats.nextThing.dateLabel}</p>
+                <p className={styles.nextMeta}>{stats.nextThing.place}</p>
+                {stats.nextThing.needsResponse && (
+                  <span className={styles.nextCta}>참석 여부 정하기 ›</span>
+                )}
+              </Link>
+            ) : (
+              <p className={styles.nextMeta}>예정된 활동이 없어요.</p>
+            )}
+
+            {/* 맨 앞에 보이는 것 말고도 답하지 않은 활동이 남아 있으면 알린다 */}
+            {stats.unansweredCount > (stats.nextThing?.needsResponse ? 1 : 0) && (
+              <Link href="/activities" className={styles.nextMore}>
+                참석 여부를 정하지 않은 활동{" "}
+                {stats.unansweredCount - (stats.nextThing?.needsResponse ? 1 : 0)}개 더 ›
+              </Link>
+            )}
           </article>
         </section>
       </SheetGroup>

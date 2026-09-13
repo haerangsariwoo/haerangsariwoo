@@ -79,16 +79,28 @@ export function MemberAdmin() {
   // ---------- 가입 승인 대기 ----------
   const [reqQ, setReqQ] = useState("");
   const [picked, setPicked] = useState<Set<string>>(new Set());
+  /** 이번에 승인한 사람 — 새로고침 전까지는 남겨 둬서 잘못 누른 걸 되돌릴 수 있게 한다 */
+  const [decidedNow, setDecidedNow] = useState<Set<string>>(new Set());
 
-  const visibleReq = rows.filter(
-    (r) => !reqQ.trim() || r.name.includes(reqQ.trim()) || r.student_id.includes(reqQ.trim()),
-  );
+  /*
+   * 대기와 반려만 보인다.
+   *
+   * 예전에는 회원 전체를 그렸다. 위의 숫자는 대기만 세면서 표에는 이미 승인한
+   * 사람까지 늘어서, 누구를 처리해야 하는지 찾을 수가 없었다. 승인된 사람은
+   * 아래 회원 관리에 있다. 반려한 사람은 되돌릴 곳이 여기뿐이라 남긴다.
+   */
+  const visibleReq = rows.filter((r) => {
+    const inQueue = r.status !== "approved" || decidedNow.has(r.id);
+    const hitQ = !reqQ.trim() || r.name.includes(reqQ.trim()) || r.student_id.includes(reqQ.trim());
+    return inQueue && hitQ;
+  });
   const pending = rows.filter((r) => r.status === "pending");
   const pendingVisible = visibleReq.filter((r) => r.status === "pending");
   const allPicked = pendingVisible.length > 0 && pendingVisible.every((r) => picked.has(r.id));
 
   async function decide(id: string, status: Status) {
     const prev = rows;
+    setDecidedNow((cur) => new Set(cur).add(id));
     setRows((cur) => cur.map((r) => (r.id === id ? { ...r, status } : r)));
     setPicked((cur) => {
       const n = new Set(cur);
@@ -106,6 +118,7 @@ export function MemberAdmin() {
     const ids = [...picked];
     if (ids.length === 0) return;
     const prev = rows;
+    setDecidedNow((cur) => new Set([...cur, ...ids]));
     setRows((cur) => cur.map((r) => (ids.includes(r.id) ? { ...r, status } : r)));
     setPicked(new Set());
     const { error: updateError } = await supabase.from("members").update({ status }).in("id", ids);
@@ -277,8 +290,8 @@ export function MemberAdmin() {
             "상태",
             "",
           ]}
-          isEmpty={!loading && rows.length === 0}
-          empty={loading ? "불러오는 중..." : "가입 신청이 없습니다."}
+          isEmpty={!loading && visibleReq.length === 0}
+          empty={loading ? "불러오는 중..." : "대기 중인 가입 신청이 없습니다."}
         >
           {visibleReq.map((r) => (
             <tr key={r.id}>

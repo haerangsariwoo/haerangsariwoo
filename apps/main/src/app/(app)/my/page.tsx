@@ -22,6 +22,15 @@ const MENU = [
 /**
  * MY 도 세 묶음이다. 나 → 내 활동 → 설정.
  */
+/**
+ * 배지는 잠시 숨긴다.
+ *
+ * 받을 수 있는 조건과 이름을 아직 정하지 않아, 지금 보이면 대부분 잠긴 칸만
+ * 늘어서 있다. 기준이 정해지면 true 로 돌리면 된다 — 계산과 스타일은 그대로
+ * 남겨 두었다.
+ */
+const SHOW_BADGES = false;
+
 export default async function MyPage() {
   const [profile, stats] = await Promise.all([getCurrentMember(), getMyStats()]);
   if (!profile) redirect("/");
@@ -103,6 +112,7 @@ export default async function MyPage() {
           </div>
         </section>
 
+        {SHOW_BADGES && (
         <section>
           <div className={styles.sectionHead}>
             <h2 className={styles.sectionTitle}>배지</h2>
@@ -120,6 +130,7 @@ export default async function MyPage() {
             ))}
           </div>
         </section>
+        )}
       </SheetGroup>
 
       {/* ③ 설정 */}

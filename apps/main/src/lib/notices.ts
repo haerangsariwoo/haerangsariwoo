@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { NoticeCategory } from "./notices-shared";
+import { formatDateKST } from "./date-kst";
 
 export type { NoticeCategory } from "./notices-shared";
 
@@ -16,10 +17,6 @@ export interface NoticeItem {
   body: string[];
 }
 
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-}
 
 interface NoticeRow {
   id: string;
@@ -52,8 +49,8 @@ export const getNotices = cache(async (): Promise<NoticeItem[]> => {
       title: n.title,
       body: n.body,
       pinned: n.pinned,
-      date: formatDate(at),
-      author: `${who} 운영진`,
+      date: formatDateKST(at),
+      author: who,
       at,
     };
   });

@@ -36,7 +36,15 @@
   flex-direction: column;
 }
 
-.noticeRow,
+/* 공지는 분류 → 제목 → 작성자가 위에서 아래로 쌓인다 */
+.noticeRow {
+  display: block;
+  padding: var(--space-16) 0;
+  color: inherit;
+}
+
+/* 앨범은 대표 사진 옆에 글이 붙는다 — 공지와 방향이 달라 규칙을 나눈다.
+   예전에 둘을 한 규칙으로 묶어 가로로 바꾸는 바람에 공지 줄까지 눕혀졌다. */
 .albumRow {
   display: flex;
   gap: var(--space-12);
@@ -76,11 +84,11 @@
   color: var(--state-danger);
 }
 
+/* 고정은 글씨가 아니라 핀 모양으로 — 분류 표 옆에 글씨를 하나 더 두면 표가 둘로 보인다 */
 .pinFlag {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--brand-blue-500);
+  display: inline-flex;
   margin-left: auto;
+  color: var(--brand-blue-500);
 }
 
 .noticeTitle {

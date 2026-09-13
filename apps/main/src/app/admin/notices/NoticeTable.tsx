@@ -8,12 +8,9 @@ import { Badge, DataTable, RowAction, tableStyles } from "@/components/admin/Dat
 import { NoticeComposer, type NoticeDraft } from "@/components/admin/NoticeComposer/NoticeComposer";
 import type { NoticeItem } from "@/lib/notices";
 import { useSemester } from "../SemesterContext";
+import { formatDateKST } from "@/lib/date-kst";
 import styles from "../volunteers/volunteers.module.css";
 
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-}
 
 interface NoticeRow {
   id: string;
@@ -40,8 +37,8 @@ function toItem(r: NoticeRow): NoticeItem {
     title: r.title,
     body: r.body,
     pinned: r.pinned,
-    date: formatDate(r.updated_at ?? r.created_at),
-    author: `${who} 운영진`,
+    date: formatDateKST(r.updated_at ?? r.created_at),
+    author: who,
   };
 }
 

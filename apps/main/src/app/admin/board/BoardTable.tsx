@@ -79,7 +79,7 @@ function toPost(r: PostRow): Post {
     title: r.title,
     body: r.body,
     filePaths: r.file_paths,
-    author: `${r.author?.name ?? "운영진"} 운영진`,
+    author: r.author?.name ?? "운영진",
     date: formatDate(r.created_at),
   };
 }

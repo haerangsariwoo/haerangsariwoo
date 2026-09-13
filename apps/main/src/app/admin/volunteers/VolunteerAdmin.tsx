@@ -48,12 +48,17 @@ const EMPTY = {
   partner_id: "",
 };
 
-/** 쉼표로 구분해 입력한 걸 배열로 — 내부봉사는 이 리스트를 상세 페이지에 그대로 보여준다 */
-function toList(v: string) {
-  return v
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+/**
+ * 쓴 그대로 줄 단위로 담는다.
+ *
+ * 예전에는 쉼표로 나눠 받았는데, "장갑(현장 제공, 여분 있음)" 처럼 글 안에
+ * 쉼표가 들어가면 거기서 끊겼다. 줄바꿈은 쓰는 사람이 정한다. 앞뒤 빈 줄만 걷는다.
+ */
+function toLines(v: string) {
+  const lines = v.replace(/\r\n/g, "\n").split("\n").map((s) => s.trimEnd());
+  while (lines.length && !lines[0].trim()) lines.shift();
+  while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+  return lines;
 }
 
 export function VolunteerAdmin() {
@@ -111,9 +116,9 @@ export function VolunteerAdmin() {
       category: form.category,
       capacity: Number(form.capacity) || 0,
       intro: form.intro.trim(),
-      duties: toList(form.duties),
-      supplies: toList(form.supplies),
-      cautions: toList(form.cautions),
+      duties: toLines(form.duties),
+      supplies: toLines(form.supplies),
+      cautions: toLines(form.cautions),
       manager: form.manager.trim(),
       partner_id: form.partner_id || null,
     };
@@ -282,30 +287,33 @@ export function VolunteerAdmin() {
             />
           </label>
           <label className={styles.field}>
-            <span className={styles.label}>담당 업무 (쉼표로 구분)</span>
-            <input
+            <span className={styles.label}>담당 업무</span>
+            <textarea
               className={styles.input}
               value={form.duties}
               onChange={(e) => setForm({ ...form, duties: e.target.value })}
-              placeholder="예: 구간별 쓰레기 수거, 분리배출 정리"
+              rows={3}
+              placeholder={"예:\n구간별 쓰레기 수거\n분리배출 정리"}
             />
           </label>
           <label className={styles.field}>
-            <span className={styles.label}>준비물 (쉼표로 구분)</span>
-            <input
+            <span className={styles.label}>준비물</span>
+            <textarea
               className={styles.input}
               value={form.supplies}
               onChange={(e) => setForm({ ...form, supplies: e.target.value })}
-              placeholder="예: 편한 운동화, 장갑(현장 제공)"
+              rows={3}
+              placeholder={"예:\n편한 운동화\n장갑 (현장 제공)"}
             />
           </label>
           <label className={styles.field}>
-            <span className={styles.label}>주의사항 (쉼표로 구분)</span>
-            <input
+            <span className={styles.label}>주의사항</span>
+            <textarea
               className={styles.input}
               value={form.cautions}
               onChange={(e) => setForm({ ...form, cautions: e.target.value })}
-              placeholder="예: 우천 시 일정이 변경될 수 있습니다."
+              rows={3}
+              placeholder={"예:\n우천 시 일정이 변경될 수 있습니다."}
             />
           </label>
           <div className={styles.formActions}>

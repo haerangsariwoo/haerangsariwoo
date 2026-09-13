@@ -30,7 +30,7 @@ export default async function AnonPostPage({ params }: PageProps<"/community/ano
 
       {author && (
         <p className={styles.adminNote}>
-          <b>관리자에게만 보임</b> · 작성자 {author.name} ({author.studentId})
+          작성자 {author.name} ({author.studentId})
         </p>
       )}
 

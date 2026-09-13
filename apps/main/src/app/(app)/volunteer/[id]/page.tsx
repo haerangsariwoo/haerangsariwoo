@@ -128,38 +128,17 @@ export default async function VolunteerDetailPage({ params }: PageProps<"/volunt
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>담당 업무</h2>
-        <ul className={styles.list}>
-          {item.duties.map((d) => (
-            <li key={d} className={styles.listItem}>
-              <span className={styles.bullet}>·</span>
-              {d}
-            </li>
-          ))}
-        </ul>
+        <p className={styles.notes}>{item.duties.join("\n")}</p>
       </section>
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>준비물</h2>
-        <ul className={styles.list}>
-          {item.supplies.map((s) => (
-            <li key={s} className={styles.listItem}>
-              <span className={styles.bullet}>·</span>
-              {s}
-            </li>
-          ))}
-        </ul>
+        <p className={styles.notes}>{item.supplies.join("\n")}</p>
       </section>
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>주의사항</h2>
-        <ul className={styles.list}>
-          {item.cautions.map((c) => (
-            <li key={c} className={styles.listItem}>
-              <span className={styles.bullet}>·</span>
-              {c}
-            </li>
-          ))}
-        </ul>
+        <p className={styles.notes}>{item.cautions.join("\n")}</p>
       </section>
 
       <section className={styles.section}>

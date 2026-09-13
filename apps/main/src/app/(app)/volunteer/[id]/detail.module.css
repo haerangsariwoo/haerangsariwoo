@@ -177,25 +177,14 @@
   color: var(--ink-600);
 }
 
-.list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.listItem {
-  display: flex;
-  gap: 8px;
+.notes {
   font-size: 14px;
+  line-height: 1.7;
   color: var(--ink-600);
-  line-height: 1.6;
-}
-
-.bullet {
-  color: var(--brand-blue-500);
-  flex: none;
-  font-weight: 700;
+  /* 운영진이 줄을 바꾼 그대로 살린다 — 점을 붙일지도 쓰는 사람이 정한다 */
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .externalNote {

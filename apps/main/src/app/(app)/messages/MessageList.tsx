@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { InboxMessage, MessageKind } from "@/lib/inbox-shared";
 import styles from "./messages.module.css";
 
-const FILTERS = ["전체", "안읽음", "공지", "봉사", "활동", "승인"] as const;
+const FILTERS = ["전체", "안읽음", "공지", "봉사", "활동", "승인", "댓글"] as const;
 type Filter = (typeof FILTERS)[number];
 
 export function MessageList({ initial }: { initial: InboxMessage[] }) {
@@ -65,7 +65,7 @@ export function MessageList({ initial }: { initial: InboxMessage[] }) {
           <p className={styles.summaryTitle}>
             {unread > 0 ? `읽지 않은 쪽지 ${unread}건` : "모든 쪽지를 확인했어요"}
           </p>
-          <p className={styles.summaryMeta}>운영진이 보낸 안내와 승인 결과가 이곳에 도착해요.</p>
+          <p className={styles.summaryMeta}>운영진 안내, 승인 결과, 내 익명 글의 댓글 알림이 이곳에 도착해요.</p>
         </div>
         {unread > 0 && (
           <button type="button" className={styles.unreadPill} onClick={markAllRead}>

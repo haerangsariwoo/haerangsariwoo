@@ -1,6 +1,11 @@
 import "server-only";
 import webpush from "web-push";
-import { listSubscriptions, removeSubscription } from "./store";
+import {
+  listSubscriptions,
+  listSubscriptionsFor,
+  removeSubscription,
+  removeSubscriptionAsAdmin,
+} from "./store";
 
 /** 공지 알림에 실어 보내는 내용 */
 export interface PushPayload {
@@ -30,12 +35,18 @@ export interface SendResult {
 
 /** 구독 중인 모든 기기에 알림을 보낸다 */
 export async function sendToAll(payload: PushPayload): Promise<SendResult> {
-  return send(await listSubscriptions(), payload);
+  return send(await listSubscriptions(), payload, removeSubscription);
+}
+
+/** 한 부원의 기기에만 보낸다 */
+export async function sendToMember(memberId: string, payload: PushPayload): Promise<SendResult> {
+  return send(await listSubscriptionsFor(memberId), payload, removeSubscriptionAsAdmin);
 }
 
 async function send(
   targets: Awaited<ReturnType<typeof listSubscriptions>>,
   payload: PushPayload,
+  remove: (endpoint: string) => Promise<void>,
 ): Promise<SendResult> {
   if (!pushConfigured) {
     throw new Error("VAPID 키가 설정되지 않았습니다. .env.local 을 확인해 주세요.");
@@ -66,7 +77,7 @@ async function send(
     }
   });
 
-  await Promise.allSettled(toRemove.map((endpoint) => removeSubscription(endpoint)));
+  await Promise.allSettled(toRemove.map((endpoint) => remove(endpoint)));
 
   return { sent, failed, removed: toRemove.length };
 }

@@ -3,7 +3,8 @@
  * lib/inbox.ts 는 서버 전용이라 여기서 갈라 둔다.
  */
 
-export type MessageKind = "공지" | "봉사" | "활동" | "승인";
+/** "댓글" 은 익명 글에 댓글이 달렸을 때 데이터베이스가 넣는다. 운영진이 직접 보내는 종류가 아니다 */
+export type MessageKind = "공지" | "봉사" | "활동" | "승인" | "댓글";
 
 export const MESSAGE_KINDS: MessageKind[] = ["공지", "봉사", "활동", "승인"];
 

@@ -15,6 +15,8 @@ const KIND_TONE: Record<MessageKind, "blue" | "green" | "orange" | "purple"> = {
   봉사: "green",
   활동: "blue",
   승인: "purple",
+  // 익명 글에 댓글이 달리면 자동으로 나간다 — 받는 사람은 여기 드러나지 않는다
+  댓글: "blue",
 };
 
 /**

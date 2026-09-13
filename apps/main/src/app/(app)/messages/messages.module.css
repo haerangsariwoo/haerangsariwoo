@@ -140,6 +140,11 @@
   color: var(--state-success);
 }
 
+.kind.댓글 {
+  background: var(--brand-surface);
+  color: var(--brand-blue-500);
+}
+
 .sentAt {
   margin-left: auto;
   flex: none;

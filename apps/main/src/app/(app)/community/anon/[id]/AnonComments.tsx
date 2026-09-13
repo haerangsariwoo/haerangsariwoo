@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { createClient } from "@/lib/supabase/client";
+import { notifyAnonComment } from "@/app/actions/push";
 import { ANON_COMMENT_MAX, type AnonCommentItem } from "@/lib/anon-posts-shared";
 import styles from "../anon.module.css";
 
@@ -36,7 +37,7 @@ export function AnonComments({
     setBusy(true);
     setError(null);
 
-    const { error: rpcError } = await supabase.rpc("anon_create_comment", {
+    const { data: newId, error: rpcError } = await supabase.rpc("anon_create_comment", {
       p_post_id: postId,
       p_body: body.trim(),
     });
@@ -46,6 +47,8 @@ export function AnonComments({
       setError("댓글을 올리지 못했어요. 잠시 후 다시 시도해 주세요.");
       return;
     }
+    // 글쓴이 휴대폰 알림 — 기다리지 않는다. 안 가도 댓글은 올라가 있다
+    if (typeof newId === "string") void notifyAnonComment(newId);
     setBody("");
     router.refresh();
   }

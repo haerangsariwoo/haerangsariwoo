@@ -6,6 +6,7 @@ import { after } from "next/server";
 import { cn } from "@/lib/cn";
 import { VolunteerCard } from "@/components/volunteer/VolunteerCard/VolunteerCard";
 import { getNotices } from "@/lib/notices";
+import { getAnonPosts } from "@/lib/anon-posts";
 import { getMyProofSubmissions } from "@/lib/proof";
 import { getMyTeam } from "@/lib/teams";
 import { getMyStats } from "@/lib/my-stats";
@@ -40,11 +41,12 @@ export default async function HomePage() {
    */
   after(() => getExternalVolunteers());
 
-  const [internalActivities, proofSubmissions, notices, myTeam, stats, content] =
+  const [internalActivities, proofSubmissions, notices, anonPosts, myTeam, stats, content] =
     await Promise.all([
       getInternalActivities(),
       getMyProofSubmissions(),
       getNotices(),
+      getAnonPosts(),
       getMyTeam(),
       getMyStats(),
       getAppContent(),
@@ -152,25 +154,51 @@ export default async function HomePage() {
             )}
           </article>
 
-          <article>
-            <div className={styles.panelHead}>
-              <h2 className={styles.panelTitle}>공지사항</h2>
-              <Link href="/community" className={styles.panelMore}>
-                전체&nbsp;&nbsp;›
-              </Link>
+          {/* 공지와 익명 게시판을 한 칸에 위아래로 — 둘 다 "새 글이 올라왔나" 를 보는 자리다 */}
+          <article className={styles.splitCell}>
+            <div>
+              <div className={styles.panelHead}>
+                <h2 className={styles.panelTitle}>공지사항</h2>
+                <Link href="/community" className={styles.panelMore}>
+                  전체&nbsp;&nbsp;›
+                </Link>
+              </div>
+              <ul className={styles.noticeList}>
+                {notices.slice(0, 2).map((n) => (
+                  <li key={n.id} className={styles.noticeItem}>
+                    <Link href={`/community/notice/${n.id}`} className={styles.noticeLink}>
+                      <span className={cn(styles.noticeTag, n.category === "필독" && styles.urgent)}>
+                        {n.category}
+                      </span>
+                      <span className={styles.noticeText}>{n.title}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              {notices.length === 0 && <p className={styles.splitEmpty}>아직 공지가 없어요.</p>}
             </div>
-            <ul className={styles.noticeList}>
-              {notices.slice(0, 3).map((n) => (
-                <li key={n.id} className={styles.noticeItem}>
-                  <Link href={`/community/notice/${n.id}`} className={styles.noticeLink}>
-                    <span className={cn(styles.noticeTag, n.category === "필독" && styles.urgent)}>
-                      {n.category}
-                    </span>
-                    <span className={styles.noticeText}>{n.title}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+
+            <div className={styles.splitLower}>
+              <div className={styles.panelHead}>
+                <h2 className={styles.panelTitle}>익명 게시판</h2>
+                <Link href="/community?tab=익명" className={styles.panelMore}>
+                  전체&nbsp;&nbsp;›
+                </Link>
+              </div>
+              <ul className={styles.noticeList}>
+                {anonPosts.slice(0, 2).map((p) => (
+                  <li key={p.id} className={styles.noticeItem}>
+                    <Link href={`/community/anon/${p.id}`} className={styles.noticeLink}>
+                      <span className={styles.noticeText}>{p.title}</span>
+                      {p.commentCount > 0 && (
+                        <span className={styles.anonCount}>{p.commentCount}</span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              {anonPosts.length === 0 && <p className={styles.splitEmpty}>아직 올라온 글이 없어요.</p>}
+            </div>
           </article>
 
           <article>

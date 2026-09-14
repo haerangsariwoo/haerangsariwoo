@@ -17,7 +17,7 @@ export function ReadOnlyNotice() {
   return (
     <p className={styles.readOnlyNotice}>
       <b>{label}</b>는 지난 학기 기록이라 읽기 전용입니다. 새로 쓰거나 바꿀 수는 없고,
-      복사·내보내기는 그대로 됩니다.
+      복사 / 내보내기는 그대로 됩니다.
     </p>
   );
 }

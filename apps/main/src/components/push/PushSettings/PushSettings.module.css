@@ -30,21 +30,30 @@
 
 /* 토글 */
 .switch {
+  position: relative;
   flex: none;
-  width: 48px;
-  height: 28px;
+  width: 56px;
+  height: 44px;
   border: none;
   border-radius: var(--radius-pill);
-  background: var(--hairline);
-  padding: 3px;
+  background: transparent;
+  padding: 11px 7px;
   cursor: pointer;
-  transition: background 0.18s ease;
   display: flex;
   justify-content: flex-start;
 }
 
-.switch[data-state="checked"] {
+.switch::before {
+  content: "";
+  position: absolute;
+  inset: 8px 4px;
+  border-radius: var(--radius-pill);
+  background: var(--hairline);
+}
+.switch[data-state="checked"]::before {
   background: var(--brand-blue-500);
+}
+.switch[data-state="checked"] {
   justify-content: flex-end;
 }
 
@@ -54,10 +63,12 @@
 }
 
 .knob {
+  position: relative;
+  z-index: 1;
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--surface-white);
+  background: var(--toggle-thumb);
   box-shadow: 0 1px 3px rgba(8, 46, 71, 0.25);
 }
 
@@ -92,4 +103,3 @@
   flex-direction: column;
   gap: 4px;
 }
-

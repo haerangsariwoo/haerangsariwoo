@@ -127,7 +127,7 @@
 
 .day.today .dayNum {
   font-weight: 700;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .day.selected {
@@ -136,7 +136,7 @@
 
 .day.selected .dayNum {
   font-weight: 700;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .dots {
@@ -228,7 +228,7 @@
 
 .eventTag.volunteer {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 .eventTag.mine {
   background: var(--state-success-bg);
@@ -236,7 +236,7 @@
 }
 .eventTag.activity {
   background: var(--state-accent-bg);
-  color: #7b3fb5;
+  color: var(--tag-purple);
 }
 
 .empty {
@@ -251,10 +251,42 @@
 
 .note {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);
   padding: 12px 14px;
   line-height: 1.6;
+}
+.monthBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 15px;
+  background: var(--surface-muted);
+  border: 0;
+  color: var(--link-color);
+}
+.calendar {
+  padding: 18px 6px;
+  border-radius: 26px;
+  box-shadow: none;
+  border: 1px solid var(--surface-muted);
+}
+.day {
+  min-height: 46px;
+}
+.dayNum {
+  font-size: 14px;
+}
+.day.selected {
+  background: #176ff2;
+}
+.day.selected .dayNum {
+  color: var(--on-brand);
+}
+.empty,
+.eventCard {
+  border-radius: 23px;
+  box-shadow: none;
+  border: 1px solid var(--surface-muted);
 }

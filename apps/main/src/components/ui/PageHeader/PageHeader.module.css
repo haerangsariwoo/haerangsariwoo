@@ -5,8 +5,12 @@
 }
 
 .backLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
   font-size: 14px;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   font-weight: 500;
   align-self: flex-start;
 }
@@ -19,9 +23,9 @@
 }
 
 .title {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  font-size: 28px;
   color: var(--ink-800);
 }
 

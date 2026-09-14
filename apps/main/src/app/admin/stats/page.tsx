@@ -4,7 +4,7 @@ import { ExportButtons } from "./ExportButtons";
 import { getAdminStats } from "@/lib/stats";
 import styles from "./stats.module.css";
 
-export const metadata = { title: "통계·내보내기 · 해랑사리우" };
+export const metadata = { title: "통계 / 내보내기 / 해랑사리우" };
 
 const TYPE_TONE = {
   개파: "orange",
@@ -99,7 +99,7 @@ export default async function AdminStatsPage() {
         </Panel>
       </div>
 
-      <Panel title="내보내기" desc="회계·학교 제출용 자료를 파일로 저장합니다.">
+      <Panel title="내보내기" desc="회계 / 학교 제출용 자료를 파일로 저장합니다.">
         <ExportButtons />
       </Panel>
     </>

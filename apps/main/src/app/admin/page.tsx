@@ -5,31 +5,6 @@ import { getDashboard } from "@/lib/dashboard";
 import { PendingHoursPanel, TodayVolunteersPanel } from "./DashboardPanels";
 import styles from "./dashboard.module.css";
 
-const ICONS: Record<string, React.ReactNode> = {
-  sun: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19" />
-    </svg>
-  ),
-  check: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12.5l4.5 4.5L19 7" />
-    </svg>
-  ),
-  alert: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-      <path d="M12 7v6.5M12 17h.01" />
-      <circle cx="12" cy="12" r="9" />
-    </svg>
-  ),
-  plus: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  ),
-};
-
 /** 이번 달 달력에 찍을 날짜들 — 1일이 무슨 요일인지에 맞춰 앞을 비운다 */
 function monthGrid(now: Date) {
   const year = now.getFullYear();
@@ -69,7 +44,6 @@ export default async function AdminDashboard() {
         {metrics.map((m) => (
           <div key={m.label} className={styles.metric}>
             <div className={styles.metricTop}>
-              <span className={cn(styles.metricIcon, styles[m.tone])}>{ICONS[m.icon]}</span>
               <span className={styles.metricLabel}>{m.label}</span>
             </div>
             <div className={styles.metricBottom}>
@@ -81,7 +55,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div className={styles.rowA}>
-        <Panel title="오늘의 봉사·출석" action={{ label: "전체 보기", href: "/admin/activities" }}>
+        <Panel title="오늘의 봉사 / 출석" action={{ label: "전체 보기", href: "/admin/activities" }}>
           <TodayVolunteersPanel items={todayVolunteers} />
         </Panel>
 
@@ -139,14 +113,10 @@ export default async function AdminDashboard() {
           <div className={styles.quickGrid}>
             {quickActions.map((q) => (
               <Link key={q.id} href={q.href} className={styles.quickCard}>
-                <span className={cn(styles.quickIcon, styles[q.tone])}>
-                  {ICONS[q.tone === "orange" ? "check" : q.tone === "blue" ? "alert" : "plus"]}
-                </span>
                 <span>
                   <span className={styles.quickLabel}>{q.label}</span>
                   <span className={styles.quickDesc}>{q.desc}</span>
                 </span>
-                <span className={styles.quickChev}>›</span>
               </Link>
             ))}
           </div>

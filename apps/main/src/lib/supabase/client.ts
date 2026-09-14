@@ -1,6 +1,7 @@
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
+import { previewTransport } from "./preview-fetch";
 
 /**
  * 클라이언트 컴포넌트에서 쓰는 Supabase 클라이언트.
@@ -14,6 +15,7 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
+      global: previewTransport(),
       cookieOptions:
         process.env.NODE_ENV === "production"
           ? { domain: ".haerangsariwoo.site", sameSite: "lax", secure: true }

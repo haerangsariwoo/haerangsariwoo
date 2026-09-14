@@ -45,14 +45,14 @@
 }
 
 .poolMeta {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--a-ink-soft);
   margin-top: 3px;
 }
 
 .genderTag {
   margin-left: auto;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   padding: 4px 10px;
   border-radius: var(--a-radius-pill);
@@ -70,7 +70,7 @@
 
 .genderTag.미정 {
   background: var(--a-line-soft, rgba(0, 0, 0, 0.06));
-  color: var(--a-ink-500, #6b7280);
+  color: var(--a-ink-500, var(--ink-600));
 }
 
 .teamGrid {
@@ -99,7 +99,7 @@
 }
 
 .ratio {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--a-ink-soft);
   margin-left: auto;
@@ -116,7 +116,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   padding: 7px 12px;
   border-radius: var(--a-radius-pill);
@@ -131,13 +131,13 @@
 }
 
 .dot.남 {
-  background: var(--a-brand);
+  background: var(--a-action);
 }
 .dot.여 {
   background: var(--state-danger);
 }
 .dot.미정 {
-  background: var(--a-ink-500, #9ca3af);
+  background: var(--a-ink-500, var(--ink-600));
 }
 
 .publishBar {
@@ -151,7 +151,7 @@
 }
 
 .publishText {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--a-ink-soft);
   flex: 1;
 }
@@ -198,7 +198,7 @@
 }
 
 .emptyHint {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--a-ink-soft);
   padding: 8px 2px;
 }
@@ -209,7 +209,7 @@
   border-radius: var(--a-radius-sm);
   background: var(--a-brand-soft);
   color: var(--a-brand);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .poolList {
@@ -218,7 +218,7 @@
 
 /* ---------- 행사 여러 개 관리 ---------- */
 .hint {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--a-ink-soft);
   padding: 10px 2px 16px;
 }
@@ -287,7 +287,7 @@
 }
 
 .eventSummaryMeta {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--a-ink-soft);
 }
 
@@ -308,7 +308,7 @@
   border-radius: var(--a-radius-sm);
   background: var(--a-surface);
   color: var(--a-ink);
-  font-size: 12px;
+  font-size: 13px;
   font-family: inherit;
   padding: 5px 8px;
 }

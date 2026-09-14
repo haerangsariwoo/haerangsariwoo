@@ -150,7 +150,7 @@ export function PendingHoursPanel({ items }: { items: PendingHour[] }) {
           disabled={readOnly || checked.size === 0}
           onClick={approveChecked}
         >
-          {checked.size > 0 ? "☑" : "☐"} {checked.size}건 선택 · 일괄 승인
+          {checked.size}건 선택 / 일괄 승인
         </button>
       )}
     </>

@@ -5,7 +5,7 @@
 }
 
 .hero {
-  background: #1a1a1a;
+  background: var(--solid-ink);
   border-radius: var(--radius-lg);
   padding: 22px 18px;
 }
@@ -19,7 +19,7 @@
 .teamName {
   font-size: 24px;
   font-weight: 600;
-  color: var(--surface-white);
+  color: var(--on-brand);
   margin-top: 6px;
 }
 
@@ -69,7 +69,7 @@
   height: 36px;
   border-radius: var(--radius-sm);
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   display: grid;
   place-items: center;
   font-size: 14px;
@@ -100,12 +100,12 @@
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .note {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);

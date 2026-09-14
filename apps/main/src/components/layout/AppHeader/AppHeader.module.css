@@ -1,218 +1,206 @@
 .header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  height: 70px;
-  background: var(--brand-surface);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--screen-pad);
+  gap: 12px;
+  padding: 18px 20px 14px;
+  background: var(--app-canvas);
 }
-
 .brand {
+  min-width: 0;
+}
+.actions {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
-
-.mascot {
-  font-size: 20px;
-  line-height: 1;
-}
-
-.wordmark {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--ink-800);
-}
-
-.menuButton {
-  border: none;
-  background: none;
-  color: var(--ink-800);
-  cursor: pointer;
+.iconButton,
+.closeButton {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-muted);
+  color: var(--ink-900);
+  cursor: pointer;
 }
-
-/* §2.2 를 따른 아이콘 버튼 — 테두리 없는 파란 면 */
-.menuButton {
-  border-radius: 0;
-  background: var(--brand-tint-05);
-  width: 40px;
-  height: 40px;
+.dots {
+  display: grid;
+  grid-template-columns: repeat(2, 5px);
+  gap: 4px;
 }
-
-.menuButton:hover {
-  background: var(--brand-tint-10);
+.dots i {
+  width: 5px;
+  height: 5px;
+  background: currentColor;
+  border-radius: 50%;
 }
-
-/* ---------- drawer ---------- */
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 40;
-  background: rgba(8, 26, 40, 0.42);
-  border: none;
-  padding: 0;
-  cursor: pointer;
+  background: #0b20536b;
+  backdrop-filter: blur(4px);
+  z-index: 70;
+  animation: fadeIn 0.2s ease-out;
 }
-
 .drawer {
   position: fixed;
-  top: 0;
-  right: 0;
+  z-index: 71;
   bottom: 0;
-  z-index: 50;
-  width: min(320px, 84vw);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 12px 24px max(20px, env(safe-area-inset-bottom));
+  border-radius: 32px 32px 0 0;
   background: var(--surface-white);
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  gap: 18px;
-  box-shadow: -12px 0 40px -18px rgba(8, 46, 71, 0.4);
+  box-shadow: 0 -15px 70px #102e5b20;
+  animation: rise 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
+.handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--hairline);
+  margin: 0 auto 17px;
+}
 .drawerHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-
-.drawerTitle {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--ink-800);
+.drawerHead h2 {
+  font-size: 24px;
+  letter-spacing: -0.055em;
 }
-
 .closeButton {
-  border: none;
-  background: none;
-  color: var(--ink-600);
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
+  font-size: 28px;
 }
-
+.description {
+  font-size: 13px;
+  color: var(--ink-600);
+  margin-top: 3px;
+}
 .profileRow {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--brand-surface);
-  border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 18px 0;
 }
-
-.profileAvatar {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-sm);
-  background: var(--brand-blue-500);
-  color: var(--surface-white);
-  display: grid;
-  place-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  flex: none;
+.profileRow strong {
+  display: block;
+  font-size: 17px;
 }
-
-.profileText {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-}
-
-.profileName {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-800);
-  line-height: 1.3;
-}
-
-.profileMeta {
-  font-size: 12px;
+.profileRow small,
+.adminLink small {
+  display: block;
   color: var(--ink-600);
-  line-height: 1.3;
+  font-size: 12px;
+  margin-top: 3px;
 }
-
-.menuList {
+.chev {
+  margin-left: auto;
+  font-size: 24px;
+  color: var(--ink-600);
+}
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.menuGrid a {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 4px;
+  background: var(--surface-muted);
+  border-radius: 21px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.18s;
 }
-
-.menuItem {
+.menuGrid a:active {
+  transform: scale(0.93);
+}
+.adminLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: var(--surface-muted);
+  color: var(--link-color);
+}
+.adminLink small {
+  color: var(--ink-600);
+}
+.adminLink > span:last-child {
+  font-size: 25px;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 18px;
+}
+.preferences {
+  margin-top: 20px;
+}
+.preferences h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.preferences > button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 4px;
-  border-bottom: 1px solid var(--hairline);
-  font-size: 14px;
-  font-weight: 500;
+  width: 100%;
+  min-height: 48px;
+  background: none;
+  border: 0;
+  font-size: 13px;
   color: var(--ink-800);
+  cursor: pointer;
 }
-
-.menuItem:last-child {
-  border-bottom: none;
-}
-
-.chev {
-  color: var(--ink-600);
-}
-
-.adminLink {
+.footer a,
+.footer button {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #1a1a1a;
-  color: var(--surface-white);
-  border-radius: 0;
-  padding: 16px;
-  margin-top: auto;
-}
-
-.adminIcon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.14);
-  display: grid;
-  place-items: center;
-  flex: none;
-}
-
-.adminText {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-}
-
-.adminLabel {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.adminDesc {
+  min-height: 44px;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.72);
-  line-height: 1.35;
-}
-
-.logout {
-  border: 1px solid var(--hairline);
-  background: var(--surface-white);
-  border-radius: 0;
-  padding: 13px;
-  font-size: 14px;
-  font-weight: 600;
   color: var(--ink-600);
+  background: none;
+  border: 0;
   cursor: pointer;
-  width: 100%;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 40px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 359px) {
+  .header {
+    padding-inline: 14px;
+  }
+  .actions {
+    gap: 2px;
+  }
 }

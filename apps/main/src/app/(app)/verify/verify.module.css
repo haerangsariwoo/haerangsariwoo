@@ -42,7 +42,7 @@
   font-size: 12px;
   font-weight: 700;
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   position: relative;
   z-index: 1;
 }
@@ -137,7 +137,7 @@
 
 .upload:hover {
   border-color: var(--brand-blue-500);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .uploadIcon {
@@ -165,7 +165,7 @@
 .sourceBtn.on {
   border-color: var(--brand-blue-500);
   background: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .photoGrid {
@@ -198,7 +198,7 @@
   border-radius: 50%;
   border: none;
   background: rgba(0, 0, 0, 0.55);
-  color: var(--surface-white);
+  color: var(--on-brand);
   font-size: 12px;
   line-height: 1;
   cursor: pointer;
@@ -223,7 +223,7 @@
   white-space: nowrap;
   font-size: 12px;
   font-weight: 500;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   background: var(--brand-surface);
   border-radius: var(--radius-pill);
   padding: 5px 12px;
@@ -235,7 +235,7 @@
   border: none;
   border-radius: 0;
   background: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
   font-size: 14px;
   font-weight: 600;
   font-family: inherit;
@@ -342,7 +342,7 @@
 
 .승인 {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .반려 {
@@ -383,4 +383,38 @@
 .cancelBtn:hover {
   border-color: var(--state-danger);
   color: var(--state-danger);
+}
+.card {
+  border-radius: 26px;
+  border: 1px solid var(--surface-muted);
+  box-shadow: none;
+  padding: 22px;
+}
+.input,
+.textarea {
+  font-size: 16px;
+  border-radius: 15px;
+  min-height: 52px;
+}
+.submit {
+  border-radius: 18px;
+  min-height: 54px;
+  background: #176ff2;
+  color: var(--on-brand);
+  font-size: 15px;
+}
+.upload {
+  border-radius: 22px;
+  min-height: 130px;
+  background: var(--surface-muted);
+}
+.sourceBtn {
+  min-height: 44px;
+  border-radius: 13px;
+}
+.stepDot {
+  box-shadow: 0 4px 12px #176ff218;
+}
+.cardTitle {
+  font-size: 21px;
 }

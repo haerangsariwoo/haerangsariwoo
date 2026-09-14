@@ -38,6 +38,7 @@ const EyeIcon = ({ off }: { off: boolean }) => (
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ({ label, icon, helperText, errorText, revealable, id, className, type, ...props }, ref) => {
     const inputId = id ?? props.name;
+    const messageId = inputId ? `${inputId}-message` : undefined;
     const [shown, setShown] = useState(false);
 
     // 눈 단추를 누르면 같은 칸이 그냥 글자 칸이 된다
@@ -50,7 +51,15 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         </label>
         <div className={cn(styles.inputWrap, errorText && styles.error)}>
           {icon && <span className={styles.icon}>{icon}</span>}
-          <input ref={ref} id={inputId} className={styles.input} type={inputType} {...props} />
+          <input
+            ref={ref}
+            id={inputId}
+            className={styles.input}
+            type={inputType}
+            aria-invalid={errorText ? true : undefined}
+            aria-describedby={errorText || helperText ? messageId : undefined}
+            {...props}
+          />
           {revealable && (
             <button
               type="button"
@@ -58,17 +67,17 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               onClick={() => setShown((v) => !v)}
               aria-label={shown ? "비밀번호 숨기기" : "비밀번호 표시"}
               aria-pressed={shown}
-              // 단추를 눌러도 입력하던 자리를 잃지 않게 한다
-              tabIndex={-1}
+              // Keep pointer focus in the input; still reachable with a keyboard.
+              onMouseDown={(event) => event.preventDefault()}
             >
               <EyeIcon off={shown} />
             </button>
           )}
         </div>
         {errorText ? (
-          <p className={styles.errorText}>{errorText}</p>
+          <p id={messageId} role="alert" className={styles.errorText}>{errorText}</p>
         ) : helperText ? (
-          <p className={styles.helper}>{helperText}</p>
+          <p id={messageId} className={styles.helper}>{helperText}</p>
         ) : null}
       </div>
     );

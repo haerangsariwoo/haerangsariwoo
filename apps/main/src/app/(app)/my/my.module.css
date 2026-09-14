@@ -5,7 +5,7 @@
 
 /* ---------- 프로필 ---------- */
 .profileCard {
-  background: #1a1a1a;
+  background: linear-gradient(115deg, #176ff2, #58a6fb);
   display: flex;
   align-items: center;
   gap: var(--space-16);
@@ -18,15 +18,15 @@
 
 .avatar {
   position: relative;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-xs);
-  background: rgba(255, 255, 255, 0.14);
+  width: 64px;
+  height: 64px;
+  border-radius: 23px;
+  background: rgba(255, 255, 255, 0.2);
   display: grid;
   place-items: center;
   font-size: 20px;
   font-weight: 600;
-  color: var(--surface-white);
+  color: var(--on-brand);
   border: none;
   padding: 0;
   cursor: pointer;
@@ -46,7 +46,7 @@
   border-radius: 50%;
   border: 2px solid var(--brand-blue-500);
   background: var(--surface-white);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   font-size: 12px;
   line-height: 1;
   display: grid;
@@ -61,7 +61,7 @@
 .name {
   font-size: 18px;
   font-weight: 600;
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .profileMeta {
@@ -79,7 +79,7 @@
   padding: 4px 9px;
   border-radius: var(--radius-xs);
   background: rgba(255, 255, 255, 0.16);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 /* ---------- 시간 요약 ----------
@@ -105,7 +105,7 @@
 .statValue {
   font-size: 20px;
   font-weight: 600;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   margin-top: var(--space-6);
 }
 
@@ -134,7 +134,7 @@
 .moreLink {
   font-size: 12px;
   font-weight: 500;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 /* ---------- 신청 내역 ---------- */
@@ -188,7 +188,7 @@
 }
 .state.신청완료 {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 .state.대기 {
   background: var(--state-warn-bg);
@@ -285,4 +285,38 @@
   font-size: 11px;
   color: var(--state-danger);
   margin-top: 4px;
+}
+.profileCard {
+  padding-block: 26px;
+}
+.name {
+  font-size: 21px;
+}
+.profileMeta {
+  color: var(--surface-muted);
+}
+.roleTag {
+  border-radius: 12px;
+}
+.statValue {
+  font-size: 27px;
+  font-weight: 700;
+}
+.statLabel {
+  font-size: 10px;
+}
+.statCaption {
+  font-size: 10px;
+}
+.menuItem {
+  min-height: 58px;
+  font-size: 15px;
+}
+.avatarEdit {
+  width: 44px;
+  height: 44px;
+  right: -12px;
+  bottom: -16px;
+  transform: scale(0.7);
+  transform-origin: center;
 }

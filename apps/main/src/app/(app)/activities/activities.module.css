@@ -35,6 +35,7 @@
 }
 
 /* 왼쪽 날짜 칸. 목록을 훑을 때 눈이 처음 닿는 자리다. */
+.calendarLink { display:inline-flex;gap:8px;align-items:center;min-height:44px;color:var(--link-color);font-size:13px;font-weight:600;margin-bottom:8px; }
 .date {
   flex: none;
   width: 46px;
@@ -74,13 +75,13 @@
   padding: 3px 8px;
   border-radius: var(--radius-xs);
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .dday {
   font-size: 12px;
   font-weight: 600;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   margin-left: auto;
 }
 
@@ -125,13 +126,13 @@
 }
 .attend.none {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .teamFlag {
   font-size: 12px;
   font-weight: 600;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .empty {
@@ -139,4 +140,45 @@
   text-align: center;
   color: var(--ink-600);
   font-size: 14px;
+}
+.intro {
+  font-size: 13px;
+  color: var(--ink-600);
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  padding-block: 44px;
+}
+.empty h2 {
+  font-size: 21px;
+}
+.empty p {
+  font-size: 13px;
+  color: var(--ink-600);
+}
+.empty a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 13px;
+  color: var(--link-color);
+}
+.date {
+  border-radius: 17px;
+  background: var(--surface-muted);
+  color: var(--link-color);
+}
+.row {
+  padding-block: 20px;
+}
+.title {
+  font-size: 17px;
+}
+.groupLabel {
+  font-size: 13px;
+  font-weight: 700;
 }

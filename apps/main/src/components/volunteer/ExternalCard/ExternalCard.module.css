@@ -1,148 +1,117 @@
-/* 목록의 한 줄. 면과 그림자는 이 줄을 담는 묶음이 이미 갖고 있다. */
 .card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  overflow: hidden;
-  padding: var(--space-12) 0;
+  display: block;
+  padding: 24px 0;
   color: inherit;
 }
-
-.thumb {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-xs);
-  flex: none;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-.thumbLogo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.thumb.p1365 {
-  background: var(--state-warn-bg);
-  color: #a8620f;
-}
-
-.thumb.pvms {
-  background: var(--state-accent-bg);
-  color: #5b47c4;
-}
-
-.body {
-  flex: 1;
-  min-width: 0;
-}
-
-.title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-800);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.org {
-  font-size: 12px;
-  color: var(--ink-600);
-  margin-top: 5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.metaRow {
+.top {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 9px;
-  /* 긴 주소 태그가 카드 밖으로 나가지 않도록 */
-  max-width: 100%;
-  min-width: 0;
+  gap: 8px;
+  margin-bottom: 12px;
 }
-
-.tag {
-  background: var(--brand-surface);
-  color: var(--brand-blue-500);
-  font-size: 10px;
-  font-weight: 500;
-  padding: 3px 8px;
-  border-radius: var(--radius-xs);
-  /* 한 줄로 두되, 넘치면 카드 폭에 맞춰 줄임표로 자른다 */
-  white-space: nowrap;
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.tag.source {
-  background: var(--surface-muted);
-  color: var(--ink-600);
-  font-weight: 700;
-}
-
-.tag.full {
-  background: var(--surface-muted);
-  color: var(--ink-400);
-  font-weight: 700;
-}
-
-.periods {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 8px;
-}
-
-.period {
+.source {
   display: flex;
   align-items: center;
   gap: 7px;
-}
-
-.periodLabel {
-  flex: none;
-  font-size: 10px;
-  font-weight: 700;
   color: var(--ink-600);
-  background: var(--surface-muted);
-  border-radius: var(--radius-xs);
-  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 600;
 }
-
-.periodLabel.recruit {
+.source img {
+  border-radius: 7px;
+}
+.source > span {
+  padding-left: 8px;
+  border-left: 1px solid var(--hairline);
+}
+.status {
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 9px;
+  padding: 5px 8px;
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
-
-.periodValue {
+.urgent {
+  background: var(--state-warn-bg);
+  color: var(--state-warn);
+}
+.closed,
+.upcoming {
+  background: var(--surface-muted);
+  color: var(--ink-600);
+}
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink-900);
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.facts {
+  margin-top: 14px;
+  display: grid;
+  gap: 9px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.facts > div {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+}
+.facts dt {
+  color: var(--ink-600);
+}
+.facts dd {
+  color: var(--ink-800);
+  overflow-wrap: anywhere;
+}
+.time {
+  display: block;
+}
+.org {
   font-size: 12px;
   color: var(--ink-600);
-  font-variant-numeric: tabular-nums;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+.bottom {
   display: flex;
   align-items: center;
-  gap: 6px;
-  min-width: 0;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--ink-600);
 }
-
-.dday {
-  flex: none;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--brand-blue-500);
+.bottom strong {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--link-color);
 }
-
-.dday.urgent {
-  color: var(--state-danger);
+.bottom svg {
+  width: 14px;
+  height: 14px;
+}
+.card:hover .title {
+  color: var(--link-color);
+}
+.card:focus-visible {
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
 }

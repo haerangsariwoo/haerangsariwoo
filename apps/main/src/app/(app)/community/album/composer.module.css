@@ -83,7 +83,7 @@
   border: none;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  color: var(--on-brand);
   font-size: 14px;
   line-height: 1;
   cursor: pointer;
@@ -105,7 +105,7 @@
   padding: 0;
   border: none;
   background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  color: var(--on-brand);
   font-size: 14px;
   line-height: 1;
   cursor: pointer;
@@ -125,7 +125,7 @@
   height: 24px;
   border: none;
   background: rgba(0, 0, 0, 0.62);
-  color: #fff;
+  color: var(--on-brand);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -180,11 +180,11 @@
 .ratioOn {
   border-color: var(--brand-blue-500);
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .ratioOn .ratioValue {
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 /* ---------- 올리기 ---------- */
@@ -201,7 +201,7 @@
   border: none;
   border-radius: var(--radius-md);
   background: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
   font-size: 15px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -217,7 +217,6 @@
   font-size: 13px;
   color: var(--state-danger);
 }
-
 
 /* ---------- 보이는 부분 정하기 ---------- */
 .overlay {
@@ -318,5 +317,22 @@
 .sheetDone {
   border: none;
   background: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
+}
+.input,
+.textarea {
+  font-size: 16px;
+  border-radius: 17px;
+}
+.actions button,
+.actions a {
+  min-height: 48px;
+  border-radius: 16px;
+}
+.catBtn {
+  min-height: 44px;
+}
+.title {
+  font-size: 25px;
+  letter-spacing: -0.045em;
 }

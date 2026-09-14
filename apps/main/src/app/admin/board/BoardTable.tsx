@@ -428,7 +428,7 @@ export function BoardTable() {
       <div className={toolbar.toolbar}>
         <input
           className={toolbar.search}
-          placeholder="제목·작성자 검색"
+          placeholder="제목 / 작성자 검색"
           aria-label="게시글 검색"
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -517,7 +517,7 @@ export function BoardTable() {
                 ＋ 본문에 사진 넣기
               </button>
               <span className={tableStyles.muted}>
-                붙여넣기(Ctrl+V)·끌어놓기도 됩니다. 커서가 있는 자리에 들어가요.
+                붙여넣기(Ctrl+V) / 끌어놓기도 됩니다. 커서가 있는 자리에 들어가요.
               </span>
             </span>
 

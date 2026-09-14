@@ -1,41 +1,44 @@
 .wrap {
   overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--a-field-line) var(--a-bg);
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 640px;
+  min-width: 540px;
 }
 
 .table thead th {
   text-align: left;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--a-ink-soft);
-  padding: 0 12px 12px;
+  padding: 12px 14px;
+  background: var(--a-bg);
   white-space: nowrap;
 }
 
 .table thead th:first-child {
-  padding-left: 0;
+  padding-left: 14px;
 }
 
 .table tbody td {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--a-ink);
-  padding: 15px 12px;
+  padding: 16px 14px;
   border-top: 1px solid var(--a-line);
   white-space: nowrap;
 }
 
 .table tbody td:first-child {
-  padding-left: 0;
+  padding-left: 14px;
   font-weight: 700;
 }
 
 .table tbody tr:hover {
-  background: var(--a-bg);
+  background: var(--a-hover);
 }
 
 .muted {
@@ -86,9 +89,10 @@
 .rowAction {
   border: 1px solid var(--a-line);
   background: var(--a-surface);
-  border-radius: 0;
-  padding: 6px 12px;
-  font-size: 12px;
+  border-radius: var(--a-radius-sm);
+  min-height: 44px;
+  padding: 8px 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--a-ink-soft);
   cursor: pointer;
@@ -101,14 +105,14 @@
 }
 
 .rowAction.primary {
-  background: var(--a-brand);
+  background: var(--a-action);
   border-color: var(--a-brand);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .rowAction.primary:not(:disabled):hover {
-  background: #1171b2;
-  border-color: #1171b2;
+  background: var(--a-action-hover);
+  border-color: var(--a-action-hover);
 }
 
 .rowAction:disabled {

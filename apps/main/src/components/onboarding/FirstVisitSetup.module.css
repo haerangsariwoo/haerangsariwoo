@@ -1,0 +1,37 @@
+.overlay { position: fixed; inset: 0; z-index: 100; background: rgb(2 10 23 / 60%); }
+.content {
+  position: fixed;
+  z-index: 101;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(440px, calc(100% - 24px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--surface-white);
+  color: var(--ink-900);
+  box-shadow: 0 16px 48px rgb(0 12 32 / 22%);
+}
+.head { display: flex; align-items: flex-start; gap: 12px; }
+.title { flex: 1; min-width: 0; margin: 8px 0 0; font-size: 22px; line-height: 1.35; letter-spacing: -0.02em; word-break: keep-all; }
+.title:focus { outline: none; }
+.close { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border: 0; border-radius: 12px; background: var(--surface-muted); color: var(--ink-800); cursor: pointer; }
+.progress { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 20px 0; padding: 0; list-style: none; }
+.progress li { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-600); }
+.progress li[aria-current] { color: var(--link-color); font-weight: 700; }
+.progress span { font-variant-numeric: tabular-nums; }
+.description, .body { font-size: 14px; line-height: 1.7; color: var(--ink-600); word-break: keep-all; }
+.body { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+.actions { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
+.primary, .secondary { width: 100%; min-height: 48px; padding: 12px 16px; border: 0; border-radius: 14px; cursor: pointer; font: inherit; font-size: 15px; font-weight: 600; }
+.primary { background: #1465e7; color: #fff; }
+.primary:hover { background: #1058cc; }
+.secondary { color: var(--ink-800); background: var(--surface-muted); }
+.secondary:hover, .close:hover { background: var(--brand-surface); }
+.content button:focus-visible, .restart:focus-visible { outline: 2px solid var(--link-color); outline-offset: 3px; }
+.later { margin-top: 16px; text-align: center; font-size: 12px; line-height: 1.6; color: var(--ink-600); }
+.restart { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; width: 100%; background: none; border: 0; color: var(--ink-800); font-size: 14px; cursor: pointer; text-align: left; }
+@media (min-width: 600px) { .content { bottom: auto; top: 50%; transform: translate(-50%, -50%); } }
+@media (max-width: 359px) { .content { padding: 20px; } .title { font-size: 20px; } .progress { column-gap: 10px; } }

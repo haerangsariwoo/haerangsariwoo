@@ -38,7 +38,7 @@
 
 .backLink {
   font-size: 14px;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   font-weight: 500;
   align-self: flex-start;
 }
@@ -103,7 +103,7 @@
 .genderBtn.on {
   background: var(--brand-blue-500);
   border-color: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .select {
@@ -164,7 +164,7 @@
 .semesterBtn.on {
   background: var(--brand-blue-500);
   border-color: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 /* MBTI 그리드 */
@@ -188,7 +188,7 @@
 .mbtiBtn.on {
   background: var(--brand-blue-500);
   border-color: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .errorText {
@@ -207,7 +207,7 @@
 
 .note {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   font-size: 12px;
   font-weight: 700;
   border-radius: var(--radius-sm);

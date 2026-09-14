@@ -1,0 +1,140 @@
+:root {
+  --entry-canvas: #f8fbff;
+  --entry-field: #ffffff;
+  --entry-line: #a5b6cd;
+  --entry-muted: #596d88;
+  --weather-surface: linear-gradient(145deg, #e1f1ff, #f4f9ff);
+  --weather-symbol: #246bb4;
+  --solid-ink: #183651;
+  --toggle-thumb: #ffffff;
+  --a-action: #176ff2;
+  --tag-purple: #6e42a6;
+  --on-brand: #fff;
+  --link-color: #075bcc;
+  --app-canvas: #f8fbff;
+  --page-outside: #eaf1fb;
+  --dock-background: rgba(255, 255, 255, 0.96);
+  --login-sky: #d9efff;
+  --login-wash: #ecf6ff;
+}
+:root[data-theme="dark"] {
+  --entry-canvas: #102033;
+  --entry-field: #192f49;
+  --entry-line: #5d7899;
+  --entry-muted: #b1c6e0;
+  --weather-surface: linear-gradient(145deg, #1b3552, #15243a);
+  --weather-symbol: #a8d6ff;
+  --solid-ink: #245180;
+  --tag-purple: #c8b5fc;
+  color-scheme: dark;
+  --ink-900: #eff5ff;
+  --ink-800: #dfe9f8;
+  --ink-600: #a3b5cd;
+  --ink-500: #bbcae0;
+  --ink-400: #7890ae;
+  --ink-300: #516984;
+  --ink-200: #304863;
+  --surface-white: #15243a;
+  --surface-muted: #1d304a;
+  --brand-surface: #142a44;
+  --brand-surface-alt: #162c46;
+  --brand-canvas: #254667;
+  --brand-tint-05: rgba(113, 178, 255, 0.09);
+  --brand-tint-10: rgba(113, 178, 255, 0.16);
+  --hairline: rgba(169, 204, 250, 0.17);
+  --surface-card: linear-gradient(125deg, #182b43, #15243a);
+  --surface-card-border: #273e5b;
+  --surface-nav: linear-gradient(90deg, #15243a, #1a2b42);
+  --surface-sheet: linear-gradient(145deg, #172b45, #15243a);
+  --link-color: #91c4ff;
+  --app-canvas: #0d192a;
+  --page-outside: #080f1a;
+  --dock-background: rgba(22, 38, 59, 0.97);
+  --login-sky: #173c59;
+  --login-wash: #101f33;
+  --state-danger: #ff9c9b;
+  --state-danger-bg: rgba(244, 103, 108, 0.16);
+  --state-warn: #f1cd7e;
+  --state-warn-bg: rgba(224, 173, 51, 0.16);
+  --state-success: #82e1bd;
+  --state-success-bg: rgba(45, 215, 164, 0.14);
+  --state-info: #91c4ff;
+  --state-info-bg: rgba(93, 160, 255, 0.16);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.18);
+  --shadow-float: 0 6px 19px rgba(0, 0, 0, 0.3);
+}
+html[data-theme] body {
+  background: var(--page-outside);
+}
+html[data-theme="dark"] .adminScope {
+  --a-bg: #101923;
+  --a-surface: #192635;
+  --a-ink: #edf3fb;
+  --a-ink-soft: #b1bfd1;
+  --a-line: #334355;
+  --a-field-line: #647990;
+  --a-hover: #213247;
+  --a-brand: #9dc7ff;
+  --a-brand-soft: #233d5b;
+  --a-sidebar: #0e1b2c;
+  --a-sidebar-active: #24456e;
+  --a-sidebar-profile: #182b42;
+  --a-green: #89dfb5;
+  --a-green-soft: #143c33;
+  --a-orange: #f0c487;
+  --a-orange-soft: #433522;
+  --a-purple: #c3b5ff;
+  --a-purple-soft: #332c50;
+  --a-grey-soft: #22344b;
+  --a-shadow: none;
+}
+input,
+textarea {
+  caret-color: var(--ink-800);
+}
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--brand-blue-500);
+}
+html[data-theme="dark"] ::selection {
+  background: #315d8b;
+  color: #fff;
+}
+html[data-theme="dark"] {
+  scrollbar-color: #38516f #0d192a;
+}
+
+/* Match the reference: reveal the new theme outwards from the viewport center. */
+:root[data-theme-transition]::view-transition {
+  pointer-events: none;
+}
+:root[data-theme-transition]::view-transition-group(root) {
+  animation: none;
+}
+:root[data-theme-transition]::view-transition-image-pair(root) {
+  isolation: isolate;
+}
+:root[data-theme-transition]::view-transition-old(root),
+:root[data-theme-transition]::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
+  opacity: 1;
+}
+:root[data-theme-transition]::view-transition-old(root) {
+  z-index: 1;
+}
+:root[data-theme-transition]::view-transition-new(root) {
+  z-index: 2;
+  animation: theme-circle-reveal 500ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes theme-circle-reveal {
+  from { clip-path: circle(0% at 50% 50%); }
+  /* 70.71% of the normalized diagonal reaches all four corners; round up. */
+  to { clip-path: circle(71% at 50% 50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme-transition]::view-transition-old(root),
+  :root[data-theme-transition]::view-transition-new(root) {
+    animation: none;
+  }
+}

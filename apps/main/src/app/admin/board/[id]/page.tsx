@@ -71,7 +71,7 @@ export default async function BoardPostPage({ params }: PageProps<"/admin/board/
         <Badge tone={CAT_TONE[post.category] ?? "grey"}>{post.category}</Badge>
         <h1 className={styles.title}>{post.title}</h1>
         <p className={styles.meta}>
-          {post.author?.name ?? "운영진"} 운영진 · {formatDate(post.created_at)}
+          {post.author?.name ?? "운영진"} 운영진 / {formatDate(post.created_at)}
         </p>
       </header>
 

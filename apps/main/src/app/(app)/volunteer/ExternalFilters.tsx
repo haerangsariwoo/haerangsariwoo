@@ -70,7 +70,7 @@ export function ExternalFilters({
         disabled={guguns.length === 0}
         onChange={(e) => onChange({ ...value, gugun: e.target.value })}
       >
-        <option value={ALL}>시·군·구 전체</option>
+        <option value={ALL}>시군구 전체</option>
         {guguns.map((g) => (
           <option key={g} value={g}>
             {g}

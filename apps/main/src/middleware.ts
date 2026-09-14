@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isLocalAdminBypass } from "@/lib/local-admin";
 
 const cookieOptions =
   process.env.NODE_ENV === "production"
@@ -7,7 +8,7 @@ const cookieOptions =
     : undefined;
 
 /** 로그인 없이 들어갈 수 있는 경로 — 로그인(/)과 회원가입, 그리고 상태 확인 */
-const PUBLIC_PATHS = ["/signup", "/api/health"];
+const PUBLIC_PATHS = ["/signup", "/login", "/api/health"];
 
 /**
  * 로그인 뒤 돌아갈 곳. 남이 넣어준 주소로 튕겨 보내지 않도록 우리 앱 안의
@@ -20,7 +21,9 @@ function safeNext(value: string | null) {
 
 function isPublic(pathname: string) {
   if (pathname === "/") return true;
-  return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  return PUBLIC_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
 }
 
 /**
@@ -29,6 +32,16 @@ function isPublic(pathname: string) {
  * 확인은 각 admin 레이아웃에서 한다 — 여기서는 "로그인했는지"만 본다.
  */
 export async function middleware(request: NextRequest) {
+  if (isLocalAdminBypass()) {
+    if (request.nextUrl.pathname === "/") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/home";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -41,7 +54,9 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value),
+          );
           response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
@@ -92,5 +107,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   // manifest 는 로그인 전에도 읽혀야 한다 — 막으면 브라우저가 이름도 아이콘도
   // 모르는 채 북마크만 만든다
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icons/|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|woff2?)$).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|icons/|media/login-ocean\\.mp4$|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|woff2?)$).*)",
+  ],
 };

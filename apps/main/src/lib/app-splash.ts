@@ -1,0 +1,2 @@
+// Before-paint presentation only. No navigation, authentication, or data fetching.
+export const SPLASH_BOOTSTRAP = `(()=>{try{const r=document.documentElement;const replay=new URLSearchParams(location.search).get('splash')==='1';if(!location.pathname.startsWith('/admin')&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&(replay||!sessionStorage.getItem('haerang-splash-v1'))){r.dataset.appSplash='show';sessionStorage.setItem('haerang-splash-v1','seen')}}catch{}})()`;

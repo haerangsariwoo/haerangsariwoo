@@ -9,3 +9,11 @@ build/
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# Local design captures and private release evidence are not application assets.
+/output/
+/.impeccable/
+/.release-private/
+**/supabase/.temp/
+*.dump
+*.backup

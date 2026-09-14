@@ -2,6 +2,12 @@
 
 한성대학교 봉사동아리 **해랑사리우** 웹앱 프로젝트.
 
+> **2026-09-14 운영 반영 준비:** 현재 기준 실행·배포 안내와 추가 검증 항목은
+> [MAIN_READINESS.md](MAIN_READINESS.md)를 먼저 확인하세요.
+> 아래 초기 기획의 ‘인증 미연동/모든 데이터 목업’ 설명은 현재 코드와 다릅니다.
+> 현재 회원 앱은 Supabase 인증·승인 상태·권한 정책을 사용하며, 로컬 미리보기만 별도로 격리합니다.
+> 회원 앱 개발 포트는 **3010**이고 `apps/recruit`는 이번 변경 범위에서 제외합니다.
+
 ## 문서
 - [해랑사리우 웹앱 브리핑](해랑사리우_브리핑.md) — 요구사항 정리 (전체 IA + 화면별 상세)
 
@@ -9,7 +15,7 @@
 
 | 앱 | 경로 | 포트 | 설명 |
 |---|---|---|---|
-| 메인 회원 웹앱 | `apps/main` | 3000 | 부원 전용. 홈·활동·봉사모집·커뮤니티·마이 + 운영진 관리자 |
+| 메인 회원 웹앱 | `apps/main` | 3010 | 부원 전용. 홈·활동·봉사모집·커뮤니티·마이 + 운영진 관리자 |
 | 신입모집 웹앱 | `apps/recruit` | 3001 | 외부 공개 창구. 소개·지원·결과 확인 + 모집 관리자 |
 
 ---
@@ -24,8 +30,8 @@ node -v    # v20 이상 나오면 OK
 
 ### 1. 코드 받기
 ```bash
-git clone https://github.com/haerangsariwoo/haerang.git
-cd haerang
+git clone https://github.com/haerangsariwoo/haerangsariwoo.git
+cd haerangsariwoo
 ```
 > 이미 받아놨으면 `git pull` 로 최신화
 
@@ -35,7 +41,7 @@ cd apps/main
 npm install
 npm run dev
 ```
-→ 브라우저에서 **http://localhost:3000**
+→ 브라우저에서 **http://localhost:3010**
 
 ### 3. 모집 앱 실행 (새 터미널 창에서)
 ```bash
@@ -57,8 +63,8 @@ npm run dev
 1. PC와 폰을 **같은 와이파이**에 연결
 2. `npm run dev` 실행하면 터미널에 이렇게 뜹니다
    ```
-   - Local:    http://localhost:3000
-   - Network:  http://192.168.0.10:3000   ← 이 주소
+   - Local:    http://localhost:3010
+   - Network:  http://192.168.0.10:3010   ← 이 주소
    ```
 3. 폰 브라우저에 **Network 주소**를 입력
 
@@ -68,7 +74,7 @@ npm run dev
 
 ## 둘러볼 화면
 
-### 메인 회원 앱 (localhost:3000)
+### 메인 회원 앱 (localhost:3010)
 | 화면 | 경로 | 비고 |
 |---|---|---|
 | 로그인 | `/` | 아무 값이나 넣고 로그인 (인증 미연동) |

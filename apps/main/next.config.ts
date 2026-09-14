@@ -1,6 +1,16 @@
 import type { NextConfig } from "next";
 
+// A hosted deployment must never inherit this Mac's credential-free preview.
+if (process.env.VERCEL && (
+  process.env.LOCAL_ADMIN_BYPASS === "1" ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY === "local-placeholder" ||
+  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::|\/|$)/i.test(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "")
+)) {
+  throw new Error("배포 환경에 로컬 미리보기 설정이 있습니다. 관리자 우회를 끄고 운영 Supabase 환경변수를 확인하세요.");
+}
+
 const nextConfig: NextConfig = {
+  devIndicators: false,
   /**
    * 개발 서버는 기본적으로 localhost 가 아닌 곳에서 오는 요청을 막는다.
    * 폰으로 LAN IP(예: http://223.194.130.18:3010)에 접속해 테스트할 때

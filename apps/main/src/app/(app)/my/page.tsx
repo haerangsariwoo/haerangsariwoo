@@ -1,3 +1,6 @@
+import { ThemePicker } from "@/components/theme/ThemeControls";
+import { TourRestart } from "@/components/onboarding/AppTour";
+import { FirstVisitRestart } from "@/components/onboarding/FirstVisitSetup";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -10,11 +13,11 @@ import { getMyStats } from "@/lib/my-stats";
 import { ProfilePhoto } from "./ProfilePhoto";
 import styles from "./my.module.css";
 
-export const metadata = { title: "MY · 해랑사리우" };
+export const metadata = { title: "MY / 해랑사리우" };
 
 const MENU = [
   { label: "봉사 인증하기", href: "/verify" as const },
-  { label: "활동 확인서 · 증명자료", href: "/my/records" as const },
+  { label: "활동 확인서 / 증명자료", href: "/my/records" as const },
   { label: "쪽지함", href: "/messages" as const },
   { label: "계정 설정", href: "/my/account" as const },
 ];
@@ -32,7 +35,10 @@ const MENU = [
 const SHOW_BADGES = false;
 
 export default async function MyPage() {
-  const [profile, stats] = await Promise.all([getCurrentMember(), getMyStats()]);
+  const [profile, stats] = await Promise.all([
+    getCurrentMember(),
+    getMyStats(),
+  ]);
   if (!profile) redirect("/");
 
   const upcoming = stats.records
@@ -40,13 +46,21 @@ export default async function MyPage() {
     .slice(0, 3);
 
   const hourStats = [
-    { label: "누적 봉사시간", value: String(stats.totalHours), caption: "시간" },
+    {
+      label: "누적 봉사시간",
+      value: String(stats.totalHours),
+      caption: "시간",
+    },
     {
       label: "이번 학기",
       value: String(stats.semesterHours),
       caption: `/ ${stats.semesterGoal}시간`,
     },
-    { label: "출석률", value: String(stats.attendanceRate), caption: "%" },
+    {
+      label: "출석률",
+      value: stats.totalActivities === 0 ? "—" : String(stats.attendanceRate),
+      caption: "%",
+    },
   ];
 
   return (
@@ -66,7 +80,7 @@ export default async function MyPage() {
           <div>
             <p className={styles.name}>{profile.name}</p>
             <p className={styles.profileMeta}>
-              {profile.studentId} · {profile.cohort}
+              {profile.studentId}  / {profile.cohort}
               <br />
               {profile.track}
             </p>
@@ -106,33 +120,49 @@ export default async function MyPage() {
                   <p className={styles.recordTitle}>{r.title}</p>
                   <p className={styles.recordMeta}>{r.date}</p>
                 </div>
-                <span className={cn(styles.state, styles[r.state])}>{r.state}</span>
+                <span className={cn(styles.state, styles[r.state])}>
+                  {r.state}
+                </span>
               </div>
             ))}
           </div>
         </section>
 
         {SHOW_BADGES && (
-        <section>
-          <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>배지</h2>
-            <span className={styles.moreLink}>
-              {stats.badges.filter((b) => b.earned).length} / {stats.badges.length}
-            </span>
-          </div>
-          <div className={styles.badgeGrid}>
-            {stats.badges.map((b) => (
-              <div key={b.id} className={cn(styles.badge, !b.earned && styles.locked)}>
-                <span className={styles.badgeDot} />
-                <p className={styles.badgeLabel}>{b.label}</p>
-                <p className={styles.badgeDesc}>{b.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+          <section>
+            <div className={styles.sectionHead}>
+              <h2 className={styles.sectionTitle}>배지</h2>
+              <span className={styles.moreLink}>
+                {stats.badges.filter((b) => b.earned).length} /{" "}
+                {stats.badges.length}
+              </span>
+            </div>
+            <div className={styles.badgeGrid}>
+              {stats.badges.map((b) => (
+                <div
+                  key={b.id}
+                  className={cn(styles.badge, !b.earned && styles.locked)}
+                >
+                  <span className={styles.badgeDot} />
+                  <p className={styles.badgeLabel}>{b.label}</p>
+                  <p className={styles.badgeDesc}>{b.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
       </SheetGroup>
 
+      <SheetGroup>
+        <section>
+          <h2 className={styles.sectionTitle}>화면 설정</h2>
+          <div style={{ marginTop: 12 }}>
+            <ThemePicker />
+          </div>
+          <TourRestart />
+          <FirstVisitRestart />
+        </section>
+      </SheetGroup>
       {/* ③ 설정 */}
       <SheetGroup>
         <section>

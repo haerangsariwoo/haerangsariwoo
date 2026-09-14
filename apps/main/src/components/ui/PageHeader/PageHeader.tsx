@@ -16,10 +16,12 @@ export function PageHeader({ title, meta, back }: PageHeaderProps) {
           ‹ {back.label}
         </Link>
       )}
-      <div className={styles.row}>
-        <h1 className={styles.title}>{title}</h1>
-        {meta && <span className={styles.meta}>{meta}</span>}
-      </div>
+      {(title || meta) && (
+        <div className={styles.row}>
+          {title && <h1 className={styles.title}>{title}</h1>}
+          {meta && <span className={styles.meta}>{meta}</span>}
+        </div>
+      )}
     </div>
   );
 }

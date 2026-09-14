@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Switch from "@radix-ui/react-switch";
 import { cn } from "@/lib/cn";
 import { subscribeUser, unsubscribeUser } from "@/app/actions/push";
@@ -25,7 +25,7 @@ function urlBase64ToUint8Array(base64String: string) {
   return output;
 }
 
-export function PushSettings() {
+export function PushSettings({ onSubscribed }: { onSubscribed?: () => void } = {}) {
   const supported = useSupportsPush();
   const isIOS = useIsIOS();
   const isIPad = useIsIPad();
@@ -36,21 +36,36 @@ export function PushSettings() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [justDenied, setJustDenied] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const mounted = useRef(false);
+  const configured = Boolean(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY);
 
   // 이미 이 기기에서 알림을 켰는지 확인한다
   useEffect(() => {
-    if (!supported) return;
-    registerServiceWorker()
-      .then((reg) => reg.pushManager.getSubscription())
-      .then(setSubscription)
-      .catch(() => setMessage("알림 기능을 준비하지 못했어요."));
-  }, [supported]);
+    mounted.current = true;
+    let cancelled = false;
+    const current = supported
+      ? registerServiceWorker().then((reg) => reg.pushManager.getSubscription())
+      : Promise.resolve(null);
+    current.then((sub) => {
+      if (cancelled) return;
+      setSubscription(sub);
+      if (sub) onSubscribed?.();
+    }).catch(() => {
+      if (!cancelled) setMessage("알림 기능을 준비하지 못했어요.");
+    }).finally(() => {
+      if (!cancelled) setChecking(false);
+    });
+    return () => { cancelled = true; mounted.current = false; };
+  }, [supported, onSubscribed]);
 
   async function enable() {
+    if (busy || checking || !supported || !configured || typeof Notification === "undefined") return;
     setBusy(true);
     setMessage(null);
     try {
       const permission = await Notification.requestPermission();
+      if (!mounted.current) return;
       if (permission !== "granted") {
         setJustDenied(permission === "denied");
         setMessage("알림 권한이 허용되지 않았어요.");
@@ -73,6 +88,7 @@ export function PushSettings() {
       }
       setSubscription(sub);
       setMessage("이제 공지가 올라오면 알림으로 알려드릴게요.");
+      if (mounted.current) onSubscribed?.();
     } catch {
       setMessage("알림을 켜지 못했어요. 잠시 후 다시 시도해 주세요.");
     } finally {
@@ -114,13 +130,18 @@ export function PushSettings() {
             checked={on}
             aria-label="공지 알림 받기"
             className={styles.switch}
-            disabled={busy || denied}
+            disabled={busy || checking || denied || (!configured && !on)}
             onCheckedChange={(next) => (next ? enable() : disable())}
           >
             <Switch.Thumb className={styles.knob} />
           </Switch.Root>
         )}
       </div>
+
+      {checking && <p className={styles.info} role="status">알림 설정을 확인하고 있어요.</p>}
+      {!checking && supported && !configured && !on && !denied && (
+        <p className={styles.info}>알림 설정을 준비하고 있어요. 준비되면 MY에서 켤 수 있어요.</p>
+      )}
 
       {needsInstall && (
         <div className={cn(styles.info, styles.warn)}>
@@ -144,7 +165,7 @@ export function PushSettings() {
         </div>
       )}
 
-      {message && <p className={cn(styles.info, on && styles.ok)}>{message}</p>}
+      {message && <p className={cn(styles.info, on && styles.ok)} role="status">{message}</p>}
     </div>
   );
 }

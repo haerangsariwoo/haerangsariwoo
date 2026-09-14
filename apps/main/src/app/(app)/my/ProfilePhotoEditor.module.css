@@ -97,7 +97,7 @@
 
 .doneBtn {
   background: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .doneBtn:hover {

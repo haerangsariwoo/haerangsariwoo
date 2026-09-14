@@ -38,7 +38,7 @@
   position: relative;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--ink-800);
+  background: var(--solid-ink);
 }
 
 /*
@@ -75,7 +75,7 @@
   padding: 3px 10px;
   border-radius: var(--radius-pill);
   background: rgba(0, 0, 0, 0.55);
-  color: #fff;
+  color: var(--on-brand);
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -161,7 +161,7 @@
 .saveReady {
   border-color: transparent;
   background: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .hint {
@@ -217,7 +217,7 @@
 }
 
 .postEdit {
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .postRemove {

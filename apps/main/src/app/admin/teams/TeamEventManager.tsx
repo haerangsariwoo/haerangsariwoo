@@ -386,7 +386,7 @@ export function TeamEventManager() {
             return (
               <option key={e.id} value={e.id}>
                 {a?.title ?? "(삭제된 활동)"}
-                {e.published ? " · 발행 중" : ""}
+                {e.published ? " / 발행 중" : ""}
               </option>
             );
           })}
@@ -429,7 +429,7 @@ export function TeamEventManager() {
             >
               {availableActivities.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {a.title} · {a.date_label}
+                  {a.title}  / {a.date_label}
                 </option>
               ))}
             </select>
@@ -495,7 +495,7 @@ export function TeamEventManager() {
             <div className={styles.eventSummary}>
               <span className={styles.eventSummaryTitle}>{selectedActivity.title}</span>
               <span className={styles.eventSummaryMeta}>
-                {selectedActivity.date_label} · {selectedActivity.place}
+                {selectedActivity.date_label}  / {selectedActivity.place}
               </span>
               {selected.published && <span className={styles.publishedBadge}>발행 중</span>}
             </div>
@@ -518,13 +518,13 @@ export function TeamEventManager() {
             <p className={styles.publishText}>
               {selected.published ? (
                 <>
-                  <b>{selectedActivity?.title}</b> 이(가) 부원 홈 · 내 조에 노출 중입니다.
+                  <b>{selectedActivity?.title}</b> 이(가) 부원 홈 / 내 조에 노출 중입니다.
                 </>
               ) : readOnly ? (
                 "지난 학기 행사는 발행 상태를 바꿀 수 없습니다."
               ) : (
                 <>
-                  조 편성은 옮길 때마다 바로 저장됩니다. 발행하면 부원이 <b>홈 · 내 조</b>에서
+                  조 편성은 옮길 때마다 바로 저장됩니다. 발행하면 부원이 <b>홈 / 내 조</b>에서
                   결과를 확인할 수 있습니다.
                 </>
               )}

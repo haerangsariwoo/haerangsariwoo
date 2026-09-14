@@ -80,7 +80,7 @@ export default async function VolunteerDetailPage({ params }: PageProps<"/volunt
           <div>
             <p className={styles.factLabel}>일시</p>
             <p className={styles.factValue}>
-              {item.dateLabel.split(" · ")[0]} · {item.timeLabel}
+              {item.dateLabel.split(/\s[·/]\s/)[0]} / {item.timeLabel}
             </p>
           </div>
         </div>

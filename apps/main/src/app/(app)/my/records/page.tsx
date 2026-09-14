@@ -4,7 +4,7 @@ import { getMyStats } from "@/lib/my-stats";
 import myStyles from "../my.module.css";
 import styles from "./records.module.css";
 
-export const metadata = { title: "활동 기록 · 해랑사리우" };
+export const metadata = { title: "활동 기록 / 해랑사리우" };
 
 export default async function RecordsPage() {
   const { records, totalHours } = await getMyStats();
@@ -35,7 +35,7 @@ export default async function RecordsPage() {
       </section>
 
       <section>
-        <h2 className={styles.groupTitle}>예정 · 대기</h2>
+        <h2 className={styles.groupTitle}>예정 / 대기</h2>
         <div className={myStyles.recordList}>
           {upcoming.length === 0 && <p className={myStyles.recordMeta}>예정된 활동이 없어요.</p>}
           {upcoming.map((r) => (
@@ -60,7 +60,7 @@ export default async function RecordsPage() {
                 <p className={myStyles.recordTitle}>{r.title}</p>
                 <p className={myStyles.recordMeta}>
                   {r.date}
-                  {r.hours ? ` · 인정 ${r.hours}시간` : ""}
+                  {r.hours ? ` / 인정 ${r.hours}시간` : ""}
                 </p>
               </div>
               <span className={cn(myStyles.state, myStyles[r.state])}>{r.state}</span>
@@ -70,7 +70,7 @@ export default async function RecordsPage() {
       </section>
 
       <p className={myStyles.note}>
-        참여 여부는 운영진이 신청자 관리에서 확인·처리하며, 승인된 실적만 시간에 반영됩니다.
+        참여 여부는 운영진이 신청자 관리에서 확인 / 처리하며, 승인된 실적만 시간에 반영됩니다.
       </p>
     </div>
   );

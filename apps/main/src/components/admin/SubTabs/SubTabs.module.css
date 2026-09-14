@@ -1,11 +1,16 @@
 .bar {
   display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
   gap: 4px;
   margin-bottom: 20px;
   border-bottom: 1px solid var(--a-line);
 }
 
 .tab {
+  flex: none;
+  min-height: 44px;
   position: relative;
   border: none;
   background: none;
@@ -20,11 +25,13 @@
 
 .tab:hover {
   color: var(--a-ink);
+  background: var(--a-hover);
 }
 
 /* 선택된 탭은 아래 선을 덮어 쓴다 — 탭과 내용이 이어져 보이게 */
 .tab.on {
   color: var(--a-brand);
+  font-weight: 700;
 }
 
 .tab.on::after {
@@ -34,5 +41,5 @@
   right: 0;
   bottom: -1px;
   height: 2px;
-  background: var(--a-brand);
+  background: var(--a-action);
 }

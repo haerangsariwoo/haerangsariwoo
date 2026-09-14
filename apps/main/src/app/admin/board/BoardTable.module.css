@@ -37,12 +37,12 @@
   border-radius: var(--a-radius-md);
   display: grid;
   place-items: center;
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 /* 카테고리 배지와 같은 색 계열로 폴더도 구분한다 */
 .folderIcon.blue {
-  background: var(--a-brand);
+  background: var(--a-action);
 }
 .folderIcon.orange {
   background: var(--a-orange);
@@ -249,8 +249,8 @@
 
 .widthBtn.on {
   border-color: var(--a-brand);
-  background: var(--a-brand);
-  color: #fff;
+  background: var(--a-action);
+  color: var(--on-brand);
 }
 
 .inlineRemove {

@@ -27,7 +27,7 @@ export default async function AnonPostPage({ params }: PageProps<"/community/ano
       <div className={styles.head}>
         <h1 className={styles.title}>{post.title}</h1>
         <p className={styles.meta}>
-          익명 · {post.date}
+          익명 / {post.date}
           {post.isMine && <span className={styles.mine}>내 글</span>}
         </p>
       </div>

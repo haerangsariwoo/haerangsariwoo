@@ -21,7 +21,7 @@ export default async function NoticeDetailPage({ params }: PageProps<"/community
         </span>
         <h1 className={styles.title}>{item.title}</h1>
         <p className={styles.meta}>
-          {item.author} · {item.date}
+          {item.author}  / {item.date}
         </p>
       </div>
 

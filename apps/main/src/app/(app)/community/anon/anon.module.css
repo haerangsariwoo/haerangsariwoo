@@ -63,7 +63,7 @@
   border: none;
   border-radius: var(--radius-md);
   background: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
@@ -107,7 +107,7 @@
   padding: 2px 8px;
   border-radius: var(--radius-pill);
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   font-size: 11px;
   font-weight: 700;
 }
@@ -179,7 +179,7 @@
 }
 
 .commentsCount {
-  color: var(--brand-blue-500);
+  color: var(--link-color);
   font-variant-numeric: tabular-nums;
 }
 
@@ -214,7 +214,7 @@
 
 /* 글쓴이 댓글은 한눈에 가려지게 */
 .commentWriter {
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 /* 관리자에게만 채워지는 이름 */
@@ -295,7 +295,7 @@
   border: none;
   border-radius: var(--radius-md);
   background: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -304,4 +304,21 @@
 .commentSubmit:disabled {
   background: var(--ink-300);
   cursor: default;
+}
+.input,
+.textarea {
+  font-size: 16px;
+  border-radius: 17px;
+}
+.actions button,
+.actions a {
+  min-height: 48px;
+  border-radius: 16px;
+}
+.catBtn {
+  min-height: 44px;
+}
+.title {
+  font-size: 25px;
+  letter-spacing: -0.045em;
 }

@@ -1,452 +1,246 @@
-/* ---------- Hero ----------
-   design.md §3.2 Explore : eyebrow + H2 를 위에 두고 가운데를 비운다 */
-.hero {
-  position: relative;
-  background: var(--surface-sheet);
-  overflow: hidden;
-}
-
-.greeting {
-  font-size: 32px;
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  color: var(--ink-900);
-  padding-right: 76px;
-}
-
-.subGreeting {
-  font-size: 14px;
-  color: var(--ink-500);
-  margin-top: var(--space-6);
-}
-
-.heroMascot {
-  position: absolute;
-  right: var(--space-16);
-  top: var(--space-16);
-}
-
-/* 두 숫자도 칸을 나누는 선만 두고 붙인다 */
-.summaryRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-top: var(--space-16);
-  padding-top: var(--space-16);
-  border-top: 1px solid var(--hairline);
-}
-
-.summaryCard {
-  padding-left: var(--space-14);
-}
-
-.summaryCard:first-child {
-  padding-left: 0;
-}
-
-.summaryCard + .summaryCard {
-  border-left: 1px solid var(--hairline);
-}
-
-/* §1.2 --type-meta : 12, --ink-600 */
-.summaryLabel {
-  font-size: 12px;
-  color: var(--ink-600);
-}
-
-/* §1.2 --type-h4 : Montserrat 600 / 20 */
-.summaryValue {
-  font-family: var(--font-heading);
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--brand-blue-500);
-  margin-top: var(--space-4);
-}
-
-/* ---------- 네 칸 블록 ----------
-   두 줄로 나눠 두면 줄끼리 높이를 모른다. 한 격자에 네 칸을 담고
-   grid-auto-rows: 1fr 로 줄 높이를 서로 맞춘다 — 네 칸이 같은 크기가 된다. */
-.quad {
-  /* 칸이 자기 여백을 갖는다 */
-  --block-pad-x: 0;
-  --block-pad-y: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-rows: 1fr;
-}
-
-.quad > * {
-  min-width: 0;
-  padding: var(--space-20) var(--space-14);
-}
-
-/* 바깥쪽 여백은 화면 여백에 맞추고, 칸 사이는 선 하나로만 나눈다 */
-.quad > *:nth-child(odd) {
-  padding-left: var(--screen-pad);
-  border-right: 1px solid var(--hairline);
-}
-
-.quad > *:nth-child(even) {
-  padding-right: var(--screen-pad);
-}
-
-.quad > *:nth-child(-n + 2) {
-  border-bottom: 1px solid var(--hairline);
-}
-
-/* 좁은 화면에서는 한 줄에 하나씩 쌓이니 경계선도 방향을 바꾼다 */
-@media (max-width: 359px) {
-  .quad {
-    grid-template-columns: 1fr;
-    grid-auto-rows: auto;
-  }
-  .quad > * {
-    padding: var(--space-20) var(--screen-pad);
-    border-right: none;
-    border-bottom: none;
-  }
-  .quad > * + * {
-    border-top: 1px solid var(--hairline);
-  }
-}
-
-/* ---------- 다음 활동 ---------- */
-.nextCard {
+.page {
+  padding: 6px 16px 0;
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
-
-.nextHead {
+.noticeStrip {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: 8px;
+  min-height: 50px;
+  margin-top: -8px;
+  padding: 8px 12px;
+  background: var(--surface-muted);
+  border-radius: 17px;
+  font-size: 11px;
 }
-
-.ddayBadge {
-  background: var(--state-success-bg);
-  color: var(--state-success);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: var(--radius-xs);
+.noticeStrip strong {
   flex: none;
+  color: var(--link-color);
 }
-
-.nextOrg {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--brand-blue-500);
-  margin-top: var(--space-12);
+.noticeStrip > span:nth-of-type(2) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
-
-.nextTitle {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--ink-800);
-  margin-top: 2px;
-}
-
-.nextWhen {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--ink-800);
-  margin-top: var(--space-12);
-}
-
-.nextMeta {
-  font-size: 12px;
+.noticeStrip > b {
+  margin-left: auto;
+  font-size: 20px;
   color: var(--ink-600);
-  margin-top: 6px;
 }
-
-/* 카드 전체가 눌린다 — 글씨 색은 그대로 둔다 */
-.nextLink {
+.quickGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: -8px;
+}
+.quickGrid a {
+  position: relative;
   display: flex;
   flex-direction: column;
-  color: inherit;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* 아직 답하지 않은 활동은 분류 줄을 주황으로 — 할 일이 남았다는 표시 */
-.nextAsk {
-  color: var(--state-warn);
-}
-
-.nextCta {
-  align-self: flex-start;
-  margin-top: var(--space-12);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--brand-blue-500);
-}
-
-.nextMore {
-  margin-top: var(--space-12);
-  font-size: 12px;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 2px;
+  background: var(--surface-white);
+  border: 1px solid var(--hairline);
+  border-radius: 23px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--ink-600);
 }
-
-/* ---------- section head ---------- */
+.quickGrid a > span:first-child {
+  transition: transform 0.2s cubic-bezier(0.2, 1.7, 0.4, 1);
+}
+.quickGrid a:active > span:first-child {
+  transform: translateY(-5px) rotate(-8deg);
+}
+.count {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  background: #176ff2;
+  color: var(--on-brand);
+  border-radius: 20px;
+  min-width: 17px;
+  min-height: 17px;
+  text-align: center;
+  font-size: 10px;
+}
+.myWave {
+  background: var(--surface-white);
+  border: 1px solid var(--hairline);
+  border-radius: 26px;
+  padding: 20px;
+}
 .sectionHead {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-10);
-}
-
-.sectionTitle {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink-800);
-}
-
-/* §1.2 --type-action-sm : 12 / 500 */
-.moreLink {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--brand-blue-500);
-}
-
-/* ---------- 모집 중인 봉사 ----------
-   홈에서는 카드가 아니라 목록의 한 줄이다.
-   VolunteerCard 가 들고 있는 면·그림자·모서리를 여기서 지운다. */
-.volunteerList {
-  display: flex;
-  flex-direction: column;
-}
-
-.volunteerList > * + * {
-  border-top: 1px solid var(--hairline);
-}
-
-/* ---------- 공지 / 앨범 ---------- */
-.panelHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.panelTitle {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink-800);
-}
-
-.panelMore {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--brand-blue-500);
-}
-
-.noticeList {
-  display: flex;
-  flex-direction: column;
-  list-style: none;
-}
-
-.noticeItem {
-  border-bottom: 1px solid var(--hairline);
-}
-
-.noticeLink {
-  display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 0;
-  color: inherit;
+  margin-bottom: 14px;
 }
-
-.noticeItem:last-child {
-  border-bottom: none;
-}
-
-.noticeTag {
-  font-size: 10px;
+.sectionHead h2 {
+  font-size: 21px;
   font-weight: 700;
-  color: var(--brand-blue-500);
-  flex: none;
-  width: 26px;
+  line-height: 1.3;
+  letter-spacing: -0.05em;
 }
-
-.noticeTag.urgent {
-  color: var(--state-warn);
-}
-
-/* 공지와 익명 게시판이 한 칸을 나눠 쓴다 — 가운데에 선 하나만 */
-.splitCell {
-  display: flex;
-  flex-direction: column;
-}
-
-.splitLower {
-  margin-top: var(--space-16);
-  padding-top: var(--space-16);
-  border-top: 1px solid var(--hairline);
-}
-
-/* 한 칸에 둘을 담으니 제목과 목록 사이를 좁힌다. 다른 칸의 제목 여백은 그대로 둔다 */
-.splitCell .panelHead {
-  margin-bottom: 4px;
-}
-
-.splitCell .noticeItem:first-child .noticeLink {
-  padding-top: 4px;
-}
-
-.splitEmpty {
-  font-size: 12px;
-  color: var(--ink-600);
-}
-
-/* 익명 글의 댓글 수 — 제목 옆에 작게 */
-.anonCount {
-  flex: none;
-  margin-left: auto;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--brand-blue-500);
-  font-variant-numeric: tabular-nums;
-}
-
-.noticeText {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--ink-800);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 사진은 한 덩어리로 붙인다 */
-.albumGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-}
-
-.photo {
-  position: relative;
-  aspect-ratio: 70 / 66;
-  overflow: hidden;
-}
-
-.photoImage {
-  object-fit: cover;
-}
-
-.photo.sky {
-  background: var(--brand-canvas);
-}
-.photo.mint {
-  background: var(--state-success-bg);
-}
-.photo.peach {
-  background: var(--state-warn-bg);
-}
-.photo.lavender {
-  background: var(--state-accent-bg);
-}
-
-/* ---------- my team ---------- */
-.teamCard {
-  min-height: 100px;
-  background: #1a1a1a;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.teamLabel {
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.teamName {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--surface-white);
-  margin-top: 4px;
-}
-
-.teamMore {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--surface-white);
-  white-space: nowrap;
-}
-
-/* ---------- 바로가기 ----------
-   같은 크기 아이콘 4칸 그리드는 어느 앱에나 있는 구성이라 개성이 없고
-   MY 메뉴와도 겹쳤다. 실제 상태가 담긴 행 두 개로 바꾼다. */
-.quickList {
-  display: flex;
-  flex-direction: column;
-}
-
-.quickItem {
-  display: flex;
+.sectionHead a {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-14);
-  min-height: 64px;
-  padding: var(--space-12) 0;
-  color: var(--ink-800);
+  min-height: 44px;
+  font-size: 11px;
+  color: var(--ink-600);
+  white-space: nowrap;
 }
-
-.quickItem + .quickItem {
+.stats {
+  display: flex;
+  gap: 20px;
   border-top: 1px solid var(--hairline);
+  padding-top: 16px;
 }
-
-.quickIcon {
-  width: 24px;
-  height: 24px;
-  flex: none;
-}
-
-.quickBody {
+.stats a {
   flex: 1;
   min-width: 0;
+}
+.stats span {
+  font-size: 11px;
+  color: var(--ink-600);
+}
+.stats strong {
+  display: block;
+  font-size: 27px;
+  letter-spacing: -0.06em;
+  line-height: 1.5;
+}
+.stats small {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  margin-left: 4px;
+  color: var(--ink-600);
+}
+.stats .teamName {
+  font-size: 17px;
+  line-height: 2.4;
+}
+.section {
+  min-width: 0;
+}
+.nextCard {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  background: var(--surface-white);
+  border: 1px solid var(--hairline);
+  border-radius: 23px;
+  padding: 17px;
+}
+.nextCard > div {
+  min-width: 0;
+  flex: 1;
+}
+.nextCard h3 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.nextCard p {
+  font-size: 11px;
+  color: var(--ink-600);
+  margin-top: 5px;
+  word-break: keep-all;
+}
+.tag {
+  display: inline-block;
+  background: var(--surface-muted);
+  color: var(--link-color);
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  margin-bottom: 5px;
+}
+.respond,
+.responseNotice {
+  display: block;
+  color: var(--link-color);
+  font-size: 12px;
+  margin-top: 10px;
+}
+.responseNotice {
+  padding: 12px;
+}
+.exploreCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 20px;
+  background: var(--surface-muted);
+  border-radius: 26px;
+  overflow: hidden;
+}
+.exploreCard h3 {
+  font-size: 21px;
+  line-height: 1.35;
+  margin: 12px 0;
+}
+.exploreCard p {
+  font-size: 11px;
+  color: var(--ink-600);
+}
+.exploreCard > span {
+  transform: rotate(-10deg);
+}
+.volunteers {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 12px;
 }
-
-.quickLabel {
+.album {
+  border-radius: 23px;
+  overflow: hidden;
+  background: var(--surface-white);
+  padding: 16px;
+}
+.post {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  align-items: center;
+  background: var(--surface-white);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--hairline);
   font-size: 14px;
-  font-weight: 600;
 }
-
-/* 지금 어떤 상태인지 알려주는 한 줄 */
-.quickMeta {
-  font-size: 12px;
-  color: var(--ink-600);
-}
-
-.quickBadge {
+.post small {
   flex: none;
-  padding: var(--space-4) var(--space-10);
-  border-radius: var(--radius-xs);
-  background: var(--brand-tint-10);
-  color: var(--brand-blue-500);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.quickChev {
-  flex: none;
-  color: var(--ink-400);
-  font-size: 18px;
-  line-height: 1;
-}
-
-.albumEmpty {
-  font-size: 12px;
   color: var(--ink-600);
-  padding: 8px 0;
+  font-size: 10px;
+}
+.footer {
+  font-size: 10px;
+  color: var(--ink-600);
+  text-align: center;
+  margin: 8px 0 10px;
+  letter-spacing: 0.03em;
+}
+@media (max-width: 359px) {
+  .page {
+    padding-inline: 12px;
+  }
+  .quickGrid {
+    gap: 5px;
+  }
+  .quickGrid a {
+    font-size: 10px;
+  }
+}
+.welcomeNote {
+  color: var(--ink-600);
+  font-size: 12px;
+  margin: -3px 0 14px;
 }

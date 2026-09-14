@@ -12,11 +12,16 @@ import { tonesFor, type Album } from "@/lib/community";
 import type { NoticeItem } from "@/lib/notices";
 import type { AnonPostItem } from "@/lib/anon-posts-shared";
 import styles from "./community.module.css";
+import { BrandIcon } from "@/components/ui/BrandIcon/BrandIcon";
 
 type Tab = "공지" | "앨범" | "익명";
 const TABS: Tab[] = ["공지", "앨범", "익명"];
 /** 탭에 적는 이름. 주소(?tab=익명)는 짧게 두고 화면에만 길게 적는다 */
-const TAB_LABEL: Record<Tab, string> = { 공지: "공지", 앨범: "앨범", 익명: "익명 게시판" };
+const TAB_LABEL: Record<Tab, string> = {
+  공지: "공지",
+  앨범: "앨범",
+  익명: "익명 게시판",
+};
 
 interface BoardProps {
   notices: NoticeItem[];
@@ -26,21 +31,42 @@ interface BoardProps {
   canPost: boolean;
 }
 
-export function CommunityBoard({ notices, albums, anonPosts, canPost }: BoardProps) {
+export function CommunityBoard({
+  notices,
+  albums,
+  anonPosts,
+  canPost,
+}: BoardProps) {
   // useSearchParams 는 직접 접속 시 서버 렌더에서 suspend 하므로 경계로 감싼다
   return (
     <Suspense
       fallback={
-        <CommunityView notices={notices} albums={albums} anonPosts={anonPosts} canPost={canPost} initialTab="공지" />
+        <CommunityView
+          notices={notices}
+          albums={albums}
+          anonPosts={anonPosts}
+          canPost={canPost}
+          initialTab="공지"
+        />
       }
     >
-      <CommunityFromQuery notices={notices} albums={albums} anonPosts={anonPosts} canPost={canPost} />
+      <CommunityFromQuery
+        notices={notices}
+        albums={albums}
+        anonPosts={anonPosts}
+        canPost={canPost}
+      />
     </Suspense>
   );
 }
 
 /** 홈의 "앨범 전체보기"처럼 ?tab=앨범 으로 들어오면 앨범 탭을 연다 */
-function CommunityFromQuery({ notices, albums, anonPosts, canPost }: BoardProps) {
+function CommunityFromQuery({
+  notices,
+  albums,
+  anonPosts,
+  canPost,
+}: BoardProps) {
   const params = useSearchParams();
   return (
     <CommunityView
@@ -48,7 +74,11 @@ function CommunityFromQuery({ notices, albums, anonPosts, canPost }: BoardProps)
       albums={albums}
       anonPosts={anonPosts}
       canPost={canPost}
-      initialTab={TABS.includes(params.get("tab") as Tab) ? (params.get("tab") as Tab) : "공지"}
+      initialTab={
+        TABS.includes(params.get("tab") as Tab)
+          ? (params.get("tab") as Tab)
+          : "공지"
+      }
     />
   );
 }
@@ -63,7 +93,9 @@ function CommunityView({
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [tab, setTab] = useState<Tab>(initialTab);
-  const sorted = [...notices].sort((a, b) => Number(b.pinned) - Number(a.pinned));
+  const sorted = [...notices].sort(
+    (a, b) => Number(b.pinned) - Number(a.pinned),
+  );
 
   /*
    * 차례 바꾸기.
@@ -115,13 +147,45 @@ function CommunityView({
       <SheetGroup>
         {/* 제목과 탭은 한 블록에 둔다. 둘로 나누면 사이에 실선이 생긴다. */}
         <div className={styles.head}>
-          <PageHeader title="커뮤니티" />
-          <div className={styles.segment} role="tablist" aria-label="커뮤니티 구분">
+          <PageHeader title="우리들의 이야기" />
+          <p className={styles.intro}>함께 나누면 더 좋은, 해랑의 일상.</p>
+          <div className={styles.feature}>
+            <div>
+              <h2>
+                작은 소식도
+                <br />
+                반가운 우리 사이.
+              </h2>
+            </div>
+            <BrandIcon name="chat" size={104} />
+          </div>
+          <div
+            className={styles.segment}
+            role="tablist"
+            aria-label="커뮤니티 구분"
+          >
             {TABS.map((t) => (
               <button
                 key={t}
                 type="button"
                 role="tab"
+                id={`community-tab-${t}`}
+                data-tour={t === "앨범" ? "community-album" : undefined}
+                aria-controls="community-panel"
+                tabIndex={tab === t ? 0 : -1}
+                onKeyDown={(e) => {
+                  const i = TABS.indexOf(t);
+                  let n = i;
+                  if (e.key === "ArrowRight") n = (i + 1) % TABS.length;
+                  else if (e.key === "ArrowLeft")
+                    n = (i + TABS.length - 1) % TABS.length;
+                  else if (e.key === "Home") n = 0;
+                  else if (e.key === "End") n = TABS.length - 1;
+                  else return;
+                  e.preventDefault();
+                  setTab(TABS[n]);
+                  document.getElementById(`community-tab-${TABS[n]}`)?.focus();
+                }}
                 aria-selected={tab === t}
                 className={cn(styles.segmentBtn, tab === t && styles.active)}
                 onClick={() => setTab(t)}
@@ -134,201 +198,255 @@ function CommunityView({
       </SheetGroup>
 
       <SheetGroup>
-        {tab === "공지" ? (
-          <div className={styles.list}>
-            {canPost && (
-              /* 공지는 자리에서 바로 알려야 할 때가 많다 — 관리자 화면까지 갈 일이 없다 */
-              <Link href="/community/notice/new" className={styles.writeRow}>
+        <div
+          id="community-panel"
+          role="tabpanel"
+          aria-labelledby={`community-tab-${tab}`}
+          tabIndex={0}
+        >
+          {tab === "공지" ? (
+            <div className={styles.list}>
+              {canPost && (
+                /* 공지는 자리에서 바로 알려야 할 때가 많다 — 관리자 화면까지 갈 일이 없다 */
+                <Link href="/community/notice/new" className={styles.writeRow}>
+                  <span className={styles.writePlus} aria-hidden="true">
+                    ＋
+                  </span>
+                  공지 작성
+                </Link>
+              )}
+              {sorted.map((n) => (
+                <Link
+                  key={n.id}
+                  href={`/community/notice/${n.id}`}
+                  className={cn(styles.noticeRow, n.pinned && styles.pinned)}
+                >
+                  <div className={styles.noticeTop}>
+                    <span
+                      className={cn(
+                        styles.catTag,
+                        n.category === "필독" && styles.urgent,
+                      )}
+                    >
+                      {n.category}
+                    </span>
+                    {n.pinned && (
+                      <span
+                        className={styles.pinFlag}
+                        role="img"
+                        aria-label="상단 고정"
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M12 17v5" />
+                          <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" />
+                        </svg>
+                      </span>
+                    )}
+                  </div>
+                  <h2 className={styles.noticeTitle}>{n.title}</h2>
+                  <p className={styles.noticeMeta}>
+                    {n.author}  / {n.date}
+                  </p>
+                </Link>
+              ))}
+              {sorted.length === 0 && (
+                <p className={styles.noticeMeta}>아직 등록된 공지가 없어요.</p>
+              )}
+            </div>
+          ) : tab === "앨범" ? (
+            <div className={styles.list}>
+              {canPost &&
+                (order ? (
+                  <div className={styles.orderBar}>
+                    <span className={styles.orderHint}>
+                      화살표로 차례를 옮기세요.
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.orderCancel}
+                      onClick={() => setOrder(null)}
+                      disabled={saving}
+                    >
+                      취소
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.orderSave}
+                      onClick={saveOrder}
+                      disabled={saving}
+                    >
+                      {saving ? "저장 중…" : "완료"}
+                    </button>
+                  </div>
+                ) : (
+                  /* 활동을 마치고 폰으로 바로 올리는 자리 — 관리자 화면까지 갈 일이 없다 */
+                  <div className={styles.writeBar}>
+                    <Link
+                      href="/community/album/new"
+                      className={styles.writeRow}
+                    >
+                      <span className={styles.writePlus} aria-hidden="true">
+                        ＋
+                      </span>
+                      게시글 작성
+                    </Link>
+                    {albums.length > 1 && (
+                      <button
+                        type="button"
+                        className={styles.orderStart}
+                        onClick={() => setOrder(albums)}
+                      >
+                        차례 바꾸기
+                      </button>
+                    )}
+                  </div>
+                ))}
+              {orderError && <p className={styles.orderError}>{orderError}</p>}
+
+              {order
+                ? order.map((a, i) => (
+                    <div
+                      key={a.id}
+                      className={cn(styles.albumRow, styles.albumRowStatic)}
+                    >
+                      <span
+                        className={cn(
+                          styles.cover,
+                          !a.photos[0] && styles[tonesFor(a.id)[0]],
+                        )}
+                      >
+                        {a.photos[0] && (
+                          <Image
+                            className={styles.photoImage}
+                            src={a.photos[0].url}
+                            alt=""
+                            fill
+                            sizes="90px"
+                            unoptimized
+                            style={{
+                              objectPosition: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
+                              transform: `scale(${a.photos[0].focus.zoom})`,
+                              transformOrigin: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
+                            }}
+                          />
+                        )}
+                      </span>
+                      <div className={styles.albumFoot}>
+                        <h2 className={styles.albumTitle}>{a.title}</h2>
+                        <span className={styles.albumMeta}>{a.date}</span>
+                      </div>
+                      <div className={styles.moveCol}>
+                        <button
+                          type="button"
+                          onClick={() => move(i, -1)}
+                          disabled={i === 0 || saving}
+                          aria-label={`${a.title} 위로`}
+                        >
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => move(i, 1)}
+                          disabled={i === list.length - 1 || saving}
+                          aria-label={`${a.title} 아래로`}
+                        >
+                          ↓
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                : albums.map((a) => (
+                    <Link
+                      key={a.id}
+                      href={`/community/album/${a.id}`}
+                      className={styles.albumRow}
+                    >
+                      {/* 대표 사진 한 장만 — 넉 장을 깔면 목록이 사진첩처럼 보인다 */}
+                      <span
+                        className={cn(
+                          styles.cover,
+                          !a.photos[0] && styles[tonesFor(a.id)[0]],
+                        )}
+                      >
+                        {a.photos[0] && (
+                          <Image
+                            className={styles.photoImage}
+                            src={a.photos[0].url}
+                            alt=""
+                            fill
+                            sizes="90px"
+                            unoptimized
+                            style={{
+                              objectPosition: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
+                              transform: `scale(${a.photos[0].focus.zoom})`,
+                              transformOrigin: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
+                            }}
+                          />
+                        )}
+                        {a.photoCount > 1 && (
+                          <span className={styles.coverCount}>
+                            {a.photoCount}
+                          </span>
+                        )}
+                      </span>
+                      <div className={styles.albumFoot}>
+                        <h2 className={styles.albumTitle}>{a.title}</h2>
+                        {a.body && <p className={styles.albumBody}>{a.body}</p>}
+                        <span className={styles.albumMeta}>
+                          {a.date}
+                          {a.photoCount > 0 && ` / 사진 ${a.photoCount}장`}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+              {albums.length === 0 && (
+                <p className={styles.noticeMeta}>
+                  아직 올라온 게시글이 없어요.
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className={styles.list}>
+              {/* 익명 게시판은 부원 누구나 쓴다 */}
+              <Link href="/community/anon/new" className={styles.writeRow}>
                 <span className={styles.writePlus} aria-hidden="true">
                   ＋
                 </span>
-                공지 작성
+                익명 글쓰기
               </Link>
-            )}
-            {sorted.map((n) => (
-              <Link
-                key={n.id}
-                href={`/community/notice/${n.id}`}
-                className={cn(styles.noticeRow, n.pinned && styles.pinned)}
-              >
-                <div className={styles.noticeTop}>
-                  <span className={cn(styles.catTag, n.category === "필독" && styles.urgent)}>
-                    {n.category}
-                  </span>
-                  {n.pinned && (
-                    <span className={styles.pinFlag} role="img" aria-label="상단 고정">
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 17v5" />
-                        <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" />
-                      </svg>
-                    </span>
-                  )}
-                </div>
-                <h2 className={styles.noticeTitle}>{n.title}</h2>
-                <p className={styles.noticeMeta}>
-                  {n.author} · {n.date}
-                </p>
-              </Link>
-            ))}
-            {sorted.length === 0 && <p className={styles.noticeMeta}>아직 등록된 공지가 없어요.</p>}
-          </div>
-        ) : tab === "앨범" ? (
-          <div className={styles.list}>
-            {canPost &&
-              (order ? (
-                <div className={styles.orderBar}>
-                  <span className={styles.orderHint}>화살표로 차례를 옮기세요.</span>
-                  <button
-                    type="button"
-                    className={styles.orderCancel}
-                    onClick={() => setOrder(null)}
-                    disabled={saving}
-                  >
-                    취소
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.orderSave}
-                    onClick={saveOrder}
-                    disabled={saving}
-                  >
-                    {saving ? "저장 중…" : "완료"}
-                  </button>
-                </div>
-              ) : (
-                /* 활동을 마치고 폰으로 바로 올리는 자리 — 관리자 화면까지 갈 일이 없다 */
-                <div className={styles.writeBar}>
-                  <Link href="/community/album/new" className={styles.writeRow}>
-                    <span className={styles.writePlus} aria-hidden="true">
-                      ＋
-                    </span>
-                    게시글 작성
-                  </Link>
-                  {albums.length > 1 && (
-                    <button
-                      type="button"
-                      className={styles.orderStart}
-                      onClick={() => setOrder(albums)}
-                    >
-                      차례 바꾸기
-                    </button>
-                  )}
-                </div>
+              {anonPosts.map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/community/anon/${p.id}`}
+                  className={styles.noticeRow}
+                >
+                  <h2 className={styles.anonTitle}>{p.title}</h2>
+                  <p className={styles.anonBody}>{p.body}</p>
+                  <p className={styles.noticeMeta}>
+                    익명 / {p.date}
+                    {p.commentCount > 0 && ` / 댓글 ${p.commentCount}`}
+                    {p.isMine && <span className={styles.anonMine}>내 글</span>}
+                  </p>
+                </Link>
               ))}
-            {orderError && <p className={styles.orderError}>{orderError}</p>}
-
-            {order
-              ? order.map((a, i) => (
-                  <div key={a.id} className={cn(styles.albumRow, styles.albumRowStatic)}>
-                    <span className={cn(styles.cover, !a.photos[0] && styles[tonesFor(a.id)[0]])}>
-                      {a.photos[0] && (
-                        <Image
-                          className={styles.photoImage}
-                          src={a.photos[0].url}
-                          alt=""
-                          fill
-                          sizes="90px"
-                          unoptimized
-                          style={{
-                            objectPosition: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
-                            transform: `scale(${a.photos[0].focus.zoom})`,
-                            transformOrigin: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
-                          }}
-                        />
-                      )}
-                    </span>
-                    <div className={styles.albumFoot}>
-                      <h2 className={styles.albumTitle}>{a.title}</h2>
-                      <span className={styles.albumMeta}>{a.date}</span>
-                    </div>
-                    <div className={styles.moveCol}>
-                      <button
-                        type="button"
-                        onClick={() => move(i, -1)}
-                        disabled={i === 0 || saving}
-                        aria-label={`${a.title} 위로`}
-                      >
-                        ↑
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => move(i, 1)}
-                        disabled={i === list.length - 1 || saving}
-                        aria-label={`${a.title} 아래로`}
-                      >
-                        ↓
-                      </button>
-                    </div>
-                  </div>
-                ))
-              : albums.map((a) => (
-              <Link key={a.id} href={`/community/album/${a.id}`} className={styles.albumRow}>
-                {/* 대표 사진 한 장만 — 넉 장을 깔면 목록이 사진첩처럼 보인다 */}
-                <span className={cn(styles.cover, !a.photos[0] && styles[tonesFor(a.id)[0]])}>
-                  {a.photos[0] && (
-                    <Image
-                      className={styles.photoImage}
-                      src={a.photos[0].url}
-                      alt=""
-                      fill
-                      sizes="90px"
-                      unoptimized
-                      style={{
-                        objectPosition: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
-                        transform: `scale(${a.photos[0].focus.zoom})`,
-                        transformOrigin: `${a.photos[0].focus.x}% ${a.photos[0].focus.y}%`,
-                      }}
-                    />
-                  )}
-                  {a.photoCount > 1 && <span className={styles.coverCount}>{a.photoCount}</span>}
-                </span>
-                <div className={styles.albumFoot}>
-                  <h2 className={styles.albumTitle}>{a.title}</h2>
-                  {a.body && <p className={styles.albumBody}>{a.body}</p>}
-                  <span className={styles.albumMeta}>
-                    {a.date}
-                    {a.photoCount > 0 && ` · 사진 ${a.photoCount}장`}
-                  </span>
-                </div>
-              </Link>
-            ))}
-            {albums.length === 0 && <p className={styles.noticeMeta}>아직 올라온 게시글이 없어요.</p>}
-          </div>
-        ) : (
-          <div className={styles.list}>
-            {/* 익명 게시판은 부원 누구나 쓴다 */}
-            <Link href="/community/anon/new" className={styles.writeRow}>
-              <span className={styles.writePlus} aria-hidden="true">
-                ＋
-              </span>
-              익명 글쓰기
-            </Link>
-            {anonPosts.map((p) => (
-              <Link key={p.id} href={`/community/anon/${p.id}`} className={styles.noticeRow}>
-                <h2 className={styles.anonTitle}>{p.title}</h2>
-                <p className={styles.anonBody}>{p.body}</p>
+              {anonPosts.length === 0 && (
                 <p className={styles.noticeMeta}>
-                  익명 · {p.date}
-                  {p.commentCount > 0 && ` · 댓글 ${p.commentCount}`}
-                  {p.isMine && <span className={styles.anonMine}>내 글</span>}
+                  아직 올라온 글이 없어요. 첫 글을 남겨 보세요.
                 </p>
-              </Link>
-            ))}
-            {anonPosts.length === 0 && (
-              <p className={styles.noticeMeta}>아직 올라온 글이 없어요. 첫 글을 남겨 보세요.</p>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </SheetGroup>
     </Sheet>
   );

@@ -256,9 +256,9 @@ export function ActivityAdmin() {
 
   return (
     <Panel
-      title="활동·행사"
+      title="활동 / 행사"
       count={`${visible.length}건`}
-      desc="개파·친바·MT·종파처럼 부원이 참석 여부를 응답하는 동아리 행사입니다. 봉사활동은 [봉사활동 관리]에서 따로 등록합니다."
+      desc="개파 / 친바 / MT / 종파처럼 부원이 참석 여부를 응답하는 동아리 행사입니다. 봉사활동은 [봉사활동 관리]에서 따로 등록합니다."
     >
       {error && <p className={tableStyles.muted}>{error}</p>}
 
@@ -473,7 +473,7 @@ export function ActivityAdmin() {
                         </div>
                         {people.length > 0 ? (
                           <p className={rsvpStyles.names}>
-                            {people.map((m) => m.name).join(" · ")}
+                            {people.map((m) => m.name).join(" / ")}
                           </p>
                         ) : (
                           <p className={rsvpStyles.none}>없음</p>

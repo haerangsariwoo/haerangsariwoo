@@ -1,6 +1,6 @@
 .card {
-  background: var(--brand-canvas);
-  border-radius: var(--radius-xs);
+  background: var(--brand-surface);
+  border-radius: 18px;
   padding: 14px 16px;
   margin-bottom: 10px;
   display: flex;
@@ -15,9 +15,8 @@
 }
 
 .desc {
-  font-size: 12px;
-  color: var(--ink-800);
-  opacity: 0.8;
+  font-size: 14px;
+  color: var(--ink-600);
   line-height: 1.7;
 }
 
@@ -27,22 +26,21 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 12px;
-  color: var(--ink-800);
-  opacity: 0.85;
+  font-size: 14px;
+  color: var(--ink-600);
   line-height: 1.6;
 }
 
 .button {
   align-self: flex-start;
-  height: 38px;
+  min-height: 44px;
   padding: 0 18px;
   border: none;
-  border-radius: 0;
-  background: var(--ink-800);
-  color: var(--surface-white);
+  border-radius: 14px;
+  background: var(--brand-blue-500);
+  color: var(--on-brand);
   font-family: inherit;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
 }

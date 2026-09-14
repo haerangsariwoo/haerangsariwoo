@@ -44,7 +44,7 @@
 
 .segmentBtn:first-child {
   background: var(--surface-white);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 /* ---------- 뼈대 ---------- */
@@ -109,7 +109,7 @@
   background: linear-gradient(
     100deg,
     var(--hairline) 20%,
-    #eaf2f8 40%,
+    var(--surface-muted) 40%,
     var(--hairline) 60%
   );
   background-size: 300% 100%;

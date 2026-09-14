@@ -2,7 +2,7 @@ import { Panel } from "@/components/admin/Panel/Panel";
 import { getAppContent } from "@/lib/app-content-queries";
 import { HomeCopyPanel, FaqPanel, NoticeCopyPanel } from "./ContentPanels";
 
-export const metadata = { title: "콘텐츠 관리 · 해랑사리우" };
+export const metadata = { title: "콘텐츠 관리 / 해랑사리우" };
 
 export default async function AdminContentPage() {
   const content = await getAppContent();

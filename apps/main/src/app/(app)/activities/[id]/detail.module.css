@@ -101,7 +101,7 @@
 }
 
 .teamCard {
-  background: #1a1a1a;
+  background: var(--solid-ink);
   border-radius: var(--radius-lg);
   padding: 18px;
   display: flex;
@@ -119,13 +119,13 @@
 .teamName {
   font-size: 18px;
   font-weight: 600;
-  color: var(--surface-white);
+  color: var(--on-brand);
   margin-top: 4px;
 }
 
 .teamMore {
   font-size: 14px;
-  color: var(--surface-white);
+  color: var(--on-brand);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -150,13 +150,13 @@
 .attendBtn.selected {
   background: var(--brand-blue-500);
   border-color: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .attendBtn.selectedDanger {
   background: var(--state-danger);
   border-color: var(--state-danger);
-  color: var(--surface-white);
+  color: var(--on-brand);
 }
 
 .footer {

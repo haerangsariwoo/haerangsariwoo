@@ -1,0 +1,5 @@
+.logo { display: block; width: 140px; height: 60px; flex: none; }
+.logo img { width: 100%; height: 100%; object-fit: contain; }
+.dark { display: none; }
+:global(html[data-theme="dark"]) .light { display: none; }
+:global(html[data-theme="dark"]) .dark { display: block; }

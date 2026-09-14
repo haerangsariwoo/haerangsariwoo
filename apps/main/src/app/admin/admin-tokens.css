@@ -1,35 +1,55 @@
 /* 관리자 전용 토큰 — 회원 앱과 팔레트가 다르므로 admin 스코프에서만 재정의 */
 .adminScope {
-  --a-bg: #f6f9fb;
+  --a-bg: #f4f7fb;
   --a-surface: #ffffff;
-  --a-ink: #0b161f;
-  --a-ink-soft: #5e6e7a;
-  --a-line: #d6e0e8;
+  --a-ink: #18283e;
+  --a-ink-soft: #56677e;
+  --a-line: #dce4ee;
+  --a-field-line: #a5b4c7;
+  --a-hover: #f0f5fc;
+  --a-action: #145fdb;
+  --a-action-hover: #0d4fbf;
 
-  --a-brand: #1485d1;
-  --a-brand-soft: #e0f2fc;
+  --a-brand: #145fcb;
+  --a-brand-soft: #e8f1ff;
 
-  --a-sidebar: #09293d;
-  --a-sidebar-active: #1a5473;
-  --a-sidebar-profile: #0f384d;
-  --a-sidebar-ink: #ccdee5;
-  --a-sidebar-icon: #abc7d6;
-  --a-sidebar-meta: #a6c4d4;
-  --a-sidebar-accent: #91c9e8;
+  --a-sidebar: #11243d;
+  --a-sidebar-active: #23456f;
+  --a-sidebar-profile: #1a304d;
+  --a-sidebar-ink: #c6d4e7;
+  --a-sidebar-meta: #a7bbd5;
+  --a-sidebar-accent: #b2d5ff;
 
-  --a-green: #0a8559;
-  --a-green-soft: #d4f2e3;
-  --a-orange: #ff964d;
-  --a-orange-soft: #fff0d1;
-  --a-purple: #736be0;
-  --a-purple-soft: #ebe5ff;
+  --a-green: #126743;
+  --a-green-soft: #e5f4ec;
+  --a-orange: #89530e;
+  --a-orange-soft: #fff1d9;
+  --a-purple: #6550a5;
+  --a-purple-soft: #f0ecfa;
   --a-grey-soft: #edf0f2;
 
   --a-radius-sm: 10px;
   --a-radius-md: 12px;
   --a-radius-lg: 14px;
-  --a-radius-xl: 18px;
+  --a-radius-xl: 16px;
   --a-radius-pill: 999px;
 
-  --a-shadow: 0px 4px 14px 0px rgba(8, 31, 46, 0.06);
+  --a-shadow: none;
+  font-size: 14px;
+  line-height: 1.6;
+  scrollbar-color: var(--a-field-line) var(--a-bg);
+}
+
+.adminScope :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--a-brand);
+  outline-offset: 3px;
+}
+
+.adminScope :where(input, textarea) {
+  caret-color: var(--a-brand);
+}
+
+.adminScope ::selection {
+  background: var(--a-brand-soft);
+  color: var(--a-ink);
 }

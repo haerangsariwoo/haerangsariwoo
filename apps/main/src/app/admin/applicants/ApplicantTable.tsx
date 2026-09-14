@@ -121,14 +121,14 @@ export function ApplicantTable() {
 
   return (
     <Panel
-      title="신청자·대기자 관리"
+      title="신청자 / 대기자 관리"
       count={`${rows.length}명`}
       desc="참여 여부는 활동 종료 후 운영진이 직접 처리합니다."
     >
       <div className={toolbar.toolbar}>
         <input
           className={toolbar.search}
-          placeholder="이름·학번 검색"
+          placeholder="이름 / 학번 검색"
           aria-label="신청자 검색"
           value={q}
           onChange={(e) => setQ(e.target.value)}

@@ -243,7 +243,7 @@ export function MemberAdmin() {
         <div className={toolbar.toolbar}>
           <input
             className={toolbar.search}
-            placeholder="이름·학번 검색"
+            placeholder="이름 / 학번 검색"
             aria-label="신청자 검색"
             value={reqQ}
             onChange={(e) => setReqQ(e.target.value)}
@@ -357,7 +357,7 @@ export function MemberAdmin() {
         <div className={toolbar.toolbar}>
           <input
             className={toolbar.search}
-            placeholder="이름·학번 검색"
+            placeholder="이름 / 학번 검색"
             aria-label="회원 검색"
             value={q}
             onChange={(e) => setQ(e.target.value)}

@@ -260,7 +260,7 @@ export const getMyStats = cache(async (): Promise<MyStats> => {
     upcoming.push({
       title: info.title,
       place: info.place,
-      dateLabel: `${info.date_label}${info.time_label ? ` · ${info.time_label}` : ""}`,
+      dateLabel: `${info.date_label}${info.time_label ? ` / ${info.time_label}` : ""}`,
       meta: a.state === "참여확정" ? "참여 확정" : a.state,
       dday,
       href: `/volunteer/${a.activity_id}`,
@@ -285,8 +285,8 @@ export const getMyStats = cache(async (): Promise<MyStats> => {
     upcoming.push({
       title: info.title,
       place: info.place,
-      dateLabel: `${info.date_label}${info.time_label ? ` · ${info.time_label}` : ""}`,
-      meta: `${info.type} · ${answer ?? "응답 전"}`,
+      dateLabel: `${info.date_label}${info.time_label ? ` / ${info.time_label}` : ""}`,
+      meta: `${info.type} / ${answer ?? "응답 전"}`,
       dday,
       href: `/activities/${info.id}`,
       needsResponse: !answer,

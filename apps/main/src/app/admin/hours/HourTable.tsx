@@ -171,14 +171,14 @@ export function HourTable() {
     <Panel
       title="봉사시간 승인"
       count={`대기 ${pending.length}건`}
-      desc="부원이 제출한 1365·VMS 증빙입니다. 승인하면 누적 봉사시간에 반영되고, 결과는 부원 쪽지함으로 자동 안내됩니다."
+      desc="부원이 제출한 1365 / VMS 증빙입니다. 승인하면 누적 봉사시간에 반영되고, 결과는 부원 쪽지함으로 자동 안내됩니다."
     >
       {error && <p className={tableStyles.muted}>{error}</p>}
 
       <div className={toolbar.toolbar}>
         <input
           className={toolbar.search}
-          placeholder="이름·봉사명 검색"
+          placeholder="이름 / 봉사명 검색"
           aria-label="승인 검색"
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -256,10 +256,10 @@ export function HourTable() {
             </td>
             <td className={tableStyles.muted}>
               {h.activity_title}
-              {h.activity_org && ` · ${h.activity_org}`}
+              {h.activity_org && ` / ${h.activity_org}`}
               {openId === h.id && (
                 <>
-                  {h.memo && <p className={tableStyles.muted}>메모 · {h.memo}</p>}
+                  {h.memo && <p className={tableStyles.muted}>메모 / {h.memo}</p>}
                   <p className={styles.rowActions}>
                     {(photoUrls[h.id] ?? []).map((p) => (
                       <a
@@ -274,7 +274,7 @@ export function HourTable() {
                     ))}
                   </p>
                   {h.reject_reason && (
-                    <p className={tableStyles.muted}>반려 사유 · {h.reject_reason}</p>
+                    <p className={tableStyles.muted}>반려 사유 / {h.reject_reason}</p>
                   )}
                 </>
               )}

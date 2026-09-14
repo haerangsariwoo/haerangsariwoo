@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { previewTransport } from "./preview-fetch";
 
 const cookieOptions =
   process.env.NODE_ENV === "production"
@@ -15,6 +16,7 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookieOptions,
+      global: previewTransport(),
       cookies: {
         getAll() {
           return cookieStore.getAll();

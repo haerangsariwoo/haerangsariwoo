@@ -11,7 +11,7 @@
   gap: 14px;
   padding: 40px var(--screen-pad, 20px);
   text-align: center;
-  background: var(--surface-page, #f4f6fa);
+  background: var(--surface-page, var(--app-canvas));
 }
 
 .code {
@@ -25,14 +25,14 @@
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--ink-800, #1b1f27);
+  color: var(--ink-800, var(--ink-900));
   word-break: keep-all;
 }
 
 .desc {
   font-size: 14px;
   line-height: 1.7;
-  color: var(--ink-600, #5b6070);
+  color: var(--ink-600, var(--ink-600));
   word-break: keep-all;
   max-width: 32ch;
 }
@@ -62,13 +62,13 @@
 
 .primary {
   background: var(--brand-blue-500, #2f6fed);
-  color: #fff;
+  color: var(--on-brand);
 }
 
 .secondary {
-  background: var(--surface-white, #fff);
-  border-color: var(--hairline, #e3e6ee);
-  color: var(--ink-600, #5b6070);
+  background: var(--surface-white);
+  border-color: var(--hairline, var(--hairline));
+  color: var(--ink-600, var(--ink-600));
 }
 
 /* 개발 중에만 쓰는 원인 표시 — 운영에서는 렌더하지 않는다 */
@@ -78,12 +78,12 @@
   overflow-x: auto;
   padding: 12px 14px;
   border-radius: var(--radius-sm, 8px);
-  background: var(--surface-white, #fff);
-  border: 1px solid var(--hairline, #e3e6ee);
+  background: var(--surface-white);
+  border: 1px solid var(--hairline, var(--hairline));
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
   line-height: 1.6;
-  color: var(--ink-600, #5b6070);
+  color: var(--ink-600, var(--ink-600));
   text-align: left;
   white-space: pre-wrap;
 }

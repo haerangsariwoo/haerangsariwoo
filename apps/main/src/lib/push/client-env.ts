@@ -73,7 +73,7 @@ export function useInAppBrowser(): string | null {
 /** 이 브라우저에 푸시 API 가 있는지 (iOS 는 홈 화면 추가 전까지 없다) */
 export function useSupportsPush() {
   return useClientValue(
-    () => "serviceWorker" in navigator && "PushManager" in window,
+    () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window,
     false,
   );
 }

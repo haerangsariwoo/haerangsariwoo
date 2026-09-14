@@ -183,7 +183,7 @@ export function MessageSender() {
   return (
     <Panel
       title="쪽지 보내기"
-      desc="부원 쪽지함으로 안내를 보냅니다. 가입 승인·참여확정·증빙 결과 쪽지는 자동으로 나가니 여기서 보내지 않아도 됩니다."
+      desc="부원 쪽지함으로 안내를 보냅니다. 가입 승인 / 참여확정 / 증빙 결과 쪽지는 자동으로 나가니 여기서 보내지 않아도 됩니다."
     >
       {error && <p className={tableStyles.muted}>{error}</p>}
       {result && <p className={tableStyles.muted}>{result}</p>}

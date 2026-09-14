@@ -1,12 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useIsIOS, useIsIPad, useInAppBrowser } from "./client-env";
-
-/** 크롬 계열이 띄워주는 설치 프롬프트 이벤트 */
-interface InstallEvent extends Event {
-  prompt: () => Promise<void>;
-}
+import { useSyncExternalStore } from "react";
+import { useIsIOS, useIsIPad, useInAppBrowser, useIsStandalone } from "./client-env";
+import { subscribeInstallPrompt, installSnapshot, installServerSnapshot, requestInstall } from "./install-prompt";
 
 /**
  * 이 기기에서 홈 화면에 추가하는 방법.
@@ -15,11 +11,12 @@ interface InstallEvent extends Event {
  * 문구를 여기 모으고, 화면은 받아서 그리기만 한다.
  */
 export type InstallHow =
+  | { kind: "installed" }
   /** 카카오톡 같은 앱 안의 브라우저 — 여기서는 아예 설치가 안 된다 */
   | { kind: "inapp"; app: string; steps: string[] }
   | { kind: "ios"; steps: string[] }
   /** 크롬 계열이 설치를 맡아주는 경우 */
-  | { kind: "prompt"; install: () => void }
+  | { kind: "prompt"; install: () => void; busy: boolean }
   | { kind: "manual"; text: string };
 
 /** 아이폰·아이패드 사파리에서 홈 화면에 추가하는 차례. 아이패드는 공유 버튼이 위에 있다 */
@@ -39,16 +36,10 @@ export function useInstallHelp(onInstall?: () => void): InstallHow {
   const isIOS = useIsIOS();
   const isIPad = useIsIPad();
   const inApp = useInAppBrowser();
-  const [deferred, setDeferred] = useState<InstallEvent | null>(null);
+  const standalone = useIsStandalone();
+  const snapshot = useSyncExternalStore(subscribeInstallPrompt, installSnapshot, installServerSnapshot);
 
-  useEffect(() => {
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferred(e as InstallEvent);
-    };
-    window.addEventListener("beforeinstallprompt", onPrompt);
-    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
-  }, []);
+  if (standalone || snapshot.installed) return { kind: "installed" };
 
   // 앱 안의 브라우저는 기기와 상관없이 먼저 걸러야 한다 — 여기서는
   // 공유 버튼도 브라우저 메뉴도 없어서 어떤 안내를 해도 따라올 수 없다
@@ -57,19 +48,18 @@ export function useInstallHelp(onInstall?: () => void): InstallHow {
   // 아이패드는 공유 버튼이 위쪽에 있다
   if (isIOS) return { kind: "ios", steps: IOS_STEPS(!isIPad) };
 
-  if (deferred) {
+  if (snapshot.event || snapshot.busy) {
     return {
       kind: "prompt",
+      busy: snapshot.busy,
       install: () => {
-        void deferred.prompt();
-        setDeferred(null);
-        onInstall?.();
+        void requestInstall().then((accepted) => { if (accepted) onInstall?.(); });
       },
     };
   }
 
   return {
     kind: "manual",
-    text: "브라우저 메뉴에서 “앱 설치” 또는 “홈 화면에 추가”를 선택해 주세요.",
+    text: snapshot.error ?? "브라우저 메뉴에서 “앱 설치” 또는 “홈 화면에 추가”를 선택해 주세요.",
   };
 }

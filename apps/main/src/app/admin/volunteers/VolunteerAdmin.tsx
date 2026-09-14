@@ -154,7 +154,7 @@ export function VolunteerAdmin() {
       <div className={toolbar.toolbar}>
         <input
           className={toolbar.search}
-          placeholder="봉사명·장소 검색"
+          placeholder="봉사명 / 장소 검색"
           aria-label="봉사 검색"
           value={q}
           onChange={(e) => setQ(e.target.value)}

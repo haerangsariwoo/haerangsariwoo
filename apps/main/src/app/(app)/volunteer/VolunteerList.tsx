@@ -7,6 +7,7 @@ import { ExternalCard } from "@/components/volunteer/ExternalCard/ExternalCard";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 import type { VolunteerSummary } from "@/lib/mock-data";
 import type { ExternalFetchResult } from "@/lib/external/types";
+import { recruitment } from "@/lib/external/presentation";
 import {
   ExternalFilters,
   filterExternal,
@@ -25,11 +26,16 @@ const PAGE = 8;
 export function VolunteerList({
   external,
   internal,
+  today,
 }: {
   external: ExternalFetchResult;
   internal: VolunteerSummary[];
+  today: string;
 }) {
   const [tab, setTab] = useState<Tab>("전체");
+  const [query, setQuery] = useState("");
+  const [onlyOpen, setOnlyOpen] = useState(true);
+  const keyword = query.trim().toLocaleLowerCase("ko");
   const [extFilter, setExtFilter] = useState<ExternalFilterValue>({
     // 부원 대부분이 서울에서 활동하므로 서울부터 보여준다.
     // 다른 지역이 필요하면 "지역 전체" 로 바꿔서 보면 된다.
@@ -40,25 +46,40 @@ export function VolunteerList({
 
   /** 우리 동아리 봉사는 마감 임박한 순으로 */
   const internalList = useMemo(
-    () => [...internal].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]),
-    [internal],
+    () =>
+      internal
+        .filter(
+          (v) =>
+            (!onlyOpen || v.status === "open" || v.status === "closing") &&
+            `${v.title} ${v.org} ${v.place} ${v.category}`
+              .toLocaleLowerCase("ko")
+              .includes(keyword),
+        )
+        .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]),
+    [internal, onlyOpen, keyword],
   );
 
   /** 출처별로 나눈 뒤 지역·유형 필터를 적용 */
   const externalByTab = useMemo(() => {
-    const filtered = filterExternal(external.items, extFilter);
+    const filtered = filterExternal(external.items, extFilter).filter(
+      (v) =>
+        (!onlyOpen || recruitment(v, today).open) &&
+        `${v.title} ${v.org} ${v.area} ${v.category}`
+          .toLocaleLowerCase("ko")
+          .includes(keyword),
+    );
     return {
       전체: filtered,
       "1365": filtered.filter((v) => v.source === "1365"),
       VMS: filtered.filter((v) => v.source === "vms"),
     };
-  }, [external.items, extFilter]);
+  }, [external.items, extFilter, onlyOpen, keyword, today]);
 
   const externalList = externalByTab[tab];
 
   // 탭이나 필터가 바뀌면 처음부터 다시 센다.
   // effect 로 되돌리면 이미 그린 긴 목록이 한 번 보였다가 잘린다.
-  const listKey = `${tab}|${extFilter.sido}|${extFilter.gugun}|${extFilter.category}`;
+  const listKey = `${tab}|${extFilter.sido}|${extFilter.gugun}|${extFilter.category}|${keyword}|${onlyOpen}`;
   const [shownKey, setShownKey] = useState(listKey);
   const [shown, setShown] = useState(PAGE);
   if (shownKey !== listKey) {
@@ -103,8 +124,9 @@ export function VolunteerList({
   const unfilteredCount =
     tab === "전체"
       ? internalList.length + external.items.length
-      : external.items.filter((v) => (tab === "1365" ? v.source === "1365" : v.source === "vms"))
-          .length;
+      : external.items.filter((v) =>
+          tab === "1365" ? v.source === "1365" : v.source === "vms",
+        ).length;
 
   return (
     <Sheet>
@@ -113,12 +135,23 @@ export function VolunteerList({
         <div className={styles.head}>
           <div className={styles.titleRow}>
             <h1 className={styles.title}>봉사 모집</h1>
-            <span className={styles.count}>
-              {totalCount === unfilteredCount
-                ? `${totalCount}건`
-                : `${unfilteredCount}건 중 ${totalCount}건`}
+            <span
+              className={styles.count}
+              aria-live="polite"
+              aria-label={`등록된 ${unfilteredCount}개 중 ${totalCount}개 봉사`}
+            >
+              {totalCount}개 봉사
             </span>
           </div>
+          <label className={styles.searchLabel}>
+            <span className={styles.srOnly}>봉사 검색</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="봉사 이름, 지역, 관심 분야"
+            />
+          </label>
 
           <Tabs.Root value={tab} onValueChange={(v) => setTab(v as Tab)}>
             <Tabs.List className={styles.segment} aria-label="봉사 출처">
@@ -130,10 +163,36 @@ export function VolunteerList({
             </Tabs.List>
           </Tabs.Root>
 
-          <ExternalFilters items={external.items} value={extFilter} onChange={setExtFilter} />
+          <div className={styles.filterControls}>
+            <div className={styles.filterTools}>
+              <label className={styles.openOnly}>
+                <input
+                  type="checkbox"
+                  checked={onlyOpen}
+                  onChange={(e) => setOnlyOpen(e.target.checked)}
+                />
+                모집 중만 보기
+              </label>
+            </div>
+            <details className={styles.filters}>
+              <summary>
+                <span>
+                  {extFilter.sido === "전체" ? "지역" : extFilter.sido} 필터
+                  변경
+                </span>
+              </summary>
+              <ExternalFilters
+                items={external.items}
+                value={extFilter}
+                onChange={setExtFilter}
+              />
+            </details>
+          </div>
 
           {!external.live && (
-            <p className={styles.sampleNote}>외부 포털 연동 전이라 예시 목록을 보여주고 있어요.</p>
+            <p className={styles.sampleNote}>
+              예시 목록입니다. 실제 모집 정보가 아니에요.
+            </p>
           )}
         </div>
       </SheetGroup>
@@ -141,7 +200,7 @@ export function VolunteerList({
       {tab === "전체" && internalList.length > 0 && (
         <SheetGroup>
           <section>
-            <h2 className={styles.groupTitle}>해랑사리우 봉사</h2>
+            <h2 className={styles.groupTitle}>동아리와 함께하는 봉사</h2>
             <div className={styles.list}>
               {internalList.map((v) => (
                 <VolunteerCard key={v.id} item={v} />
@@ -154,24 +213,50 @@ export function VolunteerList({
       <SheetGroup>
         <section>
           {tab === "전체" && externalList.length > 0 && (
-            <h2 className={styles.groupTitle}>1365 · VMS 봉사</h2>
+            <>
+              <h2 className={styles.groupTitle}>직접 골라 참여하는 봉사</h2>
+              <p className={styles.groupHelp}>원문에서 자세히 보고 신청해요.</p>
+            </>
           )}
 
           {externalList.length === 0 ? (
-            <p className={styles.empty}>조건에 맞는 봉사가 없어요.</p>
+            <div className={styles.empty}>
+              <p>조건에 맞는 봉사가 없어요.</p>
+              <p>검색어나 지역을 바꾸면 더 찾아볼 수 있어요.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setExtFilter({
+                    sido: "전체",
+                    gugun: "전체",
+                    category: "전체",
+                  });
+                  setOnlyOpen(false);
+                }}
+              >
+                필터 초기화
+              </button>
+            </div>
           ) : (
             <>
               <div className={styles.list}>
                 {visible.map((v) => (
-                  <ExternalCard key={v.id} item={v} />
+                  <ExternalCard key={v.id} item={v} today={today} />
                 ))}
               </div>
 
               {hasMore ? (
-                <div ref={sentinel} className={styles.sentinel} aria-hidden="true" />
+                <div
+                  ref={sentinel}
+                  className={styles.sentinel}
+                  aria-hidden="true"
+                />
               ) : (
                 externalList.length > PAGE && (
-                  <p className={styles.listEnd}>{externalList.length}건을 모두 봤어요</p>
+                  <p className={styles.listEnd}>
+                    {externalList.length}건을 모두 봤어요
+                  </p>
                 )
               )}
             </>

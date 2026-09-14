@@ -24,7 +24,7 @@ export default async function AlbumDetailPage({ params }: PageProps<"/community/
         </div>
         <p className={styles.meta}>
           {item.date}
-          {item.photoCount > 0 && ` · 사진 ${item.photoCount}장`}
+          {item.photoCount > 0 && ` / 사진 ${item.photoCount}장`}
         </p>
       </div>
 

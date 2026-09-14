@@ -4,7 +4,7 @@ import { getCurrentMember } from "@/lib/get-current-member";
 import { AccountForm } from "./AccountForm";
 import styles from "./account.module.css";
 
-export const metadata = { title: "계정 설정 · 해랑사리우" };
+export const metadata = { title: "계정 설정 / 해랑사리우" };
 
 export default async function AccountPage() {
   const profile = await getCurrentMember();
@@ -12,7 +12,7 @@ export default async function AccountPage() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title="" back={{ href: "/my", label: "MY" }} />
+      <PageHeader title="계정 설정" back={{ href: "/my", label: "MY" }} />
       <AccountForm track={profile.track} />
     </div>
   );

@@ -8,15 +8,25 @@ import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 import { activityTypes, type Activity } from "@/lib/activities";
 import styles from "./activities.module.css";
+import { BrandIcon } from "@/components/ui/BrandIcon/BrandIcon";
 
 /**
  * 목록의 한 줄.
  * 왼쪽 날짜 칸이 눈이 처음 닿는 자리다. 예전에는 여기에 색 띠가 있었는데
  * 그 색은 활동마다 임의로 준 값이라 읽는 사람에게 아무 뜻이 없었다.
  */
-function ActivityRow({ item, past = false }: { item: Activity; past?: boolean }) {
+function ActivityRow({
+  item,
+  past = false,
+}: {
+  item: Activity;
+  past?: boolean;
+}) {
   return (
-    <Link href={`/activities/${item.id}`} className={cn(styles.row, past && styles.pastRow)}>
+    <Link
+      href={`/activities/${item.id}`}
+      className={cn(styles.row, past && styles.pastRow)}
+    >
       <div className={styles.date}>
         <span className={styles.dateNum}>{item.dateShort}</span>
         <span className={styles.dateDay}>{item.weekday}</span>
@@ -26,19 +36,30 @@ function ActivityRow({ item, past = false }: { item: Activity; past?: boolean })
         <div className={styles.rowTop}>
           <span className={styles.typeTag}>{item.type}</span>
           {!past && item.dday !== null && item.dday >= 0 && (
-            <span className={styles.dday}>{item.dday === 0 ? "오늘" : `D-${item.dday}`}</span>
+            <span className={styles.dday}>
+              {item.dday === 0 ? "오늘" : `D-${item.dday}`}
+            </span>
           )}
         </div>
 
         <h3 className={styles.title}>{item.title}</h3>
-        <p className={styles.meta}>{past ? item.place : `${item.timeLabel} · ${item.place}`}</p>
+        <p className={styles.meta}>
+          {past ? item.place : `${item.timeLabel} / ${item.place}`}
+        </p>
 
         {!past && (
           <div className={styles.attendRow}>
-            <span className={cn(styles.attend, item.attend ? styles[item.attend] : styles.none)}>
+            <span
+              className={cn(
+                styles.attend,
+                item.attend ? styles[item.attend] : styles.none,
+              )}
+            >
               {item.attend ?? "참석 여부 미응답"}
             </span>
-            {item.teamPublished && <span className={styles.teamFlag}>조 편성 완료</span>}
+            {item.teamPublished && (
+              <span className={styles.teamFlag}>조 편성 완료</span>
+            )}
           </div>
         )}
       </div>
@@ -50,7 +71,8 @@ export function ActivityList({ activities }: { activities: Activity[] }) {
   const [type, setType] = useState<string>("전체");
 
   const { upcoming, past } = useMemo(() => {
-    const filtered = type === "전체" ? activities : activities.filter((a) => a.type === type);
+    const filtered =
+      type === "전체" ? activities : activities.filter((a) => a.type === type);
     return {
       upcoming: filtered.filter((a) => a.status !== "done"),
       past: filtered.filter((a) => a.status === "done"),
@@ -63,18 +85,30 @@ export function ActivityList({ activities }: { activities: Activity[] }) {
     <Sheet>
       <SheetGroup>
         <div className={styles.head}>
-          <PageHeader title="활동" meta={`${total}건`} />
-          <FilterChips options={activityTypes} value={type} onChange={setType} label="활동 유형" />
+          <PageHeader title="함께하는 날들" meta={`${total}건`} />
+          <p className={styles.intro}>만나고, 나누고, 조금씩 바뀌는 우리.</p>
+          <Link href="/calendar" className={styles.calendarLink} data-tour="activity-calendar">캘린더 보기 <span aria-hidden="true">↗</span></Link>
+          <FilterChips
+            options={activityTypes}
+            value={type}
+            onChange={setType}
+            label="활동 유형"
+          />
         </div>
       </SheetGroup>
 
       {total === 0 ? (
         <SheetGroup>
-          <p className={styles.empty}>
-            {activities.length === 0
-              ? "아직 등록된 활동이 없어요."
-              : "해당 유형의 활동이 없어요."}
-          </p>
+          <div className={styles.empty}>
+            <BrandIcon name="calendar" size={100} />
+            <h2>다음 만남을 기다려요</h2>
+            <p>
+              {activities.length === 0
+                ? "아직 등록된 활동이 없어요."
+                : "해당 유형의 활동이 없어요."}
+            </p>
+            <Link href="/calendar">캘린더 둘러보기 →</Link>
+          </div>
         </SheetGroup>
       ) : (
         <>

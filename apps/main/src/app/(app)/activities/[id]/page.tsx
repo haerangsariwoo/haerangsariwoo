@@ -31,7 +31,7 @@ export default async function ActivityDetailPage({ params }: PageProps<"/activit
           <span className={styles.factLabel}>일시</span>
           <span className={styles.factValue}>
             {item.dateLabel}
-            {item.timeLabel && ` · ${item.timeLabel}`}
+            {item.timeLabel && ` / ${item.timeLabel}`}
           </span>
         </div>
         <div className={styles.factRow}>

@@ -74,7 +74,7 @@ export function ApplyButton({
     return (
       <div className={styles.applyGroup}>
         <Button variant="outline" size="lg" fullWidth disabled>
-          신청 완료 · 참여 확정 대기 중
+          신청 완료 / 참여 확정 대기 중
         </Button>
         <button type="button" className={styles.cancelLink} onClick={cancel} disabled={busy}>
           신청 취소

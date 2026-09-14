@@ -236,7 +236,7 @@ export function TeamBoard({
                   <div className={styles.teamHead}>
                     <span className={styles.teamName}>{t}조</span>
                     <span className={styles.ratio}>
-                      남 {male} · 여 {female}
+                      남 {male}  / 여 {female}
                     </span>
                   </div>
                   {members.length > 0 && (
@@ -251,7 +251,7 @@ export function TeamBoard({
                       <option value="">조장 없음</option>
                       {members.map((m) => (
                         <option key={m.id} value={m.id}>
-                          조장 · {m.name}
+                          조장 / {m.name}
                         </option>
                       ))}
                     </select>

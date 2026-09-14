@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "./fallback.module.css";
 
-export const metadata = { title: "페이지를 찾을 수 없어요 · 해랑사리우" };
+export const metadata = { title: "페이지를 찾을 수 없어요 / 해랑사리우" };
 
 export default function NotFound() {
   return (

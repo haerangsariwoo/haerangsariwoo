@@ -1,7 +1,7 @@
 import { Panel } from "@/components/admin/Panel/Panel";
 import { TeamEventManager } from "./TeamEventManager";
 
-export const metadata = { title: "팀짜기 · 해랑사리우" };
+export const metadata = { title: "팀짜기 / 해랑사리우" };
 
 export default function AdminTeamsPage() {
   return (

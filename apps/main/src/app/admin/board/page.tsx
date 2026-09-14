@@ -1,7 +1,7 @@
 import { Panel } from "@/components/admin/Panel/Panel";
 import { BoardTable } from "./BoardTable";
 
-export const metadata = { title: "운영진 게시판 · 해랑사리우" };
+export const metadata = { title: "운영진 게시판 / 해랑사리우" };
 
 export default function AdminBoardPage() {
   return (

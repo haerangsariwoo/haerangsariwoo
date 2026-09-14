@@ -78,7 +78,7 @@ export function buildEvents(
       id: `mine-${r.id}`,
       date,
       title: r.title,
-      meta: r.state + (r.hours ? ` · ${r.hours}시간 인정` : ""),
+      meta: r.state + (r.hours ? ` / ${r.hours}시간 인정` : ""),
       kind: "mine",
     });
   }
@@ -92,7 +92,7 @@ export function buildEvents(
       id: `vol-${v.id}`,
       date,
       title: v.title,
-      meta: `${v.timeLabel} · ${v.place}`,
+      meta: `${v.timeLabel} / ${v.place}`,
       kind: "volunteer",
       href: `/volunteer/${v.id}`,
     });
@@ -106,7 +106,7 @@ export function buildEvents(
       id: `act-${a.id}`,
       date,
       title: a.title,
-      meta: `${a.type} · ${a.place}`,
+      meta: `${a.type} / ${a.place}`,
       kind: "activity",
       href: `/activities/${a.id}`,
     });

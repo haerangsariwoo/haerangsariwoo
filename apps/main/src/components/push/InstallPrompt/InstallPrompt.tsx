@@ -1,20 +1,25 @@
 "use client";
 
-import { useIsStandalone } from "@/lib/push/client-env";
-import { useInstallHelp } from "@/lib/push/install-help";
+import { useInstallHelp, type InstallHow } from "@/lib/push/install-help";
 import styles from "./InstallPrompt.module.css";
 
 export function InstallPrompt() {
-  const installed = useIsStandalone();
   const how = useInstallHelp();
 
-  if (installed) return null;
+  if (how.kind === "installed") return null;
 
   return (
     <div className={styles.card}>
       <p className={styles.title}>홈 화면에 추가하기</p>
       <p className={styles.desc}>앱처럼 바로 열 수 있고, 공지 알림도 받을 수 있어요.</p>
+      <InstallInstructions how={how} />
+    </div>
+  );
+}
 
+export function InstallInstructions({ how }: { how: InstallHow }) {
+  return (
+    <>
       {how.kind === "inapp" && (
         <>
           <p className={styles.desc}>
@@ -37,12 +42,12 @@ export function InstallPrompt() {
       )}
 
       {how.kind === "prompt" && (
-        <button type="button" className={styles.button} onClick={how.install}>
-          홈 화면에 추가
+        <button type="button" className={styles.button} onClick={how.install} disabled={how.busy}>
+          {how.busy ? "설치 확인 중" : "홈 화면에 추가"}
         </button>
       )}
 
       {how.kind === "manual" && <p className={styles.desc}>{how.text}</p>}
-    </div>
+    </>
   );
 }

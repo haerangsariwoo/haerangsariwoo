@@ -1,7 +1,7 @@
 .panel {
   background: var(--a-surface);
   border-radius: var(--a-radius-xl);
-  box-shadow: var(--a-shadow);
+  border: 1px solid var(--a-line);
   padding: 18px 20px 20px;
 }
 
@@ -14,12 +14,12 @@
 
 .title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--a-ink);
 }
 
 .count {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   padding: 5px 12px;
   border-radius: var(--a-radius-pill);
@@ -29,13 +29,24 @@
 
 .action {
   margin-left: auto;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--a-brand);
 }
 
 .desc {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--a-ink-soft);
   margin: -8px 0 16px;
+}
+.panel {
+  min-width: 0;
+}
+.head {
+  flex-wrap: wrap;
+}
+.action {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }

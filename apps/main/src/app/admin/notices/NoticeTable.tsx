@@ -171,7 +171,7 @@ export function NoticeTable() {
 
   return (
     <Panel
-      title="공지·알림"
+      title="공지 / 알림"
       count={`${rows.length}건`}
       desc="부원 커뮤니티에 노출되는 공지입니다."
     >

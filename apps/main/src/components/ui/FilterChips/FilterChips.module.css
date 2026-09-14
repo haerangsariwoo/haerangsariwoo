@@ -26,6 +26,12 @@
 .chip.active {
   background: var(--brand-blue-500);
   border-color: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
   font-weight: 600;
+}
+.chip {
+  min-height: 44px;
+  border-radius: 15px;
+  padding-inline: 14px;
+  font-size: 12px;
 }

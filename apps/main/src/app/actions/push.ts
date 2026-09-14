@@ -38,6 +38,15 @@ export async function sendNoticePush(input: {
   body: string;
   noticeId?: string;
 }) {
+  // Server Actions can be called directly, without visiting the admin page.
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false as const, error: "로그인이 필요합니다." };
+  const { data: member, error } = await supabase.from("members")
+    .select("role, status").eq("id", user.id).single();
+  if (error || member?.status !== "approved" || !["운영진", "관리자"].includes(member.role)) {
+    return { ok: false as const, error: "승인된 운영진만 공지 알림을 보낼 수 있습니다." };
+  }
   if (!pushConfigured) {
     return { ok: false as const, error: "서버에 VAPID 키가 설정되지 않았습니다." };
   }

@@ -1,92 +1,85 @@
 .page {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: var(--brand-surface);
-  padding: 48px 16px 40px;
-}
-
-.shell {
   width: 100%;
-  max-width: 398px;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
+  max-width: 480px;
+  min-height: 100svh;
+  margin-inline: auto;
+  background: var(--entry-canvas);
+  color: var(--ink-900);
 }
-
-.brand {
+.topbar {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  text-align: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: calc(12px + env(safe-area-inset-top)) 28px 0;
 }
-
-.mascot {
-  line-height: 1;
-}
-
-.wordmark {
-  font-size: 24px;
-  color: var(--ink-800);
-  font-weight: 600;
-}
-
-.tagline {
-  font-size: 14px;
-  color: var(--ink-600);
-}
-
-.badge {
-  align-self: center;
-  background: var(--state-success-bg);
-  color: var(--state-success);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 5px 14px;
-  border-radius: var(--radius-pill);
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.note {
-  background: var(--brand-surface);
-  color: var(--brand-blue-500);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  line-height: 1.5;
-}
-
-.footNote {
-  text-align: center;
-  font-size: 12px;
-  color: var(--ink-600);
-  line-height: 1.6;
-}
-
-.signupRow {
-  display: flex;
+.shell { padding: 24px 28px max(28px, env(safe-area-inset-bottom)); }
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) 100px;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 4px 8px;
 }
-
-.signupText {
-  font-size: 14px;
-  color: var(--ink-600);
+.dolphin {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  pointer-events: none;
 }
-
-.signupLink {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--brand-blue-500);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.intro h1 {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: clamp(28px, 8vw, 34px);
+  line-height: 1.23;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.intro p { grid-column: 1 / -1; text-align: center; font-size: 14px; line-height: 1.6; color: var(--entry-muted); }
+.form { display: flex; flex-direction: column; gap: 22px; margin-top: 28px; }
+.field > div {
+  background: var(--entry-field);
+  border-color: var(--entry-line);
+  border-radius: 16px;
+  min-height: 56px;
+}
+.field input { min-height: 54px; color: var(--ink-900); caret-color: var(--link-color); }
+.field input::placeholder { color: var(--entry-muted); }
+.field > div:focus-within { outline: 2px solid var(--link-color); outline-offset: 2px; }
+.field:has(input[aria-invalid="true"]) > div { border-color: var(--state-warn); }
+.form > button {
+  min-height: 56px;
+  margin-top: 4px;
+  border-radius: 16px;
+  background: #1465e7;
+  color: #fff;
+  box-shadow: none;
+  font-size: 17px;
+}
+.form > button:hover:not(:disabled) { background: #1058cc; }
+.signupRow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; font-size: 13px; }
+.signupText { color: var(--entry-muted); }
+.signupLink { display: flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--link-color); }
+.signupLink:hover, .localPreview a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.footNote { margin-top: 4px; text-align: center; font-size: 12px; line-height: 1.6; color: var(--entry-muted); word-break: keep-all; }
+.localPreview { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--hairline); }
+.localPreview span { flex: 1; font-size: 11px; line-height: 1.6; color: var(--entry-muted); }
+.localPreview small { display: block; font-size: 10px; }
+.localPreview a { display: flex; align-items: center; min-height: 44px; font-size: 12px; font-weight: 600; color: var(--link-color); }
+.club { margin-top: 28px; text-align: center; font-size: 11px; line-height: 1.6; color: var(--entry-muted); }
+@media (max-height: 740px) {
+  .topbar { padding-top: calc(12px + env(safe-area-inset-top)); }
+  .shell { padding-top: 18px; }
+  .form { margin-top: 26px; gap: 18px; }
+  .localPreview, .club { margin-top: 20px; }
+}
+@media (max-width: 359px) {
+  .topbar, .shell { padding-inline: 22px; }
+  .intro { grid-template-columns: minmax(0, max-content) 80px; gap: 4px 6px; }
+  .dolphin { width: 80px; height: 80px; }
+  .intro h1 { font-size: 28px; }
+  .signupRow { font-size: 12px; gap: 6px; }
 }

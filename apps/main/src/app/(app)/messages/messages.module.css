@@ -41,7 +41,7 @@
   border-radius: var(--radius-pill);
   padding: 6px 13px;
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 /* ---------- 필터 ---------- */
@@ -75,7 +75,7 @@
 .filter.on {
   background: var(--brand-blue-500);
   border-color: var(--brand-blue-500);
-  color: var(--surface-white);
+  color: var(--on-brand);
   font-weight: 700;
 }
 
@@ -127,7 +127,7 @@
 
 .kind.봉사 {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .kind.활동 {
@@ -142,7 +142,7 @@
 
 .kind.댓글 {
   background: var(--brand-surface);
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .sentAt {
@@ -191,7 +191,7 @@
 .itemLink {
   font-size: 12px;
   font-weight: 700;
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .readButton {
@@ -209,7 +209,7 @@
 }
 
 .readButton:hover {
-  color: var(--brand-blue-500);
+  color: var(--link-color);
 }
 
 .empty {
@@ -226,4 +226,27 @@
 .saveError {
   font-size: 13px;
   color: var(--state-danger);
+}
+.summary,
+.item,
+.empty {
+  border-radius: 24px;
+  box-shadow: none;
+  border: 1px solid var(--surface-muted);
+}
+.filter {
+  height: 44px;
+  border-radius: 15px;
+}
+.itemTitle {
+  font-size: 17px;
+}
+.itemBody {
+  font-size: 14px;
+}
+.readButton,
+.itemLink {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }

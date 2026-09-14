@@ -39,7 +39,7 @@ export default function VolunteerLoading() {
               </div>
             ))}
           </div>
-          <p className={styles.note}>1365 · VMS 모집 정보를 불러오고 있어요.</p>
+          <p className={styles.note}>1365 / VMS 모집 정보를 불러오고 있어요.</p>
         </section>
       </SheetGroup>
     </Sheet>

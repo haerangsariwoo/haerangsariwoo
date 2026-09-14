@@ -5,7 +5,11 @@ import { cn } from "@/lib/cn";
 import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
 import { createClient } from "@/lib/supabase/client";
 import { storagePath } from "@/lib/storage-name";
-import { compressImage, FileTooLargeError, PROOF_PRESET } from "@/lib/image-compress";
+import {
+  compressImage,
+  FileTooLargeError,
+  PROOF_PRESET,
+} from "@/lib/image-compress";
 import type { ProofSubmission, VerifySource } from "@/lib/verify";
 import styles from "./verify.module.css";
 
@@ -37,7 +41,10 @@ export default function VerifyPage() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      setLoadingHistory(false);
+      return;
+    }
     const { data } = await supabase
       .from("proof_submissions")
       .select("*")
@@ -66,7 +73,9 @@ export default function VerifyPage() {
       });
     } catch (e) {
       setError(
-        e instanceof FileTooLargeError ? e.message : "사진을 읽지 못했어요. 다른 사진을 골라주세요.",
+        e instanceof FileTooLargeError
+          ? e.message
+          : "사진을 읽지 못했어요. 다른 사진을 골라주세요.",
       );
     }
   }
@@ -78,7 +87,8 @@ export default function VerifyPage() {
     });
   }
 
-  const canSubmit = title.trim() && date.trim() && Number(hours) > 0 && photo && !submitting;
+  const canSubmit =
+    title.trim() && date.trim() && Number(hours) > 0 && photo && !submitting;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -106,16 +116,18 @@ export default function VerifyPage() {
       return;
     }
 
-    const { error: insertError } = await supabase.from("proof_submissions").insert({
-      member_id: user.id,
-      source,
-      activity_title: title.trim(),
-      activity_org: org.trim(),
-      activity_date: date,
-      hours: Number(hours),
-      photo_paths: [path],
-      memo: memo.trim(),
-    });
+    const { error: insertError } = await supabase
+      .from("proof_submissions")
+      .insert({
+        member_id: user.id,
+        source,
+        activity_title: title.trim(),
+        activity_org: org.trim(),
+        activity_date: date,
+        hours: Number(hours),
+        photo_paths: [path],
+        memo: memo.trim(),
+      });
 
     setSubmitting(false);
     if (insertError) {
@@ -129,7 +141,11 @@ export default function VerifyPage() {
 
   /** 아직 검토 전인 내 제출만 취소할 수 있다 — 운영진이 본 뒤에는 못 지운다 */
   async function cancelSubmission(item: ProofSubmission) {
-    if (!window.confirm(`"${item.activity_title}" 제출을 취소할까요? 올린 사진도 함께 지워집니다.`))
+    if (
+      !window.confirm(
+        `"${item.activity_title}" 제출을 취소할까요? 올린 사진도 함께 지워집니다.`,
+      )
+    )
       return;
 
     const prev = history;
@@ -140,7 +156,8 @@ export default function VerifyPage() {
       const { data: gone, error: removeError } = await supabase.storage
         .from("proof-files")
         .remove(item.photo_paths);
-      filesLeft = Boolean(removeError) || (gone?.length ?? 0) !== item.photo_paths.length;
+      filesLeft =
+        Boolean(removeError) || (gone?.length ?? 0) !== item.photo_paths.length;
     }
 
     const { error: deleteError } = await supabase
@@ -198,13 +215,17 @@ export default function VerifyPage() {
         <form className={styles.card} onSubmit={handleSubmit}>
           <p className={styles.cardTitle}>증빙 제출</p>
           <p className={styles.hint}>
-            1365 · VMS 에서 신청·참여한 봉사만 해당돼요. 우리 동아리가 직접 여는 내부봉사는 증빙이
-            필요 없어요.
+            1365 / VMS 에서 신청 / 참여한 봉사만 해당돼요. 우리 동아리가 직접 여는
+            내부봉사는 증빙이 필요 없어요.
           </p>
 
           <div className={styles.field}>
             <span className={styles.label}>출처</span>
-            <div className={styles.genderRow} role="group" aria-label="출처 선택">
+            <div
+              className={styles.genderRow}
+              role="group"
+              aria-label="출처 선택"
+            >
               {(["1365", "vms"] as VerifySource[]).map((s) => (
                 <button
                   key={s}
@@ -275,7 +296,9 @@ export default function VerifyPage() {
               value={hours}
               onChange={(e) => setHours(e.target.value)}
             />
-            <p className={styles.hint}>실제 활동한 시간을 입력해 주세요. 운영진 확인 후 반영됩니다.</p>
+            <p className={styles.hint}>
+              실제 활동한 시간을 입력해 주세요. 운영진 확인 후 반영됩니다.
+            </p>
           </div>
 
           <div className={styles.field}>
@@ -311,8 +334,8 @@ export default function VerifyPage() {
               </label>
             )}
             <p className={styles.hint}>
-              1365 · VMS 에서 <b>봉사시간이 인증된 화면</b>을 캡처해 한 장 올려주세요.
-              활동명과 시간이 보이면 됩니다.
+              1365 / VMS 에서 <b>봉사시간이 인증된 화면</b>을 캡처해 한 장
+              올려주세요. 활동명과 시간이 보이면 됩니다.
             </p>
           </div>
 
@@ -350,12 +373,17 @@ export default function VerifyPage() {
                 <div className={styles.itemBody}>
                   <p className={styles.itemTitle}>{r.activity_title}</p>
                   <p className={styles.itemMeta}>
-                    {r.activity_date} · {r.hours}시간 · 사진 {r.photo_paths.length}장
+                    {r.activity_date}  / {r.hours}시간 / 사진{" "}
+                    {r.photo_paths.length}장
                   </p>
                 </div>
-                <span className={cn(styles.state, styles[r.status])}>{r.status}</span>
+                <span className={cn(styles.state, styles[r.status])}>
+                  {r.status}
+                </span>
               </div>
-              {r.reject_reason && <p className={styles.reason}>반려 사유 · {r.reject_reason}</p>}
+              {r.reject_reason && (
+                <p className={styles.reason}>반려 사유 / {r.reject_reason}</p>
+              )}
               {r.status === "대기" && (
                 <button
                   type="button"

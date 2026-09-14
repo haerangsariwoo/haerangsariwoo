@@ -42,7 +42,7 @@ function toSummary(row: ActivityRow, applied: number): VolunteerSummary {
     id: row.id,
     title: row.title,
     org: "해랑사리우",
-    dateLabel: row.capacity > 0 ? `${row.date_label} · ${row.capacity}명 모집` : row.date_label,
+    dateLabel: row.capacity > 0 ? `${row.date_label} / ${row.capacity}명 모집` : row.date_label,
     timeLabel: row.time_label,
     place: row.place,
     creditHours: 0,

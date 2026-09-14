@@ -29,7 +29,7 @@
 }
 
 .barValue {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--a-ink-soft);
   font-variant-numeric: tabular-nums;
@@ -38,13 +38,13 @@
 .bar {
   width: 100%;
   max-width: 40px;
-  background: var(--a-brand);
+  background: var(--a-action);
   border-radius: var(--radius-xs) 6px 0 0;
   min-height: 4px;
 }
 
 .barLabel {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--a-ink-soft);
 }
 
@@ -63,7 +63,7 @@
 .catHead {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .catLabel {
@@ -89,7 +89,7 @@
 }
 
 .fill.blue {
-  background: var(--a-brand);
+  background: var(--a-action);
 }
 .fill.green {
   background: var(--a-green);
@@ -127,7 +127,7 @@
 }
 
 .attendLabel {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--a-ink-soft);
 }
 
@@ -158,7 +158,7 @@
 
 .exportDone {
   margin-top: 10px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--a-green);
 }

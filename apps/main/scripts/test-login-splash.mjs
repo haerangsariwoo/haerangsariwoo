@@ -8,55 +8,148 @@ import { AsyncLocalStorage } from "node:async_hooks";
 const require = createRequire(import.meta.url);
 // Next normally installs this in its server bootstrap, absent in plain Node tests.
 globalThis.AsyncLocalStorage ??= AsyncLocalStorage;
-const { unstable_doesMiddlewareMatch } = require("next/experimental/testing/server");
-const source = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+const {
+  unstable_doesMiddlewareMatch,
+} = require("next/experimental/testing/server");
+const source = (path) =>
+  fs.readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const compiled = ts.transpileModule(source("src/lib/app-splash.ts"), {
   compilerOptions: { module: ts.ModuleKind.CommonJS },
 }).outputText;
 const exports = {};
 vm.runInNewContext(compiled, { exports });
 let assertions = 0;
-const eq = (actual, expected) => { assert.equal(actual, expected); assertions++; };
+const eq = (actual, expected) => {
+  assert.equal(actual, expected);
+  assertions++;
+};
 
-function boot({ path = "/login", search = "", reduced = false, stored = null, blocked = false } = {}) {
-  const document = { documentElement: { dataset: {} } };
+function boot({
+  path = "/login",
+  search = "",
+  reduced = false,
+  stored = null,
+  blocked = false,
+  standalone = false,
+  navigation = "navigate",
+  referrer = "",
+} = {}) {
+  const document = {
+    documentElement: { dataset: {} },
+    visibilityState: "visible",
+    referrer,
+  };
   const context = {
     document,
     location: { pathname: path, search },
     URLSearchParams,
-    matchMedia: () => ({ matches: reduced }),
+    matchMedia: (query) => ({
+      matches: query.includes("reduced-motion") ? reduced : standalone,
+    }),
+    navigator: { standalone },
+    performance: { getEntriesByType: () => [{ type: navigation }] },
     sessionStorage: {
-      getItem: () => { if (blocked) throw Error("Storage unavailable"); return stored; },
-      setItem: (_key, value) => { stored = value; },
+      getItem: () => {
+        if (blocked) throw Error("Storage unavailable");
+        return stored;
+      },
+      setItem: (_key, value) => {
+        stored = value;
+      },
     },
   };
   const run = () => vm.runInNewContext(exports.SPLASH_BOOTSTRAP, context);
   run();
-  return { document, run, stored: () => stored };
+  return {
+    document,
+    run,
+    stored: () => stored,
+    markSeen: () => {
+      stored = "seen";
+    },
+  };
 }
 
 const first = boot();
 eq(first.document.documentElement.dataset.appSplash, "show");
-eq(first.stored(), "seen");
+eq(first.stored(), null); // A redirect before paint must not mark the splash seen.
+first.markSeen();
 delete first.document.documentElement.dataset.appSplash;
 first.run();
 eq(first.document.documentElement.dataset.appSplash, undefined);
-eq(boot({ stored: "seen" }).document.documentElement.dataset.appSplash, undefined);
-eq(boot({ stored: "seen", search: "?splash=1" }).document.documentElement.dataset.appSplash, "show");
-eq(boot({ reduced: true }).document.documentElement.dataset.appSplash, undefined);
-eq(boot({ reduced: true, search: "?splash=1" }).document.documentElement.dataset.appSplash, undefined);
-eq(boot({ path: "/admin" }).document.documentElement.dataset.appSplash, undefined);
-eq(boot({ path: "/admin/members", search: "?splash=1" }).document.documentElement.dataset.appSplash, undefined);
-eq(boot({ blocked: true }).document.documentElement.dataset.appSplash, undefined);
+eq(
+  boot({ stored: "seen" }).document.documentElement.dataset.appSplash,
+  undefined,
+);
+eq(
+  boot({ stored: "seen", search: "?splash=1" }).document.documentElement.dataset
+    .appSplash,
+  "show",
+);
+eq(
+  boot({ reduced: true }).document.documentElement.dataset.appSplash,
+  undefined,
+);
+eq(
+  boot({ reduced: true, search: "?splash=1" }).document.documentElement.dataset
+    .appSplash,
+  undefined,
+);
+eq(
+  boot({ path: "/admin" }).document.documentElement.dataset.appSplash,
+  undefined,
+);
+eq(
+  boot({ path: "/admin/members", search: "?splash=1" }).document.documentElement
+    .dataset.appSplash,
+  undefined,
+);
+eq(boot({ blocked: true }).document.documentElement.dataset.appSplash, "show");
 eq(boot({ path: "/home" }).document.documentElement.dataset.appSplash, "show");
-eq(boot({ stored: "seen", search: "?splash=0" }).document.documentElement.dataset.appSplash, undefined);
+eq(
+  boot({ stored: "seen", search: "?splash=0" }).document.documentElement.dataset
+    .appSplash,
+  undefined,
+);
+eq(
+  boot({ stored: "seen", standalone: true }).document.documentElement.dataset
+    .appSplash,
+  "show",
+);
+eq(
+  boot({ stored: "seen", standalone: true, navigation: "reload" }).document
+    .documentElement.dataset.appSplash,
+  undefined,
+);
+eq(
+  boot({ stored: "seen", standalone: true, navigation: "back_forward" })
+    .document.documentElement.dataset.appSplash,
+  undefined,
+);
+eq(
+  boot({
+    stored: "seen",
+    standalone: true,
+    referrer: "https://example.test/activities",
+  }).document.documentElement.dataset.appSplash,
+  undefined,
+);
 
 // Parse only the config AST: this test never imports or executes auth logic.
-const middleware = ts.createSourceFile("middleware.ts", source("src/middleware.ts"), ts.ScriptTarget.Latest, true);
+const middleware = ts.createSourceFile(
+  "middleware.ts",
+  source("src/middleware.ts"),
+  ts.ScriptTarget.Latest,
+  true,
+);
 let matcher;
 function visit(node) {
-  if (ts.isVariableDeclaration(node) && node.name.getText(middleware) === "config") {
-    matcher = node.initializer.properties.find((p) => p.name.getText(middleware) === "matcher")
+  if (
+    ts.isVariableDeclaration(node) &&
+    node.name.getText(middleware) === "config"
+  ) {
+    matcher = node.initializer.properties
+      .find((p) => p.name.getText(middleware) === "matcher")
       .initializer.elements.map((item) => item.text);
   }
   ts.forEachChild(node, visit);
@@ -74,9 +167,22 @@ for (const [url, expected] of [
   ["/api/admin/members/123", true],
   ["/api/weather", true],
 ]) {
-  eq(unstable_doesMiddlewareMatch({ config: { matcher }, nextConfig: {}, url }), expected);
+  eq(
+    unstable_doesMiddlewareMatch({ config: { matcher }, nextConfig: {}, url }),
+    expected,
+  );
 }
 eq(source("src/app/LoginScreen.tsx").includes("dolphin-hero"), false);
-eq(source("src/components/login/LoginFilm.tsx").includes('preload="none"'), true);
-eq(source("src/components/onboarding/AppSplash.module.css").includes("prefers-reduced-motion"), true);
-console.log(`PASS: ${assertions} login/splash assertions (no network or account writes).`);
+eq(
+  source("src/components/login/LoginFilm.tsx").includes('preload="none"'),
+  true,
+);
+eq(
+  source("src/components/onboarding/AppSplash.module.css").includes(
+    "prefers-reduced-motion",
+  ),
+  true,
+);
+console.log(
+  `PASS: ${assertions} login/splash assertions (no network or account writes).`,
+);

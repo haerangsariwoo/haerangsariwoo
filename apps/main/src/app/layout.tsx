@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./theme.css";
 import { ThemeController } from "@/components/theme/ThemeControls";
 import { AppSplash } from "@/components/onboarding/AppSplash";
-import { SPLASH_BOOTSTRAP } from "@/lib/app-splash";
+import { SPLASH_BOOTSTRAP, SPLASH_CRITICAL_CSS } from "@/lib/app-splash";
+import { APPLE_STARTUP_IMAGES } from "@/lib/startup-images";
+import { LoadingState } from "@/components/ui/LoadingState/LoadingState";
 
 /**
  * design.md §1.2 — 제목 Montserrat, 본문은 CircularXX 대신 Pretendard.
@@ -37,13 +40,24 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   title: "해랑사리우",
   description: "한성대학교 봉사동아리 해랑사리우 회원 웹앱",
+  // Next emits mobile-web-app-capable; retain Apple's legacy launch-image flag too.
+  other: { "apple-mobile-web-app-capable": "yes" },
+  appleWebApp: {
+    capable: true,
+    title: "해랑사리우",
+    statusBarStyle: "default",
+    startupImage: APPLE_STARTUP_IMAGES.map(({ url, media }) => ({
+      url,
+      media,
+    })),
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#176ff2",
+  themeColor: "#f8fbff",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -54,6 +68,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <head>
+        <style dangerouslySetInnerHTML={{ __html: SPLASH_CRITICAL_CSS }} />
+        <link rel="preload" as="image" href="/brand/dolphin-hello.webp" />
         <script dangerouslySetInnerHTML={{ __html: SPLASH_BOOTSTRAP }} />
         <script
           dangerouslySetInnerHTML={{
@@ -62,6 +78,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body>
+        <AppSplash />
         <template
           data-design-contract="blue-tide"
           dangerouslySetInnerHTML={{
@@ -74,8 +91,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 -->`,
           }}
         />
-        {children}
-        <AppSplash />
+        <Suspense
+          fallback={
+            <div
+              style={{ minHeight: "100dvh", background: "var(--entry-canvas)" }}
+            >
+              <LoadingState message="화면을 준비하고 있어요." />
+            </div>
+          }
+        >
+          {children}
+        </Suspense>
         <ThemeController />
       </body>
     </html>

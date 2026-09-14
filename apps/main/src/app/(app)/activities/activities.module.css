@@ -1,184 +1,381 @@
-/* 제목과 거르개는 한 블록에 둔다. 둘로 나누면 사이에 실선이 생긴다. */
-.head {
+.page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-14);
-}
-
-.groupLabel {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink-800);
-  margin-bottom: var(--space-4);
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-}
-
-/* ---------- 활동 한 줄 ---------- */
-.row {
-  display: flex;
-  gap: var(--space-14);
-  padding: var(--space-16) 0;
-  color: inherit;
-}
-
-.row + .row {
-  border-top: 1px solid var(--hairline);
-}
-
-.pastRow {
-  opacity: 0.62;
-}
-
-/* 왼쪽 날짜 칸. 목록을 훑을 때 눈이 처음 닿는 자리다. */
-.calendarLink { display:inline-flex;gap:8px;align-items:center;min-height:44px;color:var(--link-color);font-size:13px;font-weight:600;margin-bottom:8px; }
-.date {
-  flex: none;
-  width: 46px;
-  padding-top: 2px;
-  text-align: center;
-}
-
-.dateNum {
-  display: block;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--ink-800);
-  letter-spacing: -0.02em;
-}
-
-.dateDay {
-  display: block;
-  font-size: 12px;
-  color: var(--ink-600);
-  margin-top: 2px;
-}
-
-.body {
-  flex: 1;
+  gap: 16px;
+  padding: 8px 16px 24px;
   min-width: 0;
 }
-
-.rowTop {
+.head,
+.sectionHead,
+.monthBar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: var(--space-8);
+  gap: 8px;
 }
-
-.typeTag {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: var(--radius-xs);
-  background: var(--brand-surface);
-  color: var(--link-color);
+.head h1 {
+  font-size: 28px;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
 }
-
-.dday {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--link-color);
-  margin-left: auto;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--ink-800);
-  margin-top: var(--space-8);
-}
-
-.meta {
-  font-size: 12px;
-  color: var(--ink-600);
-  margin-top: var(--space-6);
-}
-
-.attendRow {
-  display: flex;
+.allCalendar {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-8);
-  margin-top: var(--space-10);
-}
-
-.attend {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--radius-xs);
-}
-
-.attend.참석 {
-  background: var(--state-success-bg);
-  color: var(--state-success);
-}
-.attend.미정 {
-  background: var(--state-warn-bg);
-  color: var(--state-warn);
-}
-.attend.불참 {
-  background: var(--state-danger-bg);
-  color: var(--state-danger);
-}
-.attend.none {
-  background: var(--brand-surface);
-  color: var(--link-color);
-}
-
-.teamFlag {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--link-color);
-}
-
-.empty {
-  padding: var(--space-32) var(--screen-pad);
-  text-align: center;
-  color: var(--ink-600);
-  font-size: 14px;
-}
-.intro {
-  font-size: 13px;
-  color: var(--ink-600);
-}
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  text-align: center;
-  padding-block: 44px;
-}
-.empty h2 {
-  font-size: 21px;
-}
-.empty p {
-  font-size: 13px;
-  color: var(--ink-600);
-}
-.empty a {
-  display: flex;
-  align-items: center;
+  gap: 2px;
   min-height: 44px;
   font-size: 13px;
   color: var(--link-color);
 }
-.date {
-  border-radius: 17px;
-  background: var(--surface-muted);
+.filters {
+  display: flex;
+  gap: 8px;
+}
+.filters button {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--surface-white);
+  color: var(--ink-600);
+  font-size: 14px;
+  font-weight: 600;
+}
+.filters button[aria-pressed="true"] {
+  background: var(--brand-blue-500);
+  border-color: var(--brand-blue-500);
+  color: var(--on-brand);
+}
+.calendar {
+  padding: 16px 8px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  background: var(--surface-white);
+}
+.monthBar {
+  padding: 0 8px 16px;
+  flex-wrap: wrap;
+}
+.monthBar h2 {
+  font-size: 21px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.monthBar p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--ink-600);
+}
+.monthControls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.monthControls button {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  color: var(--ink-800);
+  background: transparent;
+  font-size: 13px;
+}
+.monthControls button:first-child {
   color: var(--link-color);
+  font-weight: 600;
+}
+.week,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+.week {
+  padding-bottom: 8px;
+  color: var(--ink-600);
+  font-size: 12px;
+}
+.day {
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+  border: 0;
+  border-radius: 12px;
+  color: var(--ink-800);
+  background: transparent;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.outside {
+  color: var(--ink-600);
+}
+.outside > span:first-child {
+  text-decoration: underline;
+  text-decoration-color: var(--hairline);
+  text-underline-offset: 4px;
+}
+.today > span:first-child {
+  font-weight: 800;
+  color: var(--link-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.marker {
+  display: flex;
+  align-items: center;
+  height: 5px;
+}
+.marker i,
+.calendarHint i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--link-color);
+}
+.day[aria-pressed="true"] {
+  background: var(--brand-blue-500);
+  color: var(--on-brand);
+}
+.day[aria-pressed="true"] > span:first-child {
+  color: var(--on-brand);
+}
+.day[aria-pressed="true"] i {
+  background: var(--on-brand);
+}
+.calendarHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  color: var(--ink-600);
+  font-size: 12px;
+}
+.agenda {
+  margin-top: 8px;
+}
+.sectionHead {
+  min-height: 44px;
+  margin-bottom: 8px;
+}
+.sectionHead h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+.sectionHead h2 span {
+  margin-left: 4px;
+  color: var(--link-color);
+  font-size: 14px;
+}
+.sectionHead button,
+.empty button {
+  min-height: 44px;
+  border: 0;
+  color: var(--link-color);
+  font-size: 13px;
+  background: transparent;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 .row {
-  padding-block: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background: var(--surface-white);
 }
-.title {
-  font-size: 17px;
+.date {
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-height: 64px;
+  padding: 8px 2px;
+  border-radius: 12px;
+  background: var(--surface-muted);
+  font-variant-numeric: tabular-nums;
 }
-.groupLabel {
+.date strong {
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--ink-800);
+}
+.date > span {
+  font-size: 12px;
+  color: var(--ink-500);
+}
+.body {
+  flex: 1;
+  min-width: 0;
+}
+.rowTop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.typeTag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-600);
+}
+.dday {
   font-size: 13px;
   font-weight: 700;
+  color: var(--link-color);
+}
+.title {
+  margin-top: 6px;
+  font-size: 19px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+.meta {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  color: var(--ink-600);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.meta > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.meta dt {
+  flex: none;
+  font-size: 12px;
+}
+.meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+.attendRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.attend {
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.참석 {
+  color: var(--state-success);
+  background: var(--state-success-bg);
+}
+.미정 {
+  color: var(--state-warn);
+  background: var(--state-warn-bg);
+}
+.불참 {
+  color: color-mix(in srgb, var(--state-danger) 80%, var(--ink-800));
+  background: var(--state-danger-bg);
+}
+.none {
+  color: var(--link-color);
+  background: var(--brand-surface);
+}
+.teamFlag {
+  font-size: 12px;
+  color: var(--link-color);
+}
+.attendRow > svg {
+  margin-left: auto;
+  color: var(--ink-600);
+}
+.empty {
+  padding: 24px 16px;
+  text-align: center;
+  border-radius: 16px;
+  background: var(--surface-white);
+}
+.empty p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.empty > span {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-600);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.past summary {
+  min-height: 44px;
+  padding-block: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.past summary span {
+  font-size: 13px;
+  color: var(--ink-600);
+  margin-left: 8px;
+}
+.past[open] summary {
+  margin-bottom: 8px;
+}
+.page button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.page :is(button, a, summary):focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+}
+.page :is(button, a):active {
+  filter: brightness(0.92);
+}
+@media (hover: hover) {
+  .monthControls button:hover,
+  .day:not([aria-pressed="true"]):hover {
+    background: var(--surface-muted);
+  }
+  .row:hover {
+    border-color: var(--link-color);
+  }
+}
+@media (max-width: 359px) {
+  .calendar {
+    margin-inline: -12px;
+    padding-inline: 0;
+  }
+  .monthBar {
+    padding-inline: 12px;
+  }
+  .monthBar h2 {
+    font-size: 19px;
+  }
+  .row {
+    padding: 16px 12px;
+    gap: 12px;
+  }
+  .filters {
+    gap: 6px;
+  }
 }

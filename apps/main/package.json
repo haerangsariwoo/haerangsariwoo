@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "release:check": "node scripts/release/check.mjs",
-    "release:test": "node scripts/test-release-safety.mjs && node scripts/test-first-visit.mjs && node scripts/test-theme-transition.mjs && node scripts/test-entry-navigation.mjs && node scripts/test-admin-ui.mjs && node scripts/test-login-splash.mjs && node scripts/test-weather-volunteer.mjs",
+    "release:test": "node scripts/test-release-safety.mjs && node scripts/test-first-visit.mjs && node scripts/test-theme-transition.mjs && node scripts/test-entry-navigation.mjs && node scripts/test-admin-ui.mjs && node scripts/test-login-splash.mjs && node scripts/test-weather-volunteer.mjs && node scripts/test-home-activities.mjs && node scripts/test-pwa-launch.mjs",
     "release:verify": "npm run lint && npm run release:test && npx tsc --noEmit && npm run build",
     "db:contract": "node scripts/release/contract.mjs"
   },

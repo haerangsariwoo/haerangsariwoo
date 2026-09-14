@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "한성대학교 봉사동아리 해랑사리우 회원 웹앱",
     start_url: "/home",
     display: "standalone",
-    background_color: "#f3f8fe",
-    theme_color: "#176ff2",
+    background_color: "#f8fbff",
+    theme_color: "#f8fbff",
     lang: "ko",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

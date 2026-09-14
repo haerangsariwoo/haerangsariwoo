@@ -5,5 +5,8 @@ export const metadata = { title: "활동 / 해랑사리우" };
 
 export default async function ActivitiesPage() {
   const activities = await getActivities();
-  return <ActivityList activities={activities} />;
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+  }).format(new Date());
+  return <ActivityList activities={activities} today={today} />;
 }

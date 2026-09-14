@@ -3,50 +3,71 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { FilterChips } from "@/components/ui/FilterChips/FilterChips";
-import { PageHeader } from "@/components/ui/PageHeader/PageHeader";
-import { Sheet, SheetGroup } from "@/components/layout/Sheet/Sheet";
 import { activityTypes, type Activity } from "@/lib/activities";
+import {
+  ACTIVITY_WEEK,
+  activityDate,
+  monthDays,
+  moveMonth,
+} from "@/lib/activity-calendar";
 import styles from "./activities.module.css";
-import { BrandIcon } from "@/components/ui/BrandIcon/BrandIcon";
 
-/**
- * 목록의 한 줄.
- * 왼쪽 날짜 칸이 눈이 처음 닿는 자리다. 예전에는 여기에 색 띠가 있었는데
- * 그 색은 활동마다 임의로 준 값이라 읽는 사람에게 아무 뜻이 없었다.
- */
-function ActivityRow({
-  item,
-  past = false,
-}: {
-  item: Activity;
-  past?: boolean;
-}) {
+function Chevron({ back = false }: { back?: boolean }) {
   return (
-    <Link
-      href={`/activities/${item.id}`}
-      className={cn(styles.row, past && styles.pastRow)}
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      aria-hidden="true"
     >
-      <div className={styles.date}>
-        <span className={styles.dateNum}>{item.dateShort}</span>
-        <span className={styles.dateDay}>{item.weekday}</span>
-      </div>
+      <path d={back ? "m14 6-6 6 6 6" : "m10 6 6 6-6 6"} />
+    </svg>
+  );
+}
 
+function ActivityRow({ item }: { item: Activity }) {
+  const past = item.status === "done";
+  return (
+    <Link href={`/activities/${item.id}`} className={styles.row}>
+      <div className={styles.date}>
+        <strong>{item.dateShort || "미정"}</strong>
+        <span>{item.weekday ? `${item.weekday}요일` : "날짜 미정"}</span>
+      </div>
       <div className={styles.body}>
         <div className={styles.rowTop}>
           <span className={styles.typeTag}>{item.type}</span>
-          {!past && item.dday !== null && item.dday >= 0 && (
-            <span className={styles.dday}>
-              {item.dday === 0 ? "오늘" : `D-${item.dday}`}
-            </span>
+          {item.status === "closed" ? (
+            <span className={styles.dday}>접수 마감</span>
+          ) : (
+            !past &&
+            item.dday !== null &&
+            item.dday >= 0 && (
+              <span className={styles.dday}>
+                {item.dday === 0 ? "오늘" : `D-${item.dday}`}
+              </span>
+            )
           )}
         </div>
-
         <h3 className={styles.title}>{item.title}</h3>
-        <p className={styles.meta}>
-          {past ? item.place : `${item.timeLabel} / ${item.place}`}
-        </p>
-
+        <dl className={styles.meta}>
+          <div>
+            <dt>시간</dt>
+            <dd>{item.timeLabel || "시간 미정"}</dd>
+          </div>
+          <div>
+            <dt>장소</dt>
+            <dd>{item.place || "장소 미정"}</dd>
+          </div>
+          {/[~～〜–]/.test(item.dateLabel) && (
+            <div>
+              <dt>기간</dt>
+              <dd>{item.dateLabel}</dd>
+            </div>
+          )}
+        </dl>
         {!past && (
           <div className={styles.attendRow}>
             <span
@@ -55,11 +76,12 @@ function ActivityRow({
                 item.attend ? styles[item.attend] : styles.none,
               )}
             >
-              {item.attend ?? "참석 여부 미응답"}
+              {item.attend ?? "참석 여부 선택하기"}
             </span>
             {item.teamPublished && (
               <span className={styles.teamFlag}>조 편성 완료</span>
             )}
+            <Chevron />
           </div>
         )}
       </div>
@@ -67,78 +89,210 @@ function ActivityRow({
   );
 }
 
-export function ActivityList({ activities }: { activities: Activity[] }) {
+export function ActivityList({
+  activities,
+  today,
+}: {
+  activities: Activity[];
+  today: string;
+}) {
   const [type, setType] = useState<string>("전체");
-
-  const { upcoming, past } = useMemo(() => {
-    const filtered =
-      type === "전체" ? activities : activities.filter((a) => a.type === type);
-    return {
-      upcoming: filtered.filter((a) => a.status !== "done"),
-      past: filtered.filter((a) => a.status === "done"),
-    };
-  }, [type, activities]);
-
-  const total = upcoming.length + past.length;
+  const [month, setMonth] = useState(today.slice(0, 7));
+  const [selected, setSelected] = useState<string | null>(null);
+  const dated = useMemo(
+    () => activities.map((item) => ({ item, date: activityDate(item, today) })),
+    [activities, today],
+  );
+  const filtered = dated.filter(
+    ({ item }) => type === "전체" || item.type === type,
+  );
+  const byDate = new Map<string, number>();
+  for (const { date } of filtered)
+    if (date) byDate.set(date, (byDate.get(date) ?? 0) + 1);
+  const upcoming = filtered
+    .filter(({ item }) => item.status !== "done")
+    .sort(
+      (a, b) =>
+        (a.date ?? "9999").localeCompare(b.date ?? "9999") ||
+        a.item.timeLabel.localeCompare(b.item.timeLabel),
+    );
+  const past = filtered
+    .filter(({ item }) => item.status === "done")
+    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+  const visible = selected
+    ? filtered
+        .filter(({ date }) => date === selected)
+        .sort((a, b) => a.item.timeLabel.localeCompare(b.item.timeLabel))
+    : upcoming;
+  const monthCount = filtered.filter(({ date }) =>
+    date?.startsWith(month),
+  ).length;
+  const [year, monthNumber] = month.split("-").map(Number);
+  const selectedLabel = selected
+    ? `${Number(selected.slice(5, 7))}월 ${Number(selected.slice(8))}일 활동`
+    : "다가오는 활동";
 
   return (
-    <Sheet>
-      <SheetGroup>
-        <div className={styles.head}>
-          <PageHeader title="함께하는 날들" meta={`${total}건`} />
-          <p className={styles.intro}>만나고, 나누고, 조금씩 바뀌는 우리.</p>
-          <Link href="/calendar" className={styles.calendarLink} data-tour="activity-calendar">캘린더 보기 <span aria-hidden="true">↗</span></Link>
-          <FilterChips
-            options={activityTypes}
-            value={type}
-            onChange={setType}
-            label="활동 유형"
-          />
-        </div>
-      </SheetGroup>
+    <div className={styles.page} data-full-bleed>
+      <header className={styles.head}>
+        <h1>활동</h1>
+        <Link
+          href="/calendar"
+          data-tour="activity-calendar"
+          className={styles.allCalendar}
+        >
+          봉사 일정도 보기
+          <Chevron />
+        </Link>
+      </header>
+      <div className={styles.filters} role="group" aria-label="활동 유형">
+        {activityTypes.map((option) => (
+          <button
+            key={option}
+            type="button"
+            aria-pressed={type === option}
+            onClick={() => setType(option)}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
 
-      {total === 0 ? (
-        <SheetGroup>
-          <div className={styles.empty}>
-            <BrandIcon name="calendar" size={100} />
-            <h2>다음 만남을 기다려요</h2>
-            <p>
-              {activities.length === 0
-                ? "아직 등록된 활동이 없어요."
-                : "해당 유형의 활동이 없어요."}
-            </p>
-            <Link href="/calendar">캘린더 둘러보기 →</Link>
+      <section className={styles.calendar} aria-label="활동 달력">
+        <div className={styles.monthBar}>
+          <div>
+            <h2 aria-live="polite">
+              {year}년 {monthNumber}월
+            </h2>
+            <p>이달의 활동 {monthCount}건</p>
           </div>
-        </SheetGroup>
-      ) : (
-        <>
-          {upcoming.length > 0 && (
-            <SheetGroup>
-              <section>
-                <p className={styles.groupLabel}>다가오는 활동</p>
-                <div className={styles.list}>
-                  {upcoming.map((a) => (
-                    <ActivityRow key={a.id} item={a} />
-                  ))}
-                </div>
-              </section>
-            </SheetGroup>
-          )}
+          <div className={styles.monthControls}>
+            <button
+              type="button"
+              onClick={() => {
+                setMonth(today.slice(0, 7));
+                setSelected(today);
+              }}
+            >
+              오늘
+            </button>
+            <button
+              type="button"
+              aria-label="이전 달"
+              onClick={() => {
+                setMonth(moveMonth(month, -1));
+                setSelected(null);
+              }}
+            >
+              <Chevron back />
+            </button>
+            <button
+              type="button"
+              aria-label="다음 달"
+              onClick={() => {
+                setMonth(moveMonth(month, 1));
+                setSelected(null);
+              }}
+            >
+              <Chevron />
+            </button>
+          </div>
+        </div>
+        <div className={styles.week} aria-hidden="true">
+          {ACTIVITY_WEEK.map((day) => (
+            <span key={day}>{day}</span>
+          ))}
+        </div>
+        <div className={styles.grid}>
+          {monthDays(month).map((cell) => {
+            const count = byDate.get(cell.iso) ?? 0;
+            return (
+              <button
+                key={cell.iso}
+                type="button"
+                className={cn(
+                  styles.day,
+                  !cell.inMonth && styles.outside,
+                  cell.iso === today && styles.today,
+                )}
+                aria-label={`${Number(cell.iso.slice(0, 4))}년 ${Number(cell.iso.slice(5, 7))}월 ${cell.day}일, 활동 ${count}건${cell.iso === today ? ", 오늘" : ""}`}
+                aria-pressed={selected === cell.iso}
+                aria-current={cell.iso === today ? "date" : undefined}
+                onClick={() => {
+                  setSelected(selected === cell.iso ? null : cell.iso);
+                  setMonth(cell.iso.slice(0, 7));
+                }}
+              >
+                <span>{cell.day}</span>
+                <span className={styles.marker} aria-hidden="true">
+                  {count > 0 && <i />}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <p className={styles.calendarHint}>
+          <i aria-hidden="true" />
+          활동이 있는 날을 눌러보세요
+        </p>
+      </section>
 
-          {past.length > 0 && (
-            <SheetGroup>
-              <section>
-                <p className={styles.groupLabel}>지난 활동</p>
-                <div className={styles.list}>
-                  {past.map((a) => (
-                    <ActivityRow key={a.id} item={a} past />
-                  ))}
-                </div>
-              </section>
-            </SheetGroup>
+      <section
+        className={styles.agenda}
+        aria-labelledby="activity-agenda-title"
+      >
+        <div className={styles.sectionHead}>
+          <h2 id="activity-agenda-title" aria-live="polite">
+            {selectedLabel} <span>{visible.length}</span>
+          </h2>
+          {selected && (
+            <button type="button" onClick={() => setSelected(null)}>
+              전체 일정
+            </button>
           )}
-        </>
+        </div>
+        {visible.length ? (
+          <div className={styles.list}>
+            {visible.map(({ item }) => (
+              <ActivityRow key={item.id} item={item} />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.empty}>
+            <p>
+              {selected
+                ? "이날은 등록된 활동이 없어요."
+                : activities.length === 0
+                  ? "아직 등록된 활동이 없어요."
+                  : "예정된 활동이 없어요."}
+            </p>
+            <span>
+              {selected
+                ? "달력에서 다른 날짜를 선택해보세요."
+                : type !== "전체"
+                  ? "다른 유형도 확인해보세요."
+                  : "새 활동이 등록되면 여기서 확인할 수 있어요."}
+            </span>
+            {type !== "전체" && (
+              <button type="button" onClick={() => setType("전체")}>
+                모든 유형 보기
+              </button>
+            )}
+          </div>
+        )}
+      </section>
+      {!selected && past.length > 0 && (
+        <details className={styles.past}>
+          <summary>
+            지난 활동 <span>{past.length}건</span>
+          </summary>
+          <div className={styles.list}>
+            {past.map(({ item }) => (
+              <ActivityRow key={item.id} item={item} />
+            ))}
+          </div>
+        </details>
       )}
-    </Sheet>
+    </div>
   );
 }

@@ -25,7 +25,7 @@ const STEPS = [
     path: "/activities",
     target: "activity-calendar",
     title: "일정은 달력으로 한눈에",
-    copy: "‘캘린더 보기’를 눌러 활동 날짜를 확인해보세요.",
+    copy: "활동 날짜는 이 화면의 달력에서 확인해요. ‘봉사 일정도 보기’를 누르면 봉사와 내 신청 일정도 함께 볼 수 있어요.",
   },
   {
     path: "/calendar",

@@ -56,6 +56,30 @@ export default async function HomePage() {
         <span>{notices[0]?.title ?? "우리의 새로운 소식을 만나보세요"}</span>
         <b aria-hidden="true">›</b>
       </Link>
+      <div className={styles.anonStrip}>
+        {posts.length ? (
+          posts.slice(0, 2).map((p) => (
+            <Link
+              key={p.id}
+              href={`/community/anon/${p.id}`}
+              className={styles.anonRow}
+            >
+              <BrandIcon name="chat" size={28} />
+              <strong>익명</strong>
+              <span>{p.title}</span>
+              <small>댓글 {p.commentCount}</small>
+              <b aria-hidden="true">›</b>
+            </Link>
+          ))
+        ) : (
+          <Link href="/community?tab=익명" className={styles.anonRow}>
+            <BrandIcon name="chat" size={28} />
+            <strong>익명</strong>
+            <span>어떤 이야기든 편하게 남겨보세요</span>
+            <b aria-hidden="true">›</b>
+          </Link>
+        )}
+      </div>
       <nav className={styles.quickGrid} aria-label="자주 찾는 메뉴">
         {QUICK.map((q) => (
           <Link href={q.href} key={q.href}>
@@ -174,32 +198,6 @@ export default async function HomePage() {
         <div className={styles.album}>
           <AlbumPreview />
         </div>
-      </section>
-      <section className={styles.section}>
-        <div className={styles.sectionHead}>
-          <h2>조금 더 가까이</h2>
-          <Link href="/community?tab=익명">익명 게시판 ↗</Link>
-        </div>
-        {posts.length ? (
-          posts.slice(0, 2).map((p) => (
-            <Link
-              key={p.id}
-              className={styles.post}
-              href={`/community/anon/${p.id}`}
-            >
-              <span>{p.title}</span>
-              <small>댓글 {p.commentCount}</small>
-            </Link>
-          ))
-        ) : (
-          <Link href="/community?tab=익명" className={styles.nextCard}>
-            <BrandIcon name="chat" size={54} />
-            <div>
-              <h3>어떤 이야기든 괜찮아요</h3>
-              <p>해랑들과 편하게 이야기해요.</p>
-            </div>
-          </Link>
-        )}
       </section>
     </div>
   );

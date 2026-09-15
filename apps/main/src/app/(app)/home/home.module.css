@@ -205,21 +205,44 @@
   background: var(--surface-white);
   padding: 16px;
 }
-.post {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 56px;
-  align-items: center;
-  background: var(--surface-white);
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--hairline);
-  font-size: 14px;
+/* 익명 게시판 — 공지 띠와 같은 모양. 두 줄이면 한 판 안에 붙여 쌓는다 */
+.anonStrip {
+  margin-top: -8px;
+  padding: 8px 12px;
+  background: var(--surface-muted);
+  border-radius: 17px;
 }
-.post small {
+.anonRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  font-size: 11px;
+}
+.anonRow strong {
+  flex: none;
+  color: var(--link-color);
+}
+/* 아이콘은 첫 줄에만. 자리는 남겨 두 줄의 시작을 맞춘다 */
+.anonRow + .anonRow > span:first-child {
+  visibility: hidden;
+}
+.anonRow > span:nth-of-type(2) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.anonRow small {
   flex: none;
   color: var(--ink-600);
   font-size: 10px;
+}
+.anonRow > b {
+  flex: none;
+  font-size: 20px;
+  color: var(--ink-600);
 }
 .footer {
   font-size: 10px;

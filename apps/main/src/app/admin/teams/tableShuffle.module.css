@@ -1,0 +1,522 @@
+/* 테이블 섞기 — 행사장에서 휴대폰으로 쓰는 것을 기준으로 잡았다 */
+.root {
+  --ts-male: var(--a-brand);
+  --ts-male-soft: var(--a-brand-soft);
+  --ts-female: var(--state-danger);
+  --ts-female-soft: var(--state-danger-bg);
+  --ts-staff: var(--a-orange);
+  --ts-staff-soft: var(--a-orange-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--a-ink-soft);
+}
+
+.hint b {
+  color: var(--a-ink);
+}
+
+/* ---------- 설정 줄 ---------- */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 4px 4px 12px;
+  background: var(--a-bg);
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-md);
+}
+
+.stepLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+  margin-right: 4px;
+}
+
+.stepper button {
+  width: 40px;
+  height: 36px;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-sm);
+  background: var(--a-surface);
+  color: var(--a-brand);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stepper button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.stepper output {
+  min-width: 36px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--a-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--a-radius-pill);
+  background: var(--a-bg);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.male {
+  background: var(--ts-male);
+}
+.female {
+  background: var(--ts-female);
+}
+.staffDot {
+  background: var(--ts-staff);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--a-ink);
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--a-action);
+}
+
+.sideActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- 테이블 카드 ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-lg);
+  background: var(--a-surface);
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--a-ink);
+}
+
+.meta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.maleText {
+  color: var(--ts-male);
+}
+.femaleText {
+  color: var(--ts-female);
+}
+
+/* 둥근 테이블과 둘레 자리 */
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.round {
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  background: var(--a-bg);
+  border: 2px solid var(--a-line);
+  display: grid;
+  place-items: center;
+}
+
+.round b {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--a-brand);
+  letter-spacing: -0.03em;
+}
+
+.seat {
+  position: absolute;
+  width: var(--sz, 48px);
+  height: var(--sz, 48px);
+  margin: calc(var(--sz, 48px) / -2) 0 0 calc(var(--sz, 48px) / -2);
+  border-radius: 50%;
+  border: 2px solid transparent;
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  overflow: hidden;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
+  word-break: keep-all;
+}
+
+.seatMale {
+  background: var(--ts-male-soft);
+  color: var(--ts-male);
+}
+
+.seatFemale {
+  background: var(--ts-female-soft);
+  color: var(--ts-female);
+}
+
+.seatStaff {
+  border-color: var(--ts-staff);
+  box-shadow: 0 0 0 2px var(--ts-staff-soft);
+}
+
+.empty {
+  border: 1.5px dashed var(--a-line);
+  color: var(--a-ink-soft);
+  font-weight: 500;
+}
+
+.pop {
+  animation: tsPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes tsPop {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.shaking .seat:not(.seatStaff):not(.empty) {
+  animation: tsShake 0.25s ease-in-out infinite alternate;
+}
+
+@keyframes tsShake {
+  from {
+    transform: translateY(-2px) rotate(-6deg);
+  }
+  to {
+    transform: translateY(2px) rotate(6deg);
+  }
+}
+
+/* ---------- 명단 ---------- */
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  border: 1px solid var(--a-field-line);
+  border-radius: var(--a-radius-sm);
+  background: var(--a-surface);
+  color: var(--a-ink);
+  padding: 0 10px;
+  font: inherit;
+  font-size: 16px;
+}
+
+.seg {
+  display: flex;
+  flex: none;
+  padding: 3px;
+  gap: 2px;
+  border-radius: var(--a-radius-sm);
+  background: var(--a-bg);
+  border: 1px solid var(--a-line);
+}
+
+.seg button {
+  width: 34px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+  cursor: pointer;
+}
+
+.seg .segMale[aria-pressed="true"] {
+  background: var(--ts-male-soft);
+  color: var(--ts-male);
+}
+
+.seg .segFemale[aria-pressed="true"] {
+  background: var(--ts-female-soft);
+  color: var(--ts-female);
+}
+
+.staffToggle {
+  flex: none;
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-sm);
+  background: var(--a-surface);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--a-ink-soft);
+  cursor: pointer;
+}
+
+.staffToggle[aria-pressed="true"] {
+  background: var(--ts-staff-soft);
+  border-color: var(--ts-staff);
+  color: var(--ts-staff);
+}
+
+.remove {
+  flex: none;
+  width: 36px;
+  height: 44px;
+  border: none;
+  border-radius: var(--a-radius-sm);
+  background: none;
+  font-size: 20px;
+  color: var(--a-ink-soft);
+  cursor: pointer;
+}
+
+.remove:hover {
+  background: var(--a-hover);
+  color: var(--state-danger);
+}
+
+.emptyText {
+  font-size: 13px;
+  color: var(--a-ink-soft);
+  text-align: center;
+}
+
+.add {
+  display: flex;
+  gap: 6px;
+}
+
+.add input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  border: 1.5px dashed var(--a-field-line);
+  border-radius: var(--a-radius-sm);
+  background: var(--a-bg);
+  color: var(--a-ink);
+  padding: 0 12px;
+  font: inherit;
+  font-size: 16px;
+}
+
+.add input::placeholder {
+  color: var(--a-ink-soft);
+}
+
+.add input:focus {
+  border-style: solid;
+  border-color: var(--a-brand);
+}
+
+.add button {
+  flex: none;
+  height: 44px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--a-radius-sm);
+  background: var(--a-brand-soft);
+  color: var(--a-brand);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---------- 섞기 줄 — 스크롤해도 화면 아래에 붙어 있다 ---------- */
+.actionBar {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 10px 10px 10px 14px;
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--a-surface);
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius-lg);
+  box-shadow: 0 -6px 18px rgba(20, 95, 219, 0.08);
+}
+
+.status {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--a-ink-soft);
+}
+
+.go {
+  min-width: 140px;
+  height: 48px;
+  font-size: 16px;
+}
+
+.undo {
+  height: 48px;
+}
+
+@media (max-width: 600px) {
+  .controls {
+    gap: 10px;
+  }
+  .stats {
+    order: 3;
+    width: 100%;
+  }
+  .sideActions {
+    order: 4;
+    width: 100%;
+  }
+  .sideActions > button {
+    flex: 1;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .stage {
+    max-width: 230px;
+  }
+  .actionBar {
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+  .status {
+    flex-basis: 100%;
+  }
+  .undo {
+    flex: none;
+  }
+  .go {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop,
+  .shaking .seat:not(.seatStaff):not(.empty) {
+    animation: none;
+  }
+}
+
+/* ---------- 저장 상태 ---------- */
+.saveState {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 8px;
+  border-radius: var(--a-radius-pill);
+  background: var(--a-green-soft);
+  color: var(--a-green);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.saveError {
+  color: var(--state-danger);
+  font-weight: 700;
+}
+
+.retry {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--state-danger);
+  border-radius: var(--a-radius-sm);
+  background: var(--a-surface);
+  color: var(--state-danger);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
